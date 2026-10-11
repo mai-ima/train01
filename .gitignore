@@ -1,0 +1,5 @@
+out/
+tex/emblem*.png
+assets/emblem_archive/
+*.blend
+__pycache__/

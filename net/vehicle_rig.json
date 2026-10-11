@@ -1,0 +1,1428 @@
+{
+ "convention": "車両ルート空オブジェクト>台車(bogie,z軸)>輪軸(ws,y軸)・連結器(coupler,z軸)。原点=回転中心。レール上面=ローカルz0。",
+ "vehicles": [
+  {
+   "name": "coach0",
+   "location": [
+    -15.7,
+    -4.6,
+    0.274
+   ],
+   "yaw": 0.0,
+   "parts": [
+    {
+     "name": "coach0.bogie0",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "coach0",
+     "local_origin": [
+      -6.6,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "coach0.bogie0.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach0.bogie0",
+     "local_origin": [
+      -1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach0.bogie0.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach0.bogie0",
+     "local_origin": [
+      1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach0.bogie1",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "coach0",
+     "local_origin": [
+      6.6,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "coach0.bogie1.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach0.bogie1",
+     "local_origin": [
+      -1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach0.bogie1.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach0.bogie1",
+     "local_origin": [
+      1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach0.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "coach0",
+     "local_origin": [
+      -9.95,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "coach0.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "coach0",
+     "local_origin": [
+      9.95,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    }
+   ],
+   "bogies": [
+    {
+     "x": -6.6,
+     "wheelbase": 2.45,
+     "wheel_r": 0.43,
+     "axles": 2
+    },
+    {
+     "x": 6.6,
+     "wheelbase": 2.45,
+     "wheel_r": 0.43,
+     "axles": 2
+    }
+   ],
+   "wheelsets": [
+    -7.825,
+    -5.375,
+    5.375,
+    7.825
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -9.95,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 9.95,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "coach1",
+   "location": [
+    4.55,
+    -4.6,
+    0.274
+   ],
+   "yaw": 0.0,
+   "parts": [
+    {
+     "name": "coach1.bogie0",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "coach1",
+     "local_origin": [
+      -6.6,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "coach1.bogie0.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach1.bogie0",
+     "local_origin": [
+      -1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach1.bogie0.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach1.bogie0",
+     "local_origin": [
+      1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach1.bogie1",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "coach1",
+     "local_origin": [
+      6.6,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "coach1.bogie1.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach1.bogie1",
+     "local_origin": [
+      -1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach1.bogie1.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach1.bogie1",
+     "local_origin": [
+      1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach1.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "coach1",
+     "local_origin": [
+      -9.95,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "coach1.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "coach1",
+     "local_origin": [
+      9.95,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    }
+   ],
+   "bogies": [
+    {
+     "x": -6.6,
+     "wheelbase": 2.45,
+     "wheel_r": 0.43,
+     "axles": 2
+    },
+    {
+     "x": 6.6,
+     "wheelbase": 2.45,
+     "wheel_r": 0.43,
+     "axles": 2
+    }
+   ],
+   "wheelsets": [
+    -7.825,
+    -5.375,
+    5.375,
+    7.825
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -9.95,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 9.95,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "coach2",
+   "location": [
+    24.8,
+    -4.6,
+    0.274
+   ],
+   "yaw": 3.1416,
+   "parts": [
+    {
+     "name": "coach2.bogie0",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "coach2",
+     "local_origin": [
+      -6.6,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "coach2.bogie0.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach2.bogie0",
+     "local_origin": [
+      -1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach2.bogie0.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach2.bogie0",
+     "local_origin": [
+      1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach2.bogie1",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "coach2",
+     "local_origin": [
+      6.6,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "coach2.bogie1.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach2.bogie1",
+     "local_origin": [
+      -1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach2.bogie1.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "coach2.bogie1",
+     "local_origin": [
+      1.225,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "coach2.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "coach2",
+     "local_origin": [
+      -9.95,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "coach2.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "coach2",
+     "local_origin": [
+      9.95,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    }
+   ],
+   "bogies": [
+    {
+     "x": -6.6,
+     "wheelbase": 2.45,
+     "wheel_r": 0.43,
+     "axles": 2
+    },
+    {
+     "x": 6.6,
+     "wheelbase": 2.45,
+     "wheel_r": 0.43,
+     "axles": 2
+    }
+   ],
+   "wheelsets": [
+    -7.825,
+    -5.375,
+    5.375,
+    7.825
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -9.95,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 9.95,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "kiha_A",
+   "location": [
+    12.0,
+    0.0,
+    0.274
+   ],
+   "yaw": 0.0,
+   "parts": [
+    {
+     "name": "kiha_A.bogie0",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "kiha_A",
+     "local_origin": [
+      -6.9,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "kiha_A.bogie0.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "kiha_A.bogie0",
+     "local_origin": [
+      -1.05,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "kiha_A.bogie0.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "kiha_A.bogie0",
+     "local_origin": [
+      1.05,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "kiha_A.bogie1",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "kiha_A",
+     "local_origin": [
+      6.9,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "kiha_A.bogie1.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "kiha_A.bogie1",
+     "local_origin": [
+      -1.05,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "kiha_A.bogie1.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "kiha_A.bogie1",
+     "local_origin": [
+      1.05,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "kiha_A.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "kiha_A",
+     "local_origin": [
+      -10.12,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "kiha_A.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "kiha_A",
+     "local_origin": [
+      10.12,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    }
+   ],
+   "bogies": [
+    {
+     "x": -6.9,
+     "wheelbase": 2.1,
+     "wheel_r": 0.43,
+     "axles": 2
+    },
+    {
+     "x": 6.9,
+     "wheelbase": 2.1,
+     "wheel_r": 0.43,
+     "axles": 2
+    }
+   ],
+   "wheelsets": [
+    -7.95,
+    -5.85,
+    5.85,
+    7.95
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -10.12,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 10.12,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "loco_dd",
+   "location": [
+    -33.0,
+    -4.6,
+    0.274
+   ],
+   "yaw": 3.1416,
+   "parts": [
+    {
+     "name": "loco_dd.bogie0",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "loco_dd",
+     "local_origin": [
+      -4.9,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "loco_dd.bogie0.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "loco_dd.bogie0",
+     "local_origin": [
+      -1.2,
+      0.0,
+      0.5
+     ],
+     "radius": 0.5
+    },
+    {
+     "name": "loco_dd.bogie0.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "loco_dd.bogie0",
+     "local_origin": [
+      1.2,
+      0.0,
+      0.5
+     ],
+     "radius": 0.5
+    },
+    {
+     "name": "loco_dd.bogie1",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "loco_dd",
+     "local_origin": [
+      4.9,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "loco_dd.bogie1.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "loco_dd.bogie1",
+     "local_origin": [
+      -1.2,
+      0.0,
+      0.5
+     ],
+     "radius": 0.5
+    },
+    {
+     "name": "loco_dd.bogie1.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "loco_dd.bogie1",
+     "local_origin": [
+      1.2,
+      0.0,
+      0.5
+     ],
+     "radius": 0.5
+    },
+    {
+     "name": "loco_dd.bogie2",
+     "kind": "bogie",
+     "axis": "z",
+     "parent": "loco_dd",
+     "local_origin": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "radius": null
+    },
+    {
+     "name": "loco_dd.bogie2.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "loco_dd.bogie2",
+     "local_origin": [
+      -0.9,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "loco_dd.bogie2.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "loco_dd.bogie2",
+     "local_origin": [
+      0.9,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "loco_dd.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "loco_dd",
+     "local_origin": [
+      -7.07,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "loco_dd.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "loco_dd",
+     "local_origin": [
+      7.07,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    }
+   ],
+   "bogies": [
+    {
+     "x": -4.9,
+     "wheelbase": 2.4,
+     "wheel_r": 0.5,
+     "axles": 2
+    },
+    {
+     "x": 4.9,
+     "wheelbase": 2.4,
+     "wheel_r": 0.5,
+     "axles": 2
+    },
+    {
+     "x": 0.0,
+     "wheelbase": 1.8,
+     "wheel_r": 0.43,
+     "axles": 2
+    }
+   ],
+   "wheelsets": [
+    -6.1,
+    -3.7,
+    3.7,
+    6.1,
+    -0.9,
+    0.9
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -7.07,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 7.07,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "toraT3_1",
+   "location": [
+    -4.55,
+    -11.0,
+    0.274
+   ],
+   "yaw": 3.1416,
+   "parts": [
+    {
+     "name": "toraT3_1.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "toraT3_1",
+     "local_origin": [
+      -4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "toraT3_1.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "toraT3_1",
+     "local_origin": [
+      4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "toraT3_1.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "toraT3_1",
+     "local_origin": [
+      -2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "toraT3_1.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "toraT3_1",
+     "local_origin": [
+      2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    }
+   ],
+   "bogies": [],
+   "wheelsets": [
+    -2.2,
+    2.2
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -4.45,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 4.45,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "toraT3_4",
+   "location": [
+    25.15,
+    -11.0,
+    0.274
+   ],
+   "yaw": 0.0,
+   "parts": [
+    {
+     "name": "toraT3_4.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "toraT3_4",
+     "local_origin": [
+      -4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "toraT3_4.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "toraT3_4",
+     "local_origin": [
+      4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "toraT3_4.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "toraT3_4",
+     "local_origin": [
+      -2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "toraT3_4.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "toraT3_4",
+     "local_origin": [
+      2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    }
+   ],
+   "bogies": [],
+   "wheelsets": [
+    -2.2,
+    2.2
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -4.45,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 4.45,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "toraT4_0",
+   "location": [
+    6.0,
+    -16.5,
+    0.274
+   ],
+   "yaw": 0.0,
+   "parts": [
+    {
+     "name": "toraT4_0.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "toraT4_0",
+     "local_origin": [
+      -4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "toraT4_0.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "toraT4_0",
+     "local_origin": [
+      4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "toraT4_0.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "toraT4_0",
+     "local_origin": [
+      -2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "toraT4_0.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "toraT4_0",
+     "local_origin": [
+      2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    }
+   ],
+   "bogies": [],
+   "wheelsets": [
+    -2.2,
+    2.2
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -4.45,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 4.45,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "toraT4_2",
+   "location": [
+    25.8,
+    -16.5,
+    0.274
+   ],
+   "yaw": 0.0,
+   "parts": [
+    {
+     "name": "toraT4_2.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "toraT4_2",
+     "local_origin": [
+      -4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "toraT4_2.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "toraT4_2",
+     "local_origin": [
+      4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "toraT4_2.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "toraT4_2",
+     "local_origin": [
+      -2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "toraT4_2.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "toraT4_2",
+     "local_origin": [
+      2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    }
+   ],
+   "bogies": [],
+   "wheelsets": [
+    -2.2,
+    2.2
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -4.45,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 4.45,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "wamT3_0",
+   "location": [
+    -14.45,
+    -11.0,
+    0.274
+   ],
+   "yaw": 0.0,
+   "parts": [
+    {
+     "name": "wamT3_0.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "wamT3_0",
+     "local_origin": [
+      -4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "wamT3_0.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "wamT3_0",
+     "local_origin": [
+      4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "wamT3_0.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "wamT3_0",
+     "local_origin": [
+      -2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "wamT3_0.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "wamT3_0",
+     "local_origin": [
+      2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    }
+   ],
+   "bogies": [],
+   "wheelsets": [
+    -2.2,
+    2.2
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -4.45,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 4.45,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "wamT3_2",
+   "location": [
+    5.35,
+    -11.0,
+    0.274
+   ],
+   "yaw": 0.0,
+   "parts": [
+    {
+     "name": "wamT3_2.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "wamT3_2",
+     "local_origin": [
+      -4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "wamT3_2.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "wamT3_2",
+     "local_origin": [
+      4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "wamT3_2.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "wamT3_2",
+     "local_origin": [
+      -2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "wamT3_2.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "wamT3_2",
+     "local_origin": [
+      2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    }
+   ],
+   "bogies": [],
+   "wheelsets": [
+    -2.2,
+    2.2
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -4.45,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 4.45,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "wamT3_3",
+   "location": [
+    15.25,
+    -11.0,
+    0.274
+   ],
+   "yaw": 3.1416,
+   "parts": [
+    {
+     "name": "wamT3_3.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "wamT3_3",
+     "local_origin": [
+      -4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "wamT3_3.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "wamT3_3",
+     "local_origin": [
+      4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "wamT3_3.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "wamT3_3",
+     "local_origin": [
+      -2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "wamT3_3.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "wamT3_3",
+     "local_origin": [
+      2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    }
+   ],
+   "bogies": [],
+   "wheelsets": [
+    -2.2,
+    2.2
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -4.45,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 4.45,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "wamT4_1",
+   "location": [
+    15.9,
+    -16.5,
+    0.274
+   ],
+   "yaw": 0.0,
+   "parts": [
+    {
+     "name": "wamT4_1.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "wamT4_1",
+     "local_origin": [
+      -4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "wamT4_1.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "wamT4_1",
+     "local_origin": [
+      4.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "wamT4_1.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "wamT4_1",
+     "local_origin": [
+      -2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "wamT4_1.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "wamT4_1",
+     "local_origin": [
+      2.2,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    }
+   ],
+   "bogies": [],
+   "wheelsets": [
+    -2.2,
+    2.2
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -4.45,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 4.45,
+     "z": 0.88
+    }
+   ]
+  },
+  {
+   "name": "yoT4",
+   "location": [
+    47.5,
+    -16.5,
+    0.274
+   ],
+   "yaw": 3.1416,
+   "parts": [
+    {
+     "name": "yoT4.coupler0",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "yoT4",
+     "local_origin": [
+      -3.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "yoT4.coupler1",
+     "kind": "coupler",
+     "axis": "z",
+     "parent": "yoT4",
+     "local_origin": [
+      3.45,
+      0.0,
+      0.88
+     ],
+     "radius": null
+    },
+    {
+     "name": "yoT4.ws0",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "yoT4",
+     "local_origin": [
+      -1.8,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    },
+    {
+     "name": "yoT4.ws1",
+     "kind": "ws",
+     "axis": "y",
+     "parent": "yoT4",
+     "local_origin": [
+      1.8,
+      0.0,
+      0.43
+     ],
+     "radius": 0.43
+    }
+   ],
+   "bogies": [],
+   "wheelsets": [
+    -1.8,
+    1.8
+   ],
+   "couplers": [
+    {
+     "end": -1,
+     "x": -3.45,
+     "z": 0.88
+    },
+    {
+     "end": 1,
+     "x": 3.45,
+     "z": 0.88
+    }
+   ]
+  }
+ ]
+}

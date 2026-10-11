@@ -1,0 +1,422 @@
+{
+ "M01": {
+  "now": 24,
+  "need": 3,
+  "pax": 3,
+  "frt": 0,
+  "stop": 31.3,
+  "pas": 0.0,
+  "term": 21.3,
+  "note": "余裕あり"
+ },
+ "M02": {
+  "now": 3,
+  "need": 3,
+  "pax": 3,
+  "frt": 0,
+  "stop": 6.0,
+  "pas": 6.8,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "F01": {
+  "now": 8,
+  "need": 3,
+  "pax": 2,
+  "frt": 1,
+  "stop": 0.0,
+  "pas": 12.8,
+  "term": 0.0,
+  "note": "余裕あり"
+ },
+ "M03": {
+  "now": 4,
+  "need": 3,
+  "pax": 2,
+  "frt": 1,
+  "stop": 20.7,
+  "pas": 0.7,
+  "term": 2.5,
+  "note": "余裕あり"
+ },
+ "M04": {
+  "now": 3,
+  "need": 3,
+  "pax": 3,
+  "frt": 0,
+  "stop": 12.0,
+  "pas": 6.8,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "M05": {
+  "now": 4,
+  "need": 5,
+  "pax": 5,
+  "frt": 0,
+  "stop": 19.3,
+  "pas": 2.0,
+  "term": 18.8,
+  "note": "増設要"
+ },
+ "M06": {
+  "now": 4,
+  "need": 4,
+  "pax": 3,
+  "frt": 1,
+  "stop": 10.7,
+  "pas": 0.0,
+  "term": 5.6,
+  "note": "適正"
+ },
+ "M07": {
+  "now": 3,
+  "need": 4,
+  "pax": 3,
+  "frt": 1,
+  "stop": 11.4,
+  "pas": 3.3,
+  "term": 4.0,
+  "note": "増設要"
+ },
+ "M08": {
+  "now": 4,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 7.0,
+  "pas": 0.7,
+  "term": 1.4,
+  "note": "余裕あり"
+ },
+ "M09": {
+  "now": 2,
+  "need": 3,
+  "pax": 3,
+  "frt": 0,
+  "stop": 3.0,
+  "pas": 3.3,
+  "term": 0.0,
+  "note": "増設要"
+ },
+ "M10": {
+  "now": 4,
+  "need": 4,
+  "pax": 3,
+  "frt": 1,
+  "stop": 7.0,
+  "pas": 0.3,
+  "term": 5.0,
+  "note": "適正"
+ },
+ "M11": {
+  "now": 3,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.0,
+  "pas": 1.3,
+  "term": 0.0,
+  "note": "余裕あり"
+ },
+ "M12": {
+  "now": 3,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.0,
+  "pas": 1.3,
+  "term": 0.0,
+  "note": "余裕あり"
+ },
+ "M13": {
+  "now": 2,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.3,
+  "pas": 1.0,
+  "term": 0.0,
+  "note": "余裕あり"
+ },
+ "L01": {
+  "now": 1,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 0.3,
+  "pas": 2.0,
+  "term": 0.3,
+  "note": "適正"
+ },
+ "M14": {
+  "now": 5,
+  "need": 3,
+  "pax": 2,
+  "frt": 1,
+  "stop": 2.0,
+  "pas": 0.0,
+  "term": 0.0,
+  "note": "余裕あり"
+ },
+ "M15": {
+  "now": 1,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.3,
+  "pas": 0.7,
+  "term": 0.3,
+  "note": "適正"
+ },
+ "M16": {
+  "now": 4,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 3.2,
+  "pas": 0.4,
+  "term": 2.0,
+  "note": "余裕あり"
+ },
+ "M17": {
+  "now": 2,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.0,
+  "pas": 0.7,
+  "term": 0.0,
+  "note": "余裕あり"
+ },
+ "M18": {
+  "now": 1,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.0,
+  "pas": 0.7,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "M19": {
+  "now": 10,
+  "need": 3,
+  "pax": 3,
+  "frt": 0,
+  "stop": 19.2,
+  "pas": 0.0,
+  "term": 19.2,
+  "note": "余裕あり"
+ },
+ "R02": {
+  "now": 2,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 2.0,
+  "pas": 0.0,
+  "term": 2.0,
+  "note": "適正"
+ },
+ "TR02": {
+  "now": 2,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 10.0,
+  "pas": 0.0,
+  "term": 10.0,
+  "note": "適正"
+ },
+ "B02": {
+  "now": 2,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 7.5,
+  "pas": 0.0,
+  "term": 7.5,
+  "note": "適正"
+ },
+ "SH02": {
+  "now": 3,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 7.0,
+  "pas": 1.0,
+  "term": 0.0,
+  "note": "余裕あり"
+ },
+ "SH03": {
+  "now": 3,
+  "need": 3,
+  "pax": 3,
+  "frt": 0,
+  "stop": 4.0,
+  "pas": 4.0,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "SH04": {
+  "now": 4,
+  "need": 3,
+  "pax": 3,
+  "frt": 0,
+  "stop": 14.0,
+  "pas": 0.0,
+  "term": 6.0,
+  "note": "余裕あり"
+ },
+ "SH05": {
+  "now": 3,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 13.0,
+  "pas": 1.0,
+  "term": 0.0,
+  "note": "余裕あり"
+ },
+ "SH06": {
+  "now": 5,
+  "need": 4,
+  "pax": 3,
+  "frt": 1,
+  "stop": 10.0,
+  "pas": 4.0,
+  "term": 0.0,
+  "note": "余裕あり"
+ },
+ "SH07": {
+  "now": 3,
+  "need": 3,
+  "pax": 3,
+  "frt": 0,
+  "stop": 10.0,
+  "pas": 4.0,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "SH08": {
+  "now": 4,
+  "need": 4,
+  "pax": 4,
+  "frt": 0,
+  "stop": 14.0,
+  "pas": 0.0,
+  "term": 14.0,
+  "note": "適正"
+ },
+ "Y02": {
+  "now": 1,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.0,
+  "pas": 0.0,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "Y03": {
+  "now": 1,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.0,
+  "pas": 0.0,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "Y04": {
+  "now": 1,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.0,
+  "pas": 0.0,
+  "term": 1.0,
+  "note": "適正"
+ },
+ "K02": {
+  "now": 4,
+  "need": 3,
+  "pax": 3,
+  "frt": 0,
+  "stop": 14.0,
+  "pas": 4.5,
+  "term": 0.0,
+  "note": "余裕あり"
+ },
+ "K03": {
+  "now": 3,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 18.5,
+  "pas": 0.0,
+  "term": 10.0,
+  "note": "余裕あり"
+ },
+ "T02": {
+  "now": 2,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 10.0,
+  "pas": 0.0,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "T03": {
+  "now": 2,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 10.0,
+  "pas": 0.0,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "T04": {
+  "now": 2,
+  "need": 2,
+  "pax": 2,
+  "frt": 0,
+  "stop": 10.0,
+  "pas": 0.0,
+  "term": 10.0,
+  "note": "適正"
+ },
+ "S02": {
+  "now": 1,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.0,
+  "pas": 0.0,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "S03": {
+  "now": 1,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.0,
+  "pas": 0.0,
+  "term": 0.0,
+  "note": "適正"
+ },
+ "S04": {
+  "now": 2,
+  "need": 1,
+  "pax": 1,
+  "frt": 0,
+  "stop": 1.0,
+  "pas": 0.0,
+  "term": 1.0,
+  "note": "余裕あり"
+ }
+}

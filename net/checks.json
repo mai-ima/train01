@@ -1,0 +1,380 @@
+{
+ "M01": {
+  "shape": "専用設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "未",
+  "audit": "未監査(第1段階)"
+ },
+ "M02": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "F01": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M03": {
+  "shape": "型別設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M04": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M05": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M06": {
+  "shape": "原型(穂波野)",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "再監査待ち"
+ },
+ "M07": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M08": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M09": {
+  "shape": "型別設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M10": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M11": {
+  "shape": "型別設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M12": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M13": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "L01": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M14": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M15": {
+  "shape": "型別設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M16": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M17": {
+  "shape": "型別設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M18": {
+  "shape": "型別設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "M19": {
+  "shape": "専用設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "R02": {
+  "shape": "専用設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "TR02": {
+  "shape": "専用設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "B02": {
+  "shape": "専用設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "SH02": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "SH03": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "SH04": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "SH05": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "SH06": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "SH07": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "SH08": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "Y02": {
+  "shape": "型別設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "Y03": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "Y04": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "K02": {
+  "shape": "専用設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "K03": {
+  "shape": "専用設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "T02": {
+  "shape": "専用設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "T03": {
+  "shape": "専用設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "T04": {
+  "shape": "専用設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "未監査(第1段階)"
+ },
+ "S02": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "S03": {
+  "shape": "型別設計",
+  "images": 19,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ },
+ "S04": {
+  "shape": "型別設計",
+  "images": 18,
+  "render": true,
+  "track": true,
+  "interior": "あり",
+  "trains": "あり",
+  "audit": "不合格(要改良)"
+ }
+}
