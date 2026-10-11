@@ -13,8 +13,10 @@ import kit_town as KT
 
 
 def _mat():
+    import kit5
+    kit5.mats5()
     if "k8_floor" not in M:
-        M["k8_floor"] = lib.mat_plain("k8_floor", (0.52, 0.47, 0.40), rough=0.45)
+        M["k8_floor"] = M["ug_floor"]
 
 
 def _img(sid, key, fallback=None):
@@ -25,7 +27,7 @@ def _img(sid, key, fallback=None):
         return fallback
 
 
-def ticket_hall(sid, x_in, sg, yc, name=None, tone="plasterw"):
+def ticket_hall(sid, x_in, sg, yc, name=None, tone="ug_plaster"):
     _mat()
     nm = name or f"k6_{sid}_eh{'p' if sg > 0 else 'm'}"
     X = lambda u: x_in + sg * u

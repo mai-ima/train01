@@ -15,9 +15,10 @@ import os
 
 
 def asphalt():
-    if "asphalt" not in M:
-        M["asphalt"] = lib.mat_plain("k3_asphalt", (0.05, 0.05, 0.055), rough=0.92)
-        M["paving"] = lib.mat_plain("k3_paving", (0.38, 0.36, 0.32), rough=0.85)
+    import kit5
+    kit5.mats5()
+    M["asphalt"] = M["ug_asph"]
+    M["paving"] = M["ug_paving"]
     return M["asphalt"], M["paving"]
 
 
@@ -468,7 +469,20 @@ def m19():
     # ---- TR tram stop (embedded rails + shelter), BM monorail station (elevated)
     tr, bm = L["tr"], L["bm"]
     # 市電の停留場: 舗装道路に埋め込んだ複線(舗装面はレール頭の少し下)。終端は y=0(車止め)、y=58 で市電線へ続く
-    core.ribbon("m19_tram_street", [(tr[0][0] - 0.8, float(y)) for y in np.arange(-14.0, 70.0, 6.0)], 7.4, M["asphalt"], z0=0.243, rut=False, col="Roads")
+    core.ribbon("m19_tram_street", [(tr[0][0] - 0.8, float(y)) for y in np.arange(-14.0, 70.0, 6.0)], 14.0, M["asphalt"], z0=0.243, rut=False, col="Roads")
+    for sgn in (-1, 1):   # 歩道・縁石・横断歩道・信号
+        core.ribbon(f"m19_tram_walk{sgn}", [(tr[0][0] - 0.8 + sgn * 9.4, float(y)) for y in np.arange(-14.0, 70.0, 6.0)], 3.2, M["ug_paving"], z0=0.33, rut=False, col="Roads")
+    gx = G("m19_tram_xw", "Props")
+    wk = "white" if "white" in M else "plasterw"
+    for yc_ in (8.0, 46.0):
+        for k in range(15):
+            xx = tr[0][0] - 7.0 + k * 0.92
+            gx.a(wk).box(xx, xx + 0.46, yc_ - 1.6, yc_ + 1.6, 0.2435, 0.2475)
+        for sgn in (-1, 1):
+            px = tr[0][0] - 0.8 + sgn * 7.6
+            gx.a("iron_black").cyl((px, yc_ + 2.4, 0.33), (px, yc_ + 2.4, 3.2), 0.06, seg=8)
+            gx.a("iron_black").box(px - 0.12, px + 0.12, yc_ + 2.28, yc_ + 2.52, 2.5, 3.1)
+    gx.build()
     for off in (-1.2, 1.2):
         P = np.stack([np.full(60, tr[0][0] + off), np.linspace(0.0, 58.0, 60)], 1)
         trackkit.build_track(f"m19_tr_{off}", P, wooden=False, ballast=False, fittings=False, cam=None)
@@ -484,6 +498,9 @@ def m19():
     gb = G("m19_mono", "Station")
     y0b, y1b = 14.0, 48.0
     gb.a("concrete").box(bm[0][0] - 0.5, bm[0][0] + 0.5, bm[0][1], bm[1][1], 7.0, 8.2)
+    gb.a("iron_black").box(bm[0][0] - 0.31, bm[0][0] + 0.31, bm[0][1], bm[1][1], 8.2, 8.23)          # 走行面
+    for sgn in (-1, 1):
+        gb.a("iron_black").box(bm[0][0] + sgn * 0.43 - 0.025, bm[0][0] + sgn * 0.43 + 0.025, bm[0][1], bm[1][1], 7.5, 7.8)   # 案内輪の走行面
     for yy in np.arange(bm[0][1] + 6, bm[1][1], 20.0):
         gb.a("concrete", bevel=0.05).box(bm[0][0] - 0.6, bm[0][0] + 0.6, yy - 0.6, yy + 0.6, 0.0, 7.0)
         gb.a("concrete").box(bm[0][0] - 2.4, bm[0][0] + 2.4, yy - 0.8, yy + 0.8, 6.6, 7.0)

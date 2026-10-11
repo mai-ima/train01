@@ -41,6 +41,16 @@ def mats5():
         M["k5_conc"] = lib.mat_plaster("k5_conc", (0.52, 0.52, 0.50), dirt=0.8)
         M["k5_steel"] = lib.mat_paint("k5_steel", (0.10, 0.12, 0.13), rough=0.6, rust=0.6)
         M["k5_timber"] = lib.mat_plain("k5_timber", (0.18, 0.13, 0.08), rough=0.9)
+    if "ug_conc" not in M:     # 実写PBR(ambientCG CC0): 構造物・地下・舗装用
+        M["ug_conc"] = lib.mat_pbr("ug_conc", "Concrete031", scale=2.6, tint=(0.95, 0.93, 0.88), tint_amt=0.3, bump=0.5, macro=0.2, dirt=0.0, spec=0.2)
+        M["ug_conc2"] = lib.mat_pbr("ug_conc2", "Concrete048", scale=2.8, bump=0.6, macro=0.2, dirt=0.0, spec=0.2)
+        M["ug_asph"] = lib.mat_pbr("ug_asph", "Asphalt032", scale=2.2, hsv=(0.5, 1.0, 0.62), bump=0.7, macro=0.25, spec=0.25)
+        M["ug_stone"] = lib.mat_pbr("ug_stone", "Bricks102", scale=1.8, bump=0.9, macro=0.15, spec=0.2)
+        M["ug_brick"] = lib.mat_pbr("ug_brick", "Bricks097", scale=1.4, bump=0.8, macro=0.2, spec=0.25)
+        M["ug_tile"] = lib.mat_pbr("ug_tile", "Tiles107", scale=2.4, bump=0.3, macro=0.1, spec=0.5)
+        M["ug_floor"] = lib.mat_pbr("ug_floor", "Tiles139", scale=2.4, bump=0.3, macro=0.12, spec=0.4)
+        M["ug_paving"] = lib.mat_pbr("ug_paving", "PavingStones070", scale=1.6, bump=0.9, macro=0.12, spec=0.2)
+        M["ug_plaster"] = lib.mat_pbr("ug_plaster", "Concrete046", scale=3.0, bump=0.4, macro=0.2, dirt=0.0, spec=0.15)
 
 
 def river(P, s, width=40.0, length=700.0, name="river", wiggle=22.0, seed=0, flow_dir=None):

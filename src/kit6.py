@@ -150,6 +150,7 @@ def _slab_mat(g, x0, x1, y0, y1, za, zb, holes):
 
 
 def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", stripe="pl_blue", over="arcade", ys=None):
+    kit7.mats5()
     kit.ground(L=600, W=600)
     _b0 = set(bpy.data.objects.keys())
     D = UG_DEPTH
@@ -162,7 +163,8 @@ def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", strip
     zt = 6.4
     # 側壁(タイル)と天井、両端は線路の坑口
     for yw, sgn in ((ylo - 0.4, 1), (yhi, 1)):
-        g.a(wall, bevel=0.01).box(xa, xb, yw, yw + 0.4, 0.0, zt)
+        g.a("ug_tile").box(xa, xb, yw, yw + 0.4, 0.0, 2.4)                      # 腰高のタイル壁
+        g.a("ug_plaster").box(xa, xb, yw, yw + 0.4, 2.4, zt)                     # 上部は躯体
         g.a(stripe if stripe in M else "concrete").box(xa, xb, yw + (0.4 if yw == ylo - 0.4 else -0.02), yw + (0.42 if yw == ylo - 0.4 else 0.0) + 0.02, 1.0, 1.5)
     # 階段の位置(ホームの両端から地上へ)。屋根スラブは階段の通る穴を残して作る
     if island:
@@ -176,7 +178,7 @@ def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", strip
             g.a("concrete", bevel=0.01).box(xe - 0.3, xe + 0.3, y0_, y1_, 0.0, zt)
         mid = (ys[0] + ys[-1]) / 2
         g.a("concrete", bevel=0.01).box(xe - 0.3, xe + 0.3, ylo + 1.0, yhi - 1.0, zt - 1.0, zt)
-    g.a("concrete", bevel=0.0).box(xa, xb, ylo, yhi, -0.4, 0.03)       # 路盤の床(地面の草が見えないように)
+    g.a("ug_conc", bevel=0.0).box(xa, xb, ylo, yhi, -0.4, 0.03)       # 路盤の床(地面の草が見えないように)
     # ホーム
     if island:
         platform(xa + 2, xb - 2, -6.7, -1.7, name=f"k6_{sid}_plat")
@@ -193,8 +195,8 @@ def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", strip
     gp = G(f"k6_{sid}_fit", "Props")
     for yc in pcs:
         for x in np.arange(xa + 6, xb - 4, 6.5):
-            gp.a("concrete", bevel=0.03).box(x - 0.35, x + 0.35, yc - 0.35, yc + 0.35, 0.0, zt)
-            gp.a(wall).box(x - 0.37, x + 0.37, yc - 0.37, yc + 0.37, 0.0, 1.4)
+            gp.a("ug_conc", bevel=0.03).box(x - 0.35, x + 0.35, yc - 0.35, yc + 0.35, 0.0, zt)
+            gp.a("ug_tile").box(x - 0.37, x + 0.37, yc - 0.37, yc + 0.37, 0.0, 1.9)
             gp.a("lamp_glow").box(x - 0.6, x + 0.6, yc - 0.06, yc + 0.06, zt - 0.5, zt - 0.35)
         _benches(gp, np.arange(xa + 9, xb - 8, 13.0), yc + (1.2 if island else 0.0), ZP)
     # 蛍光灯の列
@@ -364,16 +366,60 @@ def k03():
     ops = {"N": [(xx - 1.6, xx + 1.6, 0.5, 3.8, 'glass') for xx in (-21, -14, 14, 21)] + [(-2.0, 2.0, 0.0, 2.6, 'open')],
            "S": [(xx - 1.4, xx + 1.4, 0.8, 3.4, 'glass') for xx in (-18, 18)],
            "W": [(-6.0, -3.6, 0.0, 2.5, 'open')], "E": [(-6.0, -3.6, 0.0, 2.5, 'open')]}
-    _R.shell(g, -24, 24, -9.8, 1.4, 0.0, zc, t=0.3, ops=ops, wall="concrete")
-    _R.floor_boards(g, -23.7, 23.7, -9.5, 1.1, 0.02)
+    kit7.mats5()
+    _R.shell(g, -24, 24, -9.8, 1.4, 0.0, zc, t=0.3, ops=ops, wall="ug_plaster")
+    g.a("ug_floor").box(-23.7, 23.7, -9.5, 1.1, -0.02, 0.02)
     # 階段(室内): -22 → -9.7 で z 0.02 → Z+0.5
     _R.stair_run(g, 'x', -22.0, -9.7, -4.2, 0.02, Z + 0.5, width=1.6, rise=0.18)
     # 内部の改札・案内・照明
     g.a("iron_black").box(-8.0, -7.9, -9.0, -5.0, 0.02, 1.1)
-    for x in (-16, -4, 8, 16):
-        lamp_point(x, -4.2, zc - 0.6, watt=70.0)
+    # 改札(階段下): 2通路・鉄パイプの支柱・木の笠・外柵、券売機、出札窓口、売店
+    for yy in (-5.0, -4.2, -3.4):
+        g.a("iron_black").cyl((-21.5, yy, 0.02), (-21.5, yy, 1.0), 0.045, seg=10)
+        g.a("wood_dark", bevel=0.01).box(-21.8, -21.2, yy - 0.07, yy + 0.07, 1.0, 1.12)
+    for (ya, yb) in ((-9.5, -5.05), (-3.35, 1.1)):
+        g.a("iron_black").box(-21.55, -21.45, ya, yb, 0.9, 0.96)
+        g.a("iron_black").box(-21.55, -21.45, ya, yb, 0.45, 0.5)
+        for yy in np.arange(ya + 0.2, yb, 0.7):
+            g.a("iron_black").box(-21.54, -21.46, yy - 0.02, yy + 0.02, 0.02, 0.96)
+    for k, xx in enumerate((-20.0, -18.9, -17.8)):          # 券売機
+        vk = ("pl_blue", "post_red", "pl_green")[k]
+        g.a(vk if vk in M else "iron_black", bevel=0.02).box(xx - 0.45, xx + 0.45, -9.5, -9.0, 0.02, 1.8)
+        g.a("iron_black").box(xx - 0.3, xx + 0.3, -9.0, -8.98, 1.1, 1.65)
+        g.a("iron_black").box(xx - 0.2, xx + 0.2, -9.0, -8.95, 0.62, 0.78)
+    g.a("wood_dark", bevel=0.01).box(-14.0, -10.0, 0.0, 0.7, 0.02, 1.0)                 # 出札窓口のカウンター
+    g.a("iron_black").box(-14.0, -10.0, 0.0, 0.05, 1.0, 2.2)
+    g.a("wood_dark").box(1.0, 5.0, -9.4, -8.6, 0.02, 1.05)                          # 売店
+    g.a("pl_cream" if "pl_cream" in M else "plasterw").box(0.8, 5.2, -9.5, -8.4, 2.15, 2.3)
+    for x in (-20, -12, -4, 4, 12, 20):
+        for yy in (-7.0, -2.0):
+            lamp_point(x, yy, zc - 0.5, watt=260.0)
+            g.a("lamp_glow").box(x - 0.6, x + 0.6, yy - 0.1, yy + 0.1, zc - 0.12, zc - 0.04)
     g.a("concrete", bevel=0.02).box(-26, 26, 1.0, 5.0, 4.6, 5.0)
     g.build()
+    # 高架下の店舗(柱間のスパンごとに間口・シャッター・庇・看板を変える)
+    gsh = G("k6_K03_shops", "Buildings")
+    tones = ["pl_blue", "post_red", "pl_green", "pl_cream", "wood_dark"]
+    rs = random.Random(31)
+    for xs_ in list(np.arange(-70, -30, 10.0)) + list(np.arange(30, 70, 10.0)):
+        k = rs.randrange(5)
+        dep = rs.choice([4.5, 5.5, 6.5])
+        gsh.a("concrete", bevel=0.02).box(xs_ + 0.6, xs_ + 0.8, 2.0 - dep, 2.0, 0.0, zc)            # 間仕切り
+        gsh.a("concrete", bevel=0.02).box(xs_ + 0.6, xs_ + 10.6 - 0.6, 2.0 - dep - 0.2, 2.0 - dep, 0.0, zc)      # 奥壁
+        tn = tones[k] if tones[k] in M else "iron_black"
+        gsh.a(tn, bevel=0.02).box(xs_ + 0.9, xs_ + 9.5, 2.1, 2.4, 3.55, 4.3)                           # 看板(間口)
+        gsh.a("tin").box(xs_ + 0.8, xs_ + 9.6, 2.1, 3.5, 3.4, 3.5)                                    # 庇
+        if k % 2 == 0:
+            gsh.a("iron_black").box(xs_ + 1.0, xs_ + 9.4, 2.15, 2.3, 0.2, 3.2)                        # シャッター
+            for zz in np.arange(0.4, 3.2, 0.18):
+                gsh.a("k5_steel" if "k5_steel" in M else "iron_black").box(xs_ + 1.0, xs_ + 9.4, 2.3, 2.33, zz, zz + 0.04)
+        else:
+            gsh.a("glass").box(xs_ + 1.0, xs_ + 9.4, 2.15, 2.2, 0.9, 3.2)                              # ショーウインドウ
+            gsh.a("wood_dark").box(xs_ + 1.5, xs_ + 8.5, 2.0 - dep + 0.6, 2.0 - dep + 1.0, 0.0, 1.8)    # 棚
+            gsh.a("wood_dark").box(xs_ + 2.0, xs_ + 8.0, 1.0, 1.6, 0.0, 0.95)                          # カウンター
+        lamp_point(xs_ + 5.0, 3.2, 3.2, watt=220.0)                                                   # 店先の明かり
+        gsh.a("lamp_glow").box(xs_ + 1.5, xs_ + 8.5, 2.9, 3.0, 3.36, 3.4)
+    gsh.build()
     gp = G("k6_K03_fit", "Props")
     for yc in (-4.2,):
         _benches(gp, np.arange(-40, 41, 12.0), yc, Z + 0.54)
@@ -396,11 +442,12 @@ def tr02():
     kit.ground(L=600, W=600)
     rb, rf = _reach(sid)
     # 道路に埋め込まれた軌道(舗装・バラストなし)と電車線柱
-    if "asphalt" not in M:
-        M["asphalt"] = lib.mat_asphalt("k6_asphalt", worn=0.6, base=(0.072, 0.070, 0.066), crack_scale=3.5, crack_amt=0.3) if hasattr(lib, "mat_asphalt") else lib.mat_plain("k6_asphalt", (0.05, 0.05, 0.055), rough=0.92)
+    kit7.mats5()
+    M["asphalt"] = M["ug_asph"]
+    M["paving"] = M["ug_paving"]
     core.ribbon("k6_TR02_street", [(x, 2.4) for x in np.arange(-rb - 10, rf + 11, 6.0)], 15.0, M["asphalt"], z0=0.243, rut=False, col="Roads")
     for sgn in (-1, 1):   # 歩道と縁石
-        core.ribbon(f"k6_TR02_walk{sgn}", [(x, 2.4 + sgn * 9.5) for x in np.arange(-rb - 10, rf + 11, 6.0)], 3.0, M["paving"] if "paving" in M else M["road"], z0=0.33, rut=False, col="Roads")
+        core.ribbon(f"k6_TR02_walk{sgn}", [(x, 2.4 + sgn * 9.5) for x in np.arange(-rb - 10, rf + 11, 6.0)], 3.0, M["ug_paving"], z0=0.33, rut=False, col="Roads")
     _tracks(sid, [0.0, 4.8], ballast=False, x0=-rb, x1=rf)     # 上下2線(島式の安全地帯を挟む)
     g = G("k6_TR02_stop", "Station")
     g.a("concrete", bevel=0.02).box(-8, 12, 1.6, 3.2, -0.05, 0.28)          # 安全地帯(島)
@@ -466,6 +513,7 @@ def _town_s(sid, rng):
 # ----------------------------------------------------------------- B02 湾岸公園: 高架モノレール終着駅 (軌道高 9m)
 def b02():
     sid = "B02"
+    kit7.mats5()
     rng = random.Random(702)
     kit.ground(L=600, W=600)
     Z = 9.0
@@ -477,15 +525,28 @@ def b02():
         g.a("concrete", bevel=0.03).box(-rb, rf, y - 0.45, y + 0.45, Z - 1.5, Z)
         g.a("iron_black").box(-rb, rf, y - 0.52, y + 0.52, Z - 0.08, Z + 0.05) if False else None
     for x in np.arange(-rb + 10, rf, 24.0):
-        g.a("concrete", bevel=0.05).box(x - 0.7, x + 0.7, -2.3 - 0.7, -2.3 + 0.7, -0.2, Z - 1.5)
-        g.a("concrete", bevel=0.05).box(x - 1.6, x + 1.6, -2.3 - 0.45, -2.3 + 0.45, Z - 2.1, Z - 1.5)
+        # T字橋脚: 脚柱+張り出した横梁(2本の桁を受ける)+支承
+        g.a("concrete", bevel=0.05).box(x - 0.6, x + 0.6, -2.3 - 0.9, -2.3 + 0.9, -0.2, Z - 2.1)
+        g.a("concrete", bevel=0.05).box(x - 0.7, x + 0.7, -5.5, 0.9, Z - 2.1, Z - 1.5)
+        g.a("concrete").extrude_x([(-5.5, Z - 1.5), (-5.0, Z - 2.1), (0.4, Z - 2.1), (0.9, Z - 1.5)], x - 0.7, x + 0.7) if False else None
+        for y in ys:
+            g.a("k5_steel").box(x - 0.25, x + 0.25, y - 0.25, y + 0.25, Z - 1.58, Z - 1.5)
+        g.a("concrete").box(x - 1.4, x + 1.4, -2.3 - 1.6, -2.3 + 1.6, -0.45, -0.1)           # 基礎フーチング
+    for y in ys:       # 走行面の鋼板・案内/安定輪の走行面・給電レール
+        g.a("iron_black").box(-rb, rf, y - 0.31, y + 0.31, Z, Z + 0.03)
+        for sg in (-1, 1):
+            g.a("k5_steel").box(-rb, rf, y + sg * 0.43 - 0.025, y + sg * 0.43 + 0.025, Z - 0.5, Z - 0.2)
+        g.a("iron_black").box(-rb, rf, y + 0.46, y + 0.5, Z - 1.1, Z - 1.04)
+    for x in np.arange(-rb, rf, 6.0):      # 桁の継目(伸縮装置)
+        for y in ys:
+            g.a("iron_black").box(x - 0.03, x + 0.03, y - 0.43, y + 0.43, Z - 1.5, Z + 0.001)
     # 駅(軌道の間に島式ホーム+コンコース)
     for (xa_, xb_) in ((-34, 14.0), (19.5, 34)):
         g.a("concrete", bevel=0.02).box(xa_, xb_, -3.9, -0.7, Z - 1.2, Z + 0.25)
-        g.a("plat_top").box(max(xa_, -33.9), min(xb_, 33.9), -3.8, -0.8, Z + 0.25, Z + 0.28)
+        g.a("stone").box(max(xa_, -33.9), min(xb_, 33.9), -3.8, -0.8, Z + 0.25, Z + 0.28)
     for (ya_, yb_) in ((-3.9, -3.1), (-1.5, -0.7)):            # 階段の穴の両脇
         g.a("concrete", bevel=0.02).box(14.0, 19.5, ya_, yb_, Z - 1.2, Z + 0.25)
-        g.a("plat_top").box(14.0, 19.5, ya_ + 0.1, yb_ - 0.1, Z + 0.25, Z + 0.28)
+        g.a("stone").box(14.0, 19.5, ya_ + 0.1, yb_ - 0.1, Z + 0.25, Z + 0.28)
     for x in np.arange(-30, 31, 7.5):
         if 13.0 < x < 29.0:
             continue                                            # 階段の通り道
@@ -494,9 +555,27 @@ def b02():
     for x in np.arange(-32, 33, 8.0):
         g.a("iron_black").cyl((x, -2.3, Z + 0.28), (x, -2.3, Z + 3.8), 0.1, seg=8)
     g.a("white_paint").extrude_x([(-5.6, Z + 3.5), (-2.3, Z + 4.4), (1.0, Z + 3.5), (1.0, Z + 3.3), (-2.3, Z + 4.2), (-5.6, Z + 3.3)], -36, 36)
+    for x in np.arange(-34, 35, 8.0):      # 屋根の梁(鉄骨リブ)と雨樋
+        g.a("iron_black").extrude_x([(-5.5, Z + 3.3), (-2.3, Z + 4.2), (0.9, Z + 3.3), (0.9, Z + 3.1), (-2.3, Z + 3.95), (-5.5, Z + 3.1)], x - 0.07, x + 0.07)
+    g.a("iron_black").box(-36, 36, -5.7, -5.5, Z + 3.1, Z + 3.4)
+    g.a("iron_black").box(-36, 36, 0.9, 1.1, Z + 3.1, Z + 3.4)
+    for x in np.arange(-30, 31, 6.0):      # ホームのベンチ・水銀灯・黄線
+        if 13.0 < x < 20.0:
+            continue
+        g.a("wood_dark").box(x - 0.9, x + 0.9, -2.55, -2.05, Z + 0.28 + 0.4, Z + 0.28 + 0.45)
+        g.a("iron_black").box(x - 0.85, x - 0.8, -2.5, -2.1, Z + 0.28, Z + 0.28 + 0.4)
+        g.a("iron_black").box(x + 0.8, x + 0.85, -2.5, -2.1, Z + 0.28, Z + 0.28 + 0.4)
+    g.a("stone").box(-33.9, 33.9, -0.95, -0.85, Z + 0.28, Z + 0.285) if False else None
+    for yy in (-0.95, -3.65):
+        g.a("white_paint").box(-33.9, 33.9, yy, yy + 0.1, Z + 0.281, Z + 0.285)
     # 下の駅舎(1階: ガラス張りのコンコース)
     g.a("glass").box(-22, 22, 4.0, 4.05, 0.2, 4.4)
     g.a("concrete", bevel=0.02).box(-24, 24, -0.5, 14.0, 4.4, 4.8)
+    for (xa_, xb_, ya_, yb_) in ((-24, 24, -0.5, -0.2), (-24, 24, 13.7, 14.0), (-24, -23.7, -0.5, 14.0), (23.7, 24, -0.5, 14.0)):
+        g.a("concrete", bevel=0.01).box(xa_, xb_, ya_, yb_, 4.8, 5.3)                  # 屋上パラペット
+    for k in range(3):                                                             # 屋上の機器(空調室外機・煙突)
+        g.a("k5_steel").box(-12 + k * 12, -9 + k * 12, 6.0, 8.0, 4.8, 6.0)
+    g.a("iron_black").cyl((16, 11, 4.8), (16, 11, 7.5), 0.25, seg=10)
     g.a("concrete", bevel=0.02).box(-24, -22, 4.0, 14.0, 0.0, 4.4)
     g.a("concrete", bevel=0.02).box(22, 24, 4.0, 14.0, 0.0, 4.4)
     g.a("concrete", bevel=0.01).box(-22, 22, 13.8, 14.0, 0.0, 4.4)
