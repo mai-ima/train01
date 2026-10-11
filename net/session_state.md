@@ -67,3 +67,9 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 - [03:25] タスク命名は taxonomy.md に厳守
 - [03:40] F3f: 寝台客車4型(sl_b/sl_a/sl_din/sl_gen)+tail端 実装・vtest撮影済(out/sl1_*)。次: DD機関車(public-spec)、zone_stock の寝台編成化、室内の近接撮影、番号/サボ済。未コミット→コミット予定
 - [04:20] F3f: 穂波野2番線(train.build_train)を寝台編成(DD51+gen+B+din+A+B tail)に置換・撮影確認(out/nt_m06c_*)。zone_stock に SLEEPER_ST(M01/M19)追加(未撮影)。次: M01/M19確認、みずほ/臨時/貨物/回送の編成、vehicle_ops.json、F3b仕様表、F3d室内近接、F3e監査、X11画像監査
+- [05:10] F3c: 市電 tram_o(大湊市電600形)を vehtypes に追加し zone_stock の市電を置換(M19/TR02)。モノレールは旧テンプレのまま(桁またぎ台車のため別途)。
+- [03:56] 不定期高級周遊列車(3泊・本線+各支線周遊・種別=臨時): N6/F3g/P7/R8/X12 を作成。F3f後に着手(順序: F3f→F3e監査→N6→F3g→P7→R8→X12)
+- [03:56] ユーザー追加: 不定期高級周遊列車(本線+各支線を周遊・3泊)。F4車両/N6運行・系統/P7ヘッドマーク・方向幕/R6a路線図/X12監査 を登録
+- [03:57] 周遊列車は公式等複数ソースで調査(net/research_tour.md に出典記録)
+- [04:25] F4/N6/P7: services.py に TC1-4、research_tour.md、vehtypes に lx_* 5形式(未撮影)、hm_yui.png。vall(全型一括撮影 out/vall_*)実行中→完了後 F3e監査、続いて lx 10両(vtest)撮影
+- [04:50] N6/F4/P7: net/tour.py(TOUR設定)、tex/logo_yui・yui_menu・yui_ticket・yui_poster・hm_yui、zone_stock に LUX_ST(M01)。vall2(全23形式クリーン撮影 out/vall2_*, ラベルは /tmp/claude-0/labels2.txt)実行中→終了後 sheet.py で確認しF3e/X12監査(Agent)。次: R8路線図、X11画像監査

@@ -84,7 +84,7 @@ def _consist(kindname, opt, n, seed):
             ends = ("cab" if i == 0 else "gang", "cab" if i == n - 1 else "gang")
             out.append(vehtypes.make(opt.get("kind", "kiha_std"), f"stk_{seed}_{i}", seed=seed + i, ends=ends, pant=(i == (1 if n >= 3 else 0)) or (n == 1)))
     elif kindname == "tram":
-        out.append(train2.make_tram(f"stk_{seed}_0", seed=seed))
+        import vehtypes; out.append(vehtypes.make("tram_o", f"stk_{seed}_0", seed=seed, ends=("cab", "cab")))
     elif kindname == "mono":
         for i in range(2):
             out.append(train2.make_mono(f"stk_{seed}_{i}", seed=seed + i))
@@ -173,7 +173,7 @@ def _place_m19_special(kinds):
     for kn, opt in kinds:
         if kn == "tram":
             x, (y0, y1) = L["tr"][0][0] - 1.2, (L["tr"][0][1], L["tr"][1][1])
-            v = train2.make_tram("stk_M19_tram", seed=11)
+            import vehtypes; v = vehtypes.make("tram_o", "stk_M19_tram", seed=11, ends=("cab", "cab"))
             v.place(x, (y0 + y1) / 2.0 + 2.0, _m.pi / 2, z=0.274)
             n += 1
         elif kn == "mono":
@@ -214,6 +214,33 @@ def _place_sleeper(sid, ntr, used, cx, stub):
         if tp is None:
             continue
         vehtypes.make(t, f"stk_{sid}_nt1_{i}", seed=seed + i, ends=ends).place(tp[0], tp[1], tp[2], z=zr + 0.274)
+        n += 1
+    return n
+
+
+LUX_ST = {"M01": 2}      # 周遊列車「結」(TC1〜TC4)の停車(1日目の始発M01)
+
+
+def _place_lux(sid, ntr, used, cx, stub):
+    """周遊列車「結」10両(ハイブリッド自走): 展望-スイート×3-ラウンジ-食堂-特別スイート-スイート×2-展望。"""
+    import vehtypes
+    free = [k for k in range(ntr) if k not in used]
+    if len(free) < 2:
+        return 0
+    k = free[-LUX_ST[sid]]
+    cars = ["lx_obs", "lx_ste", "lx_ste", "lx_ste", "lx_lng", "lx_din", "lx_grn", "lx_ste", "lx_ste", "lx_obs"]
+    pitch = 21.0 + 0.55
+    tot = pitch * len(cars)
+    x0 = cx - tot / 2
+    zr = SPECIAL_Z.get(sid, 0.0)
+    seed = _h(sid, 99) % 9000
+    n = 0
+    for i, t in enumerate(cars):
+        tp = _tpoint(sid, k, x0 + pitch * (i + 0.5))
+        if tp is None:
+            continue
+        ends = ("cab" if i == 0 else "gang", "cab" if i == len(cars) - 1 else "gang")
+        vehtypes.make(t, f"stk_{sid}_yui_{i}", seed=seed + i, ends=ends, pant=(i in (1, 2, 7, 8))).place(tp[0], tp[1], tp[2], z=zr + 0.274)
         n += 1
     return n
 
@@ -280,5 +307,7 @@ def _place_auto(sid):
             placed += 1
     if sid in SLEEPER_ST:
         placed += _place_sleeper(sid, ntr, {k for k, _ in jobs}, cx, stub)
+    if sid in LUX_ST:
+        placed += _place_lux(sid, ntr, {k for k, _ in jobs}, cx, stub)
     return placed
 

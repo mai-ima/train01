@@ -270,9 +270,12 @@ if "v2test" in parts:
 if "vtest" in parts:
     import vehtypes
     for _i, _t in enumerate(vehtypes.TYPES):
-        vehtypes.make(_t, "vt_" + _t, seed=3 + _i).place(0, 8.0 * _i, 0)
+        vehtypes.make(_t, "vt_" + _t, seed=3 + _i, ends=(("gang", "tail") if _t.startswith("sl_") else (("cab", "gang") if _t == "lx_obs" else (("gang", "gang") if _t.startswith("lx_") else ("cab", "cab"))))).place(0, 30.0 * _i, 0)
     for _j, _t in enumerate(("sl_b", "sl_a", "sl_din", "sl_gen", "sl_b")):
         vehtypes.make(_t, f"sl_{_j}", seed=40 + _j, ends=("gang", "tail" if _j == 4 else "gang")).place(-70 + _j * 21.6, -12, 0)
+    _lx = ["lx_obs", "lx_ste", "lx_ste", "lx_ste", "lx_lng", "lx_din", "lx_grn", "lx_ste", "lx_ste", "lx_obs"]
+    for _j, _t in enumerate(_lx):
+        vehtypes.make(_t, f"lx_{_j}", seed=60 + _j, ends=("cab" if _j == 0 else "gang", "cab" if _j == 9 else "gang"), pant=(_j in (1, 2, 7, 8))).place(-250 + _j * 21.55 + 10.5, -40, 0)
     for _k, _t in enumerate(("jnr_sub", "ke", "kiha_std")):
         _L = vehtypes.TYPES[_t]["L"] + 0.55
         for _j in range(3):
