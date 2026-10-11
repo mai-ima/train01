@@ -8,19 +8,21 @@ function srRender(){
  var kc={};STRI.forEach(function(s){kc[s.kind]=(kc[s.kind]||0)+1});
  $('srk').innerHTML=['all'].concat(Object.keys(STRK)).filter(function(k){return k==='all'||kc[k]}).map(function(k){return '<button class="chip" data-k="'+k+'" aria-pressed="'+(k===srK)+'">'+(k==='all'?'すべて('+STRI.length+')':'<i style="background:'+STRK[k].color+'"></i>'+STRK[k].name+'('+kc[k]+')')+'</button>'}).join('');
  $('srl').innerHTML='<option value="all">全路線</option>'+Object.keys(NET.lines).map(function(l){return '<option value="'+l+'"'+(l===srL?' selected':'')+'>'+NET.lines[l].name+'</option>'}).join('');
- $('srb').innerHTML=its.map(function(s){var a=kauditOf(s.kind);return '<tr class="frow" data-s="'+s.id+'" tabindex="0"><td class="n">'+s.id+'</td><td><span class="dotk" style="background:'+s.color+'"></span>'+s.kname+'</td><td><b>'+s.name+'</b></td><td>'+NET.lines[s.line].name+'</td><td>'+s.an+' – '+s.bn+'</td><td class="n">'+s.km.toFixed(2)+'</td><td class="n">'+s.len+' m</td><td>'+(BUILT[s.kind]?'<span style="color:#3fcf8e">3D済</span>':'<span style="color:#9bb0a6">データのみ</span>')+'</td><td style="color:'+acol(a[0])+'">'+a[0].replace('(改善中)','')+'</td></tr>'}).join('')||'<tr><td colspan="9">該当なし</td></tr>';
+ $('srb').innerHTML=its.map(function(s){var a=kauditOf(s.kind);return '<div class="srrow frow" role="listitem" data-s="'+s.id+'" tabindex="0"><span class="n sid">'+s.id+'</span><span class="sk"><span class="dotk" style="background:'+s.color+'"></span>'+s.kname+'</span><b class="snm">'+s.name+'</b><span class="ssc">'+NET.lines[s.line].name+'　'+s.an+' – '+s.bn+'</span><span class="n skm">'+s.km.toFixed(2)+' km</span><span class="n sln">'+s.len+' m</span><span class="s3d">'+(BUILT[s.kind]?'<span style="color:#3fcf8e">3D済</span>':'<span style="color:#9bb0a6">データのみ</span>')+'</span><span class="sau" style="color:'+acol(a[0])+'">'+a[0].replace(/\(.*$/,'')+'</span></div>'}).join('')||'<p class="k">該当なし</p>';
  document.querySelectorAll('#srk .chip').forEach(function(b){b.onclick=function(){srK=b.getAttribute('data-k');srRender()}});
- document.querySelectorAll('#srb .frow').forEach(function(r){var f=function(){strOpen(r.getAttribute('data-s'))};r.onclick=f;r.onkeydown=function(e){if(e.key==='Enter')f()}});
+ document.querySelectorAll('#srb .frow').forEach(function(r){var f=function(){strOpen(r.getAttribute('data-s'))};r.onclick=f;r.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}}});if(srCur&&$('strd')&&!$('strd').hidden)strPlace();
  $('srl').onchange=function(){srL=this.value;srRender()};
  $('srn').textContent=its.length+' 件 ／ 総延長 '+(its.reduce(function(a,s){return a+s.len},0)/1000).toFixed(1)+' km'}
 function kvr(a){return '<dl class="kv">'+a.filter(Boolean).map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>'}).join('')+'</dl>'}
 function strOpen(id){var s=STRI.filter(function(x){return x.id===id})[0];if(!s)return;srCur=id;var a=kauditOf(s.kind);
  var rows=[['種別',s.kname],['路線',NET.lines[s.line].name],['区間','<a href="#" class="sl" data-s="'+s.a+'">'+s.an+'</a> – <a href="#" class="sl" data-s="'+s.b+'">'+s.bn+'</a>'],['キロ程 / 延長','起点から '+s.km.toFixed(2)+' km ／ '+s.len+' m'],s.form?['形式',s.form]:0,s.year?['竣工',s.year+'年']:0,s.spans?['径間数',s.spans]:0,s.river?['河川',s.river]:0,s.depth?['深さ',s.depth+' m']:0,s.height?['高さ',s.height+' m']:0,s.grade?['勾配',s.grade+' ‰']:0,s.r?['曲線半径','R'+s.r+' m']:0,s.road?['交差道路',s.road]:0,s.vent?['換気塔',s.vent]:0,s.portal?['坑口',s.portal]:0,s.pier?['橋脚',s.pier]:0,s.wire?['架線',s.wire]:0,['3D',BUILT[s.kind]?'制作済(同種 '+BUILT[s.kind]+' 箇所)':'データのみ(未制作)'],['監査','<b style="color:'+acol(a[0])+'">'+a[0]+'</b>']];
- var d=$('strd');d.innerHTML='<h2 class="hd">'+s.id+'　'+s.name+'</h2>'+(s.note?'<p class="k" style="font-family:var(--jp);font-size:12.5px">'+s.note+'</p>':'')+xsecOf(s)+kvr(rows)+'<p class="k">'+(a[1]||'')+'</p>';
+ var d=$('strd'),first=d.hidden;d.innerHTML='<h2 class="hd">'+s.id+'　'+s.name+'</h2>'+(s.note?'<p class="k" style="font-family:var(--jp);font-size:12.5px">'+s.note+'</p>':'')+xsecOf(s)+kvr(rows)+'<p class="k">'+(a[1]||'')+'</p>';
  d.hidden=false;d.querySelectorAll('.sl').forEach(function(x){x.onclick=function(e){e.preventDefault();pick(x.getAttribute('data-s'))}});
- document.querySelectorAll('#srb .frow').forEach(function(r){r.classList.toggle('sel',r.getAttribute('data-s')===id)});
- if(MQ_.matches)d.scrollIntoView({behavior:'smooth',block:'start'})}
+ document.querySelectorAll('#srb .frow').forEach(function(r){r.classList.toggle('sel',r.getAttribute('data-s')===id)});strPlace();if(first&&!MQ_.matches){var tb=$('tabs').getBoundingClientRect();if(tb.top>120)$('tabs').scrollIntoView({block:'start'})}
+ if(MQ_.matches)setTimeout(function(){var r=document.querySelector('#srb .frow.sel');r&&r.scrollIntoView({behavior:'smooth',block:'start'})},30)}
 var MQ_=window.matchMedia('(max-width:900px)');
+function strPlace(){var d=$('strd'),row=document.querySelector('#srb .frow[data-s="'+srCur+'"]');if(MQ_.matches&&row){row.after(d)}else{document.querySelector('.srgrid').appendChild(d)}}
+MQ_.addEventListener&&MQ_.addEventListener('change',function(){if(srCur)strPlace()});
 window.__str=function(id){tab('sr');strOpen(id)};
 /* 監査表(構造種別ごと: 登録数/3D/判定/所見) */
 $('saud').innerHTML=Object.keys(STRK).map(function(k){var a=kauditOf(k),n=STRI.filter(function(s){return s.kind===k}).length,b=BUILT[k]||0;

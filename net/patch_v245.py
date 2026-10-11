@@ -12,14 +12,14 @@ newp='''<div class="panel" id="p-prof" hidden>
    <h2 class="hd">構造種別の監査</h2><div class="tbl"><table><thead><tr><th>構造種別</th><th>登録数</th><th>3D</th><th>判定</th><th>所見</th></tr></thead><tbody id="saud"></tbody></table></div>
    '''
 t=t[:a]+newp+t[b:]
-srp='''<div class="panel" id="p-sr" hidden><div class="chips" id="srk"></div><div class="chips"><label class="k" for="srl">路線</label><select id="srl"></select><span class="k" id="srn"></span></div>
-   <div class="srgrid"><div class="tbl"><table><thead><tr><th>ID</th><th>種別</th><th>名称</th><th>路線</th><th>区間</th><th>キロ程</th><th>延長</th><th>3D</th><th>監査</th></tr></thead><tbody id="srb"></tbody></table></div><div id="strd" hidden></div></div></div>
+srp='''<div class="panel" id="p-sr" hidden><div class="srbar"><div class="chips" id="srk"></div><div class="srsel"><label class="k" for="srl">路線</label><select id="srl"></select><span class="k" id="srn"></span></div></div>
+   <div class="srgrid"><div><div class="srhead" aria-hidden="true"><span>ID</span><span>種別</span><span>名称</span><span>区間</span><span>キロ程</span><span>延長</span><span>3D</span><span>監査</span></div><div id="srb" class="srlist" role="list"></div></div><div id="strd" hidden></div></div></div>
   '''
 t=t.replace('<div class="panel" id="p-tb" hidden>',srp+'<div class="panel" id="p-tb" hidden>',1)
 # remove old profile code
 a=t.index(" var o=NET.order.HM,svg=$('profsvg')");b=t.index(" var kind={寝台:")
 t=t[:a]+t[b:]
-js=''.join(open('v245/'+f).read()+'\n' for f in ['profile.js','xsec.js','registry.js'])
+js=''.join(open('v245/'+f).read()+'\n' for f in ['profile.js','xsec.js','registry.js','company.js'])
 js+="profRender('HM');srRender();\n"
 m='/* ---------- v2.4: 端末別'
 t=t.replace(m,js+m,1)

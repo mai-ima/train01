@@ -129,6 +129,42 @@ tr.row{cursor:pointer}tr.row:hover{background:rgba(242,193,78,.09)}
 tr.frow.sel{outline:2px solid var(--accent);outline-offset:-2px}
 #profsvg{min-width:860px!important;width:100%}
 #profbox{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+/* 構造物台帳(リスト化: PCは表形式+右に断面カード、スマホは2行カード+行直下に展開) */
+.srbar{display:flex;gap:10px 18px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between}
+.srbar .chips{flex:1 1 560px;min-width:0}.srsel{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.srgrid{grid-template-columns:minmax(0,1fr) minmax(320px,430px)}
+.srhead,.srrow{display:grid;grid-template-columns:3.4em 8em minmax(10em,1.6fr) minmax(12em,1.6fr) 5.2em 5em 6em 5em;gap:4px 10px;align-items:center;padding:8px 10px}
+.srhead{font:500 11px var(--mono);color:var(--dim);letter-spacing:.08em;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:2}
+.srlist{max-height:calc(100vh - 230px);overflow-y:auto;border-bottom:1px solid var(--line)}
+.srrow{border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
+.srrow:hover{background:rgba(242,193,78,.07)}.srrow.sel{background:rgba(242,193,78,.13);outline:2px solid var(--accent);outline-offset:-2px}
+.srrow .sid,.srrow .ssc,.srrow .skm,.srrow .sln{color:var(--dim);font-size:12px}.srrow .sau{font-size:12px;font-weight:700}.srrow .s3d{white-space:nowrap;font-size:12px}
+#strd{position:sticky;top:12px;max-height:calc(100vh - 28px);overflow:auto}
+@media(max-width:900px){
+ .srhead{display:none}.srlist{max-height:none;overflow:visible}
+ .srgrid{grid-template-columns:minmax(0,1fr)}
+ .srrow{grid-template-columns:auto 1fr auto;grid-template-areas:"sid snm sau" "sk ssc ssc" "skm sln s3d";padding:10px 12px;row-gap:3px}
+ .srrow .sid{grid-area:sid}.srrow .snm{grid-area:snm}.srrow .sau{grid-area:sau;text-align:right}.srrow .sk{grid-area:sk;font-size:12px}.srrow .ssc{grid-area:ssc}.srrow .skm{grid-area:skm}.srrow .sln{grid-area:sln}.srrow .s3d{grid-area:s3d;font-size:12px;text-align:right}
+ #strd{position:static;max-height:none;margin:0 0 8px;border-left:3px solid var(--accent)}
+ .srbar .chips{flex-basis:100%}
+ #srk{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}#srk .chip{flex:none}
+}
+/* 会社・系統・直通(v2.4.5) */
+.cohead{padding-left:14px}.conm{font-size:24px;letter-spacing:.06em}.cinfo{font-family:var(--jp);font-size:13px;line-height:1.8;max-width:70ch}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin:12px 0}
+.tile{border:1px solid var(--line);padding:8px 10px;display:flex;flex-direction:column;gap:2px;min-width:0}.tile b{font:500 20px var(--mono);font-variant-numeric:tabular-nums}.tile span{font-size:11px;color:var(--dim)}
+.kv.wide{grid-template-columns:7.5em minmax(0,1fr);gap:6px 14px;font-size:13px;line-height:1.8}
+.sh{font:700 14px var(--jp);letter-spacing:.1em;color:var(--accent);margin:18px 0 6px;border-bottom:1px solid var(--line);padding-bottom:4px}
+details.ln{margin:8px 0;padding:6px 12px;background:var(--panel2)}details.ln summary{cursor:pointer;line-height:1.7}
+.svc1{padding:6px 12px;margin:6px 0;background:var(--panel2);font-size:13px;line-height:1.7}
+.spk{overflow-x:auto;margin:4px 0}
+.svcard,.thcard{padding:10px 14px;margin:10px 0;background:var(--panel2);border-left:6px solid var(--line);min-width:0}
+.svcard header,.thcard header{font-size:15px;display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+.svcard .note,.thcard .note{font-family:var(--jp);font-size:12.5px;line-height:1.7;color:var(--dim);margin-top:6px}
+.thco{font-family:var(--jp);font-size:12.5px;margin:4px 0}
+details.stl summary{cursor:pointer;margin:2px 0}
+@media(max-width:720px){.kv.wide{grid-template-columns:5.6em minmax(0,1fr);gap:4px 10px}.conm{font-size:20px}}
+@media(min-width:1100px){#svclist{display:grid;grid-template-columns:1fr;}}
 
 </style>
 <div class="wrap">
@@ -177,8 +213,8 @@ tr.frow.sel{outline:2px solid var(--accent);outline-offset:-2px}
    <div class="tbl"><h2 class="hd">線路の接続(実線路)</h2><table><thead><tr><th>区間</th><th>会社</th><th>延長</th><th>最小曲線半径</th><th>接続の形</th><th>構造物</th></tr></thead><tbody id="lnk"></tbody></table></div>
    <h2 class="hd">構造種別の監査</h2><div class="tbl"><table><thead><tr><th>構造種別</th><th>登録数</th><th>3D</th><th>判定</th><th>所見</th></tr></thead><tbody id="saud"></tbody></table></div>
   </div>
-  <div class="panel" id="p-sr" hidden><div class="chips" id="srk"></div><div class="chips"><label class="k" for="srl">路線</label><select id="srl"></select><span class="k" id="srn"></span></div>
-   <div class="srgrid"><div class="tbl"><table><thead><tr><th>ID</th><th>種別</th><th>名称</th><th>路線</th><th>区間</th><th>キロ程</th><th>延長</th><th>3D</th><th>監査</th></tr></thead><tbody id="srb"></tbody></table></div><div id="strd" hidden></div></div></div>
+  <div class="panel" id="p-sr" hidden><div class="srbar"><div class="chips" id="srk"></div><div class="srsel"><label class="k" for="srl">路線</label><select id="srl"></select><span class="k" id="srn"></span></div></div>
+   <div class="srgrid"><div><div class="srhead" aria-hidden="true"><span>ID</span><span>種別</span><span>名称</span><span>区間</span><span>キロ程</span><span>延長</span><span>3D</span><span>監査</span></div><div id="srb" class="srlist" role="list"></div></div><div id="strd" hidden></div></div></div>
   <div class="panel" id="p-tb" hidden><div class="tbl"><table><thead><tr><th>ID</th><th>駅名</th><th>路線</th><th>キロ程</th><th>駅の型</th><th>状態</th></tr></thead><tbody id="tb"></tbody></table></div></div>
  </div>
 </div>
@@ -582,19 +618,21 @@ function srRender(){
  var kc={};STRI.forEach(function(s){kc[s.kind]=(kc[s.kind]||0)+1});
  $('srk').innerHTML=['all'].concat(Object.keys(STRK)).filter(function(k){return k==='all'||kc[k]}).map(function(k){return '<button class="chip" data-k="'+k+'" aria-pressed="'+(k===srK)+'">'+(k==='all'?'すべて('+STRI.length+')':'<i style="background:'+STRK[k].color+'"></i>'+STRK[k].name+'('+kc[k]+')')+'</button>'}).join('');
  $('srl').innerHTML='<option value="all">全路線</option>'+Object.keys(NET.lines).map(function(l){return '<option value="'+l+'"'+(l===srL?' selected':'')+'>'+NET.lines[l].name+'</option>'}).join('');
- $('srb').innerHTML=its.map(function(s){var a=kauditOf(s.kind);return '<tr class="frow" data-s="'+s.id+'" tabindex="0"><td class="n">'+s.id+'</td><td><span class="dotk" style="background:'+s.color+'"></span>'+s.kname+'</td><td><b>'+s.name+'</b></td><td>'+NET.lines[s.line].name+'</td><td>'+s.an+' – '+s.bn+'</td><td class="n">'+s.km.toFixed(2)+'</td><td class="n">'+s.len+' m</td><td>'+(BUILT[s.kind]?'<span style="color:#3fcf8e">3D済</span>':'<span style="color:#9bb0a6">データのみ</span>')+'</td><td style="color:'+acol(a[0])+'">'+a[0].replace('(改善中)','')+'</td></tr>'}).join('')||'<tr><td colspan="9">該当なし</td></tr>';
+ $('srb').innerHTML=its.map(function(s){var a=kauditOf(s.kind);return '<div class="srrow frow" role="listitem" data-s="'+s.id+'" tabindex="0"><span class="n sid">'+s.id+'</span><span class="sk"><span class="dotk" style="background:'+s.color+'"></span>'+s.kname+'</span><b class="snm">'+s.name+'</b><span class="ssc">'+NET.lines[s.line].name+'　'+s.an+' – '+s.bn+'</span><span class="n skm">'+s.km.toFixed(2)+' km</span><span class="n sln">'+s.len+' m</span><span class="s3d">'+(BUILT[s.kind]?'<span style="color:#3fcf8e">3D済</span>':'<span style="color:#9bb0a6">データのみ</span>')+'</span><span class="sau" style="color:'+acol(a[0])+'">'+a[0].replace(/\(.*$/,'')+'</span></div>'}).join('')||'<p class="k">該当なし</p>';
  document.querySelectorAll('#srk .chip').forEach(function(b){b.onclick=function(){srK=b.getAttribute('data-k');srRender()}});
- document.querySelectorAll('#srb .frow').forEach(function(r){var f=function(){strOpen(r.getAttribute('data-s'))};r.onclick=f;r.onkeydown=function(e){if(e.key==='Enter')f()}});
+ document.querySelectorAll('#srb .frow').forEach(function(r){var f=function(){strOpen(r.getAttribute('data-s'))};r.onclick=f;r.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}}});if(srCur&&$('strd')&&!$('strd').hidden)strPlace();
  $('srl').onchange=function(){srL=this.value;srRender()};
  $('srn').textContent=its.length+' 件 ／ 総延長 '+(its.reduce(function(a,s){return a+s.len},0)/1000).toFixed(1)+' km'}
 function kvr(a){return '<dl class="kv">'+a.filter(Boolean).map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>'}).join('')+'</dl>'}
 function strOpen(id){var s=STRI.filter(function(x){return x.id===id})[0];if(!s)return;srCur=id;var a=kauditOf(s.kind);
  var rows=[['種別',s.kname],['路線',NET.lines[s.line].name],['区間','<a href="#" class="sl" data-s="'+s.a+'">'+s.an+'</a> – <a href="#" class="sl" data-s="'+s.b+'">'+s.bn+'</a>'],['キロ程 / 延長','起点から '+s.km.toFixed(2)+' km ／ '+s.len+' m'],s.form?['形式',s.form]:0,s.year?['竣工',s.year+'年']:0,s.spans?['径間数',s.spans]:0,s.river?['河川',s.river]:0,s.depth?['深さ',s.depth+' m']:0,s.height?['高さ',s.height+' m']:0,s.grade?['勾配',s.grade+' ‰']:0,s.r?['曲線半径','R'+s.r+' m']:0,s.road?['交差道路',s.road]:0,s.vent?['換気塔',s.vent]:0,s.portal?['坑口',s.portal]:0,s.pier?['橋脚',s.pier]:0,s.wire?['架線',s.wire]:0,['3D',BUILT[s.kind]?'制作済(同種 '+BUILT[s.kind]+' 箇所)':'データのみ(未制作)'],['監査','<b style="color:'+acol(a[0])+'">'+a[0]+'</b>']];
- var d=$('strd');d.innerHTML='<h2 class="hd">'+s.id+'　'+s.name+'</h2>'+(s.note?'<p class="k" style="font-family:var(--jp);font-size:12.5px">'+s.note+'</p>':'')+xsecOf(s)+kvr(rows)+'<p class="k">'+(a[1]||'')+'</p>';
+ var d=$('strd'),first=d.hidden;d.innerHTML='<h2 class="hd">'+s.id+'　'+s.name+'</h2>'+(s.note?'<p class="k" style="font-family:var(--jp);font-size:12.5px">'+s.note+'</p>':'')+xsecOf(s)+kvr(rows)+'<p class="k">'+(a[1]||'')+'</p>';
  d.hidden=false;d.querySelectorAll('.sl').forEach(function(x){x.onclick=function(e){e.preventDefault();pick(x.getAttribute('data-s'))}});
- document.querySelectorAll('#srb .frow').forEach(function(r){r.classList.toggle('sel',r.getAttribute('data-s')===id)});
- if(MQ_.matches)d.scrollIntoView({behavior:'smooth',block:'start'})}
+ document.querySelectorAll('#srb .frow').forEach(function(r){r.classList.toggle('sel',r.getAttribute('data-s')===id)});strPlace();if(first&&!MQ_.matches){var tb=$('tabs').getBoundingClientRect();if(tb.top>120)$('tabs').scrollIntoView({block:'start'})}
+ if(MQ_.matches)setTimeout(function(){var r=document.querySelector('#srb .frow.sel');r&&r.scrollIntoView({behavior:'smooth',block:'start'})},30)}
 var MQ_=window.matchMedia('(max-width:900px)');
+function strPlace(){var d=$('strd'),row=document.querySelector('#srb .frow[data-s="'+srCur+'"]');if(MQ_.matches&&row){row.after(d)}else{document.querySelector('.srgrid').appendChild(d)}}
+MQ_.addEventListener&&MQ_.addEventListener('change',function(){if(srCur)strPlace()});
 window.__str=function(id){tab('sr');strOpen(id)};
 /* 監査表(構造種別ごと: 登録数/3D/判定/所見) */
 $('saud').innerHTML=Object.keys(STRK).map(function(k){var a=kauditOf(k),n=STRI.filter(function(s){return s.kind===k}).length,b=BUILT[k]||0;
@@ -624,6 +662,66 @@ function facSpec(f){var p=FSP[f.id];if(!p)return '';return '<p class="hd" style=
 var _pk=pick,_pf=pickFac;
 pick=function(id){_pk(id);$('detail').insertAdjacentHTML('beforeend',stationSpec(id));bindSpec()};
 pickFac=function(f){_pf(f);$('detail').insertAdjacentHTML('beforeend',facSpec(f));bindSpec()};
+
+/* ---------- v2.4.5: 会社の詳細・運行系統・直通運転(既存情報はすべて残して見やすく再構成) ---------- */
+var KC={寝台:'#4a3f8f',特急:'#d9433f',急行:'#e8962a',区間急行:'#f0b43c',ライナー:'#14a3a8',快速:'#c8a22b',普通:'#2f9e6b',直通:'#3b7bd9',貨物:'#8a8f94',臨時:'#c06bd0',回送:'#6b7280',試運転:'#b0b6bd'};
+var KRANK=['寝台','特急','急行','区間急行','ライナー','快速','普通','直通','臨時','回送','試運転','貨物'];
+function pairKm(a,b){var best=0;Object.keys(NET.order).forEach(function(l){var o=NET.order[l],ia=o.indexOf(a),ib=o.indexOf(b);if(ia>=0&&ib>=0&&Math.abs(ia-ib)===1&&!best)best=Math.abs(lkm(l,a)-lkm(l,b))});if(best)return best;var t=0;GEO.links.forEach(function(k){if(k.k>0)return;if((k.a===a&&k.b===b)||(k.a===b&&k.b===a))t+=k.len});return t/1000}
+function pathKm(P){var t=0;for(var i=0;i<P.length-1;i++)t+=pairKm(P[i],P[i+1]);return t}
+function stLink(i){return '<a href="#" class="sl" data-s="'+i+'">'+S[i].name+'</a>'}
+function spark(P,stops,col){var n=P.length,W=Math.max(300,Math.min(n*22,900)),dx=n>1?(W-24)/(n-1):0,g='<line x1="12" x2="'+(W-12)+'" y1="14" y2="14" stroke="'+col+'" stroke-width="2.5" opacity=".55"/>';
+ P.forEach(function(i,k){var st=!stops||stops.indexOf(i)>=0,x=12+dx*k;g+='<circle cx="'+x+'" cy="14" r="'+(st?4.6:2.4)+'" fill="'+(st?col:'#0e1f19')+'" stroke="'+col+'" stroke-width="1.4"><title>'+S[i].name+(st?'(停車)':'(通過)')+'</title></circle>'});
+ g+='<text x="12" y="31" font-size="10" style="fill:#9db3a6">'+S[P[0]].name+'</text><text x="'+(W-12)+'" y="31" text-anchor="end" font-size="10" style="fill:#9db3a6">'+S[P[n-1]].name+'</text>';
+ return '<div class="spk"><svg viewBox="0 0 '+W+' 36" style="min-width:'+Math.min(W,300)+'px;width:100%;height:auto" role="img" aria-label="停車駅図">'+g+'</svg></div>'}
+function elecOf(secs){var o=[];(NET.elec||[]).forEach(function(e){var a=NET.order[e.line];if(!a)return;var ia=a.indexOf(e.a),ib=a.indexOf(e.b);if(ia<0||ib<0)return;var lo=Math.min(ia,ib),hi=Math.max(ia,ib);if(secs.filter(function(i){var k=a.indexOf(i);return k>=lo&&k<=hi}).length>=2)o.push(NET.lines[e.line].name+': '+e.sys)});return o.filter(function(v,i,a){return a.indexOf(v)===i})}
+function tile(n,l){return '<div class="tile"><b>'+n+'</b><span>'+l+'</span></div>'}
+/* --- 会社 --- */
+showCo=function(id){var C=NET.companies[id];document.querySelectorAll('#cotabs button').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-co')===id?'true':'false')});
+ var ls=Object.keys(NET.lines).filter(function(l){return NET.lines[l].co===id});
+ var sts=NET.stations.filter(function(s){return s.lines.some(function(l){return NET.lines[l].co===id})});
+ var th=NET.through.filter(function(t){return NET.lines[t.from].co===id||NET.lines[t.onto].co===id});
+ var fc=(NET.fac||[]).filter(function(f){return f.co===id});
+ var sv=NET.svc.filter(function(v){return v[3]===id}).sort(function(a,b){return KRANK.indexOf(a[2])-KRANK.indexOf(b[2])});
+ var si=STRI.filter(function(s){return NET.lines[s.line].co===id});
+ var km=0,real=0;ls.forEach(function(l){var o=NET.order[l];km+=Math.abs(S[o[o.length-1]].km-(o.length>1&&l!=='HM'&&l!=='KE'&&l!=='KM'?0:S[o[0]].km));real+=GEO.links.filter(function(k){return k.line===l&&!(k.k>0)}).reduce(function(a,k){return a+k.len},0)});
+ var xf=sts.filter(function(s){return s.lines.some(function(l){return NET.lines[l].co!==id})});
+ var h='<div class="cohead" style="border-left:6px solid '+C.color+'"><b class="conm">'+C.name+'</b><p class="k cinfo">'+(C.info||'')+'</p></div>';
+ h+='<div class="tiles">'+tile(ls.length,'路線')+tile(sts.length,'駅')+tile(real?(real/1000).toFixed(1):'-','実線路km(駅間)')+tile(si.length,'構造物')+tile(fc.length,'車庫・ヤード')+tile(sv.length,'運行系統')+tile(th.length,'直通')+'</div>';
+ h+='<dl class="kv wide"><dt>本社</dt><dd>'+(C.hq||'-')+'</dd><dt>開業</dt><dd>'+(C.founded||'-')+'</dd><dt>軌間</dt><dd>'+(C.gauge||'-')+'</dd><dt>電源</dt><dd>'+(C.power||'-')+'</dd><dt>主な車両</dt><dd>'+(C.fleet||[]).join('・')+'</dd><dt>駅('+sts.length+')</dt><dd>'+sts.map(function(s){return stLink(s.id)}).join('・')+'</dd>'+(xf.length?'<dt>他社との接点</dt><dd>'+xf.map(function(s){return stLink(s.id)+'<span class="k">('+s.lines.map(function(l){return NET.lines[l].co===id?'':NET.companies[NET.lines[l].co].name}).filter(Boolean).join('・')+')</span>'}).join('・')+'</dd>':'')+'</dl>';
+ h+='<h3 class="sh">路線</h3>'+ls.map(function(l){var o=NET.order[l],len=(S[o[o.length-1]].km-S[o[0]].km).toFixed(1);var lk=GEO.links.filter(function(k){return k.line===l});var tot=lk.reduce(function(a,k){return a+(k.k>0?0:k.len)},0);var ni=STRI.filter(function(s){return s.line===l}).length;
+  return '<details class="ln" style="border-left:4px solid '+NET.lines[l].color+'"><summary><b>'+NET.lines[l].name+'</b> <span class="k">'+NET.lines[l].kind+'<br>'+len+'km ／ '+o.length+'駅 ／ 実線路 '+(tot/1000).toFixed(2)+'km(駅間) ／ 構造物 '+ni+'件</span></summary>'+spark(o,null,NET.lines[l].color)+'<div class="k" style="line-height:1.9">'+o.map(function(i){return stLink(i)+' <span style="color:#7f9a8c">'+S[i].km.toFixed(1)+'k/'+S[i].elev+'m</span>'}).join(' — ')+'</div></details>'}).join('');
+ if(sv.length)h+='<h3 class="sh">運行系統('+sv.length+')</h3><div class="svg">'+sv.map(function(v){var c=KC[v[2]]||'#999';return '<div class="svc1" style="border-left:5px solid '+c+'"><b>'+v[1]+'</b> <span class="tag" style="background:'+c+'">'+v[2]+'</span> <span class="k">'+v[5]+' ／ 所要約'+v[6]+'分</span></div>'}).join('')+'</div>';
+ if(th.length)h+='<h3 class="sh">直通運転</h3>'+th.map(function(t){return '<div class="svc1" style="border-left:5px solid '+NET.lines[t.from].color+'"><b>'+t.name+'</b><div class="k">'+t.section.map(function(i){return S[i].name}).join(' → ')+'(区間 約'+pathKm(t.section).toFixed(1)+'km)</div></div>'}).join('');
+ else if(id!=='JNR')h+='<h3 class="sh">直通運転</h3><p class="k">直通・乗入れなし(他社)。駅は国鉄駅に隣接するが線路は接続しない。</p>';
+ var kc={};si.forEach(function(s){kc[s.kind]=(kc[s.kind]||0)+1});
+ if(si.length)h+='<h3 class="sh">構造物('+si.length+')</h3><div class="chips">'+Object.keys(kc).map(function(k){return '<button class="chip" data-sk="'+k+'" aria-pressed="true"><i style="background:'+STRK[k].color+'"></i>'+STRK[k].name+'('+kc[k]+')</button>'}).join('')+'</div>';
+ if(fc.length)h+='<h3 class="sh">車庫・ヤード('+fc.length+')</h3>'+fc.map(function(f){return '<div class="svc1" style="border-left:5px solid '+C.color+'"><a href="#" class="fl2" data-f="'+f.id+'"><b>'+f.name+'</b></a> <span class="k">('+f.desc+')</span></div>'}).join('');
+ $('codetail').innerHTML=h;var d=$('codetail');
+ d.querySelectorAll('.sl').forEach(function(a){a.onclick=function(e){e.preventDefault();pick(a.getAttribute('data-s'));window.scrollTo({top:0,behavior:'smooth'})}});
+ d.querySelectorAll('.fl2').forEach(function(a){a.onclick=function(e){e.preventDefault();var f=NET.fac.filter(function(x){return x.id===a.getAttribute('data-f')})[0];if(f){pickFac(f);window.scrollTo({top:0,behavior:'smooth'})}}});
+ d.querySelectorAll('[data-sk]').forEach(function(b){b.onclick=function(){srK=b.getAttribute('data-sk');srL=si[0].line;srL='all';tab('sr');srRender()}})};
+/* --- 運行系統 --- */
+var svCo='all',svK='all';
+function svrender2(){var rows=NET.svc.slice().sort(function(a,b){return KRANK.indexOf(a[2])-KRANK.indexOf(b[2])}).filter(function(v){return (svK==='all'||v[2]===svK)&&(svCo==='all'||v[3]===svCo)});
+ var kc={};NET.svc.forEach(function(v){kc[v[2]]=(kc[v[2]]||0)+1});
+ var chips='<div class="chips" id="svchips">'+['all'].concat(KRANK).filter(function(k){return k==='all'||kc[k]}).map(function(k){return '<button class="chip" data-k="'+k+'" aria-pressed="'+(k===svK)+'">'+(k==='all'?'すべて('+NET.svc.length+')':'<i style="background:'+KC[k]+'"></i>'+k+'('+kc[k]+')')+'</button>'}).join('')+'</div><div class="chips" id="svco"><span class="k">会社</span>'+['all'].concat(Object.keys(NET.companies)).map(function(c){return '<button class="chip" data-c="'+c+'" aria-pressed="'+(c===svCo)+'">'+(c==='all'?'全社':NET.companies[c].name)+'</button>'}).join('')+'</div><p class="k">'+rows.length+' 系統を表示</p>';
+ $('svclist').innerHTML=chips+rows.map(function(v){var c=KC[v[2]]||'#999',P=v[9]||v[4],km=pathKm(P);
+  return '<article class="svcard" style="border-left:6px solid '+c+'"><header><b>'+v[1]+'</b> <span class="tag" style="background:'+c+'">'+v[2]+'</span> <span class="k">'+NET.companies[v[3]].name+'</span></header>'
+  +'<dl class="kv wide"><dt>運転区間</dt><dd>'+stLink(P[0])+' → '+stLink(P[P.length-1])+(km?'(約'+km.toFixed(1)+'km)':'')+'</dd><dt>本数・所要</dt><dd>'+v[5]+' ／ 所要約'+v[6]+'分</dd><dt>停車</dt><dd>'+v[4].length+'駅停車／'+P.length+'駅中'+(P.length-v[4].length>0?'(通過'+(P.length-v[4].length)+')':'')+'</dd><dt>使用車両</dt><dd>'+v[7]+'</dd></dl>'
+  +spark(P,v[4],c)+'<details class="stl"><summary class="k">停車駅の一覧</summary><div class="k" style="line-height:1.9">'+P.map(function(i){var st=v[4].indexOf(i)>=0;return st?'<b style="color:'+c+'">●'+S[i].name+'</b>':'<span style="opacity:.5">｜'+S[i].name+'(通過)</span>'}).join(' → ')+'</div></details><p class="k note">'+v[8]+'</p></article>'}).join('');
+ var d=$('svclist');d.querySelectorAll('#svchips .chip').forEach(function(b){b.onclick=function(){svK=b.getAttribute('data-k');svrender2()}});d.querySelectorAll('#svco .chip').forEach(function(b){b.onclick=function(){svCo=b.getAttribute('data-c');svrender2()}});
+ d.querySelectorAll('.sl').forEach(function(a){a.onclick=function(e){e.preventDefault();pick(a.getAttribute('data-s'));window.scrollTo({top:0,behavior:'smooth'})}})}
+/* --- 直通運転 --- */
+function threnderer(){$('th').innerHTML='';NET.through.forEach(function(t){var f=NET.lines[t.from],o=NET.lines[t.onto],A=NET.companies[f.co],B=NET.companies[o.co],km=pathKm(t.section);
+  var rel=NET.svc.filter(function(v){var P=v[9]||v[4];return (v[3]===f.co||v[3]===o.co)&&t.section.filter(function(i){return P.indexOf(i)>=0}).length>=Math.min(2,t.section.length)&&(v[2]==='直通'||v[7].indexOf('直通')>=0||v[1].indexOf('直通')>=0)});
+  var ns=STRI.filter(function(s){return (s.line===t.from||s.line===t.onto)&&t.section.indexOf(s.a)>=0&&t.section.indexOf(s.b)>=0});var el=elecOf(t.section);
+  var d=document.createElement('article');d.className='thcard';d.style.borderLeftColor=f.color;
+  d.innerHTML='<header><b>'+t.name+'</b></header><div class="k thco"><span style="color:'+A.color+'">■</span> '+A.name+' → <span style="color:'+B.color+'">■</span> '+B.name+'(線路: '+f.name+' → '+o.name+')</div>'+spark(t.section,null,f.color)
+  +'<dl class="kv wide"><dt>区間</dt><dd>'+t.section.map(stLink).join(' → ')+(km?'(約'+km.toFixed(1)+'km)':'')+'</dd><dt>使用車両</dt><dd>'+t.stock+'</dd>'+(el.length?'<dt>電化</dt><dd>'+el.join('／')+'</dd>':'')+(rel.length?'<dt>関連系統</dt><dd>'+rel.map(function(v){return v[1]+'('+v[2]+')'}).join('・')+'</dd>':'')+(ns.length?'<dt>区間の構造物</dt><dd>'+ns.map(function(s){return '<a href="#" class="ss" data-i="'+s.id+'">'+s.name+'</a>'}).join('・')+'</dd>':'')+'</dl><p class="k note">'+t.note+'</p>';
+  $('th').appendChild(d)});
+ $('th').querySelectorAll('.sl').forEach(function(a){a.onclick=function(e){e.preventDefault();pick(a.getAttribute('data-s'));window.scrollTo({top:0,behavior:'smooth'})}});
+ $('th').querySelectorAll('a.ss').forEach(function(a){a.onclick=function(e){e.preventDefault();window.__str(a.getAttribute('data-i'))}})}
+svrender2();threnderer();showCo('JNR');
 
 profRender('HM');srRender();
 /* ---------- v2.4: 端末別(詳細シート・初期表示・リサイズ) ---------- */
