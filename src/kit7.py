@@ -106,6 +106,13 @@ def subway(P, s0, s1, name="subway", zfun=None, half=3.15, lights=True):
                 g.a("k5_steel").sbox((q0[0], q0[1], 0.95), (q1[0], q1[1], 0.95), 0.05, 0.05)
                 if i % 3 == 0:
                     g.a("k5_steel").sbox((q0[0], q0[1], 0.1), (q0[0], q0[1], 1.0), 0.07, 0.07)
+                if i % 3 == 0:     # 控え壁(内側の付柱)と水抜き穴・梯子
+                    zc_ = (0.12 + (zm - 0.75)) / 2
+                    pi0 = a + nrm[i] * sg * (half - 0.30)
+                    pi1 = a + nrm[i] * sg * (half + 0.02)
+                    g.a("ug_conc2", bevel=0.02).sbox((pi0[0], pi0[1], zc_), (pi1[0], pi1[1], zc_), 0.55, 0.12 - (zm - 0.75))
+                    wh = a + nrm[i] * sg * (half - 0.02) + (b - a) * 0.5
+                    g.a("iron_black").sbox((wh[0], wh[1], zm - 0.35), (wh[0] - nrm[i][0] * sg * 0.08, wh[1] - nrm[i][1] * sg * 0.08, zm - 0.35), 0.1, 0.1)
             else:
                 # 壁面の仕上げ: 腰のタイル帯と避難用の側歩道
                 if sg == 1:
@@ -138,6 +145,12 @@ def subway(P, s0, s1, name="subway", zfun=None, half=3.15, lights=True):
             c = pos[i]
             w = 2 * half + 2 * wt
             g.a("k5_stone", bevel=0.03).sbox((c[0], c[1], ROOF_BOT - 0.15), (c[0] + math.cos(ang[i]) * 0.9, c[1] + math.sin(ang[i]) * 0.9, ROOF_BOT - 0.15), w + 0.6, 0.9)
+            od_ = np.array([math.cos(ang[i]), math.sin(ang[i])]) * (-1.0 if covered[i] else 1.0)
+            fc = c + od_ * 0.55
+            g.a("ug_conc2", bevel=0.03).sbox((fc[0], fc[1], ROOF_TOP + 0.05), (fc[0] + od_[0] * 0.6, fc[1] + od_[1] * 0.6, ROOF_TOP + 0.05), w + 0.9, 0.26)   # 軒蛇腹
+            pl = c + od_ * 0.62
+            g.a("k5_stone", bevel=0.02).sbox((pl[0], pl[1], ROOF_BOT + 0.35), (pl[0] + od_[0] * 0.08, pl[1] + od_[1] * 0.08, ROOF_BOT + 0.35), 1.8, 0.4)   # 扁額
+            g.a("iron_black").sbox((pl[0] + od_[0] * 0.07, pl[1] + od_[1] * 0.07, ROOF_BOT + 0.35), (pl[0] + od_[0] * 0.1, pl[1] + od_[1] * 0.1, ROOF_BOT + 0.35), 1.5, 0.28)
     _surface_works(P, ss, pos, ang, nrm, zs, covered, below, half, wt, g, name)
     g.build()
     gl.build()
@@ -152,6 +165,88 @@ def subway(P, s0, s1, name="subway", zfun=None, half=3.15, lights=True):
     return int(covered.sum())
 
 
+def _vent_tower(g, c, ang, st, sg):
+    """換気塔。st['type'] で 4 種: pilaster(煉瓦+付柱+アーチ開口) / mushroom(円筒+笠) / slab(RC+庇+格子) / grate(地表格子ピット)。"""
+    ca, sa = math.cos(ang), math.sin(ang)
+
+    def at(u, v):
+        return (c[0] + ca * u - sa * v, c[1] + sa * u + ca * v)
+    hx, hy, hz = st['hx'], st['hy'], st['hz']
+    ty = st.get('type', 'pilaster')
+    dk = "iron_black"
+    if ty == "pilaster":
+        # 壁体+四隅の付柱+胴蛇腹+アーチ形の開口(凹んだ黒い羽板)+寄棟屋根
+        for q in range(4):
+            a_, b_ = [at(-hx, -hy), at(hx, -hy), at(hx, hy), at(-hx, hy)][q], [at(-hx, -hy), at(hx, -hy), at(hx, hy), at(-hx, hy)][(q + 1) % 4]
+            g.a(st["mat"], bevel=0.02).sbox((a_[0], a_[1], hz / 2), (b_[0], b_[1], hz / 2), 0.32, hz)
+        for ux, vy in ((-hx, -hy), (hx, -hy), (hx, hy), (-hx, hy)):
+            p0 = at(ux, vy)
+            g.a("ug_conc2", bevel=0.03).box(p0[0] - 0.3, p0[0] + 0.3, p0[1] - 0.3, p0[1] + 0.3, 0.0, hz + 0.1)
+        for zz in (hz * 0.34, hz * 0.68):
+            for v_ in (-hy - 0.2, hy + 0.2):
+                a_, b_ = at(-hx - 0.12, v_), at(hx + 0.12, v_)
+                g.a("ug_conc2").sbox((a_[0], a_[1], zz), (b_[0], b_[1], zz), 0.2, 0.16)
+        nb = max(2, int(2 * hx / 0.9))
+        for v_ in (-hy - 0.18, hy + 0.18):
+            for k in range(nb):
+                u = -hx + (k + 0.5) * 2 * hx / nb
+                for zz, hh in ((hz * 0.5, hz * 0.22),):
+                    a_, b_ = at(u - 0.22, v_), at(u + 0.22, v_)
+                    g.a(dk).sbox((a_[0], a_[1], zz), (b_[0], b_[1], zz), 0.07, hh)
+                    for lv in range(4):
+                        a_, b_ = at(u - 0.2, v_ + 0.04 * (1 if v_ > 0 else -1)), at(u + 0.2, v_ + 0.04 * (1 if v_ > 0 else -1))
+                        g.a("ug_conc2").sbox((a_[0], a_[1], zz - hh / 2 + lv * hh / 3.6 + 0.1), (b_[0], b_[1], zz - hh / 2 + lv * hh / 3.6 + 0.1), 0.03, 0.04)
+        rh = 1.2
+        for k_ in range(5):     # 段状の寄棟屋根(隙間なく積む)
+            f_ = 1.0 - k_ * 0.17
+            g.a("tin").boxc(c[0], c[1], hz + 0.11 + k_ * 0.22, (2 * hx + 0.8) * f_, (2 * hy + 0.8) * f_, 0.24, rz=ang)
+    elif ty == "mushroom":
+        r = max(hy * 1.15, 0.9)
+        g.a("ug_conc2").cyl((c[0], c[1], 0.0), (c[0], c[1], 0.45), r + 0.35, r + 0.25, seg=20)
+        g.a("ug_conc", smooth=False).cyl((c[0], c[1], 0.45), (c[0], c[1], hz), r, r * 0.95, seg=20)
+        for k in range(12):
+            th = ang + k * math.pi / 6
+            q = (c[0] + math.cos(th) * (r + 0.02), c[1] + math.sin(th) * (r + 0.02))
+            for lv in range(5):
+                zz = hz * 0.55 + lv * 0.2
+                g.a(dk).boxc(q[0], q[1], zz, 0.05, 0.62, 0.07, rz=th)
+        g.a("ug_conc2").cyl((c[0], c[1], hz), (c[0], c[1], hz + 0.25), r + 0.55, r + 0.45, seg=20)
+        g.a("tin").cyl((c[0], c[1], hz + 0.25), (c[0], c[1], hz + 0.25 + 0.9), r + 0.5, 0.12, seg=20)
+        g.a(dk).cyl((c[0], c[1], hz + 1.15), (c[0], c[1], hz + 1.55), 0.06, seg=8)
+    elif ty == "slab":
+        # RC の薄い塔: 全高の縦ルーバー帯+張り出す庇+頂部の小さな採光窓
+        g.a("ug_conc", bevel=0.02).boxc(c[0], c[1], hz / 2, 2 * hx, 2 * hy, hz, rz=ang)
+        g.a("ug_conc2").boxc(c[0], c[1], 0.3, 2 * hx + 0.5, 2 * hy + 0.5, 0.6, rz=ang)
+        for v_ in (-hy - 0.03, hy + 0.03):
+            for k in range(int(2 * hx / 0.18)):
+                u = -hx + 0.25 + k * 0.18
+                if abs(u) > hx - 0.1:
+                    continue
+                a_, b_ = at(u, v_), at(u, v_)
+                g.a(dk).boxc(a_[0], a_[1], hz * 0.62, 0.06, 0.05, hz * 0.55, rz=ang)
+        g.a("ug_conc2").boxc(c[0], c[1], hz + 0.14, 2 * hx + 1.4, 2 * hy + 1.4, 0.28, rz=ang)
+        g.a("ug_conc").boxc(c[0], c[1], hz + 0.28 + 0.35, 2 * hx * 0.5, 2 * hy * 0.6, 0.7, rz=ang)
+        for k in range(3):
+            g.a(dk).boxc(c[0], c[1], hz + 0.28 + 0.2 + k * 0.17, 2 * hx * 0.5 + 0.02, 2 * hy * 0.6 + 0.02, 0.04, rz=ang)
+        a_ = at(hx + 0.04, 0)
+        g.a(dk).boxc(a_[0], a_[1], 0.9, 0.05, 0.9, 1.8, rz=ang)
+    else:   # grate: 歩道面に格子蓋のピット+低い立上り+鋳鉄の格子
+        L_, W_ = hx * 1.6, hy * 1.4
+        g.a("ug_conc2").boxc(c[0], c[1], 0.12, 2 * L_ + 0.5, 2 * W_ + 0.5, 0.24, rz=ang)
+        g.a(dk).boxc(c[0], c[1], 0.14, 2 * L_, 2 * W_, 0.05, rz=ang)
+        for k in range(int(2 * L_ / 0.14)):
+            u = -L_ + 0.07 + k * 0.14
+            a_ = at(u, 0)
+            g.a("iron_black").boxc(a_[0], a_[1], 0.26, 0.05, 2 * W_ - 0.04, 0.035, rz=ang)
+        for v_ in (-W_ * 0.5, W_ * 0.5):
+            a_, b_ = at(-L_, v_), at(L_, v_)
+            g.a("iron_black").sbox((a_[0], a_[1], 0.25), (b_[0], b_[1], 0.25), 0.06, 0.05)
+        # 小さな排気筒(格子の脇)
+        a_ = at(L_ + 0.9, 0)
+        g.a("ug_conc").cyl((a_[0], a_[1], 0.0), (a_[0], a_[1], 2.6), 0.32, seg=12)
+        g.a("tin").cyl((a_[0], a_[1], 2.6), (a_[0], a_[1], 2.95), 0.5, 0.1, seg=12)
+
+
 def _surface_works(P, ss, pos, ang, nrm, zs, covered, below, half, wt, g, name):
     """開削上部の復旧舗装(継ぎ目・マンホール)、換気塔、坑口の翼壁と門柱、埋戻し土(断面で見える)。"""
     n = len(ss)
@@ -159,7 +254,7 @@ def _surface_works(P, ss, pos, ang, nrm, zs, covered, below, half, wt, g, name):
     rv = _rnd.Random(zlib.crc32(name.encode()))
     st_tw = dict(hx=rv.choice([1.4, 1.7, 2.0, 2.3]), hy=rv.choice([1.0, 1.2, 1.5]), hz=rv.choice([3.8, 4.4, 5.2, 6.0]),
                  mat=rv.choice(["ug_brick", "ug_brick", "ug_stone", "ug_tile"]), roof=rv.choice(["flat", "hip", "gable"]),
-                 louv=rv.choice([4, 6, 8]), step=rv.choice([36, 45, 60]))
+                 louv=rv.choice([4, 6, 8]), step=rv.choice([36, 45, 60]), type=(__import__('os').environ.get('SUBWAY_TYPE') or rv.choice(['pilaster', 'mushroom', 'slab', 'grate'])))
     st_pt = dict(flare=rv.choice([2.2, 3.2, 4.2]), wl=rv.choice([7.0, 9.0, 11.0]), pw=rv.choice([0.8, 1.0, 1.3]), cap=rv.choice([True, False]))
     cidx = np.where(covered)[0]
     soil = "soil" if "soil" in M else "k5_earth"
@@ -185,35 +280,11 @@ def _surface_works(P, ss, pos, ang, nrm, zs, covered, below, half, wt, g, name):
                     p0 = pos[i] + nrm[i] * sg * (half + wt + 2.2)
                     p1 = pos[min(i + 2, n - 1)] + nrm[min(i + 2, n - 1)] * sg * (half + wt + 2.2)
                     gs.a(soil).sbox((p0[0], p0[1], (zm - 0.75 - 0.08) / 2), (p1[0], p1[1], (zm - 0.75 - 0.08) / 2), 3.4, -0.08 - (zm - 0.75))
-            # 換気塔(約90m毎・片側ずつ)
+            # 換気塔(約90m毎・片側ずつ): 駅ごとに型が違う(煉瓦付柱/きのこ型円筒/RC庇付/地表格子ピット)
             for j, i in enumerate(idx[12:-12:st_tw['step']]):
                 sg = 1 if j % 2 == 0 else -1
                 c = pos[i] + nrm[i] * sg * (half + wt + 5.5)
-                ca, sa = math.cos(ang[i]), math.sin(ang[i])
-                def at(u, v):
-                    return (c[0] + ca * u - sa * v, c[1] + sa * u + ca * v)
-                hx, hy, hz = st_tw['hx'], st_tw['hy'], st_tw['hz']
-                p = [at(-hx, -hy), at(hx, -hy), at(hx, hy), at(-hx, hy)]
-                for q in range(4):
-                    a, b = p[q], p[(q + 1) % 4]
-                    g.a(st_tw["mat"], bevel=0.02).sbox((a[0], a[1], hz / 2), (b[0], b[1], hz / 2), 0.3, hz)
-                g.a("k5_conc").sbox((at(-hx - 0.3, 0)[0], at(-hx - 0.3, 0)[1], hz + 0.12), (at(hx + 0.3, 0)[0], at(hx + 0.3, 0)[1], hz + 0.12), 2 * hy + 0.6, 0.25)
-                if st_tw["roof"] != "flat":     # 寄棟/切妻の小屋根
-                    rd = 0.9 if st_tw["roof"] == "hip" else 1.2
-                    g.a("tin").sbox((at(-hx - 0.2, 0)[0], at(-hx - 0.2, 0)[1], hz + 0.25 + rd), (at(hx + 0.2, 0)[0], at(hx + 0.2, 0)[1], hz + 0.25 + rd), 0.25, 0.12)
-                    for sgn2 in (-1, 1):
-                        a2, b2 = at(-hx - 0.2, sgn2 * (hy + 0.25)), at(hx + 0.2, sgn2 * (hy + 0.25))
-                        a3, b3 = at(-hx - 0.2, 0), at(hx + 0.2, 0)
-                        g.a("tin").sbox((a2[0], a2[1], hz + 0.25), (b2[0], b2[1], hz + 0.25), 0.1, 0.1)
-                        g.a("tin").sbox(((a2[0] + a3[0]) / 2, (a2[1] + a3[1]) / 2, hz + 0.25 + rd / 2), ((b2[0] + b3[0]) / 2, (b2[1] + b3[1]) / 2, hz + 0.25 + rd / 2), 0.9 * hy + 0.3, 0.1)
-                for lv in range(st_tw['louv']):   # ルーバー
-                    zz = 1.0 + lv * (hz - 1.8) / max(1, st_tw['louv'])
-                    a, b = at(-1.2, -hy - 0.04), at(1.2, -hy - 0.04)
-                    g.a("iron_black").sbox((a[0], a[1], zz), (b[0], b[1], zz), 0.06, 0.2)
-                    a, b = at(-1.2, hy + 0.04), at(1.2, hy + 0.04)
-                    g.a("iron_black").sbox((a[0], a[1], zz), (b[0], b[1], zz), 0.06, 0.2)
-                a, b = at(-0.5, -hy - 0.05), at(0.5, -hy - 0.05)
-                g.a("iron_black").sbox((a[0], a[1], 0.85), (b[0], b[1], 0.85), 0.05, 1.7)   # 点検扉
+                _vent_tower(g, c, ang[i], st_tw, sg)
     print('SUBWAY_DBG', name, 'portals', [round(float(ss[i])) for i in range(1, n - 1) if covered[i] != covered[i - 1] and zs[i] < 0.5], 'covered', [round(float(ss[r[0]])) for r in ([np.arange(0)] if not len(cidx) else np.split(cidx, np.where(np.diff(cidx) > 1)[0] + 1))] if len(cidx) else [], 'n', n, flush=True)
     # 坑口: 門柱と翼壁
     for i in range(1, n - 1):
@@ -227,7 +298,14 @@ def _surface_works(P, ss, pos, ang, nrm, zs, covered, below, half, wt, g, name):
                 g.a("ug_stone", bevel=0.03).sbox((q[0], q[1], zs[i] - 0.75), (q[0], q[1], 1.9), st_pt['pw'], 1.3)
                 e0 = c + o * (half + wt + 0.3) + od * 0.5
                 e1 = c + od * st_pt['wl'] + o * (half + wt + 0.3 + st_pt['flare'])
-                g.a("ug_stone", bevel=0.02).sbox((e0[0], e0[1], 0.45), (e1[0], e1[1], 0.45), 0.5, 1.9)
+                for k_ in range(3):     # 階段状の擁壁(だんだん低くなる)+笠石+控え壁
+                    f0, f1 = k_ / 3.0, (k_ + 1) / 3.0
+                    q0 = e0 + (e1 - e0) * f0
+                    q1 = e0 + (e1 - e0) * f1
+                    top = 2.3 - 0.75 * k_
+                    zc = (top - 1.2) / 2
+                    g.a("ug_stone", bevel=0.02).sbox((q0[0], q0[1], zc), (q1[0], q1[1], zc), 0.5, top + 1.2)
+                    g.a("ug_conc2", bevel=0.02).sbox((q0[0], q0[1], top + 0.06), (q1[0], q1[1], top + 0.06), 0.72, 0.12)
             w = 2 * half + 2 * wt
     gs.build()
 
