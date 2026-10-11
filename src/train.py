@@ -449,12 +449,14 @@ def build_train():
     make_kiha("kiha_A").place(12.0, T1, 0.0)
     # T2: loco (long hood west) + three old coaches along the island platform
     import diesel2
-    diesel2.make_dd51("loco_dd").place(-33.0, T2, math.pi)
+    diesel2.make_dd51("loco_dd", hm_holder=True).place(-33.0, T2, math.pi)
+    import vehtypes
     xs = -26.6 + 1.0
-    for i, (mk, var) in enumerate((("mark_coach.png", 0), ("mark_coach.png", 0), ("mark_coach2.png", 1))):
-        L = 19.8
-        make_coach(f"coach{i}", mk, var, seed=10 + i).place(xs + L / 2, T2, 0.0 if i != 2 else math.pi)
-        xs += L + 0.45
+    for i, (t_, ends) in enumerate((("sl_gen", ("gang", "gang")), ("sl_b", ("gang", "gang")), ("sl_din", ("gang", "gang")),
+                                    ("sl_a", ("gang", "gang")), ("sl_b", ("gang", "tail")))):     # 寝台特急「ほなみ」(NT1)
+        L = vehtypes.TYPES[t_]["L"]
+        vehtypes.make(t_, f"sleeper{i}", seed=10 + i, ends=ends).place(xs + L / 2, T2, 0.0)
+        xs += L + 0.55
     # T3: mixed freight
     x = -14.45
     for i, f in enumerate(("wam", "tora_rice", "wam", "wam", "tora_coal")):

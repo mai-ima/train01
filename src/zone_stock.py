@@ -185,6 +185,39 @@ def _place_m19_special(kinds):
     return n
 
 
+SLEEPER_ST = {"M01": 0, "M06": 1, "M19": 0}      # 寝台特急「ほなみ」(NT1): 始発M01・機関車付替M06・終着M19
+
+
+def _place_sleeper(sid, ntr, used, cx, stub):
+    """寝台特急「ほなみ」: DD(公開諸元ベース)+電源車+B+食堂+A+B(最後尾)。空いている最後の線に置く。"""
+    import diesel2, vehtypes
+    free = [k for k in range(ntr) if k not in used]
+    if not free:
+        return 0
+    k = free[-1]
+    cars = [("sl_gen", ("gang", "gang")), ("sl_b", ("gang", "gang")), ("sl_din", ("gang", "gang")),
+            ("sl_a", ("gang", "gang")), ("sl_b", ("gang", "tail"))]
+    pitch = 21.0 + 0.55
+    loco_l = 14.2
+    tot = loco_l + 0.6 + pitch * len(cars)
+    x0 = cx - tot / 2
+    zr = SPECIAL_Z.get(sid, 0.0) + (9.0 if sid == "B02" else 0.0)
+    n = 0
+    tp = _tpoint(sid, k, x0 + loco_l / 2)
+    if tp is None:
+        return 0
+    seed = _h(sid, 77) % 9000
+    diesel2.make_dd51(f"stk_{sid}_nt1_loco", hm_holder=True).place(tp[0], tp[1], tp[2], z=zr + 0.274)
+    n += 1
+    for i, (t, ends) in enumerate(cars):
+        tp = _tpoint(sid, k, x0 + loco_l + 0.6 + pitch * (i + 0.5))
+        if tp is None:
+            continue
+        vehtypes.make(t, f"stk_{sid}_nt1_{i}", seed=seed + i, ends=ends).place(tp[0], tp[1], tp[2], z=zr + 0.274)
+        n += 1
+    return n
+
+
 def _place_auto(sid):
     st = kit.ST[sid]
     kinds = [_kind(s) for s in st["stock"]]
@@ -245,4 +278,7 @@ def _place_auto(sid):
             zz = (zr + 0.274) if kn not in ("mono",) else zr
             v.place(tp[0], tp[1], tp[2] + (math.pi if flip else 0.0), z=zz)
             placed += 1
+    if sid in SLEEPER_ST:
+        placed += _place_sleeper(sid, ntr, {k for k, _ in jobs}, cx, stub)
     return placed
+

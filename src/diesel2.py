@@ -52,7 +52,7 @@ def end_gear(v, e, x_beam, W, plate, z_deck):
 
 
 # ====================================================================== DD51-type
-def make_dd51(name="dd51", body="verm", top="gtop", band="cream2", plate="plate_dd.png"):
+def make_dd51(name="dd51", body="verm", top="gtop", band="cream2", plate="plate_dd.png", hm_holder=False):
     v = Veh(name)
     zd = 1.32
     Wc, Wh = 2.95, 2.70
@@ -75,6 +75,12 @@ def make_dd51(name="dd51", body="verm", top="gtop", band="cream2", plate="plate_
             lamp(v, xf + e * 0.04, s * 0.72, 3.02, e, 0.12)
             v.A("lampglass").cyl((xf + e * 0.04, s * 1.0, 1.75), (xf + e * 0.06, s * 1.0, 1.75), 0.06, 0.06, seg=10)
         v.end_plane(plate, e, 0.0, 0.62, 2.55, 2.55 + 0.62 * 160 / 420, xf + e * 0.045)
+        if hm_holder:     # ヘッドマーク掛け(板は未装着): 受け金具+円環+支柱
+            v.A("steel").box(*sorted((xf + e * 0.02, xf + e * 0.09)), -0.34, 0.34, 2.86, 2.92)
+            v.A("steel").torus((xf + e * 0.10, 0.0, 3.28), "x", 0.36, 0.022, segR=32, segr=6)
+            v.A("steel").box(*sorted((xf + e * 0.04, xf + e * 0.10)), -0.016, 0.016, 2.92, 2.94)
+            for sy in (-1, 1):
+                v.A("steel").box(*sorted((xf + e * 0.04, xf + e * 0.10)), sy * 0.30 - 0.012, sy * 0.30 + 0.012, 2.92, 3.02)
         v.A("white" if band == "white" else band, 0.004).box(*sorted((xf, xf + e * 0.045)), -Wh / 2 + 0.04, Wh / 2 - 0.04, 1.55, 1.78)   # front band
         # side details: radiator + fan at the outer end, engine doors in the middle
         for s in (-1, 1):
