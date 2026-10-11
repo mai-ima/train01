@@ -81,15 +81,17 @@ def make_emu(name="emu", kind="jnr_dc", seed=11, num_img="kiha_number.png"):
     L, up, lo, band = prm["L"], prm["up"], prm["lo"], prm["band"]
     W, h = (2.80, 1.40) if kind != "km" else (2.60, 1.30)
     zf, zs, zw1, zt, zr = (1.05, 1.15, 2.75, 2.95, 3.55) if kind != "km" else (1.0, 1.10, 2.55, 2.75, 3.30)
-    v.A(lo, 0.014).extrude_x([(-h, zf), (h, zf), (h, zw1), (-h, zw1)], -L / 2, L / 2)
-    v.A(band, 0.01).extrude_x([(-h - 0.004, zs + 0.52), (h + 0.004, zs + 0.52), (h + 0.004, zs + 0.64), (-h - 0.004, zs + 0.64)], -L / 2 + 0.01, L / 2 - 0.01)
+    v.A(lo, 0.014).extrude_x([(-h, zf), (h, zf), (h, zs), (-h, zs)], -L / 2, L / 2)     # 腰板(窓帯は中空: 壁の柱+ガラス+室内)
+    v.A(band, 0.01).extrude_x([(-h - 0.004, zw1 + 0.04), (h + 0.004, zw1 + 0.04), (h + 0.004, zw1 + 0.15), (-h - 0.004, zw1 + 0.15)], -L / 2 + 0.01, L / 2 - 0.01)
     v.A(up, 0.01).extrude_x([(-h, zw1), (h, zw1), (h, zt), (-h, zt)], -L / 2, L / 2)
     v.A("roof", 0.015).extrude_x(upper_profile(W, zt - 0.05, zt + 0.03, zr, inset=0.04), -L / 2 + 0.02, L / 2 - 0.02)
     nd = prm["nd"]
-    bays = [('D', 1.3)] + [('W', 1.0)] * 2 + [('D', 1.3)] + [('W', 1.0)] * 2 + [('D', 1.3)] + [('W', 1.0)] * 2 + [('D', 1.3)]
-    if nd == 3:
-        bays = [('D', 1.3)] + [('W', 1.0)] * 3 + [('D', 1.3)] + [('W', 1.0)] * 3 + [('D', 1.3)] + [('W', 1.0)] * 3 + [('D', 1.3)]
-        bays = bays[:-4]
+    k_ = max(2, int((L - 3.2 - 1.3 * nd) / (nd - 1)))                     # 窓を車体全長に配分(旧: 中央10mのみ)
+    bays = []
+    for i_ in range(nd):
+        bays.append(('D', 1.3))
+        if i_ < nd - 1:
+            bays += [('W', 1.0)] * k_
     tot, doors = window_bays(v, bays, W, zs, zw1, up, door_key=band if kind != "km" else "sub_red", seed=seed, curtain_p=0.3, door_drop=0.0)
     interior(v, -tot / 2 + 0.1, tot / 2 - 0.1, W, zs, zw1, zt, pitch=1.02, seed=seed, person_p=0.35)
     _ends(v, L, tot, W, h, zs, zw1, zt, zr, up, lo, num_img)
@@ -123,11 +125,11 @@ def make_tram(name="tram", seed=21, num_img="kiha_number.png"):
     v = Veh(name)
     L, W, h = 12.6, 2.45, 1.225
     zf, zs, zw1, zt, zr = 0.62, 0.78, 2.15, 2.30, 2.82
-    v.A("tram_green", 0.012).extrude_x([(-h, zf), (h, zf), (h, zw1), (-h, zw1)], -L / 2, L / 2)
-    v.A("tram_cream", 0.01).extrude_x([(-h - 0.004, zs + 0.5), (h + 0.004, zs + 0.5), (h + 0.004, zw1 - 0.0), (-h - 0.004, zw1 - 0.0)], -L / 2 + 0.01, L / 2 - 0.01)
+    v.A("tram_green", 0.012).extrude_x([(-h, zf), (h, zf), (h, zs), (-h, zs)], -L / 2, L / 2)
+    v.A("tram_cream", 0.01).extrude_x([(-h - 0.004, zw1 - 0.2), (h + 0.004, zw1 - 0.2), (h + 0.004, zw1), (-h - 0.004, zw1)], -L / 2 + 0.01, L / 2 - 0.01)
     v.A("tram_cream", 0.01).extrude_x([(-h, zw1), (h, zw1), (h, zt), (-h, zt)], -L / 2, L / 2)
     v.A("roof", 0.015).extrude_x(upper_profile(W, zt - 0.05, zt + 0.03, zr, inset=0.05), -L / 2 + 0.02, L / 2 - 0.02)
-    bays = [('D', 1.1)] + [('W', 0.9)] * 4 + [('D', 1.1)]
+    bays = [('D', 1.1)] + [('W', 0.9)] * 4 + [('D', 1.1)] + [('W', 0.9)] * 4 + [('D', 1.1)]
     tot, doors = window_bays(v, bays, W, zs, zw1 - 0.2, "tram_cream", door_key="tram_green", seed=seed, curtain_p=0.2, door_drop=0.0)
     interior(v, -tot / 2 + 0.1, tot / 2 - 0.1, W, zs, zw1 - 0.2, zt, pitch=0.9, seed=seed, person_p=0.4)
     for e in (-1, 1):
@@ -157,12 +159,11 @@ def make_mono(name="mono", seed=31, num_img="kiha_number.png"):
     v = Veh(name)
     L, W, h = 14.0, 2.9, 1.45
     zf, zs, zw1, zt, zr = 0.55, 0.80, 2.15, 2.35, 3.05
-    v.A("mono_white", 0.014).extrude_x([(-h, zf), (h, zf), (h, zw1), (-h, zw1)], -L / 2, L / 2)
-    v.A("mono_blue", 0.01).extrude_x([(-h - 0.004, zs + 0.2), (h + 0.004, zs + 0.2), (h + 0.004, zs + 0.5), (-h - 0.004, zs + 0.5)], -L / 2 + 0.01, L / 2 - 0.01)
+    v.A("mono_white", 0.014).extrude_x([(-h, zf), (h, zf), (h, zs), (-h, zs)], -L / 2, L / 2)
+    v.A("mono_blue", 0.01).extrude_x([(-h - 0.004, zw1 + 0.03), (h + 0.004, zw1 + 0.03), (h + 0.004, zw1 + 0.17), (-h - 0.004, zw1 + 0.17)], -L / 2 + 0.01, L / 2 - 0.01)
     v.A("mono_white", 0.01).extrude_x([(-h, zw1), (h, zw1), (h, zt), (-h, zt)], -L / 2, L / 2)
     v.A("roof", 0.015).extrude_x(upper_profile(W, zt - 0.05, zt + 0.03, zr, inset=0.06), -L / 2 + 0.02, L / 2 - 0.02)
     bays = [('D', 1.3)] + [('W', 1.05)] * 3 + [('D', 1.3)] + [('W', 1.05)] * 3 + [('D', 1.3)]
-    bays = bays[:6]
     tot, doors = window_bays(v, bays, W, zs, zw1, "mono_white", door_key="mono_blue", seed=seed, curtain_p=0.15, door_drop=0.0)
     interior(v, -tot / 2 + 0.1, tot / 2 - 0.1, W, zs, zw1, zt, pitch=1.05, seed=seed, person_p=0.3)
     for e in (-1, 1):
