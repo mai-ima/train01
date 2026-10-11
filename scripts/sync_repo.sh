@@ -8,6 +8,7 @@ mkdir -p src scripts docs data assets/textures assets/pbr_textures assets/candid
 cp $S/*.py src/
 cp $S/*.sh scripts/; mv scripts/sync_repo.sh scripts/sync_repo.sh 2>/dev/null
 cp $S/audit_rubric.md docs/
+cp $S/README.md $R/README.md
 cp $S/network.json $S/nodes.json $S/sky_nodes.json data/ 2>/dev/null
 cp -r $S/net ./net; rm -rf net/__pycache__
 python3 - <<'P'

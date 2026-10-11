@@ -5,7 +5,7 @@ import numpy as np
 from common import *
 import lib, trackkit, props
 from props import G
-import kit, kit2, kit3, kit5
+import kit, kit2, kit3, kit5, kit7
 from kit2 import centerline, offs, LH, DESIGN
 
 NET = kit.NET
@@ -355,7 +355,9 @@ def build_links(only=None, verbose=True):
 
 
 EDGES = []
-SZ = {"K03": 7.5}          # 駅の線路の高さ(高架駅)
+SZ = {"K03": 7.5}
+DEPTH = 7.2                 # 地下駅・地下区間のレール面の深さ(m)
+MONO_Z0, MONO_Z1 = 8.2, 9.0   # 大湊のモノレール桁高 → 湾岸公園          # 駅の線路の高さ(高架駅)
 
 
 def struct_plan(ln, a, b, L):
@@ -419,14 +421,31 @@ def struct_plan(ln, a, b, L):
     elif key == ("SH06", "SH07"):
         prof += [(fr(0.1), fr(0.9), 1.8, 40.0)]
         items += [("embank", dict(s0=fr(0.1), s1=fr(0.9), h=1.8))]
-    elif ln == "KM" or key in (("M01", "K02"),):
-        items += [("tunnel", dict(s0=fr(0.1), s1=fr(0.9)))]
+    elif key == ("M01", "T02"):
+        prof = kit7.ramp_fn([(0, 0), (90, 0), (90 + 7.2 / 0.027, -DEPTH), (L + 1, -DEPTH)], ease=16)
+        items += [("subway", dict(s0=60.0, s1=L))]
+    elif key == ("T02", "T03"):
+        prof = kit7.ramp_fn([(0, -DEPTH), (L, -DEPTH)], ease=4)
+        items += [("subway", dict(s0=0.0, s1=L))]
+    elif key == ("T03", "T04"):
+        prof = kit7.ramp_fn([(0, -DEPTH), (8, -DEPTH), (L - 6, 0.0), (L + 1, 0.0)], ease=10)
+        items += [("subway", dict(s0=0.0, s1=L))]
+    elif key == ("M01", "K02"):
+        prof = kit7.ramp_fn([(0, 0), (90, 0), (90 + 7.2 / 0.027, -DEPTH), (L + 1, -DEPTH)], ease=16)
+        items += [("subway", dict(s0=60.0, s1=L))]
     elif key == ("K02", "K03"):
-        items += [("tunnel", dict(s0=fr(0.05), s1=fr(0.3)))]
-        prof += [(fr(0.35), L + 1.0, SZ["K03"], (fr(0.6), 0.001))]
+        zk = SZ["K03"]
+        prof = kit7.ramp_fn([(0, -DEPTH), (14, -DEPTH), (L - 14, zk), (L + 1, zk)], ease=14)
+        items += [("subway", dict(s0=0.0, s1=fr(0.5))), ("viaduct", dict(s0=fr(0.5), s1=L, width=7.6))]
     elif key == ("K03", "M03"):
-        prof += [(-1.0, fr(0.28), SZ["K03"], (0.001, fr(0.28)))]
-        items += [("tunnel", dict(s0=fr(0.5), s1=fr(0.5) + 0.01))] if False else []
+        zk = SZ["K03"]
+        prof = kit7.ramp_fn([(-1, zk), (0.10 * L, zk), (0.29 * L, 0.0), (L + 1, 0.0)], ease=12)
+        items += [("viaduct", dict(s0=0.0, s1=0.27 * L, width=7.6))]
+    elif key == ("M19", "TR02"):
+        items += [("street", dict(s0=0.0, s1=L))]
+    elif key == ("M19", "B02"):
+        prof = kit7.ramp_fn([(0, MONO_Z0), (L, MONO_Z1)], ease=20)
+        items += [("mono", dict(s0=0.0, s1=L))]
     if a in SZ and key != ("K03", "M03"):
         pass
     return prof, items
@@ -459,6 +478,12 @@ def run_items(P, items, zfun, nm, shift_vec=None):
             kit5.trestle(P, name=n, zfun=zfun, **kw)
         elif kind == "sea":
             kit5.seawall(P, name=n, **kw)
+        elif kind == "subway":
+            kit7.subway(P, name=n, zfun=zfun, **kw)
+        elif kind == "street":
+            kit7.street(P, name=n, zfun=zfun, **kw)
+        elif kind == "mono":
+            kit7.mono_link(P, name=n, zfun=zfun, **kw)
 
 
 def _power(line, a, b):
@@ -479,8 +504,8 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None):
     tech = TECH[ln]
     Pr, s_ = trackkit.resample(np.asarray(P, float), 1.0)
     L_ = float(s_[-1])
-    prof, items = struct_plan(ln, a, b, L_) if not junction and ka == 0 else ([], [])
-    zf = kit5.make_zfun(prof) if prof else None
+    prof, items = struct_plan(ln, a, b, L_) if ((not junction and ka == 0) or ln in ("KM", "KE", "TR", "BM")) else ([], [])
+    zf = (prof if callable(prof) else kit5.make_zfun(prof)) if (callable(prof) or prof) else None
     if SZ.get(b) and not junction and ka == 0 and (a, b) != ("K02", "K03"):
         pass
     if junction and tech == "rail" and len(Pr) > 80:
@@ -493,6 +518,10 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None):
         i0 = max(12, min(i0, len(Pr) - 20))
         trackkit.build_track(nm + "_a", Pr[:i0 + 1], wooden=True, ballast=False, fittings=True, cam=None, zfun=zf)
         trackkit.build_track(nm, Pr[i0:], wooden=True, ballast=True, fittings=True, cam=None, zfun=zf)
+    elif tech == "mono":
+        pass       # 桁は kit7.mono_link(struct_plan の "mono")が作る
+    elif tech == "tram":
+        trackkit.build_track(nm, P, wooden=False, ballast=False, fittings=False, cam=None, zfun=zf)
     else:
         trackkit.build_track(nm, P, wooden=True, ballast=(tech == "rail"), fittings=(tech == "rail"), cam=None, zfun=zf)
     if items:
@@ -504,7 +533,7 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None):
         except Exception as e_:
             print("turnout fail", nm, e_)
     pw = _power(ln, a, b)
-    if pw and tech == "rail":
+    if pw and tech == "rail" and not any(k_ == "subway" for k_, _ in items):
         try:
             kit5.catenary(Pr, 20.0, L_ - 20.0, name=nm + "_cat", zfun=zf, side=(1 if ka == 0 else -1), ac=("交流" in pw))
         except Exception as e_:
@@ -517,6 +546,8 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None):
         t, n = trackkit.frames(Q)
         for si in np.arange(30.0, s[-1] - 30.0, 55.0):
             i = int(si)
+            if zf is not None and (float(zf(si)) < -0.3 or float(zf(si)) > 1.5):
+                continue
             q = Q[i] + n[i] * 3.6
             props.pole(poles, float(q[0]), float(q[1]), h=8.0, arms=((7.4, 0.9, 3),), axis='y', old=True)
 
@@ -553,7 +584,10 @@ def export_graph(path="/home/claude/station/net/track_graph.json"):
     for sid in SB:
         for key, W in own_polylines(sid, nlast=64).items():
             Q, s = dens(W)
-            edges.append(dict(id=f"ST_{sid}_{key[2]}", line=SB[sid]["lines"][0], kind="station", station=sid, track=key[2], length=round(float(s[-1]), 1),
+            _ln = SB[sid]["lines"][0]
+            if sid == "M19":   # 大湊: 4-7=市電(TR) 8-9=モノレール(BM) は別技術の網
+                _ln = "TR" if 4 <= key[2] <= 7 else ("BM" if key[2] >= 8 else _ln)
+            edges.append(dict(id=f"ST_{sid}_{key[2]}", line=_ln, kind="station", station=sid, track=key[2], length=round(float(s[-1]), 1),
                               pts=[[round(float(x), 2), round(float(y), 2)] for x, y in Q]))
             m = Q[len(Q) // 2]
             stops.append(dict(station=sid, track=key[2], edge=f"ST_{sid}_{key[2]}", s=round(float(s[-1] / 2), 1), pos=[round(float(m[0]), 2), round(float(m[1]), 2)]))
@@ -562,6 +596,7 @@ def export_graph(path="/home/claude/station/net/track_graph.json"):
     for e in edges:
         ends.append((e["id"], "start", e["pts"][0]))
         ends.append((e["id"], "end", e["pts"][-1]))
+    EL = {e["id"]: e for e in edges}
     nodes = []
     used = [False] * len(ends)
     for i, (eid, wh, p) in enumerate(ends):
@@ -570,7 +605,12 @@ def export_graph(path="/home/claude/station/net/track_graph.json"):
         grp = [(eid, wh)]
         used[i] = True
         for j in range(i + 1, len(ends)):
-            if not used[j] and (ends[j][2][0] - p[0]) ** 2 + (ends[j][2][1] - p[1]) ** 2 < 25.0 ** 2:
+            _ej = EL[ends[j][0]]
+            _same = _ej["kind"] == "station" and any(EL[m[0]]["kind"] == "station" and EL[m[0]]["station"] == _ej["station"] and EL[m[0]]["line"] == _ej["line"] for m in grp)
+            if TECH.get(EL[eid]["line"], "rail") != TECH.get(_ej["line"], "rail"):
+                continue
+            _th = 48.0 if _same else 25.0
+            if not used[j] and (ends[j][2][0] - p[0]) ** 2 + (ends[j][2][1] - p[1]) ** 2 < _th ** 2:
                 grp.append((ends[j][0], ends[j][1]))
                 used[j] = True
         nodes.append(dict(id=f"N{len(nodes)}", pos=p, edges=grp, switch=len(grp) > 2))

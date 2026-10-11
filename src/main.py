@@ -147,6 +147,9 @@ if args.zone:
     import kit4  # CURVE_OVERRIDE 等を先に確定(ワールド合成と同じ形状で組む)
     import kit2 as kit
     kit.build_zone(args.zone, yaw=0.0)
+    import kit7 as _k7; print('CUTS', _k7.apply_cuts())
+    import kit7 as _k7
+    print('CUTS', _k7.apply_cuts())
     import veg
     veg.build_landscape(cam_loc)
     if args.zone not in ('M12', 'M13', 'L01') and os.environ.get('ZGRASS', '1') == '1':
@@ -216,6 +219,9 @@ if args.world:
             lib.link(e, "Zones")
         elif sel == "all" or sid in sel.split(","):
             kit.build_zone(sid, origin=(float(ox), float(oy), 0.0), yaw=yw)
+    import kit7 as _k7w
+    print('CUTS', _k7w.apply_cuts())
+    import kit7 as _k7w; print('CUTS', _k7w.apply_cuts())
     kit4.export_graph()
     kit4.world_landscape(cam_loc)
     import zone_stock as _zs2
