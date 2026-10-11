@@ -3,7 +3,7 @@
 import re, numpy as np, bpy
 from mathutils import Vector
 GAP = 0.2
-SKIP = re.compile(r"^(bb_|kit_ground|far_|hills|knoll|stk_|veh|room_|sky|sun|cam)|(_via|_beam|_sig|_cat|trk|track|catenary|bridge|_over|fb_|canopy|_snow|k6_K03|k6_B02|m19_head|_quay|_pier|_poles|k2_cross)", re.I)
+SKIP = re.compile(r"^(bb_|kit_ground|far_|hills|knoll|stk_|veh|room_|sky|sun|cam)|(_via|_beam|_sig|_cat|trk|track|catenary|bridge|_over|fb_|canopy|_snow|k6_K03|k6_B02|m19_head|_quay|_pier|_poles|k2_cross|_hall|_nm|_ship|ferry|_tt|_stop|^lm$)", re.I)
 def prefix(n):
     return re.split(r"[_.]", n, 1)[0] if not n.startswith("k2_") and not n.startswith("k6_") and not n.startswith("m19_") else "_".join(re.split(r"[_.]", n)[:3])
 def run(sid):

@@ -167,6 +167,9 @@ if args.zone:
                 _top = np.random.default_rng(abs(hash(_o.name)) % 99999).uniform(0.45, 0.8, (_n, 1)).astype(np.float32)
                 _a[:, :3] = _a[:, :3] * (1 - _top) + np.array(_snow, dtype=np.float32) * _top
                 _ca.data.foreach_set("color", _a.ravel())
+    if os.environ.get('WEATHER','1')=='1':
+        import weather as _w
+        print('WEATHER', _w.apply(float(os.environ.get('WEATHER_K','0.5'))))
     import zone_stock as _zs
     _zs.set_stock(True if args.stock == "on" else (False if args.stock == "off" else set(args.stock.split(","))))
     if args.interf:

@@ -711,7 +711,7 @@ def build_design(sid):
             _of = track_offsets(d["plat"], d["ntr"])
             _ye = -4.4 + min(_of) - 3.2
             _pb = -4.4 - (4.6 + 1.7 + 4.4) / 2          # B面ホームの中央(橋脚はホーム上と線路の外側だけ)
-            volume(gb, dict(x0=xc - 4.0, x1=xc + 4.0, y0=_ye - 0.4, y1=-0.4, nfl=1, roof="flat", wall="pl_grey", ground=False, zf=5.7, skip=("E", "W"), door='S'), rng, st)
+            volume(gb, dict(x0=xc - 4.0, x1=xc + 4.0, y0=_ye - 0.4, y1=-0.4, nfl=1, roof="flat", wall="pl_grey", ground=False, zf=5.7, skip=("E", "W"), door="S"), rng, st)
             for yy in (-1.4, _pb, _ye + 0.6):
                 for xx in (xc - 3.6, xc + 3.6):
                     gb.a("concrete", bevel=0.02).box(xx - 0.3, xx + 0.3, yy - 0.3, yy + 0.3, 0.0, 5.6)
