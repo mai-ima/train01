@@ -106,6 +106,23 @@ class Acc:
         self.F.append(tuple(i + k for k in reversed(range(n))))
         self.F.append(tuple(i + n + k for k in range(n)))
 
+    def loft_x(self, sections, cap=True):
+        """Loft closed (y,z) profiles (same vertex count) at successive x: sections=[(x, [(y,z)...]), ...]."""
+        i0 = len(self.V)
+        n = len(sections[0][1])
+        for (x, prof) in sections:
+            for (y, z) in prof:
+                self.V.append((x, y, z))
+        for t in range(len(sections) - 1):
+            a, b = i0 + t * n, i0 + (t + 1) * n
+            for k in range(n):
+                k2 = (k + 1) % n
+                self.F.append((a + k, a + k2, b + k2, b + k))
+        if cap:
+            self.F.append(tuple(i0 + k for k in reversed(range(n))))
+            last = i0 + (len(sections) - 1) * n
+            self.F.append(tuple(last + k for k in range(n)))
+
     def extrude_y(self, profile, y0, y1):
         """Extrude closed (x,z) polygon along Y."""
         i = len(self.V)

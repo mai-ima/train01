@@ -69,7 +69,9 @@ def _ends(v, L, tot, W, h, zs, zw1, zt, zr, up, lo, num_img, headmark="headmark.
 
 
 def make_emu(name="emu", kind="jnr_dc", seed=11, num_img="kiha_number.png"):
-    """kind: jnr_dc / jnr_ac / ke / km(地下鉄) ."""
+    """kind: jnr_dc / jnr_sub / jnr_exp / jnr_ltd / jnr_ac / ke / km → vehtypes(形式別ビルダー)へ委譲。"""
+    import vehtypes
+    return vehtypes.make(kind, name, seed, num_img)
     extra_mats()
     v = Veh(name)
     prm = dict(

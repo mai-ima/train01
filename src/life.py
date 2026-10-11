@@ -69,13 +69,31 @@ def person(f, x, y, yaw, kind="man", z=0.0, scale=1.0, pose="stand", skirt=False
         top.cyl(P(0, s_ * 0.205, 1.38), P(k * 0.5, s_ * 0.225, 1.14), 0.052 * sc, 0.043 * sc, seg=8)
         top.sphere(P(k * 0.5, s_ * 0.225, 1.13), (0.043 * sc,) * 3, seg=6, rings=4)
         top.cyl(P(k * 0.5, s_ * 0.225, 1.13), P(k, s_ * 0.235, 0.94), 0.042 * sc, 0.034 * sc, seg=8)
-        skin.sphere(P(k, s_ * 0.235, 0.91), (0.042 * sc, 0.032 * sc, 0.05 * sc), seg=8, rings=5)
-    skin.cyl(P(0.01, 0, 1.43), P(0.01, 0, 1.52), 0.048 * sc, seg=8)
-    skin.sphere(P(0.02, 0, 1.60), (0.095 * sc, 0.085 * sc, 0.11 * sc), seg=12, rings=9)
-    skin.sphere(P(0.10, 0, 1.585), (0.02 * sc, 0.016 * sc, 0.024 * sc), seg=6, rings=4)       # nose
-    eye = f.a("eye", (0.02, 0.015, 0.012))
+        skin.sphere(P(k, s_ * 0.235, 0.90), (0.040 * sc, 0.024 * sc, 0.055 * sc), seg=8, rings=5)
+        skin.sbox(P(k + 0.012, s_ * 0.235, 0.88), P(k + 0.018, s_ * 0.235, 0.80), 0.030 * sc, 0.020 * sc)
+        skin.sphere(P(k + 0.03, s_ * 0.215, 0.89), (0.012 * sc, 0.010 * sc, 0.026 * sc), seg=5, rings=4)
+    # neck + collar (trapezius slope)
+    skin.cyl(P(0.01, 0, 1.40), P(0.015, 0, 1.53), 0.050 * sc, 0.044 * sc, seg=10)
+    top.cyl(P(0.0, 0, 1.36), P(0.005, 0, 1.43), 0.085 * sc, 0.060 * sc, seg=10)
+    f.a("collar", (0.80, 0.78, 0.72)).cyl(P(0.0, 0, 1.425), P(0.008, 0, 1.455), 0.062 * sc, 0.058 * sc, seg=10)
+    # head: cranium + cheek/jaw taper + chin + ears + brow + nose bridge
+    skin.sphere(P(0.015, 0, 1.635), (0.094 * sc, 0.082 * sc, 0.105 * sc), seg=14, rings=10)
+    skin.sphere(P(0.045, 0, 1.575), (0.072 * sc, 0.066 * sc, 0.062 * sc), seg=12, rings=8)
+    skin.sphere(P(0.075, 0, 1.535), (0.034 * sc, 0.040 * sc, 0.032 * sc), seg=8, rings=6)
+    skin.sphere(P(0.112, 0, 1.585), (0.020 * sc, 0.015 * sc, 0.026 * sc), seg=6, rings=4)
+    skin.sbox(P(0.095, 0, 1.600), P(0.122, 0, 1.578), 0.014 * sc, 0.014 * sc)
     for s_ in (-1, 1):
-        eye.sphere(P(0.098, s_ * 0.035, 1.62), (0.012 * sc,) * 3, seg=5, rings=4)
+        skin.sphere(P(0.0, s_ * 0.088, 1.600), (0.014 * sc, 0.008 * sc, 0.028 * sc), seg=6, rings=4)
+    eye = f.a("eye", (0.02, 0.015, 0.012))
+    brow = f.a("brow", (0.03, 0.025, 0.02))
+    for s_ in (-1, 1):
+        eye.sphere(P(0.100, s_ * 0.036, 1.622), (0.009 * sc, 0.011 * sc, 0.007 * sc), seg=5, rings=4)
+        brow.sbox(P(0.103, s_ * 0.022, 1.646), P(0.100, s_ * 0.058, 1.649), 0.006 * sc, 0.006 * sc)
+    f.a("lip", (0.34, 0.16, 0.13)).sbox(P(0.103, -0.016, 1.555), P(0.103, 0.016, 1.555), 0.006 * sc, 0.006 * sc)
+    hair = f.a("hair", (0.02, 0.02, 0.02), 0.0, True)
+    if o["hat"] not in ("scarf",):
+        hair.sphere(P(-0.02, 0, 1.655), (0.090 * sc, 0.086 * sc, 0.088 * sc), seg=12, rings=7)
+        hair.sphere(P(-0.045, 0, 1.600), (0.060 * sc, 0.074 * sc, 0.060 * sc), seg=10, rings=6)
     h = o["hat"]
     hc = f.a("hat_" + kind, o["hatc"], 0.01, True)
     if h == "cap":

@@ -23,14 +23,33 @@ def _kind(s):
     if "市電" in s: return ("tram", {})
     if "地下鉄" in s: return ("emu", dict(kind="km"))
     if "国都電鉄" in s: return ("emu", dict(kind="ke"))
-    if "交流" in s and "電車" in s: return ("emu", dict(kind="jnr_ac"))
-    if "電車" in s: return ("emu", dict(kind="jnr_dc"))
+    if "気動車" not in s:
+        if "交流" in s and "電車" in s: return ("emu", dict(kind="jnr_ac"))
+        if "特急" in s: return ("emu", dict(kind="jnr_ltd"))
+        if "急行" in s: return ("emu", dict(kind="jnr_exp"))
+        if "近郊" in s: return ("emu", dict(kind="jnr_sub"))
+        if "電車" in s: return ("emu", dict(kind="jnr_dc"))
     if "山麓鉄道" in s: return ("kiha", dict(lo="maroon", up="ivory"))
     if "臨港線" in s: return ("kiha", dict(lo="hr_yellow", up="hr_navy"))
     if "ハイブリッド" in s: return ("kiha", dict(lo="jorange", up="cream"))
     if "気動車" in s: return ("kiha", dict(lo="red", up="cream"))
     if "貨物" in s or "コンテナ" in s: return ("freight", {})
     return None
+
+
+def _nose2(kn, opt):
+    if kn == "emu":
+        import vehtypes
+        S = vehtypes.TYPES[opt.get("kind", "jnr_dc")]
+        return 0.0
+    return 0.0
+
+
+def _len(kn, opt):
+    if kn == "emu":
+        import vehtypes
+        return vehtypes.TYPES[opt.get("kind", "jnr_dc")]["L"]
+    return LEN.get(kn, 20.0)
 
 
 def _tpoint(sid, k, x):
@@ -72,7 +91,9 @@ def _consist(kindname, opt, n, seed):
     out = []
     if kindname == "emu":
         for i in range(n):
-            out.append(train2.make_emu(f"stk_{seed}_{i}", seed=seed + i, **opt))
+            import vehtypes
+            ends = ("cab" if i == 0 else "gang", "cab" if i == n - 1 else "gang")
+            out.append(vehtypes.make(opt.get("kind", "jnr_dc"), f"stk_{seed}_{i}", seed=seed + i, ends=ends, pant=(i == (1 if n >= 3 else 0)) or (n == 1)))
     elif kindname == "kiha":
         for i in range(n):
             out.append(train.make_kiha(f"stk_{seed}_{i}", seed=seed + i, **opt))
@@ -147,8 +168,8 @@ def _place_cfg(sid, items):
         kn, opt, k = it.get("kind", "kiha"), it.get("opt", {}), int(it.get("track", 0))
         n = int(it.get("n", 2))
         cars = _consist(kn, opt, n, seed=_h(sid, k, it.get("x", 0)) % 9000)
-        L = LEN.get(kn, 20.0)
-        pitch = L + 0.55
+        L = _len(kn, opt)
+        pitch = L + 0.55 + _nose2(kn, opt)
         x0 = float(it.get("x", 0.0)) - pitch * (len(cars) - 1) / 2
         for i, v in enumerate(cars):
             tp = _tpoint(sid, k, x0 + i * pitch)
@@ -226,8 +247,8 @@ def _place_auto(sid):
             continue
         n = 2 if ntr <= 2 or sid.startswith(("S", "Y")) else 3
         cars = _consist(kn, opt, n, seed=_h(sid, k) % 9000)
-        L = LEN.get(kn, 20.0)
-        pitch = L + 0.55
+        L = _len(kn, opt)
+        pitch = L + 0.55 + _nose2(kn, opt)
         tot = pitch * len(cars)
         x0 = cx - tot / 2 + pitch / 2 + (rng.uniform(-6, 6) if not stub else 0.0)
         flip = (rng.random() < 0.5) and not stub

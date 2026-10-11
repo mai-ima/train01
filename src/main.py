@@ -267,6 +267,14 @@ if "v2test" in parts:
     train2.make_tram("t1").place(0,12,0)
     train2.make_mono("m1").place(24,12,0)
     _tr.make_kiha("hr1",lo="hr_yellow",up="hr_navy").place(48,0,0)
+if "vtest" in parts:
+    import vehtypes
+    for _i, _t in enumerate(vehtypes.TYPES):
+        vehtypes.make(_t, "vt_" + _t, seed=3 + _i).place(0, 8.0 * _i, 0)
+    for _k, _t in enumerate(("jnr_sub", "ke")):
+        _L = vehtypes.TYPES[_t]["L"] + 0.55
+        for _j in range(3):
+            vehtypes.make(_t, f"vc_{_t}_{_j}", seed=20 + _j, ends=("cab" if _j == 0 else "gang", "cab" if _j == 2 else "gang")).place(40 + _j * _L, 8.0 * _k, 0)
 if "tst" in parts:
     import tst
     tst.build()
