@@ -1,6 +1,6 @@
 """kit2: per-station bespoke design. Curved alignments, multi-volume station buildings, canopies, terrain, road networks, road-aligned towns.
 Every object is built in a local frame and parented via (Sub)Zone empties."""
-import json, math, random, os
+import json, math, random, os, zlib
 from common import *
 import lib, props, rooms, houses, core, trackkit, veg, sig
 from props import G, face_plane
@@ -752,6 +752,25 @@ def build_design(sid):
     if plat != "none":
         for (yb_f, r0, r1) in [(0.0, xa - bx + 2, xb - bx - 2)] + ([(-7.6, xa - bx + 8, xb - bx - 8)] if plat in ("island", "island2") else []) + ([(-20.6, xa - bx + 8, xb - bx - 8)] if plat == "island2" else []) + ([(-12.4, xa - bx + 8, xb - bx - 8)] if plat == "dual" else []):
             furniture_c(P, bx, r0, r1, yb_f, st, tx, _frame)
+        # ---- 人物(H1): ホーム上の待ち客・駅員を駅ごとに配置(人数は町の密度に比例)
+        import life as _life
+        _rp = random.Random(zlib.crc32(sid.encode()) % 9999)
+        _kinds = ["man", "man2", "woman", "student", "farmer", "worker"] if dens < 0.5 else ["man", "man2", "woman", "student", "man2", "woman"]
+        _ys = [-1.35] + ([-8.6] if plat in ("island", "island2") else []) + ([-12.05] if plat == "dual" else [])
+        _x0, _x1 = (xa - bx) + 6, (xb - bx) - 6
+        for _yc in _ys:
+            _n = 2 + int(dens * 5) + (1 if _rp.random() < 0.5 else 0)
+            for _i in range(_n):
+                _xp = _rp.uniform(_x0, _x1)
+                with _frame(bx + _xp):
+                    _f = _life.Fig(f"k2ppl_{sid}_{_yc}_{_i}")
+                    _life.person(_f, 0.0, _yc + _rp.uniform(-0.35, 0.35), _rp.uniform(0, 6.28), _rp.choice(_kinds), z=Z_PLAT,
+                                 scale=_rp.choice([1.0, 1.0, 0.92, 0.82]), pose=_rp.choice(["stand", "stand", "walk"]))
+                    _f.build()
+            with _frame(bx + (_x0 + _x1) / 2 - 8):
+                _f = _life.Fig(f"k2mst_{sid}_{_yc}")
+                _life.person(_f, 0.0, _yc, 1.57, "master", z=Z_PLAT)
+                _f.build()
         for k_ in range(3):
             xk_ = (xa - bx) + ((xb - bx) - (xa - bx)) * (0.35 + 0.18 * k_)
             with _frame(bx + xk_):
