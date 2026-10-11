@@ -115,9 +115,9 @@ def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", strip
             gp.a("lamp_glow").box(x - 0.45, x + 0.45, yl - 0.05, yl + 0.05, zt - 0.08, zt - 0.02)
     gp.build()
     g.build()
-    for x in np.arange(xa + 8, xb - 6, 12.0):                 # 構内照明(ホーム上と線路上)
+    for x in np.arange(xa + 8, xb - 6, 6.0):                 # 構内照明(ホーム上と線路上)
         for yc in sorted(set([ (ys[0]+ys[-1])/2 ] + pcs)):
-            lamp_point(float(x), float(yc), zt - 0.7, watt=90.0)
+            lamp_point(float(x), float(yc), zt - 0.7, watt=150.0)
     for x in (-34, 0, 34):
         lamp_point(x, (ylo + yhi) / 2, zt - 0.7, watt=120.0)
     for x in (-24, 24):
