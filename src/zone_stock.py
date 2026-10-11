@@ -159,6 +159,25 @@ def _place_cfg(sid, items):
     return placed
 
 
+def _place_m19_special(kinds):
+    import math as _m, kit3, train2
+    L = kit3.m19_layout()
+    n = 0
+    for kn, opt in kinds:
+        if kn == "tram":
+            x, (y0, y1) = L["tr"][0][0] - 1.2, (L["tr"][0][1], L["tr"][1][1])
+            v = train2.make_tram("stk_M19_tram", seed=11)
+            v.place(x, (y0 + y1) / 2.0 + 2.0, _m.pi / 2, z=0.274)
+            n += 1
+        elif kn == "mono":
+            x, (y0, y1) = L["bm"][0][0], (L["bm"][0][1], L["bm"][1][1])
+            cars = [train2.make_mono(f"stk_M19_mono{i}", seed=21 + i) for i in range(2)]
+            for i, v in enumerate(cars):
+                v.place(x, (y0 + y1) / 2.0 + (i - 0.5) * 14.55, _m.pi / 2, z=8.2)
+                n += 1
+    return n
+
+
 def _place_auto(sid):
     st = kit.ST[sid]
     kinds = [_kind(s) for s in st["stock"]]
@@ -170,9 +189,14 @@ def _place_auto(sid):
     rng = random.Random(_h(sid) % 9999)
     zrail = SPECIAL_Z.get(sid, 0.0)
     if sid == "B02": zrail = 9.0
+    placed = 0
+    if sid == "M19":     # 大湊: 市電(TR)・モノレール(BM)は別技術の線路(local_tracks の 8,9)。折れ線の座標へ直接置く
+        placed += _place_m19_special(kinds)
+        kinds = [k for k in kinds if k[0] not in ("tram", "mono")]
+        if not kinds:
+            return placed
     cx, stub = _free_x(sid)
     ntr = len(kit4.local_tracks(sid)) if sid not in kit2.DESIGN else kit2.DESIGN[sid]["ntr"]
-    placed = 0
     pax = [k for k in kinds if k[0] != "freight"]
     frt = [k for k in kinds if k[0] == "freight"]
     jobs = []                                  # (track, (kind,opt))

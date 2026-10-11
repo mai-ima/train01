@@ -3,7 +3,7 @@ import json, math, re
 import numpy as np
 import bpy
 
-OK_PAT = re.compile(r"trk|track|ballast|rail|sleeper|tie|cat[_0-9]|_cat|catenary|buffer|bufstop|_pt|turnout|switch|stk_|veh|kiha|emu|loco|wam|tora|coach|bogie|ground|terrain|sky|sun|cam|^Plane|k6_.*_via|rails|fittings|signal|sig_|pole|mast|crossing|kikyo|sleep|roadbed|embank|ditch|bed|cut|tunnel|portal|shed|k2_snow|B02_beam", re.I)
+OK_PAT = re.compile(r"trk|track|ballast|rail|sleeper|tie|cat[_0-9]|_cat|catenary|buffer|bufstop|_pt|turnout|switch|stk_|veh|kiha|emu|loco|wam|tora|coach|bogie|ground|terrain|sky|sun|cam|^Plane|k6_.*_via|rails|fittings|signal|sig_|pole|mast|crossing|kikyo|sleep|roadbed|embank|ditch|bed|cut|tunnel|portal|shed|k2_snow|B02_beam|stop_iron|bufstop", re.I)
 LAT = 1.6
 ZMIN, ZMAX = 0.55, 4.0
 
@@ -60,7 +60,7 @@ def run(sid, path=None):
         a = a.reshape(-1, 3)
         M = np.array(ob.matrix_world)
         w = a @ M[:3, :3].T + M[:3, 3]
-        zmin = 0.3 if isplat else ZMIN
+        zmin = 0.3 if isplat else (0.9 if re.search(r'zgrass|zsusuki', ob.name) else ZMIN)   # 線路際の草は丈0.9m未満なら許容
         lat = 1.55 if isplat else LAT
         m = (w[:, 2] > zmin + zr) & (w[:, 2] < ZMAX + zr) & (w[:, 0] > lo[0]) & (w[:, 0] < hi[0]) & (w[:, 1] > lo[1]) & (w[:, 1] < hi[1])
         if not m.any():
