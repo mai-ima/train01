@@ -1,0 +1,622 @@
+{
+ "FD1": {
+  "id": "FD1",
+  "capacity": "324両",
+  "staff": 120,
+  "buildings": [
+   "検修庫",
+   "洗浄線",
+   "客車仕立線",
+   "事務所棟",
+   "乗務員区所"
+  ],
+  "ladder": {
+   "tracks": 18,
+   "kind": "coach_depot",
+   "turntable": true,
+   "shed": true
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "24時間(検修は昼夜)",
+  "power": "-"
+ },
+ "FD28": {
+  "id": "FD28",
+  "capacity": "作業用車両 数両",
+  "staff": 30,
+  "buildings": [
+   "保線区事務所",
+   "機械庫",
+   "資材置場"
+  ],
+  "ladder": {
+   "tracks": 3,
+   "kind": "track_maint",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "-"
+ },
+ "FD29": {
+  "id": "FD29",
+  "capacity": "作業用車両 数両",
+  "staff": 8,
+  "buildings": [
+   "機待線",
+   "機回し線"
+  ],
+  "ladder": {
+   "tracks": 2,
+   "kind": "engine_siding",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "-"
+ },
+ "FD30": {
+  "id": "FD30",
+  "capacity": "30両",
+  "staff": 12,
+  "buildings": [
+   "留置線",
+   "休憩所"
+  ],
+  "ladder": {
+   "tracks": 3,
+   "kind": "emu_stabling",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "電化(架線)"
+ },
+ "FD31": {
+  "id": "FD31",
+  "capacity": "貨車 約90両",
+  "staff": 45,
+  "buildings": [
+   "コンテナ荷役線",
+   "ストラドルキャリア置場",
+   "ガントリークレーン",
+   "事務所"
+  ],
+  "ladder": {
+   "tracks": 5,
+   "kind": "container_terminal",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "昼間作業",
+  "power": "-"
+ },
+ "FD32": {
+  "id": "FD32",
+  "capacity": "20両",
+  "staff": 12,
+  "buildings": [
+   "留置線",
+   "休憩所"
+  ],
+  "ladder": {
+   "tracks": 2,
+   "kind": "emu_stabling",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "電化(架線)"
+ },
+ "FD16": {
+  "id": "FD16",
+  "capacity": "160両",
+  "staff": 90,
+  "buildings": [
+   "検修庫(ピット線)",
+   "洗浄線",
+   "留置線群",
+   "事務所棟",
+   "乗務員区所"
+  ],
+  "ladder": {
+   "tracks": 16,
+   "kind": "emu_depot",
+   "turntable": false,
+   "shed": true
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "24時間(検修は昼夜)",
+  "power": "電化(架線)"
+ },
+ "FD14": {
+  "id": "FD14",
+  "capacity": "貨車 約216両",
+  "staff": 60,
+  "buildings": [
+   "荷役線",
+   "貨物上屋",
+   "貨物事務所",
+   "計量台",
+   "貨物ホーム"
+  ],
+  "ladder": {
+   "tracks": 12,
+   "kind": "freight_yard",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "昼間作業",
+  "power": "-"
+ },
+ "FD17": {
+  "id": "FD17",
+  "capacity": "貨車 約324両",
+  "staff": 150,
+  "buildings": [
+   "仕分線群",
+   "入換機溜",
+   "ハンプ/信号所",
+   "操車場事務所",
+   "検査場"
+  ],
+  "ladder": {
+   "tracks": 18,
+   "kind": "marshalling",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "昼間作業",
+  "power": "-"
+ },
+ "FD2": {
+  "id": "FD2",
+  "capacity": "60両",
+  "staff": 12,
+  "buildings": [
+   "留置線",
+   "休憩所"
+  ],
+  "ladder": {
+   "tracks": 6,
+   "kind": "emu_stabling",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "電化(架線)"
+ },
+ "FD3": {
+  "id": "FD3",
+  "capacity": "30両",
+  "staff": 12,
+  "buildings": [
+   "留置線",
+   "休憩所"
+  ],
+  "ladder": {
+   "tracks": 3,
+   "kind": "emu_stabling",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "電化(架線)"
+ },
+ "FD4": {
+  "id": "FD4",
+  "capacity": "72両",
+  "staff": 260,
+  "buildings": [
+   "扇形庫",
+   "転車台",
+   "検修庫",
+   "組立工場",
+   "給水塔",
+   "石炭台",
+   "事務所棟",
+   "乗務員区所"
+  ],
+  "ladder": {
+   "tracks": 12,
+   "kind": "works_depot",
+   "turntable": true,
+   "shed": true
+  },
+  "built3d": true,
+  "three_d": "制作済(穂波野原型・位置固定)",
+  "hours": "24時間(検修は昼夜)",
+  "power": "非電化(ディーゼル/蒸機)"
+ },
+ "FD5": {
+  "id": "FD5",
+  "capacity": "15両",
+  "staff": 80,
+  "buildings": [
+   "扇形庫",
+   "転車台",
+   "給水・給炭設備",
+   "機関庫事務所",
+   "乗務員宿泊所"
+  ],
+  "ladder": {
+   "tracks": 5,
+   "kind": "loco_depot",
+   "turntable": true,
+   "shed": true
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "24時間(検修は昼夜)",
+  "power": "非電化(ディーゼル/蒸機)"
+ },
+ "FD18": {
+  "id": "FD18",
+  "capacity": "貨車 約36両",
+  "staff": 4,
+  "buildings": [
+   "専用線",
+   "荷主設備"
+  ],
+  "ladder": {
+   "tracks": 2,
+   "kind": "siding",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "-"
+ },
+ "FD19": {
+  "id": "FD19",
+  "capacity": "貨車 約54両",
+  "staff": 4,
+  "buildings": [
+   "専用線",
+   "荷主設備"
+  ],
+  "ladder": {
+   "tracks": 3,
+   "kind": "siding",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "-"
+ },
+ "FD20": {
+  "id": "FD20",
+  "capacity": "16両",
+  "staff": 6,
+  "buildings": [
+   "留置線"
+  ],
+  "ladder": {
+   "tracks": 2,
+   "kind": "stabling",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "-"
+ },
+ "FD6": {
+  "id": "FD6",
+  "capacity": "12両",
+  "staff": 30,
+  "buildings": [
+   "検修庫",
+   "給油線(軽油)",
+   "洗浄線",
+   "事務所"
+  ],
+  "ladder": {
+   "tracks": 4,
+   "kind": "dmu_depot",
+   "turntable": false,
+   "shed": true
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "24時間(検修は昼夜)",
+  "power": "非電化(ディーゼル/蒸機)"
+ },
+ "FD21": {
+  "id": "FD21",
+  "capacity": "4両",
+  "staff": 2,
+  "buildings": [
+   "引上線"
+  ],
+  "ladder": {
+   "tracks": 1,
+   "kind": "turnback",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "-"
+ },
+ "FD15": {
+  "id": "FD15",
+  "capacity": "9両",
+  "staff": 80,
+  "buildings": [
+   "扇形庫",
+   "転車台",
+   "給水・給炭設備",
+   "機関庫事務所",
+   "乗務員宿泊所"
+  ],
+  "ladder": {
+   "tracks": 3,
+   "kind": "loco_depot",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "24時間(検修は昼夜)",
+  "power": "非電化(ディーゼル/蒸機)"
+ },
+ "FD22": {
+  "id": "FD22",
+  "capacity": "作業用車両 数両",
+  "staff": 25,
+  "buildings": [
+   "保線詰所",
+   "除雪車庫",
+   "資材置場"
+  ],
+  "ladder": {
+   "tracks": 3,
+   "kind": "maint_base",
+   "turntable": false,
+   "shed": true
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "-"
+ },
+ "FD23": {
+  "id": "FD23",
+  "capacity": "16両",
+  "staff": 6,
+  "buildings": [
+   "留置線"
+  ],
+  "ladder": {
+   "tracks": 2,
+   "kind": "stabling",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "-"
+ },
+ "FD7": {
+  "id": "FD7",
+  "capacity": "貨車 約90両",
+  "staff": 60,
+  "buildings": [
+   "荷役線",
+   "貨物上屋",
+   "貨物事務所",
+   "計量台",
+   "貨物ホーム"
+  ],
+  "ladder": {
+   "tracks": 5,
+   "kind": "freight_yard",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "昼間作業",
+  "power": "-"
+ },
+ "FD9": {
+  "id": "FD9",
+  "capacity": "60両",
+  "staff": 260,
+  "buildings": [
+   "扇形庫",
+   "転車台",
+   "検修庫",
+   "組立工場",
+   "給水塔",
+   "石炭台",
+   "事務所棟",
+   "乗務員区所"
+  ],
+  "ladder": {
+   "tracks": 10,
+   "kind": "works_depot",
+   "turntable": true,
+   "shed": true
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "24時間(検修は昼夜)",
+  "power": "非電化(ディーゼル/蒸機)"
+ },
+ "FD24": {
+  "id": "FD24",
+  "capacity": "貨車 約144両",
+  "staff": 60,
+  "buildings": [
+   "荷役線",
+   "貨物上屋",
+   "貨物事務所",
+   "計量台",
+   "貨物ホーム"
+  ],
+  "ladder": {
+   "tracks": 8,
+   "kind": "freight_yard",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "昼間作業",
+  "power": "-"
+ },
+ "FD10": {
+  "id": "FD10",
+  "capacity": "貨車 約72両",
+  "staff": 60,
+  "buildings": [
+   "荷役線",
+   "貨物上屋",
+   "貨物事務所",
+   "計量台",
+   "貨物ホーム"
+  ],
+  "ladder": {
+   "tracks": 4,
+   "kind": "freight_yard",
+   "turntable": false,
+   "shed": true
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "昼間作業",
+  "power": "-"
+ },
+ "FD25": {
+  "id": "FD25",
+  "capacity": "8両",
+  "staff": 2,
+  "buildings": [
+   "引上線"
+  ],
+  "ladder": {
+   "tracks": 2,
+   "kind": "turnback",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "-"
+ },
+ "FD8": {
+  "id": "FD8",
+  "capacity": "80両",
+  "staff": 90,
+  "buildings": [
+   "検修庫(ピット線)",
+   "洗浄線",
+   "留置線群",
+   "事務所棟",
+   "乗務員区所"
+  ],
+  "ladder": {
+   "tracks": 8,
+   "kind": "emu_depot",
+   "turntable": false,
+   "shed": true
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "24時間(検修は昼夜)",
+  "power": "電化(架線)"
+ },
+ "FD11": {
+  "id": "FD11",
+  "capacity": "60両",
+  "staff": 90,
+  "buildings": [
+   "検修庫(ピット線)",
+   "洗浄線",
+   "留置線群",
+   "事務所棟",
+   "乗務員区所"
+  ],
+  "ladder": {
+   "tracks": 6,
+   "kind": "emu_depot",
+   "turntable": false,
+   "shed": true
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "24時間(検修は昼夜)",
+  "power": "電化(架線)"
+ },
+ "FD12": {
+  "id": "FD12",
+  "capacity": "4両",
+  "staff": 20,
+  "buildings": [
+   "路面電車庫",
+   "検修場",
+   "事務所"
+  ],
+  "ladder": {
+   "tracks": 4,
+   "kind": "tram_depot",
+   "turntable": false,
+   "shed": true
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "電化(架線)"
+ },
+ "FD13": {
+  "id": "FD13",
+  "capacity": "16両",
+  "staff": 25,
+  "buildings": [
+   "モノレール車庫",
+   "検修庫",
+   "洗浄設備",
+   "事務所"
+  ],
+  "ladder": {
+   "tracks": 4,
+   "kind": "mono_depot",
+   "turntable": false,
+   "shed": false
+  },
+  "built3d": false,
+  "three_d": "計画のみ(3D未制作。共通ビルダーで順次=I8)",
+  "hours": "夜間留置",
+  "power": "-"
+ }
+}

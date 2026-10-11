@@ -18,9 +18,11 @@ net["saudit"]={
  "river":["未監査",""],"embank":["未監査",""],"cut":["未監査",""],"over":["未監査","向き検査(C6)待ち"],"trestle":["未監査",""],"sea":["未監査",""]}
 net["pg"]=json.load(open("plan_geo.json"))
 net["plan"]=json.load(open("station_plan.json"))
+net["struct"]=json.load(open("structures.json"))
+net["sspec"]=json.load(open("station_spec.json"))
+net["fspec"]=json.load(open("facility_spec.json"))
 net["meta"]={"edges":len(g["edges"]),"nodes":len(g["nodes"]),"stops":len(g["stops"])}
-html=open("map_tmpl.html").read().replace("__NET__",json.dumps(net,ensure_ascii=False))
+html=open("map_tmpl_v245.html").read().replace("__NET__",json.dumps(net,ensure_ascii=False))
 open("routemap.html","w").write(html)
-open("routemap_v22.html","w").write(open("routemap_v22.html").read()) if False else None
-open("routemap_v24.html","w").write(html.replace("<title>穂波本線 路線図</title>","<title>穂波本線 路線図 v2.4</title>"))
+open("routemap_v245.html","w").write(html)
 print(len(html))

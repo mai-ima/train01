@@ -32,3 +32,12 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 ## 進捗(2026-10-12 00:50)
 - Z-A3〜A6 実装(坑口/換気塔/復旧舗装、TR02/M19街路化、B02/M19モノレール走行面・T字橋脚、K03高架下店舗・駅舎内改札)。2回目監査は 0/6 不合格 → Z-A7(素材刷新)→Z-A8(意匠差別化)→Z-A9(3回目監査)。
 - 次の一手: lib.py に mat_formwork(型枠目地コンクリート)/mat_tile/mat_masonry/mat_asphalt_marked/mat_slope_soil を追加し、kit7/kit6/kit8/kit3 の k5_conc・concrete・plaster 使用箇所を置換。
+## 割り込み(2026-10-12 00:41) 【S-R6】路線図v2.4.5 を最優先で実施中
+- 中断した作業の再開めど: out/za7_* (TR02/M19/K03/B02 実写素材レンダ)を確認 → Z-A9(3回目監査, サブエージェント) → B6 …
+- 中断: za7レンダチェーン(/tmp/claude-0/chain_za.sh)を停止。再開は同スクリプトを再実行。
+## 進捗(2026-10-12 00:55) 【S-CO2】圧縮手順を再強化(ユーザー再指示 00:49)
+- recovery_snapshot.sh 追加(一括回復)、RECOVERY.md に step0・圧縮前チェックを追加。
+- 実行中: 背景モニタ(za7_done.txt待ち)が2本あるが za7 チェーンは停止中(S-R6中は未再開)。S-R6完了後に /tmp/claude-0/chain_za.sh を再実行。
+- (00:58) 圧縮手順(旧+強化)を実行して回復確認済み。現在: S-R6 v2.4.5 実装中。net/v245/ に profile.js, xsec.js 作成済み。次: registry.js(構造物タブ・駅/施設仕様・監査表)→ patch_v245.py で map_tmpl_v245.html へ結合 → mkmap.py 更新 → Playwright検証 → Artifact公開。
+## (01:10) 【S-R6】v2.4.5 公開済み: https://claude.ai/artifact/Ae51R2sD6GyV81wgfMWG5A (v2.4は残置)。ソース: net/map_tmpl_v245.html, net/v245/*, net/patch_v245.py, mkmap.py(routemap_v245.html生成)。
+- 次: 元の作業に戻る → /tmp/claude-0/chain_za.sh を再実行(za7レンダ) → 確認 → Z-A9(3回目監査)。背景モニタ2本(za7_done.txt待ち)は同チェーン用。

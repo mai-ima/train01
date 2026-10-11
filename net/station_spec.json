@@ -1,0 +1,2128 @@
+{
+ "M01": {
+  "platform": {
+   "count": 10,
+   "form": "頭端式",
+   "length_m": 300,
+   "cars": 15,
+   "height_mm": 1100,
+   "widths_m": [
+    4.8,
+    4.8,
+    4.8,
+    4.8,
+    4.8,
+    4.8,
+    4.8,
+    4.8,
+    4.8,
+    4.8
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(大規模・各社独立改札)",
+   "windows": 24,
+   "gates": 18,
+   "machines": 20,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動(CTC)",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "直流1500V",
+  "threed": {
+   "shape": "専用設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 19,
+   "stock": "未",
+   "audit": "未監査(第1段階)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD1"
+  ],
+  "structure": "地上"
+ },
+ "M02": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 7,
+   "gates": 4,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所",
+   "駐輪場"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD16"
+  ],
+  "structure": "地上"
+ },
+ "F01": {
+  "platform": {
+   "count": 0,
+   "form": "なし(貨物)",
+   "length_m": 80,
+   "cars": 4,
+   "height_mm": 920,
+   "widths_m": [],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札)",
+   "windows": 2,
+   "gates": 2,
+   "machines": 2,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD14"
+  ],
+  "structure": "地上"
+ },
+ "M03": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    2.7
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 8,
+   "gates": 5,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD28"
+  ],
+  "structure": "高架"
+ },
+ "M04": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    2.7
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 7,
+   "gates": 4,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所",
+   "駐輪場"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD17",
+   "FD2"
+  ],
+  "structure": "地上"
+ },
+ "M05": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    2.7
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 8,
+   "gates": 5,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所",
+   "駐輪場"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "直流1500V",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD3"
+  ],
+  "structure": "地上"
+ },
+ "M06": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 200,
+   "cars": 10,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    2.7
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 8,
+   "gates": 5,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所",
+   "観光案内所",
+   "足湯"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "原型(穂波野)",
+   "interior": "原型(駅舎・待合・事務室・改札を制作済)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "再監査待ち",
+   "state": "render"
+  },
+  "facilities": [
+   "FD4"
+  ],
+  "structure": "地上"
+ },
+ "M07": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 7,
+   "gates": 4,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "CTC・自動閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "M08": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 8,
+   "gates": 5,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "タブレット閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD29",
+   "FD5",
+   "FD18"
+  ],
+  "structure": "地上"
+ },
+ "M09": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 120,
+   "cars": 6,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "待合のみ",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札)",
+   "windows": 2,
+   "gates": 2,
+   "machines": 2,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "タブレット閉塞",
+   "interlocking": "機械連動",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "トイレ",
+   "駐輪場"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD19"
+  ],
+  "structure": "地上"
+ },
+ "M10": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 8,
+   "gates": 5,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "タブレット閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所",
+   "観光案内所",
+   "足湯"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD6"
+  ],
+  "structure": "地上"
+ },
+ "M11": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 80,
+   "cars": 4,
+   "height_mm": 920,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札)",
+   "windows": 2,
+   "gates": 2,
+   "machines": 2,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "タブレット閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD15"
+  ],
+  "structure": "地上"
+ },
+ "M12": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 80,
+   "cars": 4,
+   "height_mm": 920,
+   "widths_m": [
+    2.7,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札)",
+   "windows": 2,
+   "gates": 2,
+   "machines": 2,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "タブレット閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "M13": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 80,
+   "cars": 4,
+   "height_mm": 920,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "待合のみ",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "簡易委託(出札のみ)",
+   "windows": 1,
+   "gates": 1,
+   "machines": 1,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "タブレット閉塞",
+   "interlocking": "機械連動",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "トイレ"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD22"
+  ],
+  "structure": "地上"
+ },
+ "L01": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 40,
+   "cars": 2,
+   "height_mm": 300,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "なし/簡易",
+   "surface": "砂利/木製"
+  },
+  "ticket": {
+   "staff": "臨時の出札所(冬季のみ)",
+   "windows": 1,
+   "gates": 0,
+   "machines": 0,
+   "note": ""
+  },
+  "signal": {
+   "block": "タブレット閉塞",
+   "interlocking": "連動なし(ポイントなし/手動)",
+   "signals": "腕木式信号機/手信号",
+   "ats": "なし"
+  },
+  "amenities": [
+   "公衆電話",
+   "水飲み場"
+  ],
+  "approach": [
+   "駅前の小路"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD23"
+  ],
+  "structure": "地上"
+ },
+ "M14": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 80,
+   "cars": 4,
+   "height_mm": 920,
+   "widths_m": [
+    2.7,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札)",
+   "windows": 2,
+   "gates": 2,
+   "machines": 2,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "タブレット閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD7"
+  ],
+  "structure": "地上"
+ },
+ "M15": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 40,
+   "cars": 2,
+   "height_mm": 760,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "なし/簡易",
+   "surface": "砂利/木製"
+  },
+  "ticket": {
+   "staff": "無人(車内精算)",
+   "windows": 0,
+   "gates": 0,
+   "machines": 0,
+   "note": ""
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "連動なし(ポイントなし/手動)",
+   "signals": "腕木式信号機/手信号",
+   "ats": "なし"
+  },
+  "amenities": [],
+  "approach": [
+   "駅前の小路"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "M16": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 120,
+   "cars": 6,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札)",
+   "windows": 2,
+   "gates": 2,
+   "machines": 2,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "M17": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 80,
+   "cars": 4,
+   "height_mm": 760,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "待合のみ",
+   "surface": "砂利/木製"
+  },
+  "ticket": {
+   "staff": "簡易委託(出札のみ)",
+   "windows": 1,
+   "gates": 1,
+   "machines": 1,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "機械連動",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "トイレ"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "M18": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 40,
+   "cars": 2,
+   "height_mm": 760,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "なし/簡易",
+   "surface": "砂利/木製"
+  },
+  "ticket": {
+   "staff": "無人(車内精算)",
+   "windows": 0,
+   "gates": 0,
+   "machines": 0,
+   "note": ""
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "連動なし(ポイントなし/手動)",
+   "signals": "腕木式信号機/手信号",
+   "ats": "なし"
+  },
+  "amenities": [],
+  "approach": [
+   "駅前の小路"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "M19": {
+  "platform": {
+   "count": 4,
+   "form": "頭端式",
+   "length_m": 200,
+   "cars": 10,
+   "height_mm": 1100,
+   "widths_m": [
+    5.6,
+    5.6,
+    5.6,
+    5.6
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 14,
+   "gates": 8,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動(CTC)",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "専用設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(Z8/Z9監査 2026-10-11: 構造種別の表現・質感・差別化が基準未満。Z10〜Z13で修正予定)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD9",
+   "FD24"
+  ],
+  "structure": "地上"
+ },
+ "R02": {
+  "platform": {
+   "count": 1,
+   "form": "頭端式",
+   "length_m": 80,
+   "cars": 4,
+   "height_mm": 920,
+   "widths_m": [
+    2.1
+   ],
+   "roof": "待合のみ",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "簡易委託(出札のみ)",
+   "windows": 1,
+   "gates": 1,
+   "machines": 1,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "機械連動",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "トイレ"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "専用設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "未監査(第1段階)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD10"
+  ],
+  "structure": "地上"
+ },
+ "TR02": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 26,
+   "cars": 2,
+   "height_mm": 300,
+   "widths_m": [
+    1.4
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "砂利/木製"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 6,
+   "gates": 4,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "機械連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場",
+   "路面電車/バス連絡(地上出入口)"
+  ],
+  "electric": "直流600V(路面電車)",
+  "threed": {
+   "shape": "専用設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(Z8/Z9監査 2026-10-11: 構造種別の表現・質感・差別化が基準未満。Z10〜Z13で修正予定)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD12"
+  ],
+  "structure": "路面"
+ },
+ "B02": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 80,
+   "cars": 4,
+   "height_mm": 1100,
+   "widths_m": [
+    1.6
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 6,
+   "gates": 4,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "機械連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "専用設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(Z8/Z9監査 2026-10-11: 構造種別の表現・質感・差別化が基準未満。Z10〜Z13で修正予定)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD13"
+  ],
+  "structure": "高架"
+ },
+ "SH02": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    2.7
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 7,
+   "gates": 4,
+   "machines": 4,
+   "note": "券売機は昭和後期の機械式。自動改札は新線(穂波空港線)のみ"
+  },
+  "signal": {
+   "block": "CTC・自動閉塞",
+   "interlocking": "電気連動(CTC)",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "未監査(第1段階)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "高架"
+ },
+ "SH03": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 120,
+   "cars": 6,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札)",
+   "windows": 2,
+   "gates": 2,
+   "machines": 2,
+   "note": "券売機は昭和後期の機械式。自動改札は新線(穂波空港線)のみ"
+  },
+  "signal": {
+   "block": "CTC・自動閉塞",
+   "interlocking": "電気連動(CTC)",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "男女別トイレ",
+   "手荷物扱所",
+   "駐輪場"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "未監査(第1段階)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "SH04": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    2.7
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 8,
+   "gates": 5,
+   "machines": 4,
+   "note": "券売機は昭和後期の機械式。自動改札は新線(穂波空港線)のみ"
+  },
+  "signal": {
+   "block": "CTC・自動閉塞",
+   "interlocking": "電気連動(CTC)",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "交流20kV 50Hz(最新方式)",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "未監査(第1段階)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD32"
+  ],
+  "structure": "高架"
+ },
+ "SH05": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 7,
+   "gates": 4,
+   "machines": 4,
+   "note": "券売機は昭和後期の機械式。自動改札は新線(穂波空港線)のみ"
+  },
+  "signal": {
+   "block": "CTC・自動閉塞",
+   "interlocking": "電気連動(CTC)",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所",
+   "駐輪場"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "未監査(第1段階)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "SH06": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 9,
+   "gates": 5,
+   "machines": 4,
+   "note": "券売機は昭和後期の機械式。自動改札は新線(穂波空港線)のみ"
+  },
+  "signal": {
+   "block": "CTC・自動閉塞",
+   "interlocking": "電気連動(CTC)",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "未監査(第1段階)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD31"
+  ],
+  "structure": "地上"
+ },
+ "SH07": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    2.7
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 7,
+   "gates": 4,
+   "machines": 4,
+   "note": "券売機は昭和後期の機械式。自動改札は新線(穂波空港線)のみ"
+  },
+  "signal": {
+   "block": "CTC・自動閉塞",
+   "interlocking": "電気連動(CTC)",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "未監査(第1段階)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "SH08": {
+  "platform": {
+   "count": 3,
+   "form": "島式/相対式",
+   "length_m": 200,
+   "cars": 10,
+   "height_mm": 1100,
+   "widths_m": [
+    2.7,
+    5.0,
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 8,
+   "gates": 5,
+   "machines": 4,
+   "note": "券売機は昭和後期の機械式。自動改札は新線(穂波空港線)のみ"
+  },
+  "signal": {
+   "block": "CTC・自動閉塞",
+   "interlocking": "電気連動(CTC)",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "交流20kV 50Hz(最新方式)",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "未監査(第1段階)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD30"
+  ],
+  "structure": "地上"
+ },
+ "Y02": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 40,
+   "cars": 2,
+   "height_mm": 760,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "なし/簡易",
+   "surface": "砂利/木製"
+  },
+  "ticket": {
+   "staff": "無人(車内精算)",
+   "windows": 0,
+   "gates": 0,
+   "machines": 0,
+   "note": ""
+  },
+  "signal": {
+   "block": "スタフ閉塞",
+   "interlocking": "連動なし(ポイントなし/手動)",
+   "signals": "腕木式信号機/手信号",
+   "ats": "なし"
+  },
+  "amenities": [],
+  "approach": [
+   "駅前の小路"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "Y03": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 40,
+   "cars": 2,
+   "height_mm": 760,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "なし/簡易",
+   "surface": "砂利/木製"
+  },
+  "ticket": {
+   "staff": "無人(車内精算)",
+   "windows": 0,
+   "gates": 0,
+   "machines": 0,
+   "note": ""
+  },
+  "signal": {
+   "block": "スタフ閉塞",
+   "interlocking": "連動なし(ポイントなし/手動)",
+   "signals": "腕木式信号機/手信号",
+   "ats": "なし"
+  },
+  "amenities": [],
+  "approach": [
+   "駅前の小路"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "Y04": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 40,
+   "cars": 2,
+   "height_mm": 760,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "なし/簡易",
+   "surface": "砂利/木製"
+  },
+  "ticket": {
+   "staff": "無人(車内精算)",
+   "windows": 0,
+   "gates": 0,
+   "machines": 0,
+   "note": ""
+  },
+  "signal": {
+   "block": "スタフ閉塞",
+   "interlocking": "連動なし(ポイントなし/手動)",
+   "signals": "腕木式信号機/手信号",
+   "ats": "なし"
+  },
+  "amenities": [],
+  "approach": [
+   "駅前の小路"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD21"
+  ],
+  "structure": "地上"
+ },
+ "K02": {
+  "platform": {
+   "count": 2,
+   "form": "島式/相対式",
+   "length_m": 120,
+   "cars": 6,
+   "height_mm": 1100,
+   "widths_m": [
+    1.9,
+    1.9
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 8,
+   "gates": 5,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所",
+   "券売機コーナー",
+   "案内所",
+   "地下街接続(一部)"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場",
+   "路面電車/バス連絡(地上出入口)"
+  ],
+  "electric": "直流750V(第三軌条/架線)",
+  "threed": {
+   "shape": "専用設計",
+   "interior": "地下駅(改札階+ホーム階を制作済)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(Z8/Z9監査 2026-10-11: 構造種別の表現・質感・差別化が基準未満。Z10〜Z13で修正予定)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地下"
+ },
+ "K03": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 7,
+   "gates": 4,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "電気連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "専用設計",
+   "interior": "高架駅(コンコースに改札・券売機・出札窓口・売店、高架下店舗を制作済)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(Z8/Z9監査 2026-10-11: 構造種別の表現・質感・差別化が基準未満。Z10〜Z13で修正予定)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD11"
+  ],
+  "structure": "高架"
+ },
+ "T02": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 120,
+   "cars": 6,
+   "height_mm": 1100,
+   "widths_m": [
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 6,
+   "gates": 4,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "機械連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所",
+   "券売機コーナー",
+   "案内所",
+   "地下街接続(一部)"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場",
+   "路面電車/バス連絡(地上出入口)"
+  ],
+  "electric": "直流750V(第三軌条/架線)",
+  "threed": {
+   "shape": "専用設計",
+   "interior": "地下駅(改札階+ホーム階。出札窓口・改札・券売機・事務室を制作済)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(Z8/Z9監査 2026-10-11: 構造種別の表現・質感・差別化が基準未満。Z10〜Z13で修正予定)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD25"
+  ],
+  "structure": "地下"
+ },
+ "T03": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 120,
+   "cars": 6,
+   "height_mm": 1100,
+   "widths_m": [
+    5.0
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 6,
+   "gates": 4,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "機械連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所",
+   "券売機コーナー",
+   "案内所",
+   "地下街接続(一部)"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場",
+   "路面電車/バス連絡(地上出入口)"
+  ],
+  "electric": "直流750V(第三軌条/架線)",
+  "threed": {
+   "shape": "専用設計",
+   "interior": "地下駅(改札階+ホーム階を制作済)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(Z8/Z9監査 2026-10-11: 構造種別の表現・質感・差別化が基準未満。Z10〜Z13で修正予定)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地下"
+ },
+ "T04": {
+  "platform": {
+   "count": 2,
+   "form": "頭端式",
+   "length_m": 160,
+   "cars": 8,
+   "height_mm": 1100,
+   "widths_m": [
+    2.1,
+    2.1
+   ],
+   "roof": "あり(鉄骨・波板)",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "有人(出札・改札・手荷物)",
+   "windows": 6,
+   "gates": 4,
+   "machines": 4,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "自動閉塞",
+   "interlocking": "機械連動",
+   "signals": "色灯式信号機",
+   "ats": "ATS-S(設定)"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "売店(キオスク)",
+   "男女別トイレ",
+   "手荷物扱所"
+  ],
+  "approach": [
+   "バス乗場",
+   "タクシー乗場"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "専用設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "未監査(第1段階)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD8"
+  ],
+  "structure": "地上"
+ },
+ "S02": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 40,
+   "cars": 2,
+   "height_mm": 760,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "なし/簡易",
+   "surface": "砂利/木製"
+  },
+  "ticket": {
+   "staff": "無人(車内精算)",
+   "windows": 0,
+   "gates": 0,
+   "machines": 0,
+   "note": ""
+  },
+  "signal": {
+   "block": "スタフ閉塞",
+   "interlocking": "連動なし(ポイントなし/手動)",
+   "signals": "腕木式信号機/手信号",
+   "ats": "なし"
+  },
+  "amenities": [
+   "駐輪場"
+  ],
+  "approach": [
+   "駅前の小路"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "S03": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 40,
+   "cars": 2,
+   "height_mm": 760,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "なし/簡易",
+   "surface": "砂利/木製"
+  },
+  "ticket": {
+   "staff": "無人(車内精算)",
+   "windows": 0,
+   "gates": 0,
+   "machines": 0,
+   "note": ""
+  },
+  "signal": {
+   "block": "スタフ閉塞",
+   "interlocking": "連動なし(ポイントなし/手動)",
+   "signals": "腕木式信号機/手信号",
+   "ats": "なし"
+  },
+  "amenities": [
+   "駐輪場"
+  ],
+  "approach": [
+   "駅前の小路"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 19,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [],
+  "structure": "地上"
+ },
+ "S04": {
+  "platform": {
+   "count": 1,
+   "form": "島式/相対式",
+   "length_m": 80,
+   "cars": 4,
+   "height_mm": 920,
+   "widths_m": [
+    2.7
+   ],
+   "roof": "待合のみ",
+   "surface": "アスファルト舗装"
+  },
+  "ticket": {
+   "staff": "簡易委託(出札のみ)",
+   "windows": 1,
+   "gates": 1,
+   "machines": 1,
+   "note": "改札は鋏による手検札"
+  },
+  "signal": {
+   "block": "スタフ閉塞",
+   "interlocking": "機械連動",
+   "signals": "色灯式信号機",
+   "ats": "なし"
+  },
+  "amenities": [
+   "待合室",
+   "公衆電話",
+   "水飲み場",
+   "トイレ"
+  ],
+  "approach": [
+   "駅前広場(小)"
+  ],
+  "electric": "非電化",
+  "threed": {
+   "shape": "型別設計",
+   "interior": "駅舎の内部あり(家具・待合・事務室。改札内部は未作り込み=B6で順次)",
+   "images": 18,
+   "stock": "あり",
+   "audit": "不合格(要改良)",
+   "state": "zone"
+  },
+  "facilities": [
+   "FD20"
+  ],
+  "structure": "地上"
+ }
+}

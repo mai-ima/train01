@@ -1,0 +1,642 @@
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>穂波本線 路線図 v2.4.5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* layout: 駅名標の世界観(深緑+琥珀)。左=地図(概念図/実線路図の切替)、右=駅の詳細(追従)、下=タブ(制作状況/会社/直通と系統/縦断面と区間/駅一覧) */
+:root{--bg:#0e1f19;--panel:#15291f;--panel2:#10241b;--ink:#ecf2ec;--dim:#9db3a6;--line:rgba(236,242,236,.18);--accent:#f2c14e;--ok:#3fcf8e;--warn:#e5a53b;--ng:#e0635a;--info:#4aa3df;
+--jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--jp);margin:0;padding-inline:max(16px,env(safe-area-inset-left));padding-block:20px 48px}
+.wrap{max-width:1360px;margin:0 auto;display:grid;gap:18px}
+h1{font:700 28px/1.2 var(--jp);letter-spacing:.12em;margin:0;text-wrap:balance}
+.sub{color:var(--dim);font-size:13px;letter-spacing:.06em;margin-top:6px;line-height:1.7}
+.fig{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:12px;font:400 12px var(--mono);color:var(--dim);letter-spacing:.04em}
+.fig b{font:500 18px var(--mono);color:var(--ink);font-variant-numeric:tabular-nums;margin-right:4px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sl{color:#7fd6ae}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--line);background:transparent;color:var(--ink);font:500 13px var(--jp);cursor:pointer;border-radius:3px}
+.chip i{width:22px;height:6px;border-radius:3px;display:block}
+.chip[aria-pressed=false]{opacity:.38}
+.chip.on,.tab[aria-selected=true]{background:var(--accent);color:#0e1f19;border-color:var(--accent);font-weight:700}
+.chip:focus-visible,.row:focus-visible,.tab:focus-visible,.st:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input,select{background:var(--panel2);color:var(--ink);border:1px solid var(--line);padding:7px 10px;font:500 13px var(--jp)}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;align-items:start}
+@media(max-width:1179px){.main{grid-template-columns:minmax(0,1fr)}}
+@media(min-width:1180px){.wrap{max-width:1880px}.main{grid-template-columns:minmax(0,1fr) 360px}#map,#geo{min-width:0;height:calc(100vh - 150px);aspect-ratio:auto;min-height:560px}.side{max-height:calc(100vh - 64px)}}
+.mapbox{border:1px solid var(--line);background:var(--panel);overflow-x:auto}
+.mapbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--line)}
+.seg{display:flex}.seg .chip{border-radius:0}.seg .chip:first-child{border-radius:3px 0 0 3px}.seg .chip:last-child{border-radius:0 3px 3px 0}
+#map,#geo{display:block;min-width:0;width:100%;height:auto;aspect-ratio:1260/850;touch-action:none;user-select:none;-webkit-user-select:none}
+#map[hidden],#geo[hidden]{display:none!important}
+svg text{font-family:var(--jp);fill:var(--ink)}
+.st{cursor:pointer}
+.st:hover .dot,.st.sel .dot{stroke:var(--accent);stroke-width:4}
+.lab{font-size:15px;font-weight:700;paint-order:stroke;stroke:var(--panel);stroke-width:4px}
+.kana{font-size:10px;fill:var(--dim);paint-order:stroke;stroke:var(--panel);stroke-width:3px}
+svg.sch{display:block;width:100%;max-width:380px;height:auto;min-width:0;border-radius:8px;margin:6px 0}
+.box{border:1px solid var(--line);background:var(--panel);padding:16px 18px;min-width:0}
+.box h2{font:700 15px var(--jp);letter-spacing:.1em;margin:0 0 10px;color:var(--accent)}
+.side{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}
+@media(min-width:1440px){.main{grid-template-columns:minmax(0,1fr) 440px}}
+#detail .hd,.hd{color:var(--accent);font-size:13px;letter-spacing:.1em}
+#detail b.nm{font-size:24px;letter-spacing:.08em}
+.k{font:400 11px/1.7 var(--mono);color:var(--dim);letter-spacing:.06em;margin:6px 0 0}
+#detail p{margin:8px 0 0;line-height:1.7}
+.tag{background:#2c4a3d;color:#e6f2ec !important;display:inline-block;margin:6px 6px 0 0;padding:2px 9px;font-size:12px;color:#0e1f19;border-radius:2px;font-weight:700}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:12.5px;margin:8px 0}
+.kv dt{color:var(--dim)}.kv dd{margin:0;font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:10px}
+.tab{padding:7px 14px;border:1px solid var(--line);background:transparent;color:var(--ink);font:500 13px var(--jp);cursor:pointer;border-radius:3px}
+.panel[hidden]{display:none}
+.panel{display:grid;gap:16px;padding-top:6px}
+.th{display:grid;gap:12px}
+.th div{border-left:4px solid var(--dim);padding-left:12px}
+.th b{font-size:14px}.th small{display:block;color:var(--dim);line-height:1.65;margin-top:3px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:13px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:500 11px var(--mono);letter-spacing:.1em;color:var(--dim)}
+td.n{font-variant-numeric:tabular-nums;color:var(--dim)}
+tr.row{cursor:pointer}tr.row:hover{background:rgba(242,193,78,.09)}
+.pill{display:inline-block;padding:1px 8px;border-radius:9px;font-size:11.5px;font-weight:700;color:#0b1712}
+.cell-ok{color:var(--ok)}.cell-no{color:var(--dim)}.cell-ng{color:var(--ng)}
+.legend{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12px;color:var(--dim);padding:8px 10px;border-top:1px solid var(--line)}
+.legend i{display:inline-block;width:22px;height:6px;margin-right:6px;vertical-align:middle;border-radius:3px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media(max-width:820px){.two{grid-template-columns:1fr}}
+
+/* ===== v2.4: 端末別UI ===== */
+.wrap{grid-template-columns:minmax(0,1fr)}.wrap>*,.main>*{min-width:0}
+.panel{grid-template-columns:minmax(0,1fr)}.panel>*,.two>*{min-width:0}
+#smbody,#svclist,#prog,#drive,#log,#codetail{min-width:0;max-width:100%}
+#sx{display:none}#maphint{display:none;margin:0;padding:6px 10px}
+@media(min-width:721px) and (max-width:1179px){#map,#geo{aspect-ratio:1260/850}.fig{gap:6px 18px}}
+@media(max-width:720px){
+ body{padding-inline:max(12px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-right));padding-block:10px 40px}
+ .wrap{gap:12px}
+ h1{font-size:19px;letter-spacing:.08em}
+ .sub{font-size:11.5px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;margin-top:4px}
+ .fig{flex-wrap:nowrap;overflow-x:auto;gap:4px 14px;margin-top:6px;font-size:10.5px;white-space:nowrap;scrollbar-width:none}
+ .fig::-webkit-scrollbar{display:none}.fig b{font-size:15px}
+ #chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-inline:-12px;padding-inline:12px}
+ #chips::-webkit-scrollbar{display:none}
+ .chip{min-height:40px;white-space:nowrap;padding:6px 12px;font-size:13px}
+ .main{gap:10px}
+ .mapbox{overflow:hidden}
+ .mapbar{padding:8px;gap:8px}
+ .mapbar .seg{width:100%}.mapbar .seg .chip{flex:1;justify-content:center;padding-inline:6px;font-size:12.5px}
+ #ctl{width:100%;gap:6px}
+ #q{flex:1 1 40%;min-width:0!important;min-height:40px;font-size:16px;box-sizing:border-box;padding:6px 10px}
+ #svsel{flex:1 1 40%;min-width:0;min-height:40px;font-size:16px;padding:6px 8px}
+ #ctl .chip{min-height:40px;padding:4px 10px;font-size:13px}
+ #zin,#zout{min-width:44px;justify-content:center;font-size:18px;padding:4px 0!important}
+ #tfac,#tkana{font-size:12px!important;padding:4px 8px!important}
+ .mapbar{padding:6px}
+ #maphint{display:block}
+ #map,#geo{height:calc(100svh - 370px);min-height:300px;max-height:640px;aspect-ratio:auto}
+ .legend{font-size:11px;padding:6px 8px;gap:4px 10px}
+ .box{padding:12px}
+ #detail b.nm{font-size:21px}
+ .kv{grid-template-columns:5.2em 1fr;font-size:12.5px}
+ svg.sch{max-width:100%}
+ .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-12px;padding-inline:12px}
+ .tabs::-webkit-scrollbar{display:none}
+ .tab{min-height:42px;white-space:nowrap;padding:6px 12px}
+ .tbl{margin-inline:-12px;padding-inline:12px}
+ table{font-size:12.5px;min-width:560px}
+ td:first-child,th:first-child{position:sticky;left:0;background:var(--panel);z-index:1}
+ .lab{font-size:15px}
+ #profsvg{min-width:640px!important}
+}
+@media(max-width:1179px){
+ .side{position:fixed!important;left:0;right:0;bottom:0;top:auto;max-height:min(64svh,620px)!important;z-index:60;border-radius:14px 14px 0 0;border-bottom:0;transform:translateY(105%);transition:transform .22s ease;padding:12px 14px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -12px 32px rgba(0,0,0,.55);overflow:auto;overscroll-behavior:contain;visibility:hidden}
+ .side.open{transform:none;visibility:visible}
+ #sx{display:inline-flex;position:sticky;top:0;float:right;z-index:2;background:var(--panel2);min-height:36px;padding:4px 10px;font-size:12px}
+ #maphint{display:block}
+ .side{left:50%;right:auto;width:min(720px,100%);margin-left:min(-360px,-50%)}
+}
+@media(max-width:720px){.side{left:0!important;right:0;width:auto;margin-left:0}}
+@media(min-width:721px) and (max-width:1179px){#map,#geo{height:calc(100svh - 260px);min-height:480px;max-height:900px;aspect-ratio:auto}}
+@media(max-width:380px){h1{font-size:17px}.chip{padding:6px 10px}}
+@media(hover:none){.st:hover .dot{stroke:none}}
+/* ===== v2.4.5 ===== */
+.xsec{display:block;width:100%;max-width:520px;height:auto;border:1px solid var(--line);border-radius:6px;margin:8px 0}
+.dotk{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.pflg{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin:6px 0}.pflg i{display:inline-block;width:14px;height:8px;border-radius:2px;margin-right:6px}
+.srgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,440px);gap:16px;align-items:start}
+@media(max-width:900px){.srgrid{grid-template-columns:minmax(0,1fr)}}
+#strd{position:sticky;top:12px;border:1px solid var(--line);background:var(--panel);padding:14px 16px}
+@media(max-width:900px){#strd{position:static}}
+tr.frow.sel{outline:2px solid var(--accent);outline-offset:-2px}
+#profsvg{min-width:860px!important;width:100%}
+#profbox{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+
+</style>
+<div class="wrap">
+ <header>
+  <h1>穂波本線 路線図 <span style="font:500 13px var(--mono);color:var(--accent);letter-spacing:.06em;vertical-align:middle">v2.4.5</span></h1>
+  <div class="sub">国鉄 穂波本線 ＋ 湯の里支線・穂波空港線(正式名 穂波新都線) ／ 国都電鉄・山麓鉄道・国都地下鉄・汐見臨港鉄道・大湊市電・湾岸高速鉄道（すべて架空）。穂波野は国鉄本社の所在駅であり、国鉄発祥の地。</div>
+  <div class="fig" id="fig"></div>
+ </header>
+ <div class="chips" id="chips"></div>
+ <div class="main">
+  <div class="mapbox" id="mapbox">
+   <div class="mapbar">
+    <div class="seg" role="tablist" aria-label="地図の表示">
+     <button class="chip on" id="vS" role="tab">路線図(概念)</button><button class="chip" id="vG" role="tab">実線路図(接続・構造物)</button>
+    </div>
+    <div class="chips" id="ctl">
+     <input id="q" list="stl" placeholder="駅名で検索(例: 穂波野)" aria-label="駅名検索" style="min-width:170px"><datalist id="stl"></datalist>
+     <select id="svsel" aria-label="運行系統を強調"><option value="">運行系統を強調…</option></select>
+     <button class="chip" id="zin" aria-label="拡大">＋</button><button class="chip" id="zout" aria-label="縮小">－</button><button class="chip" id="zrst">全体</button>
+     <button class="chip" id="tfac" aria-pressed="true">車庫・ヤード</button><button class="chip" id="tkana" aria-pressed="true">よみがな</button>
+    </div>
+   </div>
+   <p class="k" id="maphint">ドラッグで移動／2本指で拡大縮小／駅をタップで詳細</p>
+   <svg id="map" viewBox="0 30 1260 850" role="img" aria-label="路線図(概念)"></svg>
+   <svg id="geo" viewBox="-2900 -2750 6900 4900" role="img" aria-label="実線路図" hidden></svg>
+   <div class="legend" id="glegend" hidden></div>
+  </div>
+  <aside class="box side" id="side"><button class="chip" id="sx" aria-label="詳細を閉じる">× 閉じる</button><div id="detail" aria-live="polite"></div></aside>
+ </div>
+ <div class="box">
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="panel" id="p-prog">
+   <div id="prog"></div>
+   <div class="tbl"><table><thead><tr><th>駅</th><th>型</th><th>形状・駅舎</th><th>画像</th><th>線路</th><th>室内</th><th>停車車両</th><th>レンダ</th><th>監査</th></tr></thead><tbody id="board"></tbody></table></div>
+   <div id="drive"></div>
+   <div id="log"></div>
+  </div>
+  <div class="panel" id="p-fl" hidden><div id="flchips" class="chips"></div><div class="tbl"><table><thead><tr><th>施設</th><th>種別</th><th>会社</th><th>所在駅</th><th>線数</th><th>状態</th><th>変更</th><th>監査</th></tr></thead><tbody id="flbody"></tbody></table></div><p class="k" id="flnote"></p></div>
+  <div class="panel" id="p-co" hidden><div id="cotabs" class="chips"></div><div id="codetail"></div></div>
+  <div class="panel" id="p-th" hidden><div class="two"><div><h2 class="hd">相互直通運転</h2><div class="th" id="th"></div></div><div><h2 class="hd">運行系統</h2><div id="svclist"></div></div></div></div>
+  <div class="panel" id="p-sm" hidden><h2 class="hd">種別と停車駅(路線別)</h2><div id="smbody"></div></div>
+  <div class="panel" id="p-prof" hidden>
+   <h2 class="hd">縦断面図(路線を選択)</h2><div class="chips" id="plchips"></div>
+   <div class="mapbox" id="profbox" style="border:0"><svg id="profsvg" viewBox="0 0 1200 460"></svg></div><div class="pflg" id="proflg"></div><p class="k" id="profnote"></p>
+   <div class="tbl"><h2 class="hd">区間表</h2><table><thead><tr><th>区間</th><th>線路</th><th>閉塞</th><th>制限速度</th><th>構造物</th><th>備考</th></tr></thead><tbody id="sectb"></tbody></table></div>
+   <div class="tbl"><h2 class="hd">線路の接続(実線路)</h2><table><thead><tr><th>区間</th><th>会社</th><th>延長</th><th>最小曲線半径</th><th>接続の形</th><th>構造物</th></tr></thead><tbody id="lnk"></tbody></table></div>
+   <h2 class="hd">構造種別の監査</h2><div class="tbl"><table><thead><tr><th>構造種別</th><th>登録数</th><th>3D</th><th>判定</th><th>所見</th></tr></thead><tbody id="saud"></tbody></table></div>
+  </div>
+  <div class="panel" id="p-sr" hidden><div class="chips" id="srk"></div><div class="chips"><label class="k" for="srl">路線</label><select id="srl"></select><span class="k" id="srn"></span></div>
+   <div class="srgrid"><div class="tbl"><table><thead><tr><th>ID</th><th>種別</th><th>名称</th><th>路線</th><th>区間</th><th>キロ程</th><th>延長</th><th>3D</th><th>監査</th></tr></thead><tbody id="srb"></tbody></table></div><div id="strd" hidden></div></div></div>
+  <div class="panel" id="p-tb" hidden><div class="tbl"><table><thead><tr><th>ID</th><th>駅名</th><th>路線</th><th>キロ程</th><th>駅の型</th><th>状態</th></tr></thead><tbody id="tb"></tbody></table></div></div>
+ </div>
+</div>
+<script>
+(function(){
+var NET=__NET__;
+var $=function(i){return document.getElementById(i)};
+var SVG='http://www.w3.org/2000/svg';
+function el(n,a,p){var e=document.createElementNS(SVG,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+var S={};NET.stations.forEach(function(s){S[s.id]=s});
+var GEO=NET.geo||{links:[],stations:{}},CK=NET.checks||{};
+/* 実線路図: 北が上になるよう y を反転(世界座標は +y=北、SVGは +y=下) */
+(function(){var f=function(P){return P.map(function(p){return [p[0],-p[1]]})};GEO.links.forEach(function(k){k.pts=f(k.pts);k.items.forEach(function(i){i.pts=f(i.pts)})});Object.keys(GEO.stations).forEach(function(i){var s=GEO.stations[i];s.wy=s.y;s.y=-s.y})})();
+var GVB0=[-2900,-2750,6900,4900];
+var VIA={"M09>M10":[[830,500]],"M14>M15":[[1010,100]],"M01>K02":[[90,410],[140,360]],"M01>T02":[[90,550],[130,590]]};
+var TYPE={newtown_overpass:'ニュータウン・橋上駅',newtown_cherry:'桜並木の島式駅',newtown_center:'ニュータウン中心駅',campus:'学園都市の駅',logistics:'流通団地・貨物併設',airport_industrial:'空港関連団地の駅',airport_terminal:'空港ターミナル直結駅',megaterminal:"超大規模ターミナル",urban_island:"都市型・島式",urban_overpass:"都市型・橋上駅",suburb_island:"郊外・島式",rural_wood:"木造駅舎",honamino:"木造駅舎・車両基地併設",junction_wood:"木造・接続駅",junction_onsen:"温泉街・分岐駅",mountain:"山岳駅",summit:"最高地点駅",freight_yard:"貨物駅",temp_halt:"臨時乗降場",port_through:"港の駅・貨物ヤード",coast_halt:"断崖の海沿い小駅",medium_port:"中規模・港町",cape_halt:"岬の無人駅",lighthouse_halt:"風除けの小駅",large_terminal:"大規模終着駅",harbor_end:"桟橋の終点",tram_stop:"電停",monorail_end:"モノレール終点",port_terminal:"港の終着駅",branch_small:"支線小駅",branch_end:"支線終着",urban_underground:"都市型・地下",urban_elevated:"都市型・高架",subway:"地下鉄駅",highland_end:"高原の終着"};
+var ST=NET.status||{};var HQ='M06';var BUILT={};var SN={plan:'計画',zone:'試作',render:'レンダ確認',audit:'監査済'};var SC={plan:'#5b6b63',zone:'#e5a53b',render:'#4aa3df',audit:'#3fcf8e'};
+Object.keys(ST).forEach(function(k){BUILT[k]=ST[k].state});
+var AUD={'合格':'#3fcf8e','不合格(要改良)':'#e0635a','再監査待ち':'#4aa3df','未監査(第1段階)':'#e5a53b','未着手':'#5b6b63'};
+var active={HM:1,SH:1,YB:1,KE:1,SR:1,KM:1,HR:1,TR:1,BM:1};
+function lineCompany(l){return NET.companies[NET.lines[l].co].name}
+function pts(l){var o=NET.order[l],P=[];for(var i=0;i<o.length;i++){var s=S[o[i]];if(i>0){var v=VIA[o[i-1]+'>'+o[i]];if(v)v.forEach(function(q){P.push(q)})}P.push(s.xy)}return P}
+function pl(P){return P.map(function(p){return p.join(',')}).join(' ')}
+var map=$('map'),geo=$('geo');var showFac=true,showKana=true,hl=null,GH=null,vb=[0,30,1260,850],view='S',gvb=GVB0.slice();
+var LABEL={SH02:[14,-2,'start'],SH03:[14,-2,'start'],SH04:[14,-2,'start'],SH05:[14,-2,'start'],SH06:[14,-2,'start'],SH07:[14,-2,'start'],SH08:[14,-2,'start'],M01:[-24,-6,'end'],M02:[0,-20,'middle'],M03:[-6,28,'start'],M04:[0,-20,'middle'],M05:[0,28,'middle'],M06:[0,-24,'middle'],M07:[0,28,'middle'],M08:[0,-20,'middle'],M09:[0,28,'middle'],
+ M10:[-14,-12,'end'],M11:[-14,-8,'end'],M12:[-16,-4,'end'],M13:[-16,5,'end'],M14:[-16,5,'end'],F01:[0,32,'middle'],L01:[-16,5,'end'],M15:[0,-28,'middle'],M16:[0,-28,'middle'],M17:[0,-26,'middle'],M18:[0,-26,'middle'],M19:[0,-44,'middle'],R02:[0,28,'middle'],TR02:[0,28,'middle'],B02:[0,28,'middle'],Y02:[0,-18,'middle'],Y03:[0,-18,'middle'],Y04:[0,-18,'middle'],
+ K02:[0,-28,'middle'],K03:[0,-28,'middle'],T02:[0,30,'middle'],T03:[0,30,'middle'],T04:[0,30,'middle'],S02:[0,-18,'middle'],S03:[0,-18,'middle'],S04:[0,-18,'middle']};
+/* ---------- 概念図 ---------- */
+function draw(){
+  map.textContent='';
+  var root=el('g',{transform:'translate(60,0)'},map);var gl=el('g',{},root),gt=el('g',{},root),gh=el('g',{},root),gs=el('g',{},root);GH=gh;
+  ['HM','SH','YB','KM','KE','SR','HR','TR','BM'].forEach(function(l){if(!active[l])return;var L=NET.lines[l];
+    el('polyline',{points:pl(pts(l)),fill:'none',stroke:L.color,'stroke-width':l==='HM'?11:8,'stroke-linejoin':'round','stroke-linecap':'round'},gl)});
+  (NET.elec||[]).forEach(function(e){if(!active[e.line])return;var o=NET.order[e.line],i=o.indexOf(e.a),j=o.indexOf(e.b);var P=o.slice(i,j+1).map(function(id){return S[id].xy});el('polyline',{points:pl(P),fill:'none',stroke:'#fff','stroke-width':3,'stroke-dasharray':'1 6','stroke-linecap':'round'},gl)});
+  var lg=el('text',{x:16,y:868,'font-size':12,style:'fill:#8fa89a'},gt);lg.textContent='白い点線 = 電化区間(国鉄 穂波本線 国都中央〜みずほ: 直流1500V ／ 穂波空港線 新都中央〜穂波空港: 交流20kV)';
+  NET.through.forEach(function(t){
+    if(!active[t.from]||!active[t.onto])return;
+    var P=[];var o=t.section;for(var i=0;i<o.length;i++){var s=S[o[i]];if(i>0){var v=VIA[o[i-1]+'>'+o[i]];if(!v){v=VIA[o[i]+'>'+o[i-1]];if(v)v=v.slice().reverse()}if(v)v.forEach(function(q){P.push(q)})}P.push(s.xy)}
+    el('polyline',{points:pl(P),fill:'none',stroke:NET.lines[t.from].color,'stroke-width':5,'stroke-dasharray':'2 9','stroke-linecap':'round'},gt);
+  });
+  NET.stations.forEach(function(s){
+    var vis=s.lines.some(function(l){return active[l]});if(!vis)return;
+    var inter=s.lines.length>1;
+    var g=el('g',{'class':'st',tabindex:0,role:'button','aria-label':s.name,'data-id':s.id},gs);
+    var big=s.type==='megaterminal'||s.type==='large_terminal';
+    if(big){el('rect',{'class':'dot',x:s.xy[0]-17,y:s.xy[1]-34,width:34,height:68,rx:10,fill:'#fff',stroke:'#0e1f19','stroke-width':3},g)}
+    else if(s.type==='freight_yard')el('rect',{'class':'dot',x:s.xy[0]-8,y:s.xy[1]-8,width:16,height:16,fill:'#d9b24a',stroke:'#0e1f19','stroke-width':3},g);
+    else if(s.type==='temp_halt'||s.id==='M15'){el('circle',{cx:s.xy[0],cy:s.xy[1],r:14,fill:'none','stroke-dasharray':'3 3',stroke:'#e5a53b','stroke-width':2},g);el('circle',{'class':'dot',cx:s.xy[0],cy:s.xy[1],r:8,fill:'#fff',stroke:'#0e1f19','stroke-width':3},g)}
+    else el('circle',{'class':'dot',cx:s.xy[0],cy:s.xy[1],r:inter?11:8,fill:s.id==='M06'?NET.lines.HM.color:'#fff',stroke:'#0e1f19','stroke-width':inter?4:3},g);
+    if(s.id==='M06')el('circle',{cx:s.xy[0],cy:s.xy[1],r:15,fill:'none',stroke:'#f2c14e','stroke-width':2.5},g);
+    var lab=LABEL[s.id]||[0,-18,'middle'];
+    var t=el('text',{'class':'lab',x:s.xy[0]+lab[0],y:s.xy[1]+lab[1],'text-anchor':lab[2]},g);t.textContent=s.name;
+    if(showKana){var k=el('text',{'class':'kana',x:s.xy[0]+lab[0],y:s.xy[1]+lab[1]+13,'text-anchor':lab[2]},g);k.textContent=s.kana}
+    g.addEventListener('click',function(){pick(s.id)});
+    g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(s.id)}});
+  });
+  (NET.fac||[]).forEach(function(f){if(!showFac)return;var s=S[f.at];if(!s||!s.lines.some(function(l){return active[l]}))return;
+    var x=s.xy[0]+f.dx,y=s.xy[1]+f.dy,c=NET.companies[f.co].color;
+    el('line',{x1:s.xy[0],y1:s.xy[1],x2:x,y2:y,stroke:c,'stroke-width':2,'stroke-dasharray':'3 3'},gt);
+    var g=el('g',{'class':'fac',tabindex:0,role:'button','aria-label':f.name,'data-fid':f.id},gs);
+    fIcon(f,x,y,c,g);
+    var tl=el('title',{},g);tl.textContent=f.name;
+    g.addEventListener('click',function(){pickFac(f)});
+  });
+  [['国鉄 穂波本線',330,572,'HM'],['湯の里支線',1040,480,'YB'],['穂波空港線(穂波新都線)',548,700,'SH'],['汐見臨港鉄道',840,255,'HR'],['大湊市電',430,255,'TR'],['湾岸高速鉄道',590,255,'BM'],['国都電鉄',62,350,'KE'],['国都地下鉄',215,660,'KM'],['山麓鉄道 山麓線',850,650,'SR']].forEach(function(x){
+    if(!active[x[3]])return;var t=el('text',{x:x[1],y:x[2],'text-anchor':'middle','font-size':12,style:'fill:'+NET.lines[x[3]].color+';font-weight:700;letter-spacing:.1em'},gs);t.textContent=x[0]});
+  applyHL();
+}
+function segPts(a,b){var best=null;Object.keys(NET.order).forEach(function(l){if(best)return;var o=NET.order[l],ia=o.indexOf(a),ib=o.indexOf(b);if(ia<0||ib<0)return;var P=[S[a].xy],st=ib>ia?1:-1;
+  for(var i=ia;i!==ib;i+=st){var f=o[i],g=o[i+st];var v=VIA[f+'>'+g];if(!v){v=VIA[g+'>'+f];if(v)v=v.slice().reverse()}if(v)v.forEach(function(q){P.push(q)});P.push(S[g].xy)}best=P});return best||[S[a].xy,S[b].xy]}
+function applyHL(){var stops=null,pass=null;if(hl){stops={};pass={};hl[4].forEach(function(i){stops[i]=1});(hl[10]||[]).forEach(function(i){pass[i]=1});var P=hl[9]||hl[4];
+  var col={寝台:'#4a3f8f',特急:'#d9433f',急行:'#e8962a',区間急行:'#f0b43c',ライナー:'#14a3a8',快速:'#c8a22b',普通:'#2f9e6b',直通:'#3b7bd9',貨物:'#8a8f94',臨時:'#c06bd0',回送:'#6b7280',試運転:'#b0b6bd'}[hl[2]]||'#fff';
+  for(var i=0;i<P.length-1;i++){var pp=pl(segPts(P[i],P[i+1]));el('polyline',{points:pp,fill:'none',stroke:'#fff','stroke-width':16,'stroke-linecap':'round','stroke-linejoin':'round',opacity:.9},GH);el('polyline',{points:pp,fill:'none',stroke:col,'stroke-width':10,'stroke-linecap':'round','stroke-linejoin':'round'},GH)}}
+  document.querySelectorAll('#map .st').forEach(function(g){var id=g.getAttribute('data-id');g.style.opacity=!stops||stops[id]?1:(pass[id]?.55:.28)})}
+/* ---------- 実線路図(世界座標) ---------- */
+var SK={tunnel:['#e5a53b','トンネル/覆土',34],shed:['#c9d6cf','スノーシェッド',30],truss:['#4aa3df','鉄橋(トラス)',30],arch:['#7fc8f0','アーチ橋',30],trestle:['#c08a4a','木橋',26],embank:['#8a6a44','築堤',26],cut:['#6f7f74','切通し',26],over:['#e0d6a8','こ線橋',22],lc:['#f2c14e','踏切',22],sea:['#2f7fc0','護岸・防波堤',22],river:['#2f7fc0','川',22]};
+function drawGeo(){
+  geo.textContent='';
+  var gb=el('g',{},geo),gl=el('g',{},geo),gi=el('g',{},geo),gs=el('g',{},geo);
+  // 地面の目安線(1km)
+  for(var x=-2000;x<=3000;x+=1000)el('line',{x1:x,y1:-2600,x2:x,y2:2100,stroke:'rgba(236,242,236,.07)','stroke-width':3},gb);
+  for(var y=2000;y>=-2000;y-=1000)el('line',{x1:-2800,y1:y,x2:3900,y2:y,stroke:'rgba(236,242,236,.07)','stroke-width':3},gb);
+  var t=el('text',{x:-2800,y:-2680,'font-size':70,style:'fill:#6f8a7c'},gb);t.textContent='格子 = 1km／単位: m／上=北';
+  var order=['HM','SH','YB','KM','KE','SR','HR','TR','BM'];
+  order.forEach(function(l){if(!active[l])return;var c=NET.lines[l].color;
+    GEO.links.filter(function(k){return k.line===l}).forEach(function(k){
+      el('polyline',{points:pl(k.pts),fill:'none',stroke:c,'stroke-width':l==='HM'?36:30,'stroke-linejoin':'round','stroke-linecap':'round',opacity:k.k>0&&l==='HM'?.55:1},gl);
+      if(k.k>0&&l==='HM')el('polyline',{points:pl(k.pts),fill:'none',stroke:'#0e1f19','stroke-width':6,'stroke-linejoin':'round'},gl);
+      if(showStruct)k.items.forEach(function(it){var sk=SK[it.kind];if(!sk)return;
+        if(it.kind==='lc'||it.kind==='over'||it.kind==='river'){var p=it.pts[0];el('circle',{cx:p[0],cy:p[1],r:42,fill:sk[0],stroke:'#0e1f19','stroke-width':12},gi)}
+        else el('polyline',{points:pl(it.pts),fill:'none',stroke:sk[0],'stroke-width':sk[2]+30,'stroke-linecap':'butt',opacity:.95},gi)})});
+  });
+  (NET.elec||[]).forEach(function(e){if(!active[e.line])return;var o=NET.order[e.line],i=o.indexOf(e.a),j=o.indexOf(e.b);var inr=function(id){var q=o.indexOf(id);return q>=i&&q<=j};GEO.links.filter(function(k){return k.line===e.line&&k.k===0&&inr(k.a)&&inr(k.b)}).forEach(function(k){el('polyline',{points:pl(k.pts),fill:'none',stroke:'#fff','stroke-width':9,'stroke-dasharray':'30 70','stroke-linecap':'round'},gi)})});
+  // 分岐点
+  GEO.links.forEach(function(k){if(k.junction&&active[k.line]){var p=k.pts[0];el('circle',{cx:p[0],cy:p[1],r:36,fill:'#fff',stroke:NET.lines[k.line].color,'stroke-width':14},gi)}});
+  var placedL=[];
+  NET.stations.forEach(function(s){
+    var gs0=GEO.stations[s.id];if(!gs0||!s.lines.some(function(l){return active[l]}))return;
+    var g=el('g',{'class':'st',tabindex:0,role:'button','aria-label':s.name,'data-id':s.id},gs);
+    var big=s.type==='megaterminal'||s.type==='large_terminal',r=big?70:(s.lines.length>1?52:40);
+    el('circle',{'class':'dot',cx:gs0.x,cy:gs0.y,r:r,fill:s.id==='M06'?NET.lines.HM.color:'#fff',stroke:'#0e1f19','stroke-width':16},g);
+    if(s.id==='M06')el('circle',{cx:gs0.x,cy:gs0.y,r:r+26,fill:'none',stroke:'#f2c14e','stroke-width':12},g);
+    var lw=74*s.name.length+90,opts=[[0,-r-26,'middle'],[0,r+82,'middle'],[r+30,-r-10,'start'],[-r-30,-r-10,'end'],[r+30,r+70,'start'],[-r-30,r+70,'end']],pick0=opts[0];
+    for(var oi=0;oi<opts.length;oi++){var o2=opts[oi],bx0=gs0.x+o2[0]-(o2[2]==='middle'?lw/2:(o2[2]==='end'?lw:0)),bx1=bx0+lw,by0=gs0.y+o2[1]-74,by1=gs0.y+o2[1]+10;
+      var hit=placedL.some(function(q){return bx0<q[1]&&bx1>q[0]&&by0<q[3]&&by1>q[2]});if(!hit){pick0=o2;placedL.push([bx0,bx1,by0,by1]);break}if(oi===opts.length-1){placedL.push([bx0,bx1,by0,by1])}}
+    var t=el('text',{x:gs0.x+pick0[0],y:gs0.y+pick0[1],'text-anchor':pick0[2],'font-size':74,'font-weight':700,style:'paint-order:stroke;stroke:#15291f;stroke-width:22px'},g);t.textContent=s.name;
+    g.addEventListener('click',function(){pick(s.id)});
+    g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(s.id)}});
+  });
+  $('glegend').innerHTML=Object.keys(SK).filter(function(k){return k!=='river'}).map(function(k){return '<span><i style="background:'+SK[k][0]+'"></i>'+SK[k][1]+'</span>'}).join('')+'<span><i style="background:#fff;border:3px solid #2f9e6b;height:10px;width:10px;border-radius:50%"></i>分岐点</span><span><i style="background:#2f7fc0"></i>川</span>';
+  document.querySelectorAll('#geo .st').forEach(function(g){g.classList.toggle('sel',g.getAttribute('data-id')===curId)});
+}
+var showStruct=true;
+function setView(v){view=v;var g=v==='G';function hv(e,h){if(h)e.setAttribute('hidden','');else e.removeAttribute('hidden')}hv($('map'),g);hv($('geo'),!g);$('glegend').hidden=!g;$('vS').classList.toggle('on',!g);$('vG').classList.toggle('on',g);
+  $('tfac').hidden=g;$('tkana').hidden=g;$('svsel').hidden=g;if(g){drawGeo();gvb=geoInit();setGVB()}else{draw();vb=fullVB();setVB()}}
+function fitBox(el,b){var r=el.getBoundingClientRect(),cw=r.width,ch=r.height;if(!cw||!ch)return b.slice();var a=cw/ch;if(b[2]/b[3]>a){var nh=b[2]/a;return[b[0],b[1]-(nh-b[3])/2,b[2],nh]}var nw=b[3]*a;return[b[0]-(nw-b[2])/2,b[1],nw,b[3]]}
+function fullVB(){return fitBox(map,[0,30,1260,850])}
+function fullG(){return fitBox(geo,GVB0)}
+function geoInit(){var r=geo.getBoundingClientRect(),g=fullG();if(!r.width)return g;var sc=MQ.matches?0.16:0.14;if(r.width/g[2]>=sc)return g;var w=Math.min(g[2],r.width/sc),h=w*(r.height/r.width),c=GEO.stations.M06||{x:0,y:0};return[c.x-w/2,c.y-h/2,w,h]}
+function setVB(){map.setAttribute('viewBox',vb.join(' '))}
+function setGVB(){geo.setAttribute('viewBox',gvb.join(' '))}
+function zoom(f,cx,cy){
+  if(view==='G'){var w=gvb[2]*f,h=gvb[3]*f;if(w>fullG()[2]*1.001){gvb=fullG();setGVB();return}if(w<800)return;cx=cx==null?gvb[0]+gvb[2]/2:cx;cy=cy==null?gvb[1]+gvb[3]/2:cy;gvb=[cx-w/2,cy-h/2,w,h];setGVB();return}
+  var w=vb[2]*f,h=vb[3]*f;if(w>fullVB()[2]*1.001){vb=fullVB();setVB();return}if(w<260)return;cx=cx==null?vb[0]+vb[2]/2:cx;cy=cy==null?vb[1]+vb[3]/2:cy;vb=[cx-w/2,cy-h/2,w,h];setVB()}
+/* ---------- 駅の詳細 ---------- */
+var curId='M06';
+function nb(id){var s=S[id],h='';s.lines.forEach(function(l){var o=NET.order[l],i=o.indexOf(id);if(i<0)return;var p=i>0?S[o[i-1]]:null,n=i<o.length-1?S[o[i+1]]:null;
+  h+='<p class="k">'+NET.lines[l].name+'：'+(p?'← <a href="#" class="sl" data-s="'+p.id+'">'+p.name+'</a>':'(起点)')+' ／ '+(n?'<a href="#" class="sl" data-s="'+n.id+'">'+n.name+'</a> →':'(終点)')+'</p>'});
+  if(s.lines.length>1)h+='<p><span class="hd">乗換</span> '+s.lines.map(function(l){return NET.companies[NET.lines[l].co].name+' '+NET.lines[l].name}).join(' ⇄ ')+'</p>';return h}
+function svcHere(id){var r=NET.svc.filter(function(v){return v[4].indexOf(id)>=0}).map(function(v){return v[1]});var q=NET.svc.filter(function(v){return (v[10]||[]).indexOf(id)>=0}).map(function(v){return v[1]});return (r.length?r.join('・'):'(停車する列車なし)')+(q.length?'<br><span class="hd">通過する列車</span> '+q.join('・'):'')}
+function jp(k,v){return (NET.jp&&NET.jp[k]&&NET.jp[k][v])||v}
+function badge(id){var k=BUILT[id]||'plan';return '<span class="tag" style="background:'+SC[k]+';color:#0b1712">'+SN[k]+'</span>'}
+function audBadge(id){var a=(ST[id]&&ST[id].audit)||'未着手';return '<span class="pill" style="background:'+(AUD[a]||'#5b6b63')+'">'+a+'</span>'}
+function planRow(id){var p=(NET.plan||{})[id];if(!p)return '';var c=p.note=='増設要'?'#e8962a':(p.note=='余裕あり'?'#7fa6c9':'#2f9e6b');return '<dt>線数・需要</dt><dd>現'+p.now+'線 ／ 需要上の目安'+p.need+'線(旅客'+p.pax+(p.frt?'+貨物'+p.frt:'')+') <span style="color:'+c+'">'+p.note+'</span><br><span class="k">停車'+p.stop+'本/h・通過'+p.pas+'本/h・折返し'+p.term+'本/h</span></dd>';}
+function schemG(s,g){var W=380,ys=g.ys,pl=g.pl,all=ys.concat([].concat.apply([],pl)),mx=Math.max.apply(null,all),mn=Math.min.apply(null,all),span=mx-mn+22,k=Math.max(0.7,Math.min(4,170/span)),top=26,H=Math.round(top+span*k+26),x0=24,x1=W-24;
+  function Y(y){return Math.round(top+(mx+13-y)*k*10)/10}
+  var sv='<svg class="sch" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="配線略図" style="background:#0b1712"><text x="10" y="16" font-size="11" style="fill:#8fa89a">配線略図(実寸比・上が駅舎側・線'+ys.length+'本)</text>';
+  var pw=Math.min(250,Math.max(60,g.L*2.4)),px=g.stub?x1-30-pw:(W-pw)/2;
+  pl.forEach(function(p){sv+='<rect x="'+px+'" y="'+Y(p[1])+'" width="'+pw+'" height="'+Math.max(2,(p[1]-p[0])*k)+'" fill="#d6c58a"/>'});
+  ys.forEach(function(y,i){sv+='<line x1="'+x0+'" y1="'+Y(y)+'" x2="'+(g.stub?x1-30:x1)+'" y2="'+Y(y)+'" stroke="#9fb6aa" stroke-width="'+Math.max(1.2,Math.min(2.6,k*0.7))+'"'+(g.und?' stroke-dasharray="7 4"':'')+'/>';if(g.stub)sv+='<rect x="'+(x1-30)+'" y="'+(Y(y)-3)+'" width="4" height="6" fill="#e5a53b"/>'});
+  if(g.stub)sv+='<rect x="'+(x1-22)+'" y="'+(Y(mx)-8)+'" width="16" height="'+(Y(mn)-Y(mx)+16)+'" fill="#3c5a4a"/><text x="'+(x1-14)+'" y="'+(Y(mn)+26)+'" font-size="10" style="fill:#8fa89a" text-anchor="middle">駅舎</text>';
+  else sv+='<rect x="'+(W/2-35)+'" y="'+(Y(mx)-14)+'" width="70" height="12" fill="#8a5b2e"/><text x="'+(W/2)+'" y="'+(Y(mx)-5)+'" font-size="10" style="fill:#f3e6cf" text-anchor="middle">駅舎</text>';
+  sv+='<rect x="12" y="'+(H-14)+'" width="10" height="8" fill="#d6c58a"/><text x="26" y="'+(H-6)+'" font-size="10" style="fill:#8fa89a">ホーム</text><line x1="72" y1="'+(H-10)+'" x2="92" y2="'+(H-10)+'" stroke="#9fb6aa" stroke-width="2.5"/><text x="96" y="'+(H-6)+'" font-size="10" style="fill:#8fa89a">線路'+(g.und?'(地下/高架)':'')+'</text></svg>';
+  return sv}
+function schem(s){if((NET.pg||{})[s.id])return schemG(s,NET.pg[s.id]);var L=s.layout||'',n=Math.min(s.tracks||1,8),W=380,H=64+n*20,x0=24,x1=W-24,ys=[];
+  var isl=/island/.test(L),dual=/dual|opposed|two_sides/.test(L),stub=/stub|terminal/.test(L)&&!/pier/.test(L),und=/underground|elevated|monorail/.test(L),fr=/freight/.test(L),tmp=/temp/.test(L);
+  var sv='<svg class="sch" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="配線略図" style="background:#0b1712">';
+  sv+='<text x="10" y="16" font-size="11" style="fill:#8fa89a">配線略図（上が駅舎側）</text>';
+  var y0=46;for(var i=0;i<n;i++){ys.push(y0+i*20)}
+  var pfs=[];
+  if(isl||stub||fr){for(var i=0;i+1<n;i+=2)pfs.push([ys[i]+4,ys[i+1]-4])}
+  else if(dual&&n>=2){pfs.push([ys[0]-16,ys[0]-4]);pfs.push([ys[n-1]+4,ys[n-1]+16])}
+  else{pfs.push([ys[0]-16,ys[0]-4])}
+  if(!pfs.length)pfs.push([ys[0]-16,ys[0]-4]);
+  pfs.forEach(function(p){sv+='<rect x="'+(tmp?120:90)+'" y="'+p[0]+'" width="'+(tmp?100:200)+'" height="'+(p[1]-p[0])+'" fill="'+(tmp?'#b89a5a':'#d6c58a')+'"/>'});
+  ys.forEach(function(y){sv+='<line x1="'+x0+'" y1="'+y+'" x2="'+(stub?x1-30:x1)+'" y2="'+y+'" stroke="#9fb6aa" stroke-width="2.5"'+(und?' stroke-dasharray="7 4"':'')+'/>';
+    if(stub)sv+='<rect x="'+(x1-30)+'" y="'+(y-5)+'" width="5" height="10" fill="#e5a53b"/>'});
+  if(stub)sv+='<rect x="'+(x1-20)+'" y="'+(ys[0]-18)+'" width="16" height="'+(ys[n-1]-ys[0]+36)+'" fill="#3c5a4a"/><text x="'+(x1-12)+'" y="'+(ys[n-1]+30)+'" font-size="10" style="fill:#8fa89a" text-anchor="middle">駅舎</text>';
+  else sv+='<rect x="130" y="'+(ys[0]-34)+'" width="70" height="14" fill="#8a5b2e"/><text x="165" y="'+(ys[0]-23)+'" font-size="10" style="fill:#f3e6cf" text-anchor="middle">駅舎</text>';
+  sv+='<rect x="12" y="'+(H-14)+'" width="10" height="8" fill="#d6c58a"/><text x="26" y="'+(H-7)+'" font-size="10" style="fill:#8fa89a">ホーム</text><line x1="70" y1="'+(H-10)+'" x2="90" y2="'+(H-10)+'" stroke="#9fb6aa" stroke-width="2.5"/><text x="94" y="'+(H-7)+'" font-size="10" style="fill:#8fa89a">線路 '+(s.tracks||1)+'本'+(und?'(高架/地下)':'')+'</text></svg>';
+  return sv}
+function linkInfo(id){var ls=GEO.links.filter(function(k){return k.a===id||k.b===id});
+  if(!ls.length)return '';
+  return '<p class="hd" style="margin-top:12px">線路の接続</p><div class="k" style="line-height:1.9">'+ls.map(function(k){var o=k.a===id?S[k.b]:S[k.a];return NET.lines[k.line].name+' ⇄ '+o.name+'　'+k.len+'m・'+(k.rmin>=5000?'ほぼ直線':'最小R'+Math.round(k.rmin)+'m')+(k.junction?'・分岐':'')+(k.items.length?'・'+k.items.map(function(i){return SK[i.kind]?SK[i.kind][1]:i.kind}).filter(function(v,i,a){return a.indexOf(v)===i}).join('/'):'')}).join('<br>')+'</div>'}
+function pick(id){curId=id;setTimeout(bindSL,0);if(window.__focus)window.__focus(id);
+  var s=S[id];document.querySelectorAll('.st').forEach(function(g){g.classList.toggle('sel',g.getAttribute('data-id')===id)});
+  var tags=s.lines.map(function(l){return'<span class="tag" style="background:'+NET.lines[l].color+';cursor:pointer" onclick="window.__co(\''+NET.lines[l].co+'\')">'+lineCompany(l)+' '+NET.lines[l].name+'</span>'}).join('');
+  var th=NET.through.filter(function(t){return t.section.indexOf(id)>=0}).map(function(t){return'<p>◆ '+t.name+'（'+t.stock+'）</p>'}).join('');
+  var ck=CK[id]||{},g0=GEO.stations[id]||{};
+  var kv='<dl class="kv"><dt>制作状況</dt><dd>'+badge(id)+' '+audBadge(id)+'</dd><dt>形状・駅舎</dt><dd>'+(ck.shape||'-')+'</dd>'+planRow(id)+'<dt>画像</dt><dd>'+(ck.images?ck.images+'枚(ポスター・看板・時刻表ほか)':'(既存)')+'</dd><dt>停車車両</dt><dd>'+(ck.trains||'未')+'</dd>'+(g0.yaw!=null?'<dt>配置</dt><dd>世界座標 ('+Math.round(g0.x)+', '+Math.round(g0.wy)+') m・向き '+g0.yaw+'°'+(g0.curve_R?'・駅構内を半径'+g0.curve_R+'mの曲線':'')+'</dd><dt>構内の線路</dt><dd>'+g0.tracks+'本(前後 '+g0.reach[0]+'m / '+g0.reach[1]+'m)</dd>':'')+'</dl>';
+  $('detail').innerHTML='<h2>駅の情報</h2><div class="k">'+s.id+' ／ '+s.kana+'</div><b class="nm">'+s.name+'</b><div>'+tags+'</div><p>'+s.note+'</p>'+kv+(ST[id]?'<p class="k">'+ST[id].note+'</p>':'')+'<p class="k">型：'+TYPE[s.type]+' ／ 路線起点から '+s.km.toFixed(1)+' km ／ 標高 '+s.elev+' m</p><p><span class="hd">停車する列車</span> '+svcHere(id)+'</p>'+nb(id)+linkInfo(id)+th+(s.layout?schem(s)+'<p class="k">配線: '+jp('layout',s.layout)+' ／ 駅舎: '+jp('building',s.building)+' ／ 線路の跨ぎ方: '+jp('cross',s.cross)+' ／ '+s.tracks+'線</p><p><span class="hd">施設・特徴</span><br>'+s.features.join('・')+'</p><p><span class="hd">町</span> '+s.town.join('・')+'</p><p><span class="hd">車両</span> '+s.stock.join('・')+'</p><p class="k">'+s.history+'</p>':'')+(id===HQ?'<p><span class="hd">★ 国鉄本社所在駅・国鉄発祥の地</span></p>':'')+'<p class="k">'+NET.companies[NET.lines[s.lines[0]].co].info+'</p>';
+}
+var FCH={coach_depot:'客',emu_depot:'電',dmu_depot:'気',loco_depot:'機',works_depot:'総',tram_depot:'路',mono_depot:'モ'};
+function fIcon(f,x,y,c,g){var k=f.kind,ink='#0e1f19';
+  if(FCH[k]){var w=k==='works_depot'?13:10;el('rect',{x:x-w,y:y-5,width:w*2,height:13,fill:c,stroke:ink,'stroke-width':1.5},g);el('polygon',{points:(x-w-2)+','+(y-5)+' '+x+','+(y-13)+' '+(x+w+2)+','+(y-5),fill:c,stroke:ink,'stroke-width':1.5},g);var t=el('text',{x:x,y:y+6,'text-anchor':'middle','font-size':9,fill:'#fff','font-weight':700},g);t.textContent=FCH[k]}
+  else if(k==='freight_yard'||k==='marshalling'){el('rect',{x:x-8,y:y-8,width:16,height:16,fill:k==='marshalling'?'#e08a2a':'#d9b24a',stroke:ink,'stroke-width':1.5},g);var t2=el('text',{x:x,y:y+4,'text-anchor':'middle','font-size':10,fill:ink},g);t2.textContent=k==='marshalling'?'操':'貨'}
+  else if(k==='siding'){el('polygon',{points:x+','+(y-8)+' '+(x+8)+','+y+' '+x+','+(y+8)+' '+(x-8)+','+y,fill:'#d9b24a',stroke:ink,'stroke-width':1.5},g);var t3=el('text',{x:x,y:y+3.5,'text-anchor':'middle','font-size':9,fill:ink},g);t3.textContent='専'}
+  else if(k==='container_terminal'){el('rect',{x:x-9,y:y-6,width:18,height:12,fill:'#c9964a',stroke:ink,'stroke-width':1.5},g);el('rect',{x:x-6,y:y-3,width:5,height:6,fill:'#7a4a22'},g);el('rect',{x:x+1,y:y-3,width:5,height:6,fill:'#3d6e8c'},g)}
+  else if(k==='track_maint'||k==='signal_post'||k==='engine_siding'){el('circle',{cx:x,cy:y,r:9,fill:k==='track_maint'?'#8fa89a':(k==='signal_post'?'#d95a4a':'#b98fd1'),stroke:ink,'stroke-width':1.5},g);var t5=el('text',{x:x,y:y+3.5,'text-anchor':'middle','font-size':9,fill:ink,'font-weight':700},g);t5.textContent=k==='track_maint'?'保':(k==='signal_post'?'信':'待')}
+  else if(k==='maint_base'){el('polygon',{points:(x-5)+','+(y-8)+' '+(x+5)+','+(y-8)+' '+(x+10)+','+y+' '+(x+5)+','+(y+8)+' '+(x-5)+','+(y+8)+' '+(x-10)+','+y,fill:'#6fb3e0',stroke:ink,'stroke-width':1.5},g);var t4=el('text',{x:x,y:y+3.5,'text-anchor':'middle','font-size':9,fill:ink},g);t4.textContent='雪'}
+  else{[-5,0,5].forEach(function(o){el('line',{x1:x-10,y1:y+o,x2:x+10,y2:y+o,stroke:c,'stroke-width':2.5},g)});el('rect',{x:x-12,y:y-9,width:24,height:18,fill:'none',stroke:ink,'stroke-width':1},g)}
+  if(f.change&&f.change!=='既存'&&/新設/.test(f.change)){var n=el('circle',{cx:x+11,cy:y-9,r:4,fill:'#f0c040',stroke:ink,'stroke-width':1},g)}}
+function pickFac(f){document.querySelectorAll('.st').forEach(function(g){g.classList.remove('sel')});
+  var K=(NET.fackind||{})[f.kind]||{name:f.kind,desc:''};
+  var li=function(a){return (a||[]).map(function(x){return '<li>'+x+'</li>'}).join('')};
+  $('detail').innerHTML='<h2>施設</h2><b class="nm" style="font-size:20px">'+f.name+'</b><div class="k">'+NET.companies[f.co].name+' ／ <a href="#" class="sl" data-s="'+f.at+'">'+S[f.at].name+'駅</a>に接続</div>'
+   +'<p><span class="tag">'+K.name+'</span> <span class="tag">'+f.state+'</span> <span class="tag">'+f.change+'</span> <span class="tag">監査: '+f.audit+'</span></p><p>'+f.desc+'</p><p class="k">'+K.desc+'</p>'
+   +'<p><span class="hd">線数</span> '+f.tracks+'線</p><p class="hd">設備</p><ul class="k">'+li(f.equip)+'</ul><p class="hd">配置車両</p><ul class="k">'+li(f.stock)+'</ul><p><span class="hd">接続</span> '+f.conn+'</p>'+(f.expand?'<p><span class="hd">拡張時の規模</span> '+f.expand+'</p>':'');bindSL()}
+function bindSL(){document.querySelectorAll('.sl[data-s]').forEach(function(a){a.onclick=function(e){e.preventDefault();pick(a.getAttribute('data-s'))}})}
+/* ---------- 会社 ---------- */
+window.__co=function(id){tab('co');showCo(id);$('tabs').scrollIntoView({behavior:'smooth'})};
+function showCo(id){var C=NET.companies[id];document.querySelectorAll('#cotabs button').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-co')===id?'true':'false')});
+  var ls=Object.keys(NET.lines).filter(function(l){return NET.lines[l].co===id});
+  var sts=NET.stations.filter(function(s){return s.lines.some(function(l){return NET.lines[l].co===id})});
+  var th=NET.through.filter(function(t){return NET.lines[t.from].co===id||NET.lines[t.onto].co===id});
+  var fc=(NET.fac||[]).filter(function(f){return f.co===id});
+  var h='<div style="border-left:6px solid '+C.color+';padding-left:12px"><b style="font-size:22px">'+C.name+'</b><p class="k">'+(C.info||'')+'</p></div>';
+  h+='<p><span class="hd">本社</span> '+(C.hq||'-')+' ／ <span class="hd">開業</span> '+(C.founded||'-')+'</p><p><span class="hd">軌間</span> '+(C.gauge||'-')+' ／ <span class="hd">電源</span> '+(C.power||'-')+'</p>';
+  h+=ls.map(function(l){var o=NET.order[l],len=(S[o[o.length-1]].km-S[o[0]].km).toFixed(1);var lk=GEO.links.filter(function(k){return k.line===l});var tot=lk.reduce(function(a,k){return a+(k.k>0?0:k.len)},0);
+    return '<details style="margin:8px 0"><summary><span class="hd">路線</span> <b style="font-size:16px">'+NET.lines[l].name+'</b>'+' <span class="k">'+NET.lines[l].kind+' ／ '+len+'km ／ '+o.length+'駅 ／ 実線路 '+(tot/1000).toFixed(2)+'km(駅間)</span></summary><div class="k" style="line-height:1.9">'+o.map(function(i){return '<a href="#" class="sl" data-s="'+i+'">'+S[i].name+'</a> <span style="color:#7f9a8c">'+S[i].km.toFixed(1)+'k/'+S[i].elev+'m</span>'}).join(' — ')+'</div></details>'}).join('');
+  h+='<p><span class="hd">主な車両</span> '+(C.fleet||[]).join('・')+'</p>';
+  h+='<p><span class="hd">駅('+sts.length+')</span> '+sts.map(function(s){return '<a href="#" class="sl" data-s="'+s.id+'">'+s.name+'</a>'}).join('・')+'</p>';
+  if(th.length)h+='<p><span class="hd">直通運転</span> '+th.map(function(t){return t.name}).join('／')+'</p>';
+  if(!th.length&&id!=='JNR')h+='<p class="k">直通・乗入れなし(他社)。駅は国鉄駅に隣接するが線路は接続しない。</p>';
+  if(fc.length)h+='<p><span class="hd">車庫・ヤード</span> '+fc.map(function(f){return f.name+'（'+f.desc+'）'}).join('<br>')+'</p>';
+  $('codetail').innerHTML=h;
+  document.querySelectorAll('#codetail .sl').forEach(function(a){a.onclick=function(e){e.preventDefault();pick(a.getAttribute('data-s'));window.scrollTo({top:0,behavior:'smooth'})}})}
+/* ---------- 凡例・直通・駅一覧・制作状況 ---------- */
+Object.keys(NET.lines).forEach(function(l){var L=NET.lines[l];var b=document.createElement('button');b.className='chip';b.setAttribute('aria-pressed','true');
+  b.innerHTML='<i style="background:'+L.color+'"></i>'+lineCompany(l)+' '+L.name;b.onclick=function(){active[l]=!active[l];b.setAttribute('aria-pressed',active[l]?'true':'false');view==='G'?drawGeo():draw()};$('chips').appendChild(b)});
+var sb=document.createElement('button');sb.className='chip';sb.setAttribute('aria-pressed','true');sb.textContent='構造物(実線路図)';sb.onclick=function(){showStruct=!showStruct;sb.setAttribute('aria-pressed',showStruct);if(view==='G')drawGeo()};$('chips').appendChild(sb);
+NET.through.forEach(function(t){var d=document.createElement('div');d.style.borderLeftColor=NET.lines[t.from].color;d.innerHTML='<b>'+t.name+'</b><small>'+t.section.map(function(i){return S[i].name}).join(' → ')+'（'+t.stock+'）<br>'+t.note+'</small>';$('th').appendChild(d)});
+NET.stations.forEach(function(s){var tr=document.createElement('tr');tr.className='row';tr.tabIndex=0;
+  tr.innerHTML='<td class="n">'+s.id+'</td><td><b>'+s.name+'</b></td><td>'+s.lines.map(function(l){return NET.lines[l].name}).join('・')+'</td><td class="n">'+s.km.toFixed(1)+' km</td><td>'+TYPE[s.type]+'</td><td>'+badge(s.id)+'</td>';
+  tr.onclick=function(){pick(s.id);window.scrollTo({top:0,behavior:'smooth'})};tr.onkeydown=function(e){if(e.key==='Enter')tr.onclick()};$('tb').appendChild(tr)});
+function yn(v,okText,noText){return v?'<span class="cell-ok">'+okText+'</span>':'<span class="cell-no">'+noText+'</span>'}
+NET.stations.forEach(function(s){var c=CK[s.id]||{};var tr=document.createElement('tr');tr.className='row';tr.tabIndex=0;
+  tr.innerHTML='<td><b>'+s.name+'</b> <span class="k">'+s.id+'</span></td><td>'+TYPE[s.type]+'</td><td>'+(c.shape==='汎用'?'<span class="cell-no">汎用</span>':'<span class="cell-ok">'+c.shape+'</span>')+'</td><td class="n">'+(c.images?c.images+'枚':'-')+'</td><td>'+yn(c.track,'接続済','未')+'</td><td>'+(c.interior==='あり'?'<span class="cell-ok">あり</span>':'-')+'</td><td>'+yn(c.trains==='あり','あり','未')+'</td><td>'+yn(c.render,'確認済','未')+'</td><td>'+audBadge(s.id)+'</td>';
+  tr.onclick=function(){pick(s.id);window.scrollTo({top:0,behavior:'smooth'})};tr.onkeydown=function(e){if(e.key==='Enter')tr.onclick()};$('board').appendChild(tr)});
+(function(){var c={plan:0,zone:0,render:0,audit:0};NET.stations.forEach(function(s){c[BUILT[s.id]||'plan']++});var n=NET.stations.length;
+ var bar='<div style="display:flex;height:14px;border-radius:7px;overflow:hidden;margin:8px 0">'+['audit','render','zone','plan'].map(function(k){return '<i style="flex:'+c[k]+';background:'+SC[k]+'"></i>'}).join('')+'</div>';
+ var pass=NET.stations.filter(function(s){return ST[s.id]&&ST[s.id].audit==='合格'}).length;
+ $('prog').innerHTML='<h2 class="hd">制作の進み具合</h2>'+bar+'<p class="k">'+['audit','render','zone','plan'].map(function(k){return '<span style="color:'+SC[k]+'">■</span> '+SN[k]+' '+c[k]}).join('　')+' ／ 全'+n+'駅 ／ 厳格監査の合格 '+pass+'駅(基準: リアルに見える超高品質かつ他駅と明確に差別化)</p>';
+ var M=NET.meta||{};
+ $('drive').innerHTML='<h2 class="hd">運転準備(走行システムは未実装)</h2><p class="k" style="line-height:1.9">軌道グラフ net/track_graph.json: 辺 '+(M.edges||'-')+'・ノード '+(M.nodes||'-')+'・停止位置 '+(M.stops||'-')+'。駅間線路は '+GEO.links.length+' 区間が連続して接続済み(複線・分岐・他社線を含む)。車両は台車・車輪・可動部を別部品にしてリグ化する予定で、これが整えば線路上を滑らかに走らせられます。</p>';
+ $('log').innerHTML='<h2 class="hd">更新履歴</h2>'+(NET.log||[]).slice().reverse().map(function(l){return '<p class="k">'+l.date+'　'+l.text+'</p>'}).join('');
+ var tl=GEO.links.reduce(function(a,k){return a+k.len},0),ni=GEO.links.reduce(function(a,k){return a+k.items.length},0),des=NET.stations.filter(function(s){return CK[s.id]&&CK[s.id].shape!=='汎用'}).length;
+ $('fig').innerHTML='<span><b>'+n+'</b>駅</span><span><b>'+Object.keys(NET.lines).length+'</b>路線／<b>'+Object.keys(NET.companies).length+'</b>社</span><span><b>'+GEO.links.length+'</b>区間の線路が接続済み(<b>'+(tl/1000).toFixed(1)+'</b>km)</span><span><b>'+ni+'</b>構造物</span><span><b>'+des+'</b>駅が専用/型別設計</span><span><b>'+pass+'</b>駅が厳格監査に合格</span>'})();
+/* ---------- 縦断面・区間表 ---------- */
+(function(){
+ var kind={寝台:'#4a3f8f',特急:'#d9433f',急行:'#e8962a',区間急行:'#f0b43c',ライナー:'#14a3a8',快速:'#c8a22b',普通:'#2f9e6b',直通:'#3b7bd9',貨物:'#8a8f94',臨時:'#c06bd0',回送:'#6b7280',試運転:'#b0b6bd'};
+ var RANK=['寝台','特急','急行','区間急行','ライナー','快速','普通','直通','臨時','回送','試運転','貨物'];var svf='all';
+ function svrender(){var rows=NET.svc.slice().sort(function(a,b){return RANK.indexOf(a[2])-RANK.indexOf(b[2])}).filter(function(v){return svf==='all'||v[2]===svf});
+  $('svclist').innerHTML='<div class="chips" id="svchips"></div>'+rows.map(function(v){var c=kind[v[2]]||'#999';var P=v[9]||v[4];return '<div style="border-left:6px solid '+c+';padding:6px 10px;margin:8px 0"><b>'+v[1]+'</b> <span class="tag" style="background:'+c+'">'+v[2]+'</span> <span class="k">'+NET.companies[v[3]].name+' ／ '+v[5]+' ／ 所要約'+v[6]+'分 ／ '+v[7]+'</span><div class="k" style="margin:4px 0;line-height:1.9">'+P.map(function(i){var st=v[4].indexOf(i)>=0;return st?'<b style="color:'+c+'">●'+S[i].name+'</b>':'<span style="opacity:.5">｜'+S[i].name+'(通過)</span>'}).join(' → ')+'</div><div class="k">'+v[8]+'</div></div>'}).join('');
+  var ch=$('svchips');['all'].concat(RANK).forEach(function(k){var n=k==='all'?NET.svc.length:NET.svc.filter(function(v){return v[2]===k}).length;if(!n)return;var b=document.createElement('button');b.className='chip';b.setAttribute('aria-pressed',k===svf?'true':'false');b.textContent=(k==='all'?'すべて':k)+'('+n+')';b.onclick=function(){svf=k;svrender()};ch.appendChild(b)})}
+ svrender();
+ /* 停車駅表 */
+ var smL='HM';
+ function smrender(){var ln=NET.lines,o=NET.order[smL];var cols=NET.svc.filter(function(v){var P=v[9]||v[4];return P.filter(function(i){return o.indexOf(i)>=0}).length>=2}).sort(function(a,b){return RANK.indexOf(a[2])-RANK.indexOf(b[2])});
+  var h='<div class="chips" id="smchips"></div><div class="tbl"><table><thead><tr><th>駅</th>'+cols.map(function(v){return '<th style="border-bottom:4px solid '+(kind[v[2]]||'#999')+';font-size:11px;white-space:normal;min-width:64px">'+(v[1].indexOf(v[2])===0?'':v[2]+'<br>')+v[1]+'</th>'}).join('')+'<th>停車列車数</th></tr></thead><tbody>';
+  o.forEach(function(i){var n=0;h+='<tr><td><b>'+S[i].name+'</b> <span class="k">'+i+'</span></td>'+cols.map(function(v){var P=v[9]||v[4];if(v[4].indexOf(i)>=0){n++;return '<td style="text-align:center;color:'+(kind[v[2]]||'#fff')+';font-weight:700">●</td>'}return '<td style="text-align:center;opacity:.45">'+(P.indexOf(i)>=0?'｜':'')+'</td>'}).join('')+'<td class="n">'+n+'</td></tr>'});
+  h+='</tbody></table></div><p class="k">● 停車　｜ 通過　(空白は運行なし)。色は種別。路線図上部の「運行系統を強調」で停車駅を地図上にも表示できます。</p>';
+  $('smbody').innerHTML=h;var c=$('smchips');Object.keys(NET.order).forEach(function(l){var b=document.createElement('button');b.className='chip';b.setAttribute('aria-pressed',l===smL?'true':'false');b.innerHTML='<i style="background:'+NET.lines[l].color+'"></i>'+NET.lines[l].name;b.onclick=function(){smL=l;smrender()};c.appendChild(b)})}
+ smrender();
+ $('sectb').innerHTML=NET.sect.map(function(s){return '<tr><td><b>'+S[s[0]].name+' – '+S[s[1]].name+'</b></td><td>'+s[2]+'</td><td>'+s[3]+'</td><td class="n">'+s[4]+' km/h</td><td>'+(s[5].join('、')||'-')+'</td><td>'+s[6]+'</td></tr>'}).join('');
+ $('lnk').innerHTML=GEO.links.map(function(k){var kinds=k.items.map(function(i){return SK[i.kind]?SK[i.kind][1]:i.kind}).filter(function(v,i,a){return a.indexOf(v)===i}).join('・');
+   var form=k.junction?'分岐 ('+S[k.junction].name+'の本線から)':(k.k>0?'複線の2本目':'本線');
+   return '<tr><td><b>'+S[k.a].name+' – '+S[k.b].name+'</b></td><td>'+lineCompany(k.line)+'</td><td class="n">'+k.len+' m</td><td class="n">'+k.rmin+' m</td><td>'+form+'</td><td>'+(kinds||'-')+'</td></tr>'}).join('');
+})();
+Object.keys(NET.companies).forEach(function(k){var b=document.createElement('button');b.className='chip';b.setAttribute('data-co',k);b.setAttribute('aria-pressed','false');b.innerHTML='<i style="background:'+NET.companies[k].color+'"></i>'+NET.companies[k].name;b.onclick=function(){showCo(k)};$('cotabs').appendChild(b)});
+(function(){var cnt={};GEO.links.forEach(function(k){k.items.forEach(function(i){cnt[i.kind]=(cnt[i.kind]||0)+1})});
+ $('saud').innerHTML=Object.keys(NET.saudit).map(function(k){var a=NET.saudit[k];var col=a[0]==='不合格'?'#e0705a':(a[0]==='未監査'?'#9bb0a6':'#e5c14b');return '<tr><td>'+(SK[k]?SK[k][1]:k)+'</td><td class="n">'+(cnt[k]||0)+'</td><td style="color:'+col+';font-weight:700">'+a[0]+'</td><td>'+a[1]+'</td></tr>'}).join('')})();
+/* ---------- 施設一覧 ---------- */
+(function(){var cur='all';var kinds=Object.keys(NET.fackind||{});
+ function mk(v,l){var b=document.createElement('button');b.className='chip';b.setAttribute('aria-pressed',v===cur?'true':'false');b.setAttribute('data-k',v);b.textContent=l;b.onclick=function(){cur=v;rend()};return b}
+ function rend(){$('flchips').innerHTML='';$('flchips').appendChild(mk('all','すべて('+NET.fac.length+')'));kinds.forEach(function(k){var n=NET.fac.filter(function(f){return f.kind===k}).length;if(n)$('flchips').appendChild(mk(k,NET.fackind[k].name+'('+n+')'))});
+  var CO=Object.keys(NET.companies);var rows=NET.fac.filter(function(f){return cur==='all'||f.kind===cur}).sort(function(a,b){return CO.indexOf(a.co)-CO.indexOf(b.co)||S[a.at].km-S[b.at].km||a.id.localeCompare(b.id)});
+  $('flbody').innerHTML=rows.map(function(f){return '<tr class="frow" data-f="'+f.id+'" tabindex="0"><td><b>'+f.name+'</b></td><td>'+NET.fackind[f.kind].name+'</td><td>'+NET.companies[f.co].name+'</td><td>'+S[f.at].name+'</td><td class="n">'+f.tracks+'</td><td>'+f.state+'</td><td>'+f.change+'</td><td>'+f.audit+'</td></tr>'}).join('');
+  document.querySelectorAll('.frow').forEach(function(r){r.onclick=function(){var f=NET.fac.filter(function(x){return x.id===r.getAttribute('data-f')})[0];pickFac(f);$('detail').scrollIntoView({behavior:'smooth'})}});
+  $('flnote').textContent='配置の考え方: 客車・電車の基地は大駅の終端側に隣接/電留は電化終端の折返し駅/貨車操車場は大都市外縁の平坦地/貨物駅は本線から手の平型に分岐/気動車区は支線分岐駅/補機・除雪は勾配・積雪区間の麓。(調査メモ: facilities_research.md)'}
+ rend()})();
+/* ---------- タブ・操作 ---------- */
+var TABS=[['prog','制作状況'],['tb','駅一覧'],['fl','車両基地・貨物駅'],['sr','構造物台帳'],['prof','縦断面と区間'],['co','会社'],['th','直通と運行系統'],['sm','種別と停車駅']];
+TABS.forEach(function(t){var b=document.createElement('button');b.className='tab';b.id='t-'+t[0];b.setAttribute('role','tab');b.setAttribute('aria-selected',t[0]==='prog'?'true':'false');b.textContent=t[1];b.onclick=function(){tab(t[0])};$('tabs').appendChild(b)});
+function tab(id){TABS.forEach(function(t){$('p-'+t[0]).hidden=t[0]!==id;$('t-'+t[0]).setAttribute('aria-selected',t[0]===id?'true':'false')});try{history.replaceState(null,'','#'+id)}catch(e){}}
+NET.stations.forEach(function(s){var o=document.createElement('option');o.value=s.name;$('stl').appendChild(o);var o2=document.createElement('option');o2.value=s.kana;$('stl').appendChild(o2)});
+$('q').addEventListener('change',function(){var v=this.value.trim();var s=NET.stations.filter(function(x){return x.name===v||x.kana===v})[0];if(s){pick(s.id);if(view==='S')zoom(0.4,s.xy[0]+60,s.xy[1]);else{var g=GEO.stations[s.id];zoom(0.3,g.x,g.y)}}});
+NET.svc.forEach(function(v){var o=document.createElement('option');o.value=v[0];o.textContent=v[2]+'：'+v[1];$('svsel').appendChild(o)});
+$('svsel').addEventListener('change',function(){hl=NET.svc.filter(function(v){return v[0]===$('svsel').value})[0]||null;draw()});
+$('vS').onclick=function(){setView('S')};$('vG').onclick=function(){setView('G')};
+$('zin').onclick=function(){zoom(0.7)};$('zout').onclick=function(){zoom(1/0.7)};$('zrst').onclick=function(){if(view==='G'){gvb=fullG();setGVB()}else{vb=fullVB();setVB()}};
+$('tfac').onclick=function(){showFac=!showFac;this.setAttribute('aria-pressed',showFac);draw()};$('tkana').onclick=function(){showKana=!showKana;this.setAttribute('aria-pressed',showKana);draw()};
+(function(){function bind(svgEl,getvb,setvb,lim){var P={},drag=null,pinch=null,moved=0;
+ function two(){var k=Object.keys(P);return k.length>=2?[P[k[0]],P[k[1]]]:null}
+ svgEl.addEventListener('pointerdown',function(e){P[e.pointerId]={clientX:e.clientX,clientY:e.clientY};var t2=two();moved=0;
+  if(t2){pinch={d:Math.hypot(t2[0].clientX-t2[1].clientX,t2[0].clientY-t2[1].clientY),vb:getvb().slice()};drag=null}else{drag={x:e.clientX,y:e.clientY,vb:getvb().slice()}}});
+ function up(e){delete P[e.pointerId];if(!two())pinch=null;var k=Object.keys(P);if(k.length===1){var p=P[k[0]];drag={x:p.clientX,y:p.clientY,vb:getvb().slice()}}else if(!k.length)drag=null}
+ window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);
+ svgEl.addEventListener('pointermove',function(e){if(P[e.pointerId]){P[e.pointerId].clientX=e.clientX;P[e.pointerId].clientY=e.clientY}
+  var r=svgEl.getBoundingClientRect(),t2=two();
+  if(pinch&&t2){var d=Math.hypot(t2[0].clientX-t2[1].clientX,t2[0].clientY-t2[1].clientY),L=lim(),nw=Math.max(L[0],Math.min(L[1],pinch.vb[2]*pinch.d/Math.max(d,1))),nh=nw*pinch.vb[3]/pinch.vb[2];
+   var mx=(t2[0].clientX+t2[1].clientX)/2-r.left,my=(t2[0].clientY+t2[1].clientY)/2-r.top,fx=pinch.vb[0]+mx/r.width*pinch.vb[2],fy=pinch.vb[1]+my/r.height*pinch.vb[3];
+   moved=99;setvb([fx-mx/r.width*nw,fy-my/r.height*nh,nw,nh]);return}
+  if(!drag||e.buttons===0&&e.pointerType==='mouse')return;var v=getvb(),k=v[2]/r.width,dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved=Math.max(moved,Math.hypot(dx,dy));
+  if(moved>6)setvb([drag.vb[0]-dx*k,drag.vb[1]-dy*(v[3]/r.height),v[2],v[3]])});
+ svgEl.addEventListener('click',function(e){if(moved>6){e.stopPropagation();e.preventDefault();moved=0}},true);
+ svgEl.addEventListener('wheel',function(e){e.preventDefault();var v=getvb(),k=v[2]/r0(svgEl).width;zoom(e.deltaY<0?0.85:1/0.85,v[0]+(e.clientX-r0(svgEl).left)*k,v[1]+(e.clientY-r0(svgEl).top)*(v[3]/r0(svgEl).height))},{passive:false})}
+ function r0(el){return el.getBoundingClientRect()}
+ bind(map,function(){return vb},function(v){vb=v;setVB()},function(){return[260,fullVB()[2]]});bind(geo,function(){return gvb},function(v){gvb=v;setGVB()},function(){return[800,fullG()[2]]})})();
+/* ---------- v2.4.5: 路線別 縦断面図(キロ程・標高・勾配‰・構造物帯) ---------- */
+var PLN='HM',STRK=(NET.struct||{}).kinds||{},STRI=(NET.struct||{}).items||[];
+var LANE={subway:0,tunnel:0,shed:0,street:0,viaduct:1,truss:1,arch:1,trestle:1,mono:1,over:1,sea:1,embank:2,cut:2,lc:2,curve:2,turnout:2,snowfence:2};
+var LANEN=['地下・トンネル・覆い','橋・高架','土工・平面構造'];
+function lkm(l,i){var o=NET.order[l];return o.indexOf(i)===0?0:S[i].km}
+function profRender(l){
+ if(l)PLN=l;var o=NET.order[PLN],svg=$('profsvg'),W=1200,L=124,R=24,T=34,GB=104,BH=3*20+30;
+ var es=o.map(function(i){return S[i].elev}),emax=Math.max.apply(0,es),emin=Math.min.apply(0,es);
+ var top=Math.max(10,Math.ceil((emax+(emax-emin)*.1+6)/ (emax>150?50:10))*(emax>150?50:10)),bot=emin<0?Math.floor((emin-8)/10)*10:0;
+ var step=(top-bot)>300?100:((top-bot)>100?50:((top-bot)>40?20:10));
+ var km=o.map(function(i){return lkm(PLN,i)});var maxk=Math.max(km[km.length-1],.5);
+ var PH=290,H=T+PH+GB+BH;
+ function X(k){return L+(W-L-R)*k/maxk}function Y(e){return T+PH*(1-(e-bot)/(top-bot))}
+ var h='<defs><pattern id="pfh" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#355f4b" stroke-width="1"/></pattern></defs>';
+ for(var e=Math.ceil(bot/step)*step;e<=top;e+=step)h+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(e)+'" y2="'+Y(e)+'" stroke="'+(e===0?'#5f9d82':'#1f3a2f')+'" stroke-dasharray="'+(e===0?'6 4':'0')+'"/><text x="'+(L-8)+'" y="'+(Y(e)+4)+'" text-anchor="end" font-size="11" style="fill:#7f9a8c">'+e+' m</text>';
+ if(bot<0)h+='<rect x="'+L+'" y="'+Y(0)+'" width="'+(W-L-R)+'" height="'+(Y(bot)-Y(0))+'" fill="#2a2018" opacity=".55"/><text x="'+(W-R-4)+'" y="'+(Y(0)+14)+'" text-anchor="end" font-size="10" style="fill:#c9a27a">地下(地表より下)</text>';
+ for(var t=0;t<=maxk+.001;t+= (maxk>40?10:(maxk>14?2:1)))h+='<line x1="'+X(t)+'" x2="'+X(t)+'" y1="'+T+'" y2="'+(T+PH)+'" stroke="#1a3329"/><text x="'+X(t)+'" y="'+(T+PH+13)+'" text-anchor="middle" font-size="10" style="fill:#6f8a7c">'+t+'km</text>';
+ var pts=o.map(function(i,n){return X(km[n])+','+Y(S[i].elev)}).join(' ');
+ h+='<polygon points="'+X(0)+','+Y(bot)+' '+pts+' '+X(km[km.length-1])+','+Y(bot)+'" fill="url(#pfh)" opacity=".9"/>';
+ /* 構造物(線上) */
+ var its=STRI.filter(function(s){return s.line===PLN});
+ function eAt(k){for(var n=0;n<o.length-1;n++){if(k>=km[n]-.001&&k<=km[n+1]+.001){var f=(k-km[n])/Math.max(km[n+1]-km[n],.01);return S[o[n]].elev+(S[o[n+1]].elev-S[o[n]].elev)*f}}return S[o[o.length-1]].elev}
+ its.forEach(function(s){var k0=s.km,k1=s.km+s.len/1000,col=s.color||'#999';if(k1>maxk)k1=maxk;var x0=X(k0),x1=Math.max(x0+5,X(k1)),y0=Y(eAt(k0)),y1=Y(eAt(k1));
+  if(s.kind==='subway'||s.kind==='tunnel'||s.kind==='shed')h+='<polyline points="'+x0+','+y0+' '+x1+','+y1+'" stroke="'+col+'" stroke-width="12" opacity=".35" fill="none" stroke-linecap="round"/>';
+  else if(s.kind==='viaduct'||s.kind==='truss'||s.kind==='arch'||s.kind==='trestle'||s.kind==='mono'||s.kind==='sea'){var n=Math.max(2,Math.round((x1-x0)/16));for(var q=0;q<=n;q++){var xx=x0+(x1-x0)*q/n,yy=y0+(y1-y0)*q/n;h+='<line x1="'+xx+'" x2="'+xx+'" y1="'+yy+'" y2="'+(yy+16)+'" stroke="'+col+'" stroke-width="2"/>'}}
+  else if(s.kind==='embank')h+='<polyline points="'+x0+','+(y0-0)+' '+x1+','+y1+'" stroke="'+col+'" stroke-width="7" opacity=".5" fill="none"/>';
+  else if(s.kind==='cut')h+='<polyline points="'+x0+','+(y0+5)+' '+x1+','+(y1+5)+'" stroke="'+col+'" stroke-width="5" opacity=".7" fill="none" stroke-dasharray="5 3"/>'});
+ h+='<polyline points="'+pts+'" fill="none" stroke="'+NET.lines[PLN].color+'" stroke-width="3.5" stroke-linejoin="round"/>';
+ /* 勾配‰(プロット下の専用帯。重なる場合は間引く) */
+ h+='<text x="'+(L-8)+'" y="'+(T+PH+33)+'" text-anchor="end" font-size="9.5" style="fill:#6f8a7c">勾配</text>';var gr=-99;
+ for(var n=0;n<o.length-1;n++){var dk=(km[n+1]-km[n])*1000;if(dk<=0)continue;var g=(S[o[n+1]].elev-S[o[n]].elev)/dk*1000,xm=X((km[n]+km[n+1])/2);
+  if(Math.abs(g)<0.5||xm-24<gr)continue;gr=xm+24;var up=g>0;h+='<text x="'+xm+'" y="'+(T+PH+33)+'" text-anchor="middle" font-size="10.5" style="fill:'+(Math.abs(g)>=25?'#ff9a6b':'#cfe0d6')+';font-family:var(--mono)">'+(up?'▲':'▼')+Math.abs(g).toFixed(1)+'‰</text>'}
+ /* 駅 */
+ var lastx=-99,row=0;
+ o.forEach(function(i,n){var s=S[i],x=X(km[n]),y=Y(s.elev);h+='<line x1="'+x+'" x2="'+x+'" y1="'+y+'" y2="'+(T+PH)+'" stroke="#2f5545" stroke-dasharray="2 3"/><circle cx="'+x+'" cy="'+y+'" r="5" fill="#fff" stroke="#0e1f19" stroke-width="2" style="cursor:pointer" onclick="window.__pick(\''+i+'\')"/>';
+  h+='<text x="'+x+'" y="'+(y-10-(x-lastx<42?11:0))+'" text-anchor="middle" font-size="10" style="fill:#e8c868;font-family:var(--mono)">'+s.elev+'</text>';lastx=x;
+  h+='<text transform="translate('+x+','+(T+PH+46)+') rotate(62)" font-size="11" style="fill:#cfe0d6;cursor:pointer" onclick="window.__pick(\''+i+'\')">'+s.name+'</text>'});
+ /* 構造物帯(3レーン) */
+ var by=T+PH+GB;LANEN.forEach(function(nm,ln){h+='<text x="'+(L-8)+'" y="'+(by+ln*20+13)+'" text-anchor="end" font-size="9.5" style="fill:#6f8a7c">'+nm+'</text><line x1="'+L+'" x2="'+(W-R)+'" y1="'+(by+ln*20+19)+'" y2="'+(by+ln*20+19)+'" stroke="#1a3329"/>'});
+ its.forEach(function(s){var ln=LANE[s.kind]||0,x0=X(s.km),w=Math.max(8,X(s.km+s.len/1000)-x0);h+='<g style="cursor:pointer" onclick="window.__str(\''+s.id+'\')"><rect x="'+x0+'" y="'+(by+ln*20+3)+'" width="'+w+'" height="14" rx="2" fill="'+s.color+'" opacity=".92"/><title>'+s.name+' '+s.len+'m</title></g>'});
+ svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.innerHTML=h;
+ var used={};its.forEach(function(s){used[s.kind]=1});
+ $('proflg').innerHTML=Object.keys(used).map(function(k){return '<span><i style="background:'+STRK[k].color+'"></i>'+STRK[k].name+'</span>'}).join('')||'<span>この路線に登録された構造物はありません</span>';
+ $('profnote').innerHTML=NET.lines[PLN].name+'：キロ程 '+maxk.toFixed(1)+' km、最高 '+emax+' m／最低 '+emin+' m。数値は駅の軌条面標高(m)。駅間の ▲▼ は平均勾配(‰)で、25‰以上は橙。構造物帯の帯をクリックすると詳細と断面図が開きます。';
+ document.querySelectorAll('#plchips .chip').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-l')===PLN?'true':'false')})}
+(function(){var c=$('plchips');Object.keys(NET.order).forEach(function(l){var b=document.createElement('button');b.className='chip';b.setAttribute('data-l',l);b.setAttribute('aria-pressed','false');b.innerHTML='<i style="background:'+NET.lines[l].color+'"></i>'+NET.lines[l].name;b.onclick=function(){profRender(l)};c.appendChild(b)})})();
+window.__pick=function(i){pick(i)};
+
+/* ---------- v2.4.5: 構造物の断面図ジェネレータ(縮尺つき・寸法線つき) ---------- */
+var XC={soil:'#6b5036',soil2:'#85673f',conc:'#a3aca6',conc2:'#7e8882',steel:'#7fa0b8',rail:'#e4e4e4',bal:'#8d8a80',gr:'#6fbf86',ink:'#cfe0d6',road:'#4a4f52',water:'#2f6f9c',sky:'#12261d',wood:'#9a6b3a'};
+function xs(parts,W,H,cap){return '<svg viewBox="0 0 '+W+' '+(H+22)+'" class="xsec" role="img" aria-label="'+cap+'"><defs><pattern id="xh" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#8a6e4a" stroke-width="1.2"/></pattern><pattern id="xc" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".7" fill="#c6cdc8"/><circle cx="4" cy="4" r=".6" fill="#8a948e"/></pattern></defs><rect width="'+W+'" height="'+(H+22)+'" fill="'+XC.sky+'"/>'+parts+'<text x="10" y="'+(H+15)+'" font-size="10.5" style="fill:#9db3a6">'+cap+'</text></svg>'}
+function dm(x1,y1,x2,y2,t,side){var v=(x1===x2),m=v?'':'',tx=(x1+x2)/2,ty=(y1+y2)/2;return '<g stroke="#e8c868" stroke-width="1" fill="#e8c868"><line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"/><path d="M'+x1+','+y1+(v?' l-3,6 h6z':' l6,-3 v6z')+'"/><path d="M'+x2+','+y2+(v?' l-3,-6 h6z':' l-6,-3 v6z')+'"/></g><text x="'+(v?tx+(side||6):tx)+'" y="'+(v?ty+4:ty-5)+'" '+(v&&side<0?'text-anchor="end"':(v?'':'text-anchor="middle"'))+' font-size="10.5" style="fill:#e8c868;font-family:var(--mono)">'+t+'</text>'}
+function trk(cx,y,s){s=s||1;return '<rect x="'+(cx-30*s)+'" y="'+y+'" width="'+(60*s)+'" height="'+(5*s)+'" fill="'+XC.bal+'"/><rect x="'+(cx-14*s)+'" y="'+(y-4*s)+'" width="'+(3*s)+'" height="'+(4*s)+'" fill="'+XC.rail+'"/><rect x="'+(cx+11*s)+'" y="'+(y-4*s)+'" width="'+(3*s)+'" height="'+(4*s)+'" fill="'+XC.rail+'"/>'}
+function train(cx,y,w,h,col){return '<rect x="'+(cx-w/2)+'" y="'+(y-h)+'" width="'+w+'" height="'+h+'" rx="4" fill="'+(col||'#c9533f')+'" opacity=".92"/><rect x="'+(cx-w/2+4)+'" y="'+(y-h+8)+'" width="'+(w-8)+'" height="'+(h*.28)+'" fill="#bcd6e6" opacity=".9"/>'}
+function mast(x,y,hh){return '<line x1="'+x+'" x2="'+x+'" y1="'+y+'" y2="'+(y-hh)+'" stroke="#8aa09a" stroke-width="3"/><line x1="'+(x-3)+'" x2="'+(x+22)+'" y1="'+(y-hh+8)+'" y2="'+(y-hh+8)+'" stroke="#8aa09a" stroke-width="2"/>'}
+var XSF={
+ tunnel:function(s){var W=420,H=250,cx=210,gy=205;var d=+s.grade||0;var cov=s.depth||'土被り 15〜40m(丘陵)';return xs('<rect x="0" y="40" width="'+W+'" height="'+(H-40)+'" fill="'+XC.soil+'"/><rect x="0" y="40" width="'+W+'" height="'+(H-40)+'" fill="url(#xh)"/><path d="M0,40 Q105,20 210,28 T420,40 V48 H0z" fill="'+XC.gr+'" opacity=".8"/>'
+  +'<path d="M130,'+gy+' V130 A80,80 0 0 1 290,130 V'+gy+' z" fill="'+XC.conc2+'"/><path d="M142,'+gy+' V130 A68,68 0 0 1 278,130 V'+gy+' z" fill="#0b1411"/><path d="M142,130 A68,68 0 0 1 278,130" fill="none" stroke="'+XC.conc+'" stroke-width="2" stroke-dasharray="3 3"/>'
+  +trk(cx,gy-14,1.5)+train(cx,gy-18,58,66,'#4f87b8')+'<line x1="'+(cx-15)+'" x2="'+(cx+15)+'" y1="'+(gy-100)+'" y2="'+(gy-100)+'" stroke="#8aa09a" stroke-width="2"/>'
+  +'<path d="M130,'+gy+' h-10 v4 h10z M290,'+gy+' h10 v4 h-10z" fill="'+XC.conc+'"/><path d="M122,'+(gy+4)+' h-14" stroke="#4aa3df" stroke-width="3"/><text x="52" y="'+(gy+10)+'" font-size="9.5" style="fill:#4aa3df">側溝</text>'
+  +dm(142,gy+22,278,gy+22,'内空幅 約'+(s.w||'8.2')+'m')+dm(100,50,100,gy,'覆工+土被り',-6)+'<text x="232" y="92" font-size="10" style="fill:#c9d6cf">覆工コンクリート(厚 0.5m)</text><text x="14" y="30" font-size="10.5" style="fill:#9fd6b0">'+cov+'</text>',W,H,'トンネル横断面(馬蹄形・単線'+(s.form?'／'+s.form:'')+')')},
+ subway:function(s){var W=460,H=292,gy=60,d=+s.depth||8;return xs('<rect x="0" y="'+gy+'" width="'+W+'" height="'+(H-gy)+'" fill="'+XC.soil+'"/><rect x="0" y="'+gy+'" width="'+W+'" height="'+(H-gy)+'" fill="url(#xh)"/><rect x="0" y="'+(gy-10)+'" width="'+W+'" height="12" fill="'+XC.road+'"/><line x1="0" x2="'+W+'" y1="'+(gy-4)+'" y2="'+(gy-4)+'" stroke="#e8e0b0" stroke-width="1.5" stroke-dasharray="14 10"/>'
+  +'<rect x="110" y="'+(gy+30)+'" width="240" height="150" fill="'+XC.conc2+'"/><rect x="124" y="'+(gy+44)+'" width="95" height="122" fill="#0b1411"/><rect x="241" y="'+(gy+44)+'" width="95" height="122" fill="#0b1411"/><rect x="219" y="'+(gy+44)+'" width="22" height="122" fill="'+XC.conc+'"/>'
+  +trk(171,gy+150,1.25)+trk(288,gy+150,1.25)+train(171,gy+146,64,70,'#d86bb3')+'<line x1="171" x2="171" y1="'+(gy+44)+'" y2="'+(gy+58)+'" stroke="#8aa09a" stroke-width="2"/>'
+  +'<g stroke="#8aa09a" stroke-width="2"><line x1="40" x2="40" y1="'+(gy-30)+'" y2="'+(gy-2)+'"/></g><rect x="60" y="'+(gy+30)+'" width="40" height="38" fill="#23221c" stroke="#5a5a4a"/><text x="62" y="'+(gy+52)+'" font-size="9" style="fill:#9b9b86">埋設物</text>'
+  +dm(410,gy-4,410,gy+180,'深さ '+(d+4)+'m',-6)+dm(124,gy+196,336,gy+196,'箱型 幅 約 11m')+'<text x="130" y="'+(gy+40)+'" font-size="9.5" style="fill:#10201a">頂版 厚1.0m</text><text x="14" y="'+(gy-18)+'" font-size="10.5" style="fill:#9fd6b0">開削工法・復旧舗装(アスファルト)</text>',W,H,'地下鉄 開削箱型トンネル(複線)')},
+ viaduct:function(s){var W=460,H=270,gy=235,hh=+s.height||9;var py=gy-hh*14;return xs('<rect x="0" y="'+gy+'" width="'+W+'" height="'+(H-gy)+'" fill="'+XC.soil+'"/><line x1="0" x2="'+W+'" y1="'+gy+'" y2="'+gy+'" stroke="'+XC.gr+'" stroke-width="2"/>'
+  +'<rect x="150" y="'+py+'" width="170" height="16" fill="'+XC.conc+'"/><rect x="150" y="'+py+'" width="170" height="16" fill="url(#xc)"/><rect x="215" y="'+(py+16)+'" width="38" height="'+(gy-py-16)+'" fill="'+XC.conc2+'"/><rect x="195" y="'+(gy-12)+'" width="78" height="14" fill="'+XC.conc2+'"/>'
+  +'<rect x="150" y="'+(py-10)+'" width="170" height="10" fill="'+XC.bal+'"/>'+trk(190,py-6,.9)+trk(280,py-6,.9)+train(190,py-10,50,46,'#3b7bd9')+mast(150,py-10,60)+mast(320,py-10,60)+'<rect x="146" y="'+(py-24)+'" width="6" height="14" fill="'+XC.conc+'"/><rect x="318" y="'+(py-24)+'" width="6" height="14" fill="'+XC.conc+'"/>'
+  +dm(380,py,380,gy,'桁下 約'+hh+'m',6)+dm(150,py-76,320,py-76,'桁幅 約 11m')+'<text x="14" y="30" font-size="10.5" style="fill:#c9d6cf">'+(s.form||'RC高架橋')+'・径間 '+(s.spans?s.spans+'連':'連続')+'</text>',W,H,'高架橋 断面(複線・T形橋脚)')},
+ truss:function(s){var W=480,H=250,wy=190,ht=70;var n=6,x0=70,x1=410,dx=(x1-x0)/n,p='';p+='<rect x="0" y="'+wy+'" width="'+W+'" height="'+(H-wy)+'" fill="'+XC.water+'" opacity=".85"/><rect x="20" y="'+(wy-32)+'" width="50" height="'+(H-wy+32)+'" fill="'+XC.soil2+'"/><rect x="410" y="'+(wy-32)+'" width="50" height="'+(H-wy+32)+'" fill="'+XC.soil2+'"/><rect x="62" y="'+(wy-44)+'" width="14" height="60" fill="#7c7c72"/><rect x="404" y="'+(wy-44)+'" width="14" height="60" fill="#7c7c72"/>'
+  +'<g stroke="'+XC.steel+'" stroke-width="3" fill="none"><line x1="'+x0+'" y1="'+(wy-44)+'" x2="'+x1+'" y2="'+(wy-44)+'"/><line x1="'+x0+'" y1="'+(wy-44-ht)+'" x2="'+x1+'" y2="'+(wy-44-ht)+'"/>';
+  for(var i=0;i<=n;i++){var x=x0+dx*i;p+='<line x1="'+x+'" y1="'+(wy-44)+'" x2="'+x+'" y2="'+(wy-44-ht)+'"/>';if(i<n)p+='<line x1="'+x+'" y1="'+((i%2)?wy-44-ht:wy-44)+'" x2="'+(x+dx)+'" y2="'+((i%2)?wy-44:wy-44-ht)+'"/>'}
+  p+='</g>'+trk(240,wy-50,.6)+dm(x0,wy+26,x1,wy+26,'支間 約'+(s.len||60)+'m')+dm(450,wy-44-ht,450,wy-44,'トラス高 約 6m',-6)+'<text x="14" y="26" font-size="10.5" style="fill:#c9d6cf">'+(s.form||'下路ワーレントラス')+(s.river?'／'+s.river:'')+'</text>';return xs(p,W,H,'鉄橋 側面図(ワーレントラス・橋台は石積み)')},
+ arch:function(s){var W=480,H=250,wy=210,p='<rect x="0" y="'+wy+'" width="'+W+'" height="40" fill="'+XC.water+'" opacity=".85"/><rect x="40" y="70" width="400" height="22" fill="'+XC.conc2+'"/><rect x="40" y="62" width="400" height="8" fill="'+XC.bal+'"/>'+trk(240,58,.8);var n=3;for(var i=0;i<n;i++){var x=60+i*120;p+='<path d="M'+x+',210 A60,60 0 0 1 '+(x+120)+',210 V92 H'+x+'z" fill="none"/><path d="M'+x+',210 V150 A60,60 0 0 1 '+(x+120)+',150 V210" fill="none" stroke="'+XC.conc+'" stroke-width="3"/>'}
+  p+='<rect x="40" y="92" width="400" height="118" fill="'+XC.conc2+'" opacity=".95"/>';for(i=0;i<n;i++){var xa=60+i*120;p+='<path d="M'+(xa+10)+',210 V150 A50,50 0 0 1 '+(xa+110)+',150 V210z" fill="'+XC.sky+'"/><path d="M'+(xa+10)+',210 V150 A50,50 0 0 1 '+(xa+110)+',150" fill="none" stroke="#c6cdc8" stroke-width="3"/>'}
+  p+=dm(70,236,190,236,'径間 約 12m')+'<text x="14" y="26" font-size="10.5" style="fill:#c9d6cf">'+(s.form||'石積みアーチ')+'・迫石と拱上壁・川の増水位線あり</text>';return xs(p,W,H,'アーチ橋 側面図(3連)')},
+ embank:function(s){var W=460,H=230,gy=190,hh=+s.height||5,top=gy-hh*16;return xs('<polygon points="60,'+gy+' 160,'+top+' 300,'+top+' 400,'+gy+'" fill="'+XC.soil2+'"/><polygon points="60,'+gy+' 160,'+top+' 300,'+top+' 400,'+gy+'" fill="url(#xh)"/><rect x="0" y="'+gy+'" width="'+W+'" height="40" fill="'+XC.soil+'"/><line x1="0" x2="60" y1="'+gy+'" y2="'+gy+'" stroke="'+XC.gr+'" stroke-width="2"/><line x1="400" x2="'+W+'" y1="'+gy+'" y2="'+gy+'" stroke="'+XC.gr+'" stroke-width="2"/><polyline points="60,'+gy+' 160,'+top+'" stroke="'+XC.gr+'" stroke-width="3" fill="none"/><polyline points="300,'+top+' 400,'+gy+'" stroke="'+XC.gr+'" stroke-width="3" fill="none"/>'
+  +'<polygon points="175,'+top+' 285,'+top+' 296,'+(top-8)+' 164,'+(top-8)+'" fill="'+XC.bal+'" transform="translate(0,2)"/>'+trk(205,top-9,.7)+trk(255,top-9,.7)+train(205,top-12,36,40,'#2f9e6b')+'<rect x="60" y="'+(gy+4)+'" width="340" height="8" fill="none"/><path d="M55,'+(gy-2)+' h-10 v6 h10z" fill="#4aa3df"/>'
+  +dm(60,gy+22,400,gy+22,'底幅 約 '+Math.round((340)/16*1)+'m')+dm(430,top,430,gy,'盛土高 約'+hh+'m',-6)+'<text x="170" y="'+(top+36)+'" font-size="10.5" style="fill:#e8d9b8">法面 1:1.5(芝・張芝)</text>',W,H,'築堤 断面(複線・法面勾配 1:1.5)')},
+ cut:function(s){var W=460,H=240,gy=60,bt=185;return xs('<polygon points="0,'+gy+' 120,'+gy+' 170,'+bt+' 290,'+bt+' 340,'+gy+' '+W+','+gy+' '+W+','+H+' 0,'+H+'" fill="'+XC.soil+'"/><polygon points="0,'+gy+' 120,'+gy+' 170,'+bt+' 290,'+bt+' 340,'+gy+' '+W+','+gy+' '+W+','+H+' 0,'+H+'" fill="url(#xh)"/><polyline points="0,'+gy+' 120,'+gy+' 170,'+bt+' 290,'+bt+' 340,'+gy+' '+W+','+gy+'" stroke="'+XC.gr+'" stroke-width="3" fill="none"/>'
+  +'<rect x="175" y="'+(bt-4)+'" width="110" height="8" fill="'+XC.bal+'"/>'+trk(230,bt-6,.9)+train(230,bt-10,44,54,'#c8a22b')+'<path d="M160,'+(bt+8)+' h-14" stroke="#4aa3df" stroke-width="3"/><path d="M300,'+(bt+8)+' h14" stroke="#4aa3df" stroke-width="3"/><rect x="146" y="'+(bt-20)+'" width="20" height="26" fill="'+XC.conc2+'" opacity=".8"/><text x="22" y="'+(gy-10)+'" font-size="10.5" style="fill:#9fd6b0">切土法面 1:0.8〜1:1(吹付・石積み擁壁)</text>'
+  +dm(120,gy+20,340,gy+20,'上幅 約 '+(s.w||'24')+'m')+dm(400,gy,400,bt,'切土深 約 '+(s.height||8)+'m',-6)+'<text x="180" y="'+(bt+26)+'" font-size="10.5" style="fill:#4aa3df">側溝(排水)</text>',W,H,'切通し 断面(単線＋側溝・小段つき法面)')},
+ shed:function(s){var W=460,H=240,gy=200;return xs('<polygon points="0,60 120,60 460,200 460,240 0,240" fill="'+XC.soil+'"/><polygon points="0,60 120,60 460,200 460,240 0,240" fill="url(#xh)"/><rect x="0" y="'+gy+'" width="'+W+'" height="40" fill="'+XC.soil+'" opacity=".5"/>'
+  +'<polygon points="110,'+gy+' 110,90 330,150 330,'+gy+' 310,'+gy+' 310,152 130,100 130,'+gy+'" fill="'+XC.conc+'"/><polygon points="130,100 310,152 310,162 130,110" fill="'+XC.conc2+'"/><polygon points="120,92 330,150 340,128 130,70" fill="#e8f0ee" opacity=".9"/>'
+  +trk(220,gy-12,1.2)+train(220,gy-16,50,60,'#d9433f')+'<text x="140" y="60" font-size="10.5" style="fill:#e8f0ee">積雪・雪崩を山側屋根で受け谷側へ流す</text>'+dm(130,gy+22,310,gy+22,'内空 約 '+(s.w||'6')+'m')+'<text x="14" y="30" font-size="10.5" style="fill:#c9d6cf">'+(s.form||'片流れ式RCシェッド')+'</text>',W,H,'スノーシェッド 断面(山側から谷側へ片流れ)')},
+ over:function(s){var W=460,H=240,gy=205;return xs('<rect x="0" y="'+gy+'" width="'+W+'" height="35" fill="'+XC.soil+'"/><rect x="40" y="70" width="380" height="16" fill="'+XC.conc+'"/><rect x="40" y="62" width="380" height="8" fill="'+XC.road+'"/><rect x="70" y="86" width="30" height="'+(gy-86)+'" fill="'+XC.conc2+'"/><rect x="360" y="86" width="30" height="'+(gy-86)+'" fill="'+XC.conc2+'"/>'
+  +trk(160,gy-6,1)+trk(300,gy-6,1)+train(160,gy-10,52,64,'#3b7bd9')+'<line x1="70" x2="70" y1="40" y2="62" stroke="#9aa39d" stroke-width="3"/><line x1="390" x2="390" y1="40" y2="62" stroke="#9aa39d" stroke-width="3"/><line x1="70" x2="390" y1="40" y2="40" stroke="#9aa39d" stroke-width="2"/>'
+  +dm(430,86,430,gy,'建築限界高 ≧5.0m',-6)+dm(100,gy+22,360,gy+22,'線路上の径間 約 '+(s.len||34)+'m')+'<text x="14" y="26" font-size="10.5" style="fill:#c9d6cf">'+(s.road||'道路')+'をまたぐこ線橋</text>',W,H,'こ線橋 断面(道路橋が線路をまたぐ)')},
+ lc:function(s){var p='<rect width="440" height="230" fill="#17301f"/><rect x="0" y="105" width="440" height="30" fill="'+XC.bal+'"/><line x1="0" x2="440" y1="114" y2="114" stroke="'+XC.rail+'" stroke-width="3"/><line x1="0" x2="440" y1="126" y2="126" stroke="'+XC.rail+'" stroke-width="3"/><rect x="190" y="0" width="60" height="230" fill="'+XC.road+'"/><line x1="220" x2="220" y1="0" y2="230" stroke="#e8e0b0" stroke-dasharray="10 8"/><rect x="190" y="100" width="60" height="40" fill="#5b5f5c"/>'
+  +'<g><rect x="168" y="52" width="26" height="6" fill="#fff"/><rect x="168" y="52" width="6" height="6" fill="#d9433f"/><rect x="250" y="172" width="26" height="6" fill="#fff"/><circle cx="170" cy="46" r="5" fill="#d9433f"/><circle cx="276" cy="190" r="5" fill="#d9433f"/></g><rect x="196" y="145" width="48" height="4" fill="#fff" opacity=".3"/>'
+  +dm(190,214,250,214,'道路幅 約 6m')+'<text x="14" y="26" font-size="10.5" style="fill:#c9d6cf">遮断機は道路の両側・警報機は進行方向左側</text><text x="262" y="124" font-size="10" style="fill:#f2c14e">線路(1067mm)</text>';return xs(p,440,230,'踏切 平面図(道路は線路に直交)')},
+ sea:function(s){var p='<rect x="0" y="150" width="460" height="100" fill="'+XC.water+'" opacity=".9"/><rect x="40" y="110" width="150" height="130" fill="'+XC.conc2+'"/><rect x="40" y="110" width="150" height="130" fill="url(#xc)"/><rect x="30" y="98" width="170" height="14" fill="'+XC.conc+'"/><rect x="190" y="198" width="60" height="30" fill="#8a8f94" opacity=".8"/><line x1="0" x2="460" y1="150" y2="150" stroke="#8fd0f0" stroke-width="2" stroke-dasharray="6 4"/>'+trk(90,92,.9)+train(90,88,48,40,'#14a3a8')+dm(200,98,200,220,'護岸高 約 '+(s.height||5)+'m',6)+'<text x="14" y="26" font-size="10.5" style="fill:#c9d6cf">波返し付き重力式護岸・消波ブロック</text><text x="212" y="146" font-size="10" style="fill:#8fd0f0">満潮位</text>';return xs(p,460,250,'護岸・防波堤 断面')},
+ street:function(s){var p='<rect x="0" y="130" width="460" height="100" fill="'+XC.soil+'"/><rect x="0" y="120" width="460" height="14" fill="'+XC.road+'"/><rect x="150" y="120" width="160" height="14" fill="#7a6a58"/><line x1="170" x2="170" y1="116" y2="132" stroke="'+XC.rail+'" stroke-width="3"/><line x1="290" x2="290" y1="116" y2="132" stroke="'+XC.rail+'" stroke-width="3"/>'+train(230,116,90,62,'#7ad0c8')+'<rect x="20" y="124" width="90" height="10" fill="#9a9a90"/><rect x="350" y="124" width="90" height="10" fill="#9a9a90"/><line x1="230" x2="230" y1="40" y2="54" stroke="#8aa09a" stroke-width="2"/><line x1="40" x2="420" y1="40" y2="40" stroke="#8aa09a" stroke-width="1.5"/>'+dm(170,160,290,160,'軌間 1067mm＋埋込舗装')+'<text x="14" y="26" font-size="10.5" style="fill:#c9d6cf">併用軌道:車道と同一面・敷石舗装・架線は道路上空</text><text x="24" y="150" font-size="10" style="fill:#c9d6cf">歩道</text>';return xs(p,460,230,'併用軌道(路面電車)断面')},
+ mono:function(s){var p='<rect x="0" y="222" width="460" height="28" fill="'+XC.soil+'"/><rect x="215" y="105" width="30" height="117" fill="'+XC.conc2+'"/><rect x="150" y="95" width="160" height="14" fill="'+XC.conc2+'"/><rect x="198" y="72" width="64" height="26" fill="'+XC.conc+'"/><rect x="192" y="40" width="76" height="34" rx="6" fill="#c78cf0"/><rect x="200" y="46" width="60" height="12" fill="#bcd6e6"/><path d="M188,64 q-6,24 8,30 h68 q14,-6 8,-30" fill="#a468c8" opacity=".9"/><circle cx="214" cy="86" r="7" fill="#1a1a1a"/><circle cx="246" cy="86" r="7" fill="#1a1a1a"/>'
+  +dm(330,98,330,222,'地上高 約 '+(s.height||8)+'m',6)+dm(198,16,262,16,'軌道桁幅 約 0.85m(跨座式)')+'<text x="14" y="236" font-size="10" style="fill:#c9d6cf">T形橋脚と基礎</text>';return xs(p,460,250,'モノレール(跨座式)断面')},
+ trestle:function(s){var p='<rect x="0" y="210" width="460" height="40" fill="'+XC.water+'" opacity=".7"/>';for(var i=0;i<4;i++){var x=80+i*100;p+='<rect x="'+(x-4)+'" y="100" width="8" height="125" fill="'+XC.wood+'"/><rect x="'+(x-16)+'" y="96" width="32" height="8" fill="#7a5226"/><line x1="'+(x-4)+'" y1="120" x2="'+(x+96)+'" y2="190" stroke="#7a5226" stroke-width="3"/>'}
+  p+='<rect x="64" y="86" width="340" height="10" fill="#6e4b24"/>'+trk(240,82,.9)+train(240,78,60,42,'#8a8f94')+dm(80,240,380,240,'ベント間隔 約 3m')+'<text x="14" y="26" font-size="10.5" style="fill:#c9d6cf">木造ベント橋(杉丸太・補強筋かい)</text>';return xs(p,460,250,'木橋(トレッスル)側面')},
+ snowfence:function(s){var p='<polygon points="0,170 300,170 460,110 460,240 0,240" fill="#dfe8e4" opacity=".6"/><rect x="0" y="170" width="460" height="70" fill="'+XC.soil+'" opacity=".5"/>';for(var i=0;i<5;i++)p+='<rect x="'+(250+i*22)+'" y="'+(130-i*4)+'" width="5" height="46" fill="'+XC.wood+'"/>';p+='<rect x="250" y="136" width="95" height="20" fill="'+XC.wood+'" opacity=".6"/>'+trk(140,166,1)+'<text x="14" y="26" font-size="10.5" style="fill:#c9d6cf">山側に雪崩止め柵(高さ約 2.5m)を段状に連ねる</text>';return xs(p,460,240,'雪崩止め柵')},
+ curve:function(s){var r=+s.r||250;var p='<path d="M40,200 A220,220 0 0 1 400,70" fill="none" stroke="'+XC.bal+'" stroke-width="16" opacity=".6"/><path d="M40,200 A220,220 0 0 1 400,70" fill="none" stroke="'+XC.rail+'" stroke-width="2.5" stroke-dasharray="0"/><path d="M40,208 A228,228 0 0 1 406,76" fill="none" stroke="'+XC.rail+'" stroke-width="2.5"/><circle cx="400" cy="230" r="3" fill="#e8c868"/><line x1="400" y1="230" x2="400" y2="76" stroke="#e8c868" stroke-dasharray="4 4"/><text x="300" y="150" font-size="12" style="fill:#e8c868;font-family:var(--mono)">R='+r+' m</text><text x="14" y="26" font-size="10.5" style="fill:#c9d6cf">カント(外軌を高く)と緩和曲線で接続</text>';return xs(p,460,250,'急曲線 平面')},
+ turnout:function(s){var p='<rect x="0" y="110" width="460" height="10" fill="'+XC.bal+'" opacity=".7"/><line x1="0" x2="460" y1="115" y2="115" stroke="'+XC.rail+'" stroke-width="3"/><path d="M140,115 C230,115 260,60 440,60" stroke="'+XC.rail+'" stroke-width="3" fill="none"/><circle cx="140" cy="115" r="5" fill="#e8c868"/><path d="M148,115 l60,0 -50,-20z" fill="#9fb6aa" opacity=".4"/><text x="132" y="140" font-size="11" style="fill:#e8c868">分岐器(転てつ機)</text><text x="300" y="50" font-size="11" style="fill:#cfe0d6">分岐線(貨物線)</text><text x="14" y="26" font-size="10.5" style="fill:#c9d6cf">片開き分岐 8番(基準線は本線)</text>';return xs(p,460,230,'分岐 平面')}
+};
+function xsecOf(s){var f=XSF[s.kind];return f?f(s):''}
+
+/* ---------- v2.4.5: 構造物台帳・断面詳細・駅/施設の仕様・監査表 ---------- */
+var SA=(NET.struct||{}).audit||{},BUILT={};GEO.links.forEach(function(k){k.items.forEach(function(i){BUILT[i.kind]=(BUILT[i.kind]||0)+1})});
+function kauditOf(k){var a=SA[k]||NET.saudit[k];return a||['未監査','']}
+function acol(t){return /^不合格/.test(t)?'#e0705a':(/未/.test(t)?'#9bb0a6':'#e5c14b')}
+var srK='all',srL='all',srCur=null;
+function srRender(){
+ var its=STRI.filter(function(s){return (srK==='all'||s.kind===srK)&&(srL==='all'||s.line===srL)});
+ var kc={};STRI.forEach(function(s){kc[s.kind]=(kc[s.kind]||0)+1});
+ $('srk').innerHTML=['all'].concat(Object.keys(STRK)).filter(function(k){return k==='all'||kc[k]}).map(function(k){return '<button class="chip" data-k="'+k+'" aria-pressed="'+(k===srK)+'">'+(k==='all'?'すべて('+STRI.length+')':'<i style="background:'+STRK[k].color+'"></i>'+STRK[k].name+'('+kc[k]+')')+'</button>'}).join('');
+ $('srl').innerHTML='<option value="all">全路線</option>'+Object.keys(NET.lines).map(function(l){return '<option value="'+l+'"'+(l===srL?' selected':'')+'>'+NET.lines[l].name+'</option>'}).join('');
+ $('srb').innerHTML=its.map(function(s){var a=kauditOf(s.kind);return '<tr class="frow" data-s="'+s.id+'" tabindex="0"><td class="n">'+s.id+'</td><td><span class="dotk" style="background:'+s.color+'"></span>'+s.kname+'</td><td><b>'+s.name+'</b></td><td>'+NET.lines[s.line].name+'</td><td>'+s.an+' – '+s.bn+'</td><td class="n">'+s.km.toFixed(2)+'</td><td class="n">'+s.len+' m</td><td>'+(BUILT[s.kind]?'<span style="color:#3fcf8e">3D済</span>':'<span style="color:#9bb0a6">データのみ</span>')+'</td><td style="color:'+acol(a[0])+'">'+a[0].replace('(改善中)','')+'</td></tr>'}).join('')||'<tr><td colspan="9">該当なし</td></tr>';
+ document.querySelectorAll('#srk .chip').forEach(function(b){b.onclick=function(){srK=b.getAttribute('data-k');srRender()}});
+ document.querySelectorAll('#srb .frow').forEach(function(r){var f=function(){strOpen(r.getAttribute('data-s'))};r.onclick=f;r.onkeydown=function(e){if(e.key==='Enter')f()}});
+ $('srl').onchange=function(){srL=this.value;srRender()};
+ $('srn').textContent=its.length+' 件 ／ 総延長 '+(its.reduce(function(a,s){return a+s.len},0)/1000).toFixed(1)+' km'}
+function kvr(a){return '<dl class="kv">'+a.filter(Boolean).map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>'}).join('')+'</dl>'}
+function strOpen(id){var s=STRI.filter(function(x){return x.id===id})[0];if(!s)return;srCur=id;var a=kauditOf(s.kind);
+ var rows=[['種別',s.kname],['路線',NET.lines[s.line].name],['区間','<a href="#" class="sl" data-s="'+s.a+'">'+s.an+'</a> – <a href="#" class="sl" data-s="'+s.b+'">'+s.bn+'</a>'],['キロ程 / 延長','起点から '+s.km.toFixed(2)+' km ／ '+s.len+' m'],s.form?['形式',s.form]:0,s.year?['竣工',s.year+'年']:0,s.spans?['径間数',s.spans]:0,s.river?['河川',s.river]:0,s.depth?['深さ',s.depth+' m']:0,s.height?['高さ',s.height+' m']:0,s.grade?['勾配',s.grade+' ‰']:0,s.r?['曲線半径','R'+s.r+' m']:0,s.road?['交差道路',s.road]:0,s.vent?['換気塔',s.vent]:0,s.portal?['坑口',s.portal]:0,s.pier?['橋脚',s.pier]:0,s.wire?['架線',s.wire]:0,['3D',BUILT[s.kind]?'制作済(同種 '+BUILT[s.kind]+' 箇所)':'データのみ(未制作)'],['監査','<b style="color:'+acol(a[0])+'">'+a[0]+'</b>']];
+ var d=$('strd');d.innerHTML='<h2 class="hd">'+s.id+'　'+s.name+'</h2>'+(s.note?'<p class="k" style="font-family:var(--jp);font-size:12.5px">'+s.note+'</p>':'')+xsecOf(s)+kvr(rows)+'<p class="k">'+(a[1]||'')+'</p>';
+ d.hidden=false;d.querySelectorAll('.sl').forEach(function(x){x.onclick=function(e){e.preventDefault();pick(x.getAttribute('data-s'))}});
+ document.querySelectorAll('#srb .frow').forEach(function(r){r.classList.toggle('sel',r.getAttribute('data-s')===id)});
+ if(MQ_.matches)d.scrollIntoView({behavior:'smooth',block:'start'})}
+var MQ_=window.matchMedia('(max-width:900px)');
+window.__str=function(id){tab('sr');strOpen(id)};
+/* 監査表(構造種別ごと: 登録数/3D/判定/所見) */
+$('saud').innerHTML=Object.keys(STRK).map(function(k){var a=kauditOf(k),n=STRI.filter(function(s){return s.kind===k}).length,b=BUILT[k]||0;
+ return '<tr><td><span class="dotk" style="background:'+STRK[k].color+'"></span>'+STRK[k].name+'</td><td class="n">'+n+'</td><td class="n">'+(b?'<span style="color:#3fcf8e">済</span>':'<span style="color:#9bb0a6">-</span>')+'</td><td style="color:'+acol(a[0])+';font-weight:700;white-space:nowrap">'+a[0]+'</td><td>'+a[1]+'</td></tr>'}).join('');
+/* ---- 駅の設備仕様(設定値) ---- */
+var SSP=NET.sspec||{},FSP=NET.fspec||{};
+function stationSpec(id){var p=SSP[id];if(!p)return '';var pf=p.platform||{},t=p.ticket||{},sg=p.signal||{},th=p.threed||{};
+ var fl=(p.facilities||[]).map(function(f){var o=NET.fac.filter(function(x){return x.id===f})[0];return o?'<a href="#" class="fl" data-f="'+f+'">'+o.name+'</a>':f}).join('、');
+ var ns=STRI.filter(function(s){return s.a===id||s.b===id});
+ return '<p class="hd" style="margin-top:14px">設備の仕様(設定値)</p>'+kvr([
+  ['ホーム',pf.count+'面 '+(pf.form||'')+'／有効長 '+pf.length_m+'m（'+pf.cars+'両）'],['高さ・幅',pf.height_mm+'mm ／ 幅 '+(pf.widths_m||[]).slice(0,3).join('・')+'m'],['屋根・舗装',(pf.roof||'-')+'／'+(pf.surface||'-')],
+  ['出札・改札',(t.staff||'-')+'／窓口 '+t.windows+'・改札 '+t.gates+'・券売機 '+t.machines],t.note?['備考',t.note]:0,
+  ['信号保安',(sg.block||'-')+'／'+(sg.interlocking||'-')+'／'+(sg.signals||'-')+'／'+(sg.ats||'-')],['電気方式',p.electric||'-'],['構造',p.structure||'-'],
+  ['旅客設備',(p.amenities||[]).join('、')||'-'],['駅前',(p.approach||[]).join('、')||'-'],fl?['附帯施設',fl]:0,
+  ['3D',(th.shape||'-')+'／画像 '+(th.images||0)+'枚／停車車両 '+(th.stock||'-')],['室内',th.interior||'-'],['監査',th.audit||'-']])
+ +(ns.length?'<p class="hd" style="margin-top:10px">接する構造物</p><div class="k" style="font-family:var(--jp);font-size:12.5px;line-height:1.9">'+ns.map(function(s){return '<a href="#" class="ss" data-i="'+s.id+'"><span class="dotk" style="background:'+s.color+'"></span>'+s.name+'</a>'}).join('<br>')+'</div>':'')}
+function bindSpec(){var d=$('detail');d.querySelectorAll('a.ss').forEach(function(a){a.onclick=function(e){e.preventDefault();window.__str(a.getAttribute('data-i'))}});
+ d.querySelectorAll('a.fl').forEach(function(a){a.onclick=function(e){e.preventDefault();var f=NET.fac.filter(function(x){return x.id===a.getAttribute('data-f')})[0];if(f)pickFac(f)}})}
+/* ---- 施設: 配線梯子図と仕様 ---- */
+function ladderSvg(l){var n=Math.min(l.tracks||6,24),W=380,H=40+n*11,x0=70,x1=330,g='';
+ g+='<line x1="10" y1="'+(H/2)+'" x2="'+x0+'" y2="'+(H/2)+'" stroke="#e4e4e4" stroke-width="2.5"/><text x="10" y="'+(H/2-6)+'" font-size="9.5" style="fill:#9db3a6">本線</text>';
+ for(var i=0;i<n;i++){var y=20+i*11;g+='<path d="M'+x0+','+(H/2)+' L'+(x0+14+Math.abs(i-n/2)*1.2)+','+y+' H'+x1+'" stroke="#d8d8d8" stroke-width="1.8" fill="none"/><rect x="'+(x1)+'" y="'+(y-2)+'" width="4" height="4" fill="#d9433f"/>'}
+ if(l.shed)g+='<rect x="'+(x0+70)+'" y="14" width="150" height="'+(n*11+8)+'" fill="#8a5b2e" opacity=".28" stroke="#8a5b2e"/><text x="'+(x0+78)+'" y="11" font-size="9.5" style="fill:#c9a27a">検修庫</text>';
+ if(l.turntable)g+='<circle cx="'+(x0+10)+'" cy="'+(H/2)+'" r="9" fill="none" stroke="#e8c868" stroke-width="2"/><text x="'+(x0-4)+'" y="'+(H-2)+'" font-size="9.5" style="fill:#e8c868">転車台</text>';
+ return '<svg viewBox="0 0 '+W+' '+H+'" class="sch" role="img" aria-label="配線梯子図"><rect width="'+W+'" height="'+H+'" fill="#0f2219"/>'+g+'<text x="'+(W-6)+'" y="'+(H-3)+'" text-anchor="end" font-size="9.5" style="fill:#9db3a6">留置・検修線 '+n+'線</text></svg>'}
+function facSpec(f){var p=FSP[f.id];if(!p)return '';return '<p class="hd" style="margin-top:14px">施設の仕様(設定値)</p>'+kvr([['収容',p.capacity],['要員',p.staff+'人'],['稼働',p.hours],['電力',p.power],['建物',(p.buildings||[]).join('、')||'-'],['3D',p.three_d]])+(p.ladder?'<p class="hd">配線(概念)</p>'+ladderSvg(p.ladder):'')}
+var _pk=pick,_pf=pickFac;
+pick=function(id){_pk(id);$('detail').insertAdjacentHTML('beforeend',stationSpec(id));bindSpec()};
+pickFac=function(f){_pf(f);$('detail').insertAdjacentHTML('beforeend',facSpec(f));bindSpec()};
+
+profRender('HM');srRender();
+/* ---------- v2.4: 端末別(詳細シート・初期表示・リサイズ) ---------- */
+var MQ=window.matchMedia('(max-width:1179px)'),MQ2=window.matchMedia('(max-width:720px)');
+function openSheet(){if(MQ.matches){$('side').classList.add('open');$('side').scrollTop=0}}
+var _pick=pick,_pickFac=pickFac;pick=function(id){_pick(id);openSheet()};pickFac=function(f){_pickFac(f);openSheet()};
+$('sx').onclick=function(){$('side').classList.remove('open')};
+document.addEventListener('keydown',function(e){if(e.key==='Escape')$('side').classList.remove('open')});
+function initView(){vb=fullVB();setVB();gvb=geoInit();setGVB();
+ if(view==='S'&&S.M06&&S.M06.xy){var r=map.getBoundingClientRect(),sc=MQ2.matches?0.85:0.73;
+  if(r.width/vb[2]<sc){var w=Math.min(1260,r.width/sc),h=w*(r.height/Math.max(r.width,1)),c=S.M06.xy,x=Math.max(0,Math.min(1260-w,c[0]-w/2)),y=h>=850?30-(h-850)/2:Math.max(30,Math.min(880-h,c[1]-h*0.58));vb=[x,y,w,h];setVB()}}}
+var _rz=null;window.addEventListener('resize',function(){clearTimeout(_rz);_rz=setTimeout(function(){if(view==='G'){gvb=fullG();setGVB()}else{vb=fullVB();setVB()}},150)});
+showCo('JNR');draw();pick('M06');$('side').classList.remove('open');initView();
+var h0=(location.hash||'').replace('#','');if(h0==='geo'){setView('G')}else if(TABS.some(function(t){return t[0]===h0})){tab(h0)}
+})();
+</script>
