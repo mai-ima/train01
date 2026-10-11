@@ -38,6 +38,8 @@ def run(sid, path=None):
         return {}
     allp = np.vstack(tr)
     lo, hi = allp.min(0) - 3, allp.max(0) + 3
+    import zone_stock as _zs
+    zr = 9.0 if sid == "B02" else _zs.SPECIAL_Z.get(sid, 0.0)   # 軌条面の高さ(高架/地下/モノレールは地面と別)
     res = {}
     PLAT = re.compile(r"plat|isl_|_pl[0-9]|k6_.*plat", re.I)
     for ob in bpy.data.objects:
@@ -60,7 +62,7 @@ def run(sid, path=None):
         w = a @ M[:3, :3].T + M[:3, 3]
         zmin = 0.3 if isplat else ZMIN
         lat = 1.55 if isplat else LAT
-        m = (w[:, 2] > zmin) & (w[:, 2] < ZMAX) & (w[:, 0] > lo[0]) & (w[:, 0] < hi[0]) & (w[:, 1] > lo[1]) & (w[:, 1] < hi[1])
+        m = (w[:, 2] > zmin + zr) & (w[:, 2] < ZMAX + zr) & (w[:, 0] > lo[0]) & (w[:, 0] < hi[0]) & (w[:, 1] > lo[1]) & (w[:, 1] < hi[1])
         if not m.any():
             continue
         w = w[m]

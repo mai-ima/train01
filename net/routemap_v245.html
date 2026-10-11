@@ -510,7 +510,7 @@ var LANE={subway:0,tunnel:0,shed:0,street:0,viaduct:1,truss:1,arch:1,trestle:1,m
 var LANEN=['地下・トンネル・覆い','橋・高架','土工・平面構造'];
 function lkm(l,i){var o=NET.order[l];return o.indexOf(i)===0?0:S[i].km}
 function profRender(l){
- if(l)PLN=l;var o=NET.order[PLN],svg=$('profsvg'),W=1200,L=124,R=24,T=34,GB=104,BH=3*20+30;
+ if(l)PLN=l;var o=NET.order[PLN],svg=$('profsvg'),W=1200,L=124,R=24,T=34,GB=156,BH=3*20+30;
  var es=o.map(function(i){return S[i].elev}),emax=Math.max.apply(0,es),emin=Math.min.apply(0,es);
  var top=Math.max(10,Math.ceil((emax+(emax-emin)*.1+6)/ (emax>150?50:10))*(emax>150?50:10)),bot=emin<0?Math.floor((emin-8)/10)*10:0;
  var step=(top-bot)>300?100:((top-bot)>100?50:((top-bot)>40?20:10));
@@ -537,10 +537,10 @@ function profRender(l){
  for(var n=0;n<o.length-1;n++){var dk=(km[n+1]-km[n])*1000;if(dk<=0)continue;var g=(S[o[n+1]].elev-S[o[n]].elev)/dk*1000,xm=X((km[n]+km[n+1])/2);
   if(Math.abs(g)<0.5||xm-24<gr)continue;gr=xm+24;var up=g>0;h+='<text x="'+xm+'" y="'+(T+PH+33)+'" text-anchor="middle" font-size="10.5" style="fill:'+(Math.abs(g)>=25?'#ff9a6b':'#cfe0d6')+';font-family:var(--mono)">'+(up?'▲':'▼')+Math.abs(g).toFixed(1)+'‰</text>'}
  /* 駅 */
- var lastx=-99,row=0;
+ var lastx=-99,row=0,lx2=-99,stg=0;
  o.forEach(function(i,n){var s=S[i],x=X(km[n]),y=Y(s.elev);h+='<line x1="'+x+'" x2="'+x+'" y1="'+y+'" y2="'+(T+PH)+'" stroke="#2f5545" stroke-dasharray="2 3"/><circle cx="'+x+'" cy="'+y+'" r="5" fill="#fff" stroke="#0e1f19" stroke-width="2" style="cursor:pointer" onclick="window.__pick(\''+i+'\')"/>';
   h+='<text x="'+x+'" y="'+(y-10-(x-lastx<42?11:0))+'" text-anchor="middle" font-size="10" style="fill:#e8c868;font-family:var(--mono)">'+s.elev+'</text>';lastx=x;
-  h+='<text transform="translate('+x+','+(T+PH+46)+') rotate(62)" font-size="11" style="fill:#cfe0d6;cursor:pointer" onclick="window.__pick(\''+i+'\')">'+s.name+'</text>'});
+  h+='<text transform="translate('+(x+4)+','+(T+PH+44)+') rotate(90)" font-size="11" style="fill:#cfe0d6;cursor:pointer" onclick="window.__pick(\''+i+'\')">'+s.name+'</text>'});
  /* 構造物帯(3レーン) */
  var by=T+PH+GB;LANEN.forEach(function(nm,ln){h+='<text x="'+(L-8)+'" y="'+(by+ln*20+13)+'" text-anchor="end" font-size="9.5" style="fill:#6f8a7c">'+nm+'</text><line x1="'+L+'" x2="'+(W-R)+'" y1="'+(by+ln*20+19)+'" y2="'+(by+ln*20+19)+'" stroke="#1a3329"/>'});
  its.forEach(function(s){var ln=LANE[s.kind]||0,x0=X(s.km),w=Math.max(8,X(s.km+s.len/1000)-x0);h+='<g style="cursor:pointer" onclick="window.__str(\''+s.id+'\')"><rect x="'+x0+'" y="'+(by+ln*20+3)+'" width="'+w+'" height="14" rx="2" fill="'+s.color+'" opacity=".92"/><title>'+s.name+' '+s.len+'m</title></g>'});
