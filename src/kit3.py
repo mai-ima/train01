@@ -486,6 +486,8 @@ def m19():
     for off in (-1.2, 1.2):
         P = np.stack([np.full(60, tr[0][0] + off), np.linspace(0.0, 58.0, 60)], 1)
         trackkit.build_track(f"m19_tr_{off}", P, wooden=False, ballast=False, fittings=False, cam=None)
+        import kit7 as _k7b
+        _k7b.tram_bed([tuple(q) for q in P[::3]], f'm19_tr_bed{off}')
         trackkit.buffer_stop(tr[0][0] + off, 0.0, math.pi / 2) if False else None
     gt = G("m19_tram", "Station")
     gt.a("concrete").box(tr[0][0] + 2.0, tr[0][0] + 5.0, 14, 40, 0.0, 0.3)

@@ -449,6 +449,8 @@ def tr02():
     for sgn in (-1, 1):   # 歩道と縁石
         core.ribbon(f"k6_TR02_walk{sgn}", [(x, 2.4 + sgn * 9.5) for x in np.arange(-rb - 10, rf + 11, 6.0)], 3.0, M["ug_paving"], z0=0.33, rut=False, col="Roads")
     _tracks(sid, [0.0, 4.8], ballast=False, x0=-rb, x1=rf)     # 上下2線(島式の安全地帯を挟む)
+    for _y in (0.0, 4.8):
+        kit7.tram_bed([(x, _y) for x in np.arange(-rb, rf + 1, 4.0)], f'k6_TR02_bed{int(_y)}')
     g = G("k6_TR02_stop", "Station")
     g.a("concrete", bevel=0.02).box(-8, 12, 1.6, 3.2, -0.05, 0.28)          # 安全地帯(島)
     g.a("plat_top").box(-7.9, 11.9, 1.7, 3.1, 0.28, 0.31)
@@ -522,13 +524,19 @@ def b02():
     g = G("k6_B02_beam", "Station")
     for y in ys:
         # PC軌道桁(幅0.85×高1.5)
-        g.a("concrete", bevel=0.03).box(-rb, rf, y - 0.45, y + 0.45, Z - 1.5, Z)
-        g.a("iron_black").box(-rb, rf, y - 0.52, y + 0.52, Z - 0.08, Z + 0.05) if False else None
+        g.a("concrete").extrude_x([(y - 0.45, Z), (y + 0.45, Z), (y + 0.45, Z - 1.25), (y + 0.30, Z - 1.5), (y - 0.30, Z - 1.5), (y - 0.45, Z - 1.25)], -rb, rf)   # 面取りのPC桁
+        sgw = 1 if y >= -0.1 else -1                                                    # 外側の避難用点検歩廊(格子床+手摺)
+        yw0, yw1 = y + sgw * 0.50, y + sgw * 1.05
+        g.a("k5_steel").box(-rb, rf, min(yw0, yw1), max(yw0, yw1), Z - 0.95, Z - 0.90)
+        for x in np.arange(-rb + 1.5, rf, 3.0):
+            g.a("iron_black").box(x - 0.03, x + 0.03, y + sgw * 0.45 - 0.02, y + sgw * 1.04 + 0.02, Z - 1.1, Z - 0.95)
+            g.a("iron_black").box(x - 0.025, x + 0.025, y + sgw * 1.03 - 0.025, y + sgw * 1.03 + 0.025, Z - 0.90, Z + 0.25)
+        g.a("iron_black").box(-rb, rf, y + sgw * 1.03 - 0.02, y + sgw * 1.03 + 0.02, Z + 0.22, Z + 0.26)
+        g.a("iron_black").box(-rb, rf, y + sgw * 1.03 - 0.015, y + sgw * 1.03 + 0.015, Z - 0.30, Z - 0.27)
     for x in np.arange(-rb + 10, rf, 24.0):
         # T字橋脚: 脚柱+張り出した横梁(2本の桁を受ける)+支承
-        g.a("concrete", bevel=0.05).box(x - 0.6, x + 0.6, -2.3 - 0.9, -2.3 + 0.9, -0.2, Z - 2.1)
-        g.a("concrete", bevel=0.05).box(x - 0.7, x + 0.7, -5.5, 0.9, Z - 2.1, Z - 1.5)
-        g.a("concrete").extrude_x([(-5.5, Z - 1.5), (-5.0, Z - 2.1), (0.4, Z - 2.1), (0.9, Z - 1.5)], x - 0.7, x + 0.7) if False else None
+        g.a("concrete", bevel=0.05).cyl((x, -2.3, -0.2), (x, -2.3, Z - 2.1), 1.05, 0.8, seg=8)
+        g.a("concrete").extrude_x([(-5.5, Z - 1.5), (-5.0, Z - 2.1), (0.4, Z - 2.1), (0.9, Z - 1.5), (0.9, Z - 1.35), (-5.5, Z - 1.35)], x - 0.7, x + 0.7)   # 張り出し梁(下面に勾配)
         for y in ys:
             g.a("k5_steel").box(x - 0.25, x + 0.25, y - 0.25, y + 0.25, Z - 1.58, Z - 1.5)
         g.a("concrete").box(x - 1.4, x + 1.4, -2.3 - 1.6, -2.3 + 1.6, -0.45, -0.1)           # 基礎フーチング

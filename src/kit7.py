@@ -247,6 +247,21 @@ def _vent_tower(g, c, ang, st, sg):
         g.a("tin").cyl((a_[0], a_[1], 2.6), (a_[0], a_[1], 2.95), 0.5, 0.1, seg=12)
 
 
+def tram_bed(pts, name, gauge=1.067, z0=0.2465):
+    """併用軌道の敷石帯(サイコロ石の舗装)と溝付きレールの溝(軌間の内側/外側の黒い線)。pts=軌道中心線(N,2)。"""
+    mats5()
+    P = np.asarray(pts, float)
+    if len(P) < 2:
+        return
+    d = np.gradient(P, axis=0)
+    ln = np.hypot(d[:, 0], d[:, 1]) + 1e-9
+    nr = np.stack([-d[:, 1] / ln, d[:, 0] / ln], 1)
+    core.ribbon(name + "_sett", [tuple(p) for p in P], gauge + 1.3, M["ug_paving"], z0=z0, rut=False, col="Roads")
+    for sg in (-1, 1):
+        for k, off in enumerate((gauge / 2 - 0.05, gauge / 2 + 0.07)):
+            core.ribbon(f"{name}_gv{sg}{k}", [tuple(p + n * sg * off) for p, n in zip(P, nr)], 0.04, M["iron_black"], z0=z0 + 0.0008, rut=False, col="Roads")
+
+
 def _surface_works(P, ss, pos, ang, nrm, zs, covered, below, half, wt, g, name):
     """開削上部の復旧舗装(継ぎ目・マンホール)、換気塔、坑口の翼壁と門柱、埋戻し土(断面で見える)。"""
     n = len(ss)
@@ -353,6 +368,7 @@ def street(P, s0, s1, name="street", road_w=8.8, zfun=None):
     pts = [tuple(p) for p in pos]
     zr = 0.243
     core.ribbon(name + "_asph", pts, road_w, M["asphalt"] if "asphalt" in M else M["road"], z0=zr, rut=False, col="Roads")
+    tram_bed(pos, name + "_bed")
     for sg in (-1, 1):
         wp = [tuple(p + n * sg * (road_w / 2 + 1.5)) for p, n in zip(pos, nrm)]
         core.ribbon(f"{name}_walk{sg}", wp, 3.0, M["paving"], z0=0.33, rut=False, col="Roads")
