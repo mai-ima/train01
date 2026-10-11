@@ -1,0 +1,147 @@
+<title>穂波野駅を歩く</title>
+<style>
+/* layout: full-bleed panorama stage, minimap bottom-left, location chip top-left, hotspots floating on the ground */
+:root{--ink:#14171a;--ink2:#1d2226;--paper:#eef0ea;--dim:#aab1a8;--sig:#e9b44c;--line:rgba(238,240,234,.22);
+--jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;color-scheme:dark}
+html,body{height:100%;margin:0;padding:0}
+:root{padding:0!important}
+body{background:var(--ink);color:var(--paper);font-family:var(--jp);overflow:hidden;position:fixed;inset:0;width:100%}
+#stage{position:absolute;inset:0;touch-action:none;cursor:grab}
+#stage.drag{cursor:grabbing}
+canvas{display:block;width:100%;height:100%}
+.hs{position:absolute;left:0;top:0;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;
+ background:none;border:0;color:var(--paper);font:500 13px/1.2 var(--jp);cursor:pointer;padding:6px;will-change:transform}
+.hs i{width:30px;height:30px;border-radius:50%;border:2px solid var(--paper);background:rgba(20,23,26,.45);display:grid;place-items:center;
+ box-shadow:0 0 0 4px rgba(20,23,26,.25);transition:transform .15s,background .15s}
+.hs i::after{content:"";width:9px;height:9px;border-top:2px solid var(--paper);border-left:2px solid var(--paper);transform:translateY(2px) rotate(45deg)}
+.hs span{background:rgba(20,23,26,.72);padding:2px 8px;border-radius:3px;white-space:nowrap;letter-spacing:.04em}
+.hs:hover i,.hs:focus-visible i{transform:scale(1.18);background:var(--sig);border-color:var(--sig)}
+.hs:hover i::after,.hs:focus-visible i::after{border-color:var(--ink)}
+.hs:focus-visible{outline:2px solid var(--sig);outline-offset:2px;border-radius:6px}
+#where{position:absolute;left:max(16px,env(safe-area-inset-left));top:max(14px,env(safe-area-inset-top));background:rgba(20,23,26,.78);
+ padding:8px 14px;border-left:3px solid var(--sig);max-width:calc(100% - 32px)}
+#where small{display:block;font:400 11px var(--mono);letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+#where b{font-size:17px;font-weight:700;letter-spacing:.06em}
+#map{position:absolute;left:max(16px,env(safe-area-inset-left));bottom:max(16px,env(safe-area-inset-bottom));width:132px;height:216px;
+ background:rgba(20,23,26,.78);border:1px solid var(--line)}
+#help{position:absolute;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));background:rgba(20,23,26,.78);
+ padding:10px 14px;font-size:12px;line-height:1.7;color:var(--dim);max-width:230px}
+#help kbd{font:500 11px var(--mono);color:var(--paper);border:1px solid var(--line);padding:0 5px;border-radius:3px}
+#load{position:absolute;right:max(16px,env(safe-area-inset-right));top:max(14px,env(safe-area-inset-top));font:400 12px var(--mono);color:var(--dim);
+ background:rgba(20,23,26,.78);padding:6px 10px}
+#err{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;background:var(--ink)}
+#err[hidden],#load[hidden]{display:none}
+@media (max-width:560px){#help{display:none}#map{width:96px;height:156px}}
+</style>
+<div id="stage"><canvas id="gl"></canvas></div>
+<div id="hsl"></div>
+<div id="where"><small>穂波野 HONAMINO</small><b id="wname">…</b></div>
+<div id="load" hidden>読み込み中</div>
+<canvas id="map" width="264" height="432"></canvas>
+<div id="help">ドラッグで見回す／ホイールでズーム<br>丸い矢印をクリックして移動<br><kbd>W</kbd>前へ <kbd>S</kbd>後ろへ <kbd>A</kbd><kbd>D</kbd>向きを変える<br>地図の点でも移動できます</div>
+<div id="err" hidden>このブラウザでは WebGL が使えません。</div>
+<script>
+(function(){
+var NODES=__NODES__;
+var byId={};NODES.forEach(function(n,i){n.i=i;byId[n.id]=n});
+// graph: nearest neighbours within 42 m, symmetric, max 4 each, plus forced links
+NODES.forEach(function(a){a.nb=[]});
+NODES.forEach(function(a){
+ var d=NODES.filter(function(b){return b!==a}).map(function(b){return[b,Math.hypot(a.x-b.x,a.y-b.y)]}).sort(function(p,q){return p[1]-q[1]});
+ d.slice(0,3).forEach(function(p){if(p[1]<42){if(a.nb.indexOf(p[0])<0)a.nb.push(p[0]);if(p[0].nb.indexOf(a)<0)p[0].nb.push(a)}});
+});
+function link(a,b){a=byId[a];b=byId[b];if(a.nb.indexOf(b)<0)a.nb.push(b);if(b.nb.indexOf(a)<0)b.nb.push(a)}
+// the station hall joins forecourt and platform; depot is reached by the access path
+(__LINKS__).forEach(function(l){link(l[0],l[1])});
+
+var cv=document.getElementById('gl'),stage=document.getElementById('stage');
+var gl=cv.getContext('webgl2',{antialias:false});var GL2=!!gl;if(!gl)gl=cv.getContext('webgl',{antialias:false});
+if(!gl){document.getElementById('err').hidden=false;return}
+var vs='attribute vec2 p;varying vec2 q;void main(){q=p;gl_Position=vec4(p,0.,1.);}';
+var fs='precision highp float;varying vec2 q;uniform sampler2D A,B;uniform float mixv,yaw,pitch,tf,asp;'+
+'void main(){vec3 f=vec3(sin(yaw)*cos(pitch),sin(pitch),cos(yaw)*cos(pitch));vec3 r=vec3(cos(yaw),0.,-sin(yaw));'+
+'vec3 u=vec3(-sin(yaw)*sin(pitch),cos(pitch),-cos(yaw)*sin(pitch));vec3 d=normalize(f+q.x*tf*asp*r+q.y*tf*u);'+
+'float lon=atan(d.x,d.z);float lat=asin(clamp(d.y,-1.,1.));vec2 uv=vec2(lon/6.2831853+.5,lat/3.1415926+.5);'+
+'gl_FragColor=mix(texture2D(A,uv),texture2D(B,uv),mixv);}';
+function sh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o}
+var pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+var lp=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(lp);gl.vertexAttribPointer(lp,2,gl.FLOAT,false,0,0);
+var U={};['A','B','mixv','yaw','pitch','tf','asp'].forEach(function(k){U[k]=gl.getUniformLocation(pr,k)});
+gl.uniform1i(U.A,0);gl.uniform1i(U.B,1);
+function mkTex(unit){var t=gl.createTexture();gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,t);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,GL2?gl.REPEAT:gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([20,23,26,255]));return t}
+var tA=mkTex(0),tB=mkTex(1);
+function upload(unit,t,img){gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,t);
+ gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img)}
+
+var cache={};
+function load(n){return cache[n.id]||(cache[n.id]=new Promise(function(ok,ng){var im=new Image();im.onload=function(){ok(im)};im.onerror=function(){delete cache[n.id];ng()};im.src='pano/'+n.id+'.jpg'}))}
+
+var cur=byId['n05']||NODES[0],yaw=5.2,pitch=-0.03,fov=78*Math.PI/180,mixv=1,busy=false;
+function size(){var dpr=Math.min(window.devicePixelRatio||1,2);cv.width=Math.round(stage.clientWidth*dpr);cv.height=Math.round(stage.clientHeight*dpr);gl.viewport(0,0,cv.width,cv.height);mark()}
+var dirty=true;function mark(){dirty=true}
+function draw(){requestAnimationFrame(draw);if(!dirty)return;dirty=false;
+ gl.uniform1f(U.mixv,mixv);gl.uniform1f(U.yaw,yaw);gl.uniform1f(U.pitch,pitch);gl.uniform1f(U.tf,Math.tan(fov/2));gl.uniform1f(U.asp,cv.width/cv.height);
+ gl.drawArrays(gl.TRIANGLE_STRIP,0,4);placeHS();drawMap()}
+window.addEventListener('resize',size);
+
+// hotspots
+var hsl=document.getElementById('hsl');var hsEls=[];
+function bearing(a,b){return Math.atan2(b.x-a.x,b.y-a.y)}
+function buildHS(){hsl.innerHTML='';hsEls=[];cur.nb.forEach(function(n){
+ var b=document.createElement('button');b.className='hs';b.style.position='absolute';b.innerHTML='<i></i><span>'+n.name+'</span>';
+ b.addEventListener('click',function(e){e.stopPropagation();go(n)});hsl.appendChild(b);hsEls.push({el:b,n:n,br:bearing(cur,n)})})}
+function placeHS(){var W=stage.clientWidth,H=stage.clientHeight,t=Math.tan(fov/2),asp=W/H;
+ var f=[Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)],r=[Math.cos(yaw),0,-Math.sin(yaw)],
+ u=[-Math.sin(yaw)*Math.sin(pitch),Math.cos(pitch),-Math.cos(yaw)*Math.sin(pitch)];
+ hsEls.forEach(function(h){var e=-0.2,w=[Math.sin(h.br)*Math.cos(e),Math.sin(e),Math.cos(h.br)*Math.cos(e)];
+  var z=w[0]*f[0]+w[1]*f[1]+w[2]*f[2];if(z<=0.05||busy){h.el.style.display='none';return}
+  var sx=(w[0]*r[0]+w[2]*r[2])/(z*t*asp),sy=(w[0]*u[0]+w[1]*u[1]+w[2]*u[2])/(z*t);
+  if(Math.abs(sx)>1.1||Math.abs(sy)>1.1){h.el.style.display='none';return}
+  h.el.style.display='';h.el.style.left=((sx+1)/2*W)+'px';h.el.style.top=((1-sy)/2*H)+'px'})}
+
+function wrap(a){while(a>Math.PI)a-=2*Math.PI;while(a<-Math.PI)a+=2*Math.PI;return a}
+function go(n){if(busy||n===cur)return;busy=true;var ld=document.getElementById('load');var slow=setTimeout(function(){ld.hidden=false},250);
+ load(n).then(function(im){clearTimeout(slow);ld.hidden=true;
+  upload(1,tB,im);var t0=performance.now();
+  // turn toward travel direction a little, keep the viewer's heading otherwise
+  (function step(now){var k=Math.min(1,(now-t0)/520);mixv=k;mark();
+   if(k<1)requestAnimationFrame(step);else{upload(0,tA,im);mixv=0;cur=n;busy=false;setName();buildHS();mark();warm()}})(t0)
+ }).catch(function(){clearTimeout(slow);ld.hidden=true;busy=false})}
+function warm(){cur.nb.forEach(function(n){load(n).catch(function(){})})}
+function setName(){document.getElementById('wname').textContent=cur.name}
+
+// look controls
+var drag=null;
+stage.addEventListener('pointerdown',function(e){if(e.target.closest('.hs'))return;drag={x:e.clientX,y:e.clientY};stage.classList.add('drag');stage.setPointerCapture(e.pointerId)});
+stage.addEventListener('pointermove',function(e){if(!drag)return;var k=fov/stage.clientHeight;yaw=wrap(yaw-(e.clientX-drag.x)*k);pitch=Math.max(-1.4,Math.min(1.4,pitch+(e.clientY-drag.y)*k));drag.x=e.clientX;drag.y=e.clientY;mark()});
+function up(){drag=null;stage.classList.remove('drag')}
+stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);
+stage.addEventListener('wheel',function(e){e.preventDefault();fov=Math.max(30,Math.min(100,fov*180/Math.PI+e.deltaY*0.04))*Math.PI/180;mark()},{passive:false});
+document.addEventListener('keydown',function(e){var k=e.key.toLowerCase();
+ if(k==='a'||k==='arrowleft'){yaw=wrap(yaw-0.2);mark()}else if(k==='d'||k==='arrowright'){yaw=wrap(yaw+0.2);mark()}
+ else if(k==='w'||k==='arrowup'||k==='s'||k==='arrowdown'){var back=(k==='s'||k==='arrowdown'),want=back?yaw+Math.PI:yaw,best=null,bd=1.1;
+  hsEls.forEach(function(h){var d=Math.abs(wrap(h.br-want));if(d<bd){bd=d;best=h.n}});if(best)go(best)}});
+
+// minimap
+var mc=document.getElementById('map'),mx=mc.getContext('2d');
+var X0=Math.min.apply(0,NODES.map(function(n){return n.x}))-6,X1=Math.max.apply(0,NODES.map(function(n){return n.x}))+6,Y0=Math.min.apply(0,NODES.map(function(n){return n.y}))-6,Y1=Math.max.apply(0,NODES.map(function(n){return n.y}))+6;
+var SC=Math.min((mc.width-24)/(X1-X0),(mc.height-24)/(Y1-Y0)),OX=(mc.width-(X1-X0)*SC)/2,OY=(mc.height-(Y1-Y0)*SC)/2;
+function mp(n){return[OX+(n.x-X0)*SC,OY+(Y1-n.y)*SC]}
+function drawMap(){mx.clearRect(0,0,mc.width,mc.height);mx.lineWidth=2;mx.strokeStyle='rgba(238,240,234,.28)';
+ NODES.forEach(function(a){a.nb.forEach(function(b){if(a.i<b.i){var p=mp(a),q=mp(b);mx.beginPath();mx.moveTo(p[0],p[1]);mx.lineTo(q[0],q[1]);mx.stroke()}})});
+ NODES.forEach(function(n){var p=mp(n);mx.beginPath();mx.arc(p[0],p[1],n===cur?0:6,0,7);mx.fillStyle='#aab1a8';mx.fill()});
+ var p=mp(cur);mx.fillStyle='rgba(233,180,76,.35)';mx.beginPath();mx.moveTo(p[0],p[1]);mx.arc(p[0],p[1],44,yaw-Math.PI/2-fov/2*1.1,yaw-Math.PI/2+fov/2*1.1);mx.closePath();mx.fill();
+ mx.fillStyle='#e9b44c';mx.beginPath();mx.arc(p[0],p[1],8,0,7);mx.fill()}
+mc.addEventListener('click',function(e){var r=mc.getBoundingClientRect(),x=(e.clientX-r.left)*mc.width/r.width,y=(e.clientY-r.top)*mc.height/r.height,best=null,bd=28;
+ NODES.forEach(function(n){var p=mp(n),d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;best=n}});if(best&&best!==cur)jump(best)});
+function jump(n){go(n)}
+
+size();setName();buildHS();
+load(cur).then(function(im){upload(0,tA,im);upload(1,tB,im);mixv=0;mark();warm()});
+draw();
+})();
+</script>

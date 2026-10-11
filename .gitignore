@@ -1,5 +1,3 @@
-out/
-tex/emblem*.png
-assets/emblem_archive/
 *.blend
+*.blend1
 __pycache__/
