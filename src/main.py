@@ -271,7 +271,9 @@ if "vtest" in parts:
     import vehtypes
     for _i, _t in enumerate(vehtypes.TYPES):
         vehtypes.make(_t, "vt_" + _t, seed=3 + _i).place(0, 8.0 * _i, 0)
-    for _k, _t in enumerate(("jnr_sub", "ke")):
+    for _j, _t in enumerate(("sl_b", "sl_a", "sl_din", "sl_gen", "sl_b")):
+        vehtypes.make(_t, f"sl_{_j}", seed=40 + _j, ends=("gang", "tail" if _j == 4 else "gang")).place(-70 + _j * 21.6, -12, 0)
+    for _k, _t in enumerate(("jnr_sub", "ke", "kiha_std")):
         _L = vehtypes.TYPES[_t]["L"] + 0.55
         for _j in range(3):
             vehtypes.make(_t, f"vc_{_t}_{_j}", seed=20 + _j, ends=("cab" if _j == 0 else "gang", "cab" if _j == 2 else "gang")).place(40 + _j * _L, 8.0 * _k, 0)

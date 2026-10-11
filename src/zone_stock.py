@@ -23,33 +23,17 @@ def _kind(s):
     if "市電" in s: return ("tram", {})
     if "地下鉄" in s: return ("emu", dict(kind="km"))
     if "国都電鉄" in s: return ("emu", dict(kind="ke"))
-    if "気動車" not in s:
-        if "交流" in s and "電車" in s: return ("emu", dict(kind="jnr_ac"))
-        if "特急" in s: return ("emu", dict(kind="jnr_ltd"))
-        if "急行" in s: return ("emu", dict(kind="jnr_exp"))
-        if "近郊" in s: return ("emu", dict(kind="jnr_sub"))
-        if "電車" in s: return ("emu", dict(kind="jnr_dc"))
-    if "山麓鉄道" in s: return ("kiha", dict(lo="maroon", up="ivory"))
-    if "臨港線" in s: return ("kiha", dict(lo="hr_yellow", up="hr_navy"))
-    if "ハイブリッド" in s: return ("kiha", dict(lo="jorange", up="cream"))
-    if "気動車" in s: return ("kiha", dict(lo="red", up="cream"))
+    if "山麓鉄道" in s: return ("kiha", dict(kind="kiha_sr"))
+    if "臨港線" in s: return ("kiha", dict(kind="kiha_hr"))
+    if "ハイブリッド" in s: return ("kiha", dict(kind="kiha_hyb"))
+    if "交流" in s and "電車" in s: return ("emu", dict(kind="jnr_ac"))
+    if "臨時急行" in s: return ("kiha", dict(kind="kiha_exp"))
+    if "特急" in s: return ("kiha", dict(kind="kiha_ltd"))     # 非電化区間の特急は気動車(電車の特急形は電化区間の国都中央のみ)
+    if "近郊" in s: return ("emu", dict(kind="jnr_sub"))
+    if "気動車" in s: return ("kiha", dict(kind="kiha_std"))
+    if "電車" in s: return ("emu", dict(kind="jnr_dc"))
     if "貨物" in s or "コンテナ" in s: return ("freight", {})
     return None
-
-
-def _nose2(kn, opt):
-    if kn == "emu":
-        import vehtypes
-        S = vehtypes.TYPES[opt.get("kind", "jnr_dc")]
-        return 0.0
-    return 0.0
-
-
-def _len(kn, opt):
-    if kn == "emu":
-        import vehtypes
-        return vehtypes.TYPES[opt.get("kind", "jnr_dc")]["L"]
-    return LEN.get(kn, 20.0)
 
 
 def _tpoint(sid, k, x):
@@ -95,8 +79,10 @@ def _consist(kindname, opt, n, seed):
             ends = ("cab" if i == 0 else "gang", "cab" if i == n - 1 else "gang")
             out.append(vehtypes.make(opt.get("kind", "jnr_dc"), f"stk_{seed}_{i}", seed=seed + i, ends=ends, pant=(i == (1 if n >= 3 else 0)) or (n == 1)))
     elif kindname == "kiha":
+        import vehtypes
         for i in range(n):
-            out.append(train.make_kiha(f"stk_{seed}_{i}", seed=seed + i, **opt))
+            ends = ("cab" if i == 0 else "gang", "cab" if i == n - 1 else "gang")
+            out.append(vehtypes.make(opt.get("kind", "kiha_std"), f"stk_{seed}_{i}", seed=seed + i, ends=ends, pant=(i == (1 if n >= 3 else 0)) or (n == 1)))
     elif kindname == "tram":
         out.append(train2.make_tram(f"stk_{seed}_0", seed=seed))
     elif kindname == "mono":

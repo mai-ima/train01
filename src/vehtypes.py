@@ -41,6 +41,8 @@ def mats():
         "t_moq_o": lib.mat_plain("t_moq_o", (0.52, 0.27, 0.07), rough=0.9, spec=0.1),
         "t_moq_k": lib.mat_plain("t_moq_k", (0.05, 0.05, 0.06), rough=0.9, spec=0.1),
         "t_moq_y": lib.mat_plain("t_moq_y", (0.70, 0.55, 0.14), rough=0.9, spec=0.1),
+        "t_curt": lib.mat_plain("t_curt", (0.07, 0.13, 0.28), rough=0.92, spec=0.05),
+        "t_blank": lib.mat_plain("t_blank", (0.55, 0.60, 0.70), rough=0.9, spec=0.05),
         "t_white": lib.mat_plain("t_white", (0.82, 0.82, 0.78), rough=0.85, spec=0.05),
         "t_panel": lib.mat_plain("t_panel", (0.52, 0.45, 0.30), rough=0.7, spec=0.1),
         "t_wood": lib.mat_plain("t_wood", (0.30, 0.17, 0.08), rough=0.55, spec=0.2),
@@ -120,10 +122,61 @@ TYPES = {
         seat="t_moq_r", interior="subway", standing=True),
 }
 
+TYPES.update({
+    "kiha_std": dict(
+        title="国鉄一般形気動車(2扉・ラジエーター)", L=20.0, W=2.80, z=(1.12, 1.80, 2.58, 2.98, 3.50), cab=1.75, zb0=0.92, diesel=True,
+        fs="sabo", ss="sabo", ds="hing", ps="lap", wc=(0.04, 0.04), liner="t_cab", lamp="globe",
+        lo="t_verm", up="t_cream", door="t_verm", mask="t_verm", stripe=[],
+        pattern="w2 D w8 D w2", door_w=1.05, win="pair", pillar=0.11,
+        front="vee", screens=2, lamps="roofc", roofshape="round", rake=0.12,
+        roof=["radiator", "exhaust", "garland"], pant_x=0.0, bogie=("dt", 2.1, 0.43), under="engine",
+        seat="t_moq_g", interior="box", standing=False),
+    "kiha_exp": dict(
+        title="国鉄急行形気動車(2扉デッキ・大窓)", L=21.0, W=2.90, z=(1.18, 1.86, 2.62, 3.04, 3.58), cab=2.0, zb0=0.92, diesel=True,
+        fs="holder", ss="sabo", ds="deck", ps="beads", wc=(0.10, 0.02), liner="t_panel", lamp="tube",
+        lo="t_cream", up="t_cream", door="t_cream", mask="t_cream", stripe=[("t_ltdred", 1.62, 1.80), ("t_ltdred", 2.64, 2.78)],
+        pattern="D s w9 D", door_w=0.95, win="wide", pillar=0.08,
+        front="flat", screens=2, lamps="belt", roofshape="round", rake=0.28,
+        roof=["radiator", "exhaust", "bigvent"], pant_x=0.0, bogie=("air", 2.3, 0.43), under="engine",
+        seat="t_moq_r", interior="box", standing=False),
+    "kiha_hyb": dict(
+        title="国鉄ハイブリッド汎用気動車(3扉・パンタ付)", L=20.0, W=2.95, z=(1.06, 1.72, 2.50, 2.88, 3.36), cab=1.45, zb0=0.88, diesel=True,
+        fs="roll", ss="roll", ds="modern", ps="smooth", wc=(0.12, 0.12), liner="t_white", lamp="strip",
+        lo="t_steel", up="t_steel", door="t_orange", mask="black", stripe=[("t_orange", 1.30, 1.52), ("t_green", 2.56, 2.66)],
+        pattern="w1 D w3 D w3 D w1", door_w=1.30, win="ribbon", pillar=0.07,
+        front="flat", screens=2, lamps="led", roofshape="flat", rake=0.34,
+        roof=["pant", "hybrid", "aerial"], pant_x=-5.2, bogie=("dt", 2.1, 0.43), under="skirtfull",
+        seat="t_moq_b", interior="mix", standing=True),
+    "kiha_ltd": dict(
+        title="国鉄特急ハイブリッド気動車(展望前面)", L=21.0, W=2.95, z=(1.20, 1.92, 2.66, 3.06, 3.60), cab=2.1, zb0=0.9, diesel=True,
+        fs="roll", ss="roll", ds="modern", ps="smooth", wc=(0.18, 0.18), liner="t_cream", lamp="strip",
+        lo="t_ivory", up="t_ivory", door="t_ivory", mask="t_ltdred", stripe=[("t_ltdred", 1.20, 1.46), ("t_navy", 2.70, 2.80)],
+        pattern="D s w9 D", door_w=0.95, win="ribbon", pillar=0.06,
+        front="round", screens=3, lamps="round", roofshape="round", nose=1.25,
+        roof=["pant", "hybrid", "acpod"], pant_x=6.0, bogie=("air", 2.3, 0.43), under="skirtfull",
+        seat="t_moq_o", interior="recline", standing=False),
+    "kiha_sr": dict(
+        title="山麓鉄道キハ200(丸形・片引き1扉)", L=16.0, W=2.65, z=(1.00, 1.66, 2.42, 2.78, 3.28), cab=1.5, zb0=0.88, diesel=True,
+        fs="sabo", ss="sabo", ds="bus", ps="plank", wc=(0.14, 0.14), liner="t_wood", lamp="globe",
+        lo="t_maroon", up="t_ivory", door="t_maroon", mask="t_maroon", stripe=[("t_gold", 1.64, 1.70)],
+        pattern="w2 D w4 w1", door_w=1.05, win="bus", pillar=0.10,
+        front="round", screens=3, lamps="round", roofshape="round", nose=0.55,
+        roof=["radiator", "exhaust", "pods"], pant_x=0.0, bogie=("pedestal", 1.9, 0.40), under="engine",
+        seat="t_wood", interior="long", standing=False),
+    "kiha_hr": dict(
+        title="臨港線小型気動車(バス型・中央扉)", L=12.5, W=2.50, z=(0.95, 1.55, 2.30, 2.66, 3.08), cab=1.3, zb0=0.82, diesel=True,
+        fs="sabo", ss="sabo", ds="bus", ps="weld", wc=(0.10, 0.10), liner="t_panel", lamp="globe",
+        lo="t_navy", up="t_warn", door="t_navy", mask="t_navy", stripe=[("t_navy", 2.30, 2.42)],
+        pattern="w2 D w2", door_w=1.0, win="bus", pillar=0.10,
+        front="flat", screens=1, lamps="belt", roofshape="round", rake=0.10,
+        roof=["radiator", "exhaust"], pant_x=0.0, bogie=("dt", 1.8, 0.36), under="engine",
+        seat="t_moq_y", interior="long", standing=False),
+})
 
-def _bays(S, tot):
+
+def _bays(S, tot, key="pattern"):
     """pattern 'w1 D w3 ...' → bays [(kind,width)]. W 幅は残り寸法を窓数で均等割り。"""
-    toks = S["pattern"].split()
+    toks = S.get(key, S["pattern"]).split()
     nD = sum(1 for t in toks if t == "D")
     nS = sum(1 for t in toks if t == "s")
     nW = sum(int(t[1:]) for t in toks if t[0] == "w")
@@ -227,6 +280,26 @@ def _door(v, S, xa, xb, s, style):
             fk.box(a - 0.025, b + 0.025, yo0, yo1, zs + 0.15, zs + 0.18)
             fk.box(a - 0.025, b + 0.025, yo0, yo1, zw1 - 0.10, zw1 - 0.075)
         v.A("t_grey").box(xa - 0.04, xa, ya, yb, zlo, zhi + 0.02); v.A("t_grey").box(xb, xb + 0.04, ya, yb, zlo, zhi + 0.02)
+    elif style == "hing":         # 気動車一般形: 片引戸1枚(上半分が窓)+下半に補強リブ+手すり
+        v.A(key, 0.004).box(xa + 0.04, xb - 0.04, ya, yb, zlo, zhi)
+        gl.box(xa + 0.14, xb - 0.14, yo0, yo1, zs - 0.05, zw1 - 0.08)
+        fk.box(xa + 0.12, xb - 0.12, yo0, yo1, zs - 0.08, zs - 0.05)
+        for k in range(3):
+            v.A("t_grey").box(xa + 0.10, xb - 0.10, yo0, yo1, zfl + 0.20 + k * 0.17, zfl + 0.23 + k * 0.17)
+        v.A("t_steel").cyl((xb - 0.07, s * (h + 0.06), zfl + 0.1), (xb - 0.07, s * (h + 0.06), zw1), 0.015, 0.015, seg=6)
+    elif style == "bus":          # バス型: 黒枠の大きなガラスの2枚折戸
+        v.A("black", 0.004).box(xa, xb, ya, yb, zlo, zhi)
+        for (a, b) in ((xa + 0.06, xm - 0.03), (xm + 0.03, xb - 0.06)):
+            gl.box(a, b, yo0, yo1, zlo + 0.14, zhi - 0.10)
+            _fillet(v, "black", a, zhi - 0.10, 0.10, 1, -1, yo0, yo1); _fillet(v, "black", b, zhi - 0.10, 0.10, -1, -1, yo0, yo1)
+        v.A("t_steel").cyl((xm, s * (h + 0.05), zfl), (xm, s * (h + 0.05), zw1), 0.014, 0.014, seg=6)
+    elif style == "modern":       # 近代形: 面一の引戸(全面スモークガラス+白縁)
+        v.A(key, 0.003).box(xa, xb, ya, yb, zlo, zhi)
+        for (a, b) in ((xa + 0.06, xm - 0.03), (xm + 0.03, xb - 0.06)):
+            gl.box(a, b, yo0, yo1, zlo + 0.30, zhi - 0.12)
+            v.A("t_white").box(a - 0.02, a, yo0, yo1, zlo + 0.28, zhi - 0.10); v.A("t_white").box(b, b + 0.02, yo0, yo1, zlo + 0.28, zhi - 0.10)
+        v.A("t_sred").box(xm - 0.05, xm + 0.05, *sorted((s * (h + 0.014), s * (h + 0.03))), zhi + 0.0, zhi + 0.06)
+        v.A("lamp_glow").box(xm - 0.035, xm + 0.035, *sorted((s * (h + 0.03), s * (h + 0.034))), zhi + 0.01, zhi + 0.05)
     elif style == "two2":         # 地下鉄: 全高の細長い窓+上部の戸閉表示灯+アルミ縁
         v.A(key, 0.004).box(xa, xm - 0.01, ya, yb, zlo, zhi)
         v.A(key, 0.004).box(xm + 0.01, xb, ya, yb, zlo, zhi)
@@ -315,6 +388,15 @@ def _panels(v, S, tot, bays):
                 for j in range(k):
                     xx = xa + 0.07 + j * 0.14
                     v.A("t_grey").box(xx - 0.01, xx + 0.01, *sorted((yy, yy + s * 0.007)), z0, z1)
+            elif ps == "beads":               # 水平のビード2条
+                for zz in (z0 + 0.30, z0 + 0.62):
+                    v.A("t_grey", 0.002).box(xa, xb, *sorted((yy, yy + s * 0.012)), zz, zz + 0.035)
+            elif ps == "lap":                 # 下見板張りのように重ねた水平継ぎ+縦の継ぎ目
+                for k in range(1, 4):
+                    v.A("black").box(xa, xb, *sorted((yy, yy + s * 0.004)), z0 + k * 0.17, z0 + k * 0.17 + 0.012)
+                v.A("black").box(xa + w * 0.5 - 0.006, xa + w * 0.5 + 0.006, *sorted((yy, yy + s * 0.004)), z0, z1)
+            elif ps == "smooth":              # 平滑+細い縦の継ぎ目だけ
+                v.A("t_grey").box(xa - 0.004, xa + 0.004, *sorted((yy, yy + s * 0.003)), z0, z1)
             elif ps == "plank":               # 水平の羽目板(細い溝)
                 n = int((z1 - z0) / 0.13)
                 for j in range(1, n):
@@ -330,6 +412,7 @@ def _windows(v, S, tot, seed):
     h = S["W"] / 2
     zfl, zs, zw1, zt, zr = S["z"]
     bays = _bays(S, tot)
+    bays2 = _bays(S, tot, "pattern2") if "pattern2" in S else bays
     rnd = random.Random(seed + 7)
     pillar = S["pillar"]
     win = S["win"]
@@ -341,9 +424,11 @@ def _windows(v, S, tot, seed):
     doors = []
     x = -tot / 2
     r_top, r_bot = S["wc"]
-    for kind, w in bays:
+    for s in (-1, 1):
+      x = -tot / 2
+      for kind, w in (bays if s == 1 else bays2):
         xa, xb = x, x + w
-        for s in (-1, 1):
+        if True:
             ya, yb = sorted((s * (h - 0.078), s * h))
             yf0, yf1 = sorted((s * (h - 0.082), s * (h + 0.008)))
             if kind == "W":
@@ -366,6 +451,16 @@ def _windows(v, S, tot, seed):
                     sh_ = rnd.uniform(0.05, 0.38) if rnd.random() < cp * 1.6 else 0.0
                     if sh_ > 0:
                         v.A("curtain").box(x0 + 0.02, x1 - 0.02, *sorted((s * (h - 0.115), s * (h - 0.095))), zw1 - sh_, zw1 - 0.02)
+                elif win == "pair":       # 2枚引き違い+中桟+黒ゴム
+                    fk.box(xm - 0.02, xm + 0.02, yf0, yf1, zs, zw1)
+                    v.A("black").box(x0, x1, yf0, yf1, zs - 0.01, zs + 0.03)
+                    v.A("black").box(x0, x1, yf0, yf1, zw1 - 0.03, zw1 + 0.01)
+                elif win == "bus":        # バス窓: 黒い太枠+丸い隅
+                    v.A("black").box(x0, x1, yf0, yf1, zs - 0.02, zs + 0.05)
+                    v.A("black").box(x0, x1, yf0, yf1, zw1 - 0.05, zw1 + 0.02)
+                    v.A("black").box(xm - 0.03, xm + 0.03, yf0, yf1, zs, zw1)
+                elif win == "ribbon":     # 連続窓: 無桟+細い柱だけ
+                    pass
                 elif win == "arch":       # 私鉄形: 上部がアーチの窓+金色の下枠+欄間
                     fk.box(x0, x1, yf0, yf1, zw1 - 0.24, zw1 - 0.21)
                     v.A("t_gold").box(x0, x1, yf0, yf1, zs - 0.03, zs + 0.01)
@@ -375,7 +470,7 @@ def _windows(v, S, tot, seed):
                     fk.box(xm - 0.02, xm + 0.02, yf0, yf1, zs, zw1)
                     fk.box(x0, x1, yf0, yf1, zs + 0.38, zs + 0.41)
                     v.A("black").box(x0 + 0.03, xm - 0.04, *sorted((s * (h - 0.088), s * (h - 0.01))), zs + 0.01, zs + 0.35) if False else None
-                if win in ("single", "wide", "sash2", "arch", "subway"):
+                if win in ("single", "wide", "sash2", "arch", "subway", "pair", "bus", "ribbon"):
                     # 窓隅の丸み(形式ごとに半径が違う)
                     yy0, yy1 = sorted((s * (h - 0.082), s * (h + 0.006)))
                     _fillet(v, upk, x0, zw1, r_top, 1, -1, yy0, yy1); _fillet(v, upk, x1, zw1, r_top, -1, -1, yy0, yy1)
@@ -387,6 +482,12 @@ def _windows(v, S, tot, seed):
                 if s == 1:
                     doors.append((xa + xb) / 2)
                 _door(v, S, xa, xb, s, S["ds"])
+            elif kind == "s" and S.get("louver"):
+                v.A(upk, 0.003).box(xa, xb, ya, yb, zs, zw1)
+                for k in range(9):
+                    zz = zs + 0.28 + k * (zw1 - zs - 0.55) / 8
+                    v.A("black").box(xa + 0.10, xb - 0.10, *sorted((s * (h + 0.012), s * (h - 0.01))), zz, zz + 0.07)
+                    v.A(upk).box(xa + 0.10, xb - 0.10, *sorted((s * (h + 0.02), s * (h + 0.006))), zz + 0.07, zz + 0.095)
             elif kind == "s":
                 v.A(upk, 0.003).box(xa, xb, ya, yb, zs, zw1)
                 gl.box(xa + 0.2, xb - 0.2, *sorted((s * h, s * (h + 0.012))), zw1 - 0.45, zw1 - 0.1)
@@ -480,13 +581,16 @@ def _front0(v, S, e, nose):
             v.A("t_grey").box(*sorted((X(xe + 0.02), X(xe + 0.03))), h - 0.20, h - 0.17, zws + 0.55, zws + 0.80)  # ハンドル
             v.A("t_sred", 0.004).box(*sorted((X(xe - 0.12), X(xe + 0.02))), -h, h, zws - 0.28, zws - 0.12)   # 前面の帯
         else:
-            if n == 2:
+            rk = S.get("rake", 0.0)
+            if n == 1:
+                screen(xe + 0.015, 0.0, 2 * h - 0.34, zws + 0.06, zwt - 0.10, rk)
+            elif n == 2:
                 for yc in (-0.64, 0.64):
-                    screen(xe + 0.015, yc, 0.98, zws + 0.06, zwt - 0.10, 0.0)
+                    screen(xe + 0.015, yc, 0.98, zws + 0.06, zwt - 0.10, rk)
                 pil.box(*sorted((X(xe - 0.08), X(xe + 0.04))), -0.10, 0.10, zws, zwt)
             else:
                 for yc in (-0.88, 0.0, 0.88):
-                    screen(xe + 0.015, yc, 0.72 if yc == 0 else 0.66, zws + 0.06, zwt - 0.10, 0.0)
+                    screen(xe + 0.015, yc, 0.72 if yc == 0 else 0.66, zws + 0.06, zwt - 0.10, rk)
                 for yp in (-0.51, 0.51):
                     pil.box(*sorted((X(xe - 0.08), X(xe + 0.04))), yp - 0.05, yp + 0.05, zws, zwt)
             pil.box(*sorted((X(xe - 0.08), X(xe + 0.04))), -h, -h + 0.13, zws, zwt)
@@ -509,6 +613,11 @@ def _front0(v, S, e, nose):
                 v.A("black", 0.01).box(*sorted((X(xe), X(xe + 0.07))), s * 0.95 - 0.16, s * 0.95 + 0.16, 1.28, 1.62)
                 v.A("lampglass").box(*sorted((X(xe + 0.07), X(xe + 0.085))), s * 0.95 - 0.12, s * 0.95 + 0.12, 1.34, 1.56)
                 v.A("t_sred").cyl((X(xe + 0.0), s * 0.62, 1.20), (X(xe + 0.05), s * 0.62, 1.20), 0.06, 0.06, seg=10)
+        elif lp == "led":     # 近代形: 角形LEDの前照灯・尾灯を黒マスクの隅に
+            for s in (-1, 1):
+                v.A("lampglass").box(*sorted((X(xe + 0.012), X(xe + 0.04))), s * 0.98 - 0.14, s * 0.98 + 0.14, 1.20, 1.30)
+                v.A("t_sred").box(*sorted((X(xe + 0.012), X(xe + 0.04))), s * 0.98 - 0.14, s * 0.98 + 0.14, 1.34, 1.40)
+                v.A("lampglass").box(*sorted((X(xe + 0.012), X(xe + 0.04))), s * 0.55 - 0.05, s * 0.55 + 0.05, zt - 0.20, zt - 0.14)
         elif lp == "high":    # 交流形: 屋根肩に2灯の丸形前照灯+側面寄りの尾灯
             for s in (-1, 1):
                 v.A("black").cyl((X(xe), s * 0.90, zt - 0.20), (X(xe + 0.12), s * 0.90, zt - 0.20), 0.14, 0.13, seg=14)
@@ -740,6 +849,20 @@ def _roof(v, S):
             for s in (-1, 1):
                 for x in (-3.0, 3.0):
                     v.A("roof", 0.008).cyl((x - 0.2, s * 0.6, zr - 0.2), (x + 0.2, s * 0.6, zr - 0.2), 0.10, 0.10, seg=8)
+        elif it == "radiator":      # 気動車: ラジエーター(屋根上・両端)+通風口
+            for x in (-7.2, 7.2) if S["L"] > 15 else (-4.0, 4.0):
+                v.A("roof", 0.015).box(x - 0.8, x + 0.8, -0.62, 0.62, zr - 0.08, zr + 0.16)
+                v.A("dark").box(x - 0.7, x + 0.7, -0.57, 0.57, zr + 0.15, zr + 0.17)
+                for k in range(7):
+                    v.A("black").box(x - 0.76, x + 0.76, -0.60 + k * 0.2 - 0.01, -0.60 + k * 0.2 + 0.01, zr + 0.02, zr + 0.15)
+        elif it == "exhaust":
+            v.A("steel").cyl((-1.2, 0.0, zr - 0.04), (-1.2, 0.0, zr + 0.55), 0.09, 0.075, seg=10)
+            v.A("black").cyl((-1.2, 0.0, zr + 0.55), (-1.2, 0.0, zr + 0.60), 0.10, 0.10, seg=10)
+        elif it == "hybrid":        # ハイブリッド: 屋根上の蓄電池箱+冷房
+            for x in (-1.5, 2.5):
+                v.A("t_steel", 0.015).box(x - 1.0, x + 1.0, -0.6, 0.6, zr - 0.10, zr + 0.2)
+                v.A("t_grey").box(x - 0.9, x + 0.9, -0.5, 0.5, zr + 0.2, zr + 0.23)
+            v.A("t_orange").box(-2.6, -0.4, -0.6, 0.6, zr + 0.0, zr + 0.04) if False else None
         elif it == "torpedo":       # 魚雷形ベンチレータ
             for x in (-4.0, -1.6, 1.6, 4.0):
                 v.A("roof", 0.01, True).sphere((x, 0, zr + 0.0), (0.38, 0.14, 0.12), seg=12, rings=6)
@@ -747,6 +870,19 @@ def _roof(v, S):
             for x in (-6.0, -2.0, 2.0):
                 v.A("roof", 0.012).box(x - 0.55, x + 0.55, -0.32, 0.32, zr - 0.06, zr + 0.17)
                 v.A("t_grey").box(x - 0.50, x + 0.50, -0.29, 0.29, zr + 0.17, zr + 0.19)
+        elif it == "kvent":         # 食堂車: 厨房の排気煙突+大型換気
+            v.A("steel").cyl((-6.2, 0.4, zr - 0.04), (-6.2, 0.4, zr + 0.42), 0.12, 0.10, seg=10)
+            v.A("black").cyl((-6.2, 0.4, zr + 0.42), (-6.2, 0.4, zr + 0.48), 0.14, 0.14, seg=10)
+            v.A("roof", 0.012).box(-7.6, -4.8, -0.5, 0.0, zr - 0.06, zr + 0.14)
+            for x in (-3.0, 0.5, 4.0):
+                v.A("roof", 0.01, True).sphere((x, 0, zr), (0.34, 0.14, 0.10), seg=12, rings=6)
+        elif it == "gensetvent":    # 電源車: 大型ルーバー+機関室ベンチ+消音器
+            v.A("roof", 0.015).box(-6.8, -1.0, -0.8, 0.8, zr - 0.08, zr + 0.20)
+            for k in range(11):
+                v.A("black").box(-6.6 + k * 0.5, -6.5 + k * 0.5, -0.75, 0.75, zr + 0.19, zr + 0.23)
+            v.A("t_grey", 0.01).box(1.4, 3.6, -0.55, 0.55, zr - 0.06, zr + 0.28)
+            v.A("steel").cyl((5.0, 0.0, zr - 0.04), (5.0, 0.0, zr + 0.70), 0.15, 0.12, seg=10)
+            v.A("black").cyl((5.0, 0.0, zr + 0.70), (5.0, 0.0, zr + 0.76), 0.16, 0.16, seg=10)
         elif it == "duct":
             v.A("roof", 0.01).box(-8.2, 8.2, -0.05, 0.05, zr + 0.0, zr + 0.06)
         elif it == "acpod":         # 冷房用の箱(特急形)
@@ -808,6 +944,24 @@ def _under(v, S):
         for s in (-1, 1):
             v.A(S["lo"], 0.01).box(-L / 2 + 0.9, L / 2 - 0.9, *sorted((s * (h - 0.12), s * (h - 0.09))), 0.46, zb + 0.04)
         v.A("iron", 0.01).box(-2.0, 2.0, -0.5, 0.5, 0.42, zb)
+    elif u == "engine":
+        v.A("under", 0.01).box(-3.4, 0.9, -0.85, 0.85, 0.34, zb)                       # 燃料タンク
+        v.A("iron", 0.01).box(1.8, 3.6, -0.9, 0.2, 0.40, zb)                         # 蓄電池箱
+        v.A("iron", 0.01).box(-5.6, -4.2, -0.2, 0.9, 0.42, zb)
+        v.A("black").cyl((-L * 0.34, 0, 0.90), (L * 0.34, 0, 0.90), 0.04, 0.04, seg=6)       # 推進軸
+        for yy in (-0.5, 0.5):
+            v.A("steel").cyl((4.3, yy, 0.50), (5.9, yy, 0.50), 0.14, 0.14, seg=10)
+        v.A("steel").cyl((0.0, 0.0, 0.46), (1.8, 0.0, 0.46), 0.17, 0.17, seg=12)      # 排気管のマフラー
+    elif u == "sleeper":       # 寝台車: 水タンク・蓄電池箱・ブレーキシリンダー
+        v.A("iron", 0.01).box(-4.4, -1.6, -0.95, 0.95, 0.42, zb)
+        v.A("under", 0.01).box(0.6, 3.4, -0.9, 0.6, 0.44, zb)
+        v.A("iron", 0.01).box(4.6, 6.4, -0.8, 0.8, 0.48, zb)
+        v.A("steel").cyl((-0.8, 0.5, 0.60), (0.4, 0.5, 0.60), 0.13, 0.13, seg=10)
+    elif u == "gen":           # 電源車: 燃料タンク+発電機+消音器
+        v.A("under", 0.01).box(-7.4, -2.4, -0.95, 0.95, 0.30, zb)
+        v.A("iron", 0.01).box(-1.6, 2.0, -0.9, 0.9, 0.44, zb)
+        v.A("steel").cyl((2.6, 0.0, 0.52), (5.6, 0.0, 0.52), 0.19, 0.19, seg=12)
+        v.A("iron", 0.01).box(6.0, 7.6, -0.8, 0.8, 0.46, zb)
     elif u == "xfmr":
         v.A("iron", 0.012).box(-3.2, 0.8, -0.9, 0.9, 0.40, zb)             # 主変圧器
         for k in range(6):
@@ -828,6 +982,41 @@ def _under(v, S):
                     v.A("rubber", 0.01).cyl((x, s * 0.58, r + 0.14), (x, s * 0.58, r + 0.46), 0.17, 0.15, seg=14)
                     v.A("steel").cyl((x, s * 0.58, r + 0.46), (x, s * 0.58, r + 0.54), 0.19, 0.19, seg=14)
             v.meta["bogies"].append(dict(x=round(float(x), 3), wheelbase=wb, wheel_r=r, axles=2))
+
+TYPES.update({
+    "sl_b": dict(
+        title="国鉄寝台客車 B寝台(開放式・2段)", L=21.0, W=2.90, z=(1.20, 1.90, 2.66, 3.06, 3.66), cab=1.10, zb0=0.95,
+        fs="holder", ss="sabo", ds="deck", ps="beads", wc=(0.05, 0.05), liner="t_cream", lamp="tube",
+        lo="t_navy", up="t_navy", door="t_navy", mask="t_navy", stripe=[("t_ivory", 2.74, 2.86), ("t_ivory", 1.86, 1.94)],
+        pattern="D w11 D", pattern2="D w15 D", door_w=0.85, win="wide", pillar=0.09,
+        front="flat", screens=0, lamps="belt", roofshape="round", rake=0.0,
+        roof=["torpedo", "duct"], pant_x=0.0, bogie=("dt", 2.4, 0.43), under="sleeper",
+        seat="t_moq_b", interior="bunk", standing=False),
+    "sl_a": dict(
+        title="国鉄寝台客車 A寝台(個室・廊下側窓)", L=21.0, W=2.90, z=(1.20, 1.90, 2.66, 3.06, 3.66), cab=1.10, zb0=0.95,
+        fs="holder", ss="sabo", ds="deck", ps="lap", wc=(0.02, 0.02), liner="t_wood", lamp="globe",
+        lo="t_navy", up="t_navy", door="t_navy", mask="t_navy", stripe=[("t_gold", 2.74, 2.80), ("t_ivory", 1.86, 1.92), ("t_ivory", 2.66, 2.70)],
+        pattern="D w8 D", pattern2="D w16 D", door_w=0.85, win="sash2", pillar=0.11,
+        front="flat", screens=0, lamps="belt", roofshape="round", rake=0.0,
+        roof=["bigvent", "duct"], pant_x=0.0, bogie=("air", 2.5, 0.43), under="sleeper",
+        seat="t_moq_r", interior="compart", standing=False),
+    "sl_din": dict(
+        title="国鉄食堂車(厨房・大窓・煙突)", L=21.0, W=2.90, z=(1.20, 1.90, 2.62, 3.06, 3.68), cab=1.10, zb0=0.95,
+        fs="holder", ss="sabo", ds="deck", ps="smooth", wc=(0.12, 0.12), liner="t_cream", lamp="strip",
+        lo="t_navy", up="t_navy", door="t_navy", mask="t_navy", stripe=[("t_ltdred", 2.70, 2.82), ("t_ivory", 1.86, 1.94)],
+        pattern="D s w7 D", pattern2="D s w7 D", door_w=0.85, win="arch", pillar=0.16,
+        front="flat", screens=0, lamps="belt", roofshape="round", rake=0.0,
+        roof=["acpod", "kvent"], pant_x=0.0, bogie=("air", 2.5, 0.43), under="sleeper",
+        seat="t_moq_r", interior="dining", standing=False),
+    "sl_gen": dict(
+        title="国鉄電源荷物車(発電機・ルーバー)", L=21.0, W=2.90, z=(1.20, 1.90, 2.66, 3.06, 3.66), cab=1.10, zb0=0.95, diesel=True,
+        fs="holder", ss="sabo", ds="deck", ps="weld", wc=(0.02, 0.02), liner="t_grey", lamp="globe",
+        lo="t_navy", up="t_navy", door="t_navy", mask="t_navy", stripe=[("t_ivory", 1.86, 1.94)],
+        pattern="D " + " ".join(["s"] * 18) + " D", door_w=0.85, win="pair", pillar=0.12, louver=True,
+        front="flat", screens=0, lamps="belt", roofshape="round", rake=0.0,
+        roof=["gensetvent", "exhaust"], pant_x=0.0, bogie=("dt", 2.4, 0.43), under="gen",
+        seat="t_moq_k", interior="genset", standing=False),
+})
 
 
 # --------------------------------------------------------------------------- interior
@@ -907,6 +1096,9 @@ def _interior(v, S, tot, bays, seed):
             for s_ in (-1, 1):
                 v.A("lamp_in").sphere((x, s_ * 0.55, zw1 - 0.10), (0.085, 0.085, 0.085), seg=10, rings=6)
                 v.A("steel").cyl((x, s_ * 0.55, zw1 - 0.02), (x, s_ * 0.55, zw1 - 0.06), 0.012, 0.012, seg=5)
+    if st in ("bunk", "compart", "dining", "genset"):
+        _sleep_inside(v, S, tot, bays, segs, zones, rnd)
+        return
     if st in ("long", "mix", "cross"):
         n = int((2 * ax) / 2.4)
         for i in range(n):                   # 扇風機(扇風機は私鉄/近郊/通勤に)
@@ -1040,6 +1232,101 @@ def _interior(v, S, tot, bays, seed):
     for e in (-1, 1):
         pass
 
+def _sleep_inside(v, S, tot, bays, segs, zones, rnd):
+    """寝台車・食堂車・電源車の室内。通路は +y 側、寝台/個室は -y 側。"""
+    h = S["W"] / 2
+    zfl, zs, zw1, zt, zr = S["z"]
+    st = S["interior"]
+    ax = tot / 2 - 0.05
+    ya, yb = -h + 0.12, 0.50              # 寝台側の奥行 (≒1.8m)
+    if st == "bunk":
+        for (a, b) in segs:
+            m = max(1, int((b - a) / 0.78))
+            p = (b - a) / m
+            for j in range(m):
+                xc = a + p * (j + 0.5)
+                v.A("t_blank", 0.02).box(xc - 0.34, xc + 0.34, ya + 0.02, yb, zfl + 0.40, zfl + 0.58)       # 下段マットレス
+                v.A("t_curt", 0.03).box(xc - 0.33, xc + 0.33, ya + 0.04, yb - 0.02, zfl + 0.50, zfl + 0.62)    # 毛布
+                v.A("t_white", 0.03).box(xc - 0.26, xc + 0.26, ya + 0.04, ya + 0.32, zfl + 0.62, zfl + 0.70)   # 枕
+                v.A("t_blank", 0.02).box(xc - 0.34, xc + 0.34, ya + 0.02, yb, zfl + 1.38, zfl + 1.54)      # 上段
+                v.A("t_curt", 0.03).box(xc - 0.33, xc + 0.33, ya + 0.04, yb - 0.02, zfl + 1.48, zfl + 1.58)
+                v.A("t_white", 0.03).box(xc - 0.26, xc + 0.26, ya + 0.04, ya + 0.32, zfl + 1.58, zfl + 1.66)
+                if j % 2 == 1:                                                                             # 区画の仕切り
+                    v.A("t_wood").box(xc - p / 2 - 0.015, xc - p / 2 + 0.015, ya + 0.02, yb, zfl + 0.02, zfl + 1.75)
+                if rnd.random() < 0.6:                                                                      # 通路側のカーテン(半分閉)
+                    k = rnd.choice((0.0, 0.5))
+                    v.A("t_curt", 0.01).box(xc - 0.33 + k * 0.5, xc + 0.33, yb, yb + 0.02, zfl + 0.30, zfl + 1.80)
+            for s_ in (a, b):
+                v.A("t_wood").box(s_ - 0.015, s_ + 0.015, ya + 0.02, yb, zfl + 0.02, zfl + 1.75)
+        for (a, b) in segs:                                                                                 # 通路側の窓下: 補助席と小テーブル
+            for xx in range(int((b - a) / 1.56)):
+                x = a + 0.78 + xx * 1.56
+                v.A("t_moq_b", 0.02).box(x - 0.2, x + 0.2, h - 0.38, h - 0.10, zfl + 0.40, zfl + 0.46)
+                v.A("t_wood").box(x - 0.2, x + 0.2, h - 0.28, h - 0.09, zfl + 0.70, zfl + 0.73)
+    elif st == "compart":
+        for (a, b) in segs:
+            m = max(1, int((b - a) / 2.05))
+            p = (b - a) / m
+            for j in range(m + 1):
+                xw = a + p * j
+                v.A("t_cream").box(xw - 0.02, xw + 0.02, ya, yb, zfl + 0.02, zw1 - 0.03)                    # 個室の仕切壁
+            for j in range(m):
+                xc = a + p * (j + 0.5)
+                v.A("t_wood", 0.01).box(xc - 0.40, xc + 0.40, yb - 0.04, yb, zfl + 0.02, zw1 - 0.25)         # 引き戸
+                v.A("glass").box(xc - 0.22, xc + 0.22, yb - 0.04, yb - 0.02, zfl + 1.30, zfl + 1.80)
+                v.A("t_gold").box(xc + 0.28, xc + 0.34, yb, yb + 0.03, zfl + 0.95, zfl + 1.05)
+                v.A("t_moq_r", 0.03).box(xc - 0.55, xc + 0.55, ya + 0.02, ya + 0.60, zfl + 0.40, zfl + 0.82)  # 長手の下段寝台(座席状態)
+                v.A("t_moq_r", 0.03).box(xc - 0.55, xc + 0.55, ya + 0.02, ya + 0.14, zfl + 0.82, zfl + 1.45)
+                v.A("t_blank", 0.02).box(xc - 0.55, xc + 0.55, ya + 0.02, yb - 0.10, zfl + 1.62, zfl + 1.72)  # 折畳みの上段
+                v.A("t_wood").box(xc - 0.25, xc + 0.25, ya + 0.02, ya + 0.40, zfl + 0.72, zfl + 0.75)         # 窓台テーブル
+                v.A("t_gold").cyl((xc, ya + 0.20, zfl + 0.75), (xc, ya + 0.20, zfl + 0.98), 0.03, 0.045, seg=8)  # スタンド
+        v.A("t_moq_r").box(-ax, ax, h - 0.80, h - 0.12, zfl + 0.02, zfl + 0.03)                                # 廊下の絨毯
+        for s_ in (h - 0.14,):
+            v.A("t_gold").cyl((-ax, s_, zfl + 0.98), (ax, s_, zfl + 0.98), 0.014, 0.014, seg=6)               # 窓際の手すり
+    elif st == "dining":
+        kx = -tot / 2 + 4.4                                                                                 # 厨房: x<kx
+        v.A("t_steel").box(-ax, kx - 0.1, -0.30, 0.30, zfl + 0.02, zfl + 0.90)                              # 調理台
+        v.A("black").box(-ax + 0.4, -ax + 1.4, -0.28, 0.28, zfl + 0.90, zfl + 0.94)
+        for k in range(3):
+            v.A("t_steel").box(-ax + 0.2, -ax + 0.5, h - 0.65 - k * 0.0, h - 0.12, zfl + 0.02 + k * 0.7, zfl + 0.68 + k * 0.7)
+        v.A("t_cream").box(kx - 0.05, kx, -h + 0.08, h - 0.08, zfl + 0.02, zw1 - 0.03)                     # 配膳口のある仕切壁
+        v.A("t_cream").box(kx - 0.05, kx, -h + 0.08, -0.45, zfl + 0.02, zw1 - 0.03)
+        for x in [kx + 0.9 + i * 1.62 for i in range(int((tot / 2 - kx - 1.4) / 1.62) + 1)]:
+            for s_ in (-1, 1):
+                yy = s_ * (h - 0.72)
+                v.A("t_white", 0.01).box(x - 0.42, x + 0.42, yy - 0.34, yy + 0.34, zfl + 0.72, zfl + 0.745)    # テーブルクロス
+                v.A("lamp_glow").cyl((x, yy, zfl + 0.745), (x, yy, zfl + 0.90), 0.035, 0.07, seg=8)           # 卓上ランプ
+                v.A("steel").cyl((x, yy, zfl + 0.02), (x, yy, zfl + 0.72), 0.03, 0.03, seg=6)
+                for sg in (-1, 1):
+                    v.A("t_moq_r", 0.025).box(x + sg * 0.62 - 0.19, x + sg * 0.62 + 0.19, yy - 0.2, yy + 0.2, zfl + 0.02, zfl + 0.44)
+                    v.A("t_moq_r", 0.025).box(x + sg * 0.80 - 0.03, x + sg * 0.80 + 0.03, yy - 0.2, yy + 0.2, zfl + 0.44, zfl + 1.0)
+                    if rnd.random() < 0.45:
+                        _rider(v, x + sg * 0.62, yy, zfl, 0.0 if sg < 0 else 3.14, True, rnd=rnd)
+        v.A("t_moq_r").box(kx, ax, -0.32, 0.32, zfl + 0.02, zfl + 0.03)                                    # 通路の絨毯
+    else:   # genset
+        v.A("iron", 0.02).box(-ax + 1.0, -ax + 4.4, -0.85, 0.85, zfl + 0.05, zfl + 1.45)                   # ディーゼル機関
+        for k in range(6):
+            v.A("steel").cyl((-ax + 1.4 + k * 0.5, 0, zfl + 1.45), (-ax + 1.4 + k * 0.5, 0, zfl + 1.75), 0.10, 0.10, seg=8)
+        v.A("iron", 0.02).box(-ax + 4.4, -ax + 6.2, -0.7, 0.7, zfl + 0.05, zfl + 1.15)                     # 発電機
+        v.A("t_warn").box(-ax + 6.8, -ax + 7.6, h - 0.5, h - 0.12, zfl + 0.02, zfl + 1.7)                  # 配電盤
+        v.A("t_grey").box(-ax + 8.4, ax - 0.6, -0.6, 0.9, zfl + 0.02, zfl + 0.9)                            # 荷物室の荷
+        v.A("t_wood").box(-ax + 8.6, ax - 0.9, -0.5, 0.7, zfl + 0.9, zfl + 1.6)
+
+
+def _tail(v, S, e, tot):
+    """最後尾の車端: 貫通路は閉じ、尾灯と空の後部標識(テールマーク)掛けを付ける。"""
+    _gang(v, S, e, tot)
+    L, W = S["L"], S["W"]
+    zfl, zs, zw1, zt, zr = S["z"]
+    xe = L / 2
+    X = lambda a: e * a
+    for s in (-1, 1):
+        v.A("t_steel").box(*sorted((X(xe + 0.02), X(xe + 0.10))), s * 1.02 - 0.14, s * 1.02 + 0.14, zfl + 0.62, zfl + 0.92)   # 尾灯の枠
+        v.A("lamp_glow").box(*sorted((X(xe + 0.10), X(xe + 0.12))), s * 1.02 - 0.10, s * 1.02 + 0.10, zfl + 0.67, zfl + 0.87)
+    v.A("t_steel").box(*sorted((X(xe + 0.02), X(xe + 0.07))), -0.30, 0.30, zfl + 2.05, zfl + 2.12)      # テールマーク掛け(空)
+    v.A("t_steel").torus((X(xe + 0.10), 0.0, zfl + 2.62), "x", 0.30, 0.025, segR=28, segr=6)
+    v.A("t_steel").box(*sorted((X(xe + 0.04), X(xe + 0.10))), -0.015, 0.015, zfl + 2.12, zfl + 2.34)
+
 
 # --------------------------------------------------------------------------- main entry
 def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True):
@@ -1061,6 +1348,8 @@ def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True)
     for e, kd in ((-1, ends[0]), (1, ends[1])):
         if kd == "cab":
             _cab(v, S, e, tot, nose)
+        elif kd == "tail":
+            _tail(v, S, e, tot)
         else:
             _gang(v, S, e, tot)
     for dx in doors:
@@ -1069,7 +1358,9 @@ def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True)
     _under(v, S)
     _roof(v, S)
     lg = {"jnr_dc": ("logo_new.png", 0.50), "jnr_sub": ("logo_new.png", 0.62), "jnr_exp": ("logo_new.png", 0.70),
-          "jnr_ltd": ("logo_new.png", 0.52), "jnr_ac": ("logo_new.png", 0.56), "ke": ("logo_ke.png", 0.60), "km": ("logo_km.png", 0.46)}[tid]
+          "jnr_ltd": ("logo_new.png", 0.52), "jnr_ac": ("logo_new.png", 0.56), "ke": ("logo_ke.png", 0.60), "km": ("logo_km.png", 0.46), "kiha_std": ("logo_new.png", 0.55), "kiha_exp": ("logo_new.png", 0.66),
+          "kiha_hyb": ("logo_new.png", 0.60), "kiha_ltd": ("logo_new.png", 0.58), "kiha_sr": ("logo_sr.png", 0.46), "kiha_hr": ("logo_hr.png", 0.40),
+          "sl_b": ("logo_new.png", 0.56), "sl_a": ("logo_new.png", 0.56), "sl_din": ("logo_new.png", 0.60), "sl_gen": ("logo_new.png", 0.50)}[tid]
     ds = sorted(doors)
     xm = (ds[0] + ds[1]) / 2 if len(ds) > 1 else ds[0] + 2.2
     di = ds[1] if len(ds) > 1 else ds[0]
