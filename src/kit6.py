@@ -9,6 +9,9 @@ from rooms import lamp_point
 import kit, kit2
 from kit import ST, platform
 import kit_town as KT
+import bpy
+import kit7
+import kit8
 
 ZP = Z_PLAT
 
@@ -70,8 +73,86 @@ def _vault(g, x0, x1, y0, y1, zb, rise, wall_key, rib_key="concrete", ribs=7.0):
 
 
 # ----------------------------------------------------------------- 地下鉄・地下駅 (T02/T03/K02): 地上は街区の下に覆われた駅
+
+def _slab(g, x0, x1, y0, y1, za, zb, holes):
+    """長方形スラブから軸平行の穴(x0,x1,y0,y1)を抜いて作る。"""
+    xs = sorted(set([x0, x1] + [h[0][0] for h in holes] + [h[0][1] for h in holes]))
+    for xa_, xb_ in zip(xs[:-1], xs[1:]):
+        xm = (xa_ + xb_) / 2
+        hs = sorted([(h[1], h[2]) for h in holes if h[0][0] < xm < h[0][1]])
+        y = y0
+        for (ha, hb) in hs:
+            if ha > y:
+                g.a("concrete", bevel=0.02).box(xa_, xb_, y, ha, za, zb)
+            y = max(y, hb)
+        if y < y1:
+            g.a("concrete", bevel=0.02).box(xa_, xb_, y, y1, za, zb)
+
+
+def _solid_stair(g, sg, yc, width=2.4):
+    """ホーム端から地上へ上がる直線階段(蹴上げは詰まった中実)。ホーム面 ZP → 地表 UG_DEPTH(ホール局所座標)。"""
+    D = UG_DEPTH
+    n = int(math.ceil((D - ZP) / 0.18))
+    dz = (D - ZP) / n
+    x_from = sg * (39.4 - n * 0.28)        # 最上段が地表(穴の縁 x=39.4)にちょうど届く
+    for k in range(n):
+        xa_ = x_from + sg * k * 0.28
+        xb_ = x_from + sg * (k + 1) * 0.28
+        zt_ = ZP + (k + 1) * dz
+        g.a("concrete", bevel=0.004).box(min(xa_, xb_), max(xa_, xb_), yc - width / 2, yc + width / 2, ZP - 0.05, zt_)
+    xe = x_from + sg * n * 0.28
+    for s in (-1, 1):
+        g.a("concrete", bevel=0.01).sbox((x_from, yc + s * (width / 2 + 0.1), ZP + 0.45), (xe, yc + s * (width / 2 + 0.1), D + 0.45), 0.2, 0.9)   # 腰壁
+        g.a("iron_black").sbox((x_from, yc + s * (width / 2 + 0.1), ZP + 1.2), (xe, yc + s * (width / 2 + 0.1), D + 1.2), 0.05, 0.05)   # 手すり
+    return xe
+
+
+def _tunnel_ext(g, sid, xa, xb, ylo, yhi, zt):
+    """ホールの外側(±52m〜ゾーン端)の箱形トンネル。"""
+    rb, rf = _reach(sid)
+    for (x0, x1) in ((xb, rf), (-rb, xa)):
+        if x1 - x0 < 1.0:
+            continue
+        for yw in (ylo - 0.4, yhi):
+            g.a("concrete", bevel=0.01).box(x0, x1, yw, yw + 0.4, -0.5, zt)
+        g.a("concrete", bevel=0.02).box(x0, x1, ylo - 0.4, yhi + 0.4, zt, zt + 0.5)
+        g.a("concrete", bevel=0.0).box(x0, x1, ylo, yhi, -0.55, 0.0)
+
+
+def _ug_surface(sid, stairs, ylo, yhi, xa, xb):
+    """地上: 地下への出入口の上屋、舗装の広場、地面の切り欠き(階段室)。ゾーン局所座標(地表 z=0)。"""
+    g = G(f"k6_{sid}_ug_surf", "Buildings")
+    holes = []
+    for k, (yc, sg) in enumerate(stairs):
+        hx = (33.5, 39.4) if sg > 0 else (-39.4, -33.5)
+        kit7.shaft_cut(hx[0] - 0.05, hx[1] + 0.05, yc - 1.5, yc + 1.5, name=f"k6_{sid}_shaft{k}")
+        holes.append((hx, yc - 1.5, yc + 1.5))
+        kit8.ticket_hall(sid, 32.6 * sg, sg, yc)
+    g.build()
+    # 広場の舗装(階段室の穴を残す)
+    gp = G(f"k6_{sid}_plaza", "Roads")
+    _slab_mat(gp, xa - 6, xb + 6, ylo - 5, yhi + 3, -0.08, 0.0, holes)
+    gp.build()
+
+
+def _slab_mat(g, x0, x1, y0, y1, za, zb, holes):
+    xs = sorted(set([x0, x1] + [h[0][0] for h in holes] + [h[0][1] for h in holes]))
+    for xa_, xb_ in zip(xs[:-1], xs[1:]):
+        xm = (xa_ + xb_) / 2
+        hs = sorted([(h[1], h[2]) for h in holes if h[0][0] < xm < h[0][1]])
+        y = y0
+        for (ha, hb) in hs:
+            if ha > y:
+                g.a("paving" if "paving" in M else "concrete").box(xa_, xb_, y, ha, za, zb)
+            y = max(y, hb)
+        if y < y1:
+            g.a("paving" if "paving" in M else "concrete").box(xa_, xb_, y, y1, za, zb)
+
+
 def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", stripe="pl_blue", over="arcade", ys=None):
     kit.ground(L=600, W=600)
+    _b0 = set(bpy.data.objects.keys())
+    D = UG_DEPTH
     if ys is None:
         ys = [0.0, -8.4] if island else [0.0, -4.6]
     _tracks(sid, ys, ballast=False)
@@ -83,9 +164,13 @@ def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", strip
     for yw, sgn in ((ylo - 0.4, 1), (yhi, 1)):
         g.a(wall, bevel=0.01).box(xa, xb, yw, yw + 0.4, 0.0, zt)
         g.a(stripe if stripe in M else "concrete").box(xa, xb, yw + (0.4 if yw == ylo - 0.4 else -0.02), yw + (0.42 if yw == ylo - 0.4 else 0.0) + 0.02, 1.0, 1.5)
-    g.a("concrete", bevel=0.02).box(xa, xb, ylo - 0.4, yhi + 0.4, zt, zt + 0.5)
-    # 地下駅の上は土被りの丘(開削トンネル): 緩い法面の草地で包み、坑口の袖壁と面一にする
-    g.a("grass_ground" if "grass_ground" in M else "concrete").extrude_x([(ylo - 9.0, -0.05), (ylo - 2.5, zt + 1.0), (yhi + 2.5, zt + 1.0), (yhi + 9.0, -0.05)], xa - 0.3, xb + 0.3)
+    # 階段の位置(ホームの両端から地上へ)。屋根スラブは階段の通る穴を残して作る
+    if island:
+        stairs = [(-4.2, +1), (-4.2, -1)]
+    else:
+        stairs = [(2.65, +1), (2.65, -1), (ys[-1] - 2.65, +1), (ys[-1] - 2.65, -1)]
+    holes = [((33.5, 39.4) if sg > 0 else (-39.4, -33.5), yc - 1.5, yc + 1.5) for (yc, sg) in stairs]
+    _slab(g, xa, xb, ylo - 0.4, yhi + 0.4, zt, zt + 0.5, holes)
     for xe in (xa, xb):                          # 坑口の袖壁(線路の通る穴を残す)
         for (y0_, y1_) in ((ylo - 0.4, ylo + 1.0), (yhi - 1.0, yhi + 0.4)):
             g.a("concrete", bevel=0.01).box(xe - 0.3, xe + 0.3, y0_, y1_, 0.0, zt)
@@ -101,6 +186,9 @@ def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", strip
         platform(xa + 2, xb - 2, 1.7, 3.6, name=f"k6_{sid}_platA")
         platform(xa + 2, xb - 2, ys[-1] - 3.6, ys[-1] - 1.7, name=f"k6_{sid}_platB")
         pcs = [2.7, ys[-1] - 2.7]
+    for (yc, sg) in stairs:
+        _solid_stair(g, sg, yc)
+    _tunnel_ext(g, sid, xa, xb, ylo, yhi, zt)
     # 柱・照明・ベンチ・案内
     gp = G(f"k6_{sid}_fit", "Props")
     for yc in pcs:
@@ -122,7 +210,12 @@ def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", strip
         lamp_point(x, (ylo + yhi) / 2, zt - 0.7, watt=120.0)
     for x in (-24, 24):
         _ekimei(sid, x, yhi - 0.4 + 0.0, 3.0, w=4.2, face='S', name=f"k6_{sid}_nm{x}")
-    # 地上: 出入口(階段室)・換気塔・上の街区
+    # ---- ここまで(ホール・線路・ホーム・照明・駅名標)を地下 D m へ下げる
+    for nm in set(bpy.data.objects.keys()) - _b0:
+        bpy.data.objects[nm].location.z -= D
+    # 地上: 出入口(階段室の上屋)・広場・切り欠き
+    _ug_surface(sid, stairs, ylo, yhi, xa, xb)
+    # 地上: 換気塔・上の街区
     gs = G(f"k6_{sid}_surf", "Buildings")
     cx = 0.0
     if over == "arcade":                          # 商店街アーケードを抱える2階建て街区
@@ -170,11 +263,6 @@ def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", strip
         gs.a("wood_dark", bevel=0.01).box(x, x + 5.4, yhi + 0.4, yhi + 1.6, 0.0, 3.2)
         gs.a(col if col in M else "tin").box(x - 0.1, x + 5.5, yhi + 1.0, yhi + 2.6, 3.2, 3.4)
         gs.a("glass").box(x + 0.4, x + 5.0, yhi + 1.58, yhi + 1.62, 0.5, 2.6)
-    # 階段出入口(2か所)
-    for sx in (-40, 40):
-        gs.a("concrete", bevel=0.02).box(sx - 3, sx + 3, yhi + 20.0, yhi + 26.0, 0.0, 3.0)
-        gs.a("tin").box(sx - 3.4, sx + 3.4, yhi + 19.6, yhi + 26.4, 3.0, 3.25)
-        gs.a("dark_glass").box(sx - 2.0, sx + 2.0, yhi + 19.97, yhi + 20.03, 0.0, 2.5)
     gs.build()
     _town(sid, rng, "urban" if over != "civic" else "suburb", yhi + 36.0, 0.75)
     kit.ground  # keep import usage
@@ -308,7 +396,11 @@ def tr02():
     kit.ground(L=600, W=600)
     rb, rf = _reach(sid)
     # 道路に埋め込まれた軌道(舗装・バラストなし)と電車線柱
-    core.ribbon("k6_TR02_street", [(x, 0.0) for x in np.arange(-rb - 10, rf + 11, 6.0)], 14.0, M["road"])
+    if "asphalt" not in M:
+        M["asphalt"] = lib.mat_asphalt("k6_asphalt", worn=0.6, base=(0.072, 0.070, 0.066), crack_scale=3.5, crack_amt=0.3) if hasattr(lib, "mat_asphalt") else lib.mat_plain("k6_asphalt", (0.05, 0.05, 0.055), rough=0.92)
+    core.ribbon("k6_TR02_street", [(x, 2.4) for x in np.arange(-rb - 10, rf + 11, 6.0)], 15.0, M["asphalt"], z0=0.243, rut=False, col="Roads")
+    for sgn in (-1, 1):   # 歩道と縁石
+        core.ribbon(f"k6_TR02_walk{sgn}", [(x, 2.4 + sgn * 9.5) for x in np.arange(-rb - 10, rf + 11, 6.0)], 3.0, M["paving"] if "paving" in M else M["road"], z0=0.33, rut=False, col="Roads")
     _tracks(sid, [0.0, 4.8], ballast=False, x0=-rb, x1=rf)     # 上下2線(島式の安全地帯を挟む)
     g = G("k6_TR02_stop", "Station")
     g.a("concrete", bevel=0.02).box(-8, 12, 1.6, 3.2, -0.05, 0.28)          # 安全地帯(島)
@@ -334,6 +426,12 @@ def tr02():
             gm.a("sack" if "sack" in M else "straw").box(x - 1.2 + k * 0.7, x - 0.7 + k * 0.7, 22.1, 22.9, 0.9, 1.25)
     gm.build()
     face_plane("k6_TR02_nm", f"kit_{sid}_ekimei.png", 'S', 2.0, 2.4, 1.0, 2.0, h=0.8)
+    face_plane("k6_TR02_nm_b", f"kit_{sid}_ekimei.png", 'N', 2.0, 2.52, 1.0, 2.0, h=0.8)   # 両面の駅名標(裏から見て鏡文字にならない)
+    gpst = G("k6_TR02_signposts", "Props")
+    for xx in (1.1, 2.9):
+        gpst.a("iron_black").cyl((xx, 2.46, 0.3), (xx, 2.46, 1.85), 0.045, seg=8)
+    gpst.a("iron_black").box(1.0, 3.0, 2.40, 2.52, 1.78, 1.84)
+    gpst.build()
     face_plane("k6_TR02_mk", f"kit_{sid}_facade.png", 'S', 4.0, 18.05, 4.3, 12.0, h=2.0)
     # 架線(電車線)柱
     gp = G("k6_TR02_poles", "Props")
@@ -342,7 +440,22 @@ def tr02():
         gp.a("iron_black").sbox((x, -3.6, 6.4), (x, 0.0, 6.0), 0.05, 0.05)
     gp.a("iron_black").sbox((-rb, 0.0, 5.8), (rf, 0.0, 5.8), 0.02, 0.02)
     gp.build()
+    # 横断歩道(ゼブラ)と歩行者用信号
+    gz = G("k6_TR02_xwalk", "Props")
+    wk = "white" if "white" in M else "plasterw"
+    for xc in (-16.0, 40.0):
+        for k in range(17):
+            yy = -4.6 + k * 0.92
+            gz.a(wk).box(xc - 1.6, xc + 1.6, yy, yy + 0.46, 0.2435, 0.2475)
+        for sgn in (-1, 1):
+            px, py = xc + 2.4, (-6.2 if sgn < 0 else 11.4)
+            gz.a("iron_black").cyl((px, py, 0.33), (px, py, 3.2), 0.06, seg=8)
+            gz.a("iron_black").box(px - 0.18, px + 0.18, py - 0.12, py + 0.12, 2.5, 3.1)
+            for kk, mk in enumerate(("post_red" if "post_red" in M else "iron_black", "lamp_glow", "pl_green" if "pl_green" in M else "iron_black")):
+                gz.a(mk).cyl((px, py - 0.13 * (1 if sgn > 0 else -1), 2.95 - kk * 0.2), (px, py - 0.15 * (1 if sgn > 0 else -1), 2.95 - kk * 0.2), 0.07, seg=10)
+    gz.build()
     _town(sid, rng, "urban", 52.0, 0.9, rows=2, sides=("L",), skip=((-30, 38),))
+    _town(sid, rng, "urban", -26.0, 0.95, rows=1, sides=("L",), skip=())
     _town_s(sid, rng)
 
 

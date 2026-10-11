@@ -14,7 +14,7 @@ import kit2
 import trackkit
 
 PITCH = 20.6
-SPECIAL_Z = {"K03": 7.5}          # 軌道面の高さ
+SPECIAL_Z = {"K03": 7.5, "T02": -7.2, "T03": -7.2, "K02": -7.2}          # 軌道面の高さ
 LEN = {"emu": 20.0, "tram": 12.6, "mono": 14.0}
 
 

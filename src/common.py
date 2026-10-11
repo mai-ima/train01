@@ -168,3 +168,5 @@ def smooth(ob):
 def sample_noise(x, y, scale=1.0, seed=0.0):
     from mathutils import noise as mn
     return mn.noise(Vector((x * scale + seed, y * scale - seed, seed)))
+
+UG_DEPTH = 7.2          # 地下駅・地下区間のレール面の深さ(m)。駅ホール床=地表-UG_DEPTH、覆工の上面=地表の下0.3m

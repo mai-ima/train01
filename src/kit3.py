@@ -467,9 +467,12 @@ def m19():
         core.ribbon(f"m19_rd_{pts[0][0]}_{pts[0][1]}", pts, w, M["asphalt"], rut=False)
     # ---- TR tram stop (embedded rails + shelter), BM monorail station (elevated)
     tr, bm = L["tr"], L["bm"]
+    # 市電の停留場: 舗装道路に埋め込んだ複線(舗装面はレール頭の少し下)。終端は y=0(車止め)、y=58 で市電線へ続く
+    core.ribbon("m19_tram_street", [(tr[0][0] - 0.8, float(y)) for y in np.arange(-14.0, 70.0, 6.0)], 7.4, M["asphalt"], z0=0.243, rut=False, col="Roads")
     for off in (-1.2, 1.2):
-        P = np.stack([np.full(40, tr[0][0] + off), np.linspace(tr[0][1], tr[1][1], 40)], 1)
-        trackkit.build_track(f"m19_tr_{off}", P[:, ::-1][:, ::-1], wooden=False, ballast=False, fittings=False, cam=None) if False else None
+        P = np.stack([np.full(60, tr[0][0] + off), np.linspace(0.0, 58.0, 60)], 1)
+        trackkit.build_track(f"m19_tr_{off}", P, wooden=False, ballast=False, fittings=False, cam=None)
+        trackkit.buffer_stop(tr[0][0] + off, 0.0, math.pi / 2) if False else None
     gt = G("m19_tram", "Station")
     gt.a("concrete").box(tr[0][0] + 2.0, tr[0][0] + 5.0, 14, 40, 0.0, 0.3)
     for yy in (14.5, 39.5):

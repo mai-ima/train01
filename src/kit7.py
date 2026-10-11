@@ -88,7 +88,7 @@ def subway(P, s0, s1, name="subway", zfun=None, half=3.15, lights=True):
         if not (below[i] or below[i + 1]):
             continue
         # 底版(インバート)
-        g.a("k5_conc").sbox((a[0], a[1], z0 - 0.45), (b[0], b[1], z1 - 0.45), 2 * half + 2 * wt, 0.7)
+        g.a("concrete").sbox((a[0], a[1], z0 - 0.45), (b[0], b[1], z1 - 0.45), 2 * half + 2 * wt, 0.7)
         cov = covered[i] and covered[i + 1]
         for sg in (-1, 1):
             p0 = a + nrm[i] * sg * (half + wt / 2)
@@ -97,7 +97,7 @@ def subway(P, s0, s1, name="subway", zfun=None, half=3.15, lights=True):
             bot = zm - 0.75
             zc = (top + bot) / 2
             hh = top - bot
-            g.a("k5_conc").sbox((p0[0], p0[1], zc), (p1[0], p1[1], zc), wt, hh)
+            g.a("concrete").sbox((p0[0], p0[1], zc), (p1[0], p1[1], zc), wt, hh)
             if not cov:
                 # 掘割の笠コンクリートと地上側の転落防止柵
                 g.a("k5_stone").sbox((p0[0], p0[1], 0.16), (p1[0], p1[1], 0.16), wt + 0.25, 0.12)
@@ -111,14 +111,14 @@ def subway(P, s0, s1, name="subway", zfun=None, half=3.15, lights=True):
                 if sg == 1:
                     w0 = a + nrm[i] * (half - 0.45)
                     w1 = b + nrm[i + 1] * (half - 0.45)
-                    g.a("k5_conc").sbox((w0[0], w0[1], zm - 0.1), (w1[0], w1[1], zm - 0.1), 0.9, 0.24)
+                    g.a("concrete").sbox((w0[0], w0[1], zm - 0.1), (w1[0], w1[1], zm - 0.1), 0.9, 0.24)
                 u0 = a + nrm[i] * sg * (half - 0.04)
                 u1 = b + nrm[i + 1] * sg * (half - 0.04)
                 g.a("k5_stone").sbox((u0[0], u0[1], zm + 1.0), (u1[0], u1[1], zm + 1.0), 0.04, 1.8)
         if cov:
             r0 = a
             r1 = b
-            g.a("k5_conc").sbox((r0[0], r0[1], (ROOF_TOP + ROOF_BOT) / 2), (r1[0], r1[1], (ROOF_TOP + ROOF_BOT) / 2), 2 * half + 2 * wt, ROOF_TOP - ROOF_BOT)
+            g.a("concrete").sbox((r0[0], r0[1], (ROOF_TOP + ROOF_BOT) / 2), (r1[0], r1[1], (ROOF_TOP + ROOF_BOT) / 2), 2 * half + 2 * wt, ROOF_TOP - ROOF_BOT)
             # ケーブルラックと剛体架線(天井吊り)
             for sg in (-1, 1):
                 c0 = a + nrm[i] * sg * (half - 0.25)
@@ -138,6 +138,7 @@ def subway(P, s0, s1, name="subway", zfun=None, half=3.15, lights=True):
             c = pos[i]
             w = 2 * half + 2 * wt
             g.a("k5_stone", bevel=0.03).sbox((c[0], c[1], ROOF_BOT - 0.15), (c[0] + math.cos(ang[i]) * 0.9, c[1] + math.sin(ang[i]) * 0.9, ROOF_BOT - 0.15), w + 0.6, 0.9)
+    _surface_works(P, ss, pos, ang, nrm, zs, covered, below, half, wt, g, name)
     g.build()
     gl.build()
     # 地面の切り欠き(掘割部分: 地表から見える範囲)
@@ -149,6 +150,74 @@ def subway(P, s0, s1, name="subway", zfun=None, half=3.15, lights=True):
             if len(r) >= 2:
                 _cutter(f"{name}_cut{k}", pos[r], nrm[r], half + wt + 0.15)
     return int(covered.sum())
+
+
+def _surface_works(P, ss, pos, ang, nrm, zs, covered, below, half, wt, g, name):
+    """開削上部の復旧舗装(継ぎ目・マンホール)、換気塔、坑口の翼壁と門柱、埋戻し土(断面で見える)。"""
+    if "asphalt" not in M:
+        M["asphalt"] = lib.mat_asphalt("k7_asphalt", worn=0.6, base=(0.072, 0.070, 0.066), crack_scale=3.5, crack_amt=0.3)
+    n = len(ss)
+    cidx = np.where(covered)[0]
+    soil = "soil" if "soil" in M else "k5_earth"
+    gs = G(name + "_soil", "Props")
+    if len(cidx):
+        runs = np.split(cidx, np.where(np.diff(cidx) > 1)[0] + 1)
+        for k, r in enumerate(runs):
+            if len(r) < 3:
+                continue
+            idx = np.arange(r[0], r[-1] + 1)
+            core.ribbon(f"{name}_rest{k}", [tuple(pos[i]) for i in idx], 2 * half + 2 * wt + 3.2, M["asphalt"], z0=0.03, rut=False, col="Roads")
+            for i in idx[::6]:        # 継ぎ目(開削の復旧ライン)
+                a = pos[i] + nrm[i] * (half + wt + 1.5)
+                b = pos[i] - nrm[i] * (half + wt + 1.5)
+                g.a("iron_black").sbox((a[0], a[1], 0.045), (b[0], b[1], 0.045), 0.05, 0.01)
+            for i in idx[::15]:       # マンホール
+                c = pos[i] + nrm[i] * 1.2
+                g.a("iron_black").cyl((c[0], c[1], 0.03), (c[0], c[1], 0.055), 0.32, seg=14)
+            # 埋戻し土(土被りの断面表現)
+            for sg in (-1, 1):
+                for i in idx[:-1:2]:
+                    zm = zs[i]
+                    p0 = pos[i] + nrm[i] * sg * (half + wt + 2.2)
+                    p1 = pos[min(i + 2, n - 1)] + nrm[min(i + 2, n - 1)] * sg * (half + wt + 2.2)
+                    gs.a(soil).sbox((p0[0], p0[1], (zm - 0.75 - 0.08) / 2), (p1[0], p1[1], (zm - 0.75 - 0.08) / 2), 3.4, -0.08 - (zm - 0.75))
+            # 換気塔(約90m毎・片側ずつ)
+            for j, i in enumerate(idx[12:-12:45]):
+                sg = 1 if j % 2 == 0 else -1
+                c = pos[i] + nrm[i] * sg * (half + wt + 5.5)
+                ca, sa = math.cos(ang[i]), math.sin(ang[i])
+                def at(u, v):
+                    return (c[0] + ca * u - sa * v, c[1] + sa * u + ca * v)
+                hx, hy, hz = 1.7, 1.2, 4.4
+                p = [at(-hx, -hy), at(hx, -hy), at(hx, hy), at(-hx, hy)]
+                for q in range(4):
+                    a, b = p[q], p[(q + 1) % 4]
+                    g.a("k5_stone", bevel=0.02).sbox((a[0], a[1], hz / 2), (b[0], b[1], hz / 2), 0.3, hz)
+                g.a("k5_conc").sbox((at(-2.0, 0)[0], at(-2.0, 0)[1], hz + 0.12), (at(2.0, 0)[0], at(2.0, 0)[1], hz + 0.12), 3.0, 0.25)
+                for lv in range(6):   # ルーバー
+                    zz = 1.2 + lv * 0.45
+                    a, b = at(-1.2, -hy - 0.04), at(1.2, -hy - 0.04)
+                    g.a("iron_black").sbox((a[0], a[1], zz), (b[0], b[1], zz), 0.06, 0.2)
+                    a, b = at(-1.2, hy + 0.04), at(1.2, hy + 0.04)
+                    g.a("iron_black").sbox((a[0], a[1], zz), (b[0], b[1], zz), 0.06, 0.2)
+                a, b = at(-0.5, -hy - 0.05), at(0.5, -hy - 0.05)
+                g.a("iron_black").sbox((a[0], a[1], 0.85), (b[0], b[1], 0.85), 0.05, 1.7)   # 点検扉
+    print('SUBWAY_DBG', name, 'portals', [round(float(ss[i])) for i in range(1, n - 1) if covered[i] != covered[i - 1] and zs[i] < 0.5], 'covered', [round(float(ss[r[0]])) for r in ([np.arange(0)] if not len(cidx) else np.split(cidx, np.where(np.diff(cidx) > 1)[0] + 1))] if len(cidx) else [], 'n', n, flush=True)
+    # 坑口: 門柱と翼壁
+    for i in range(1, n - 1):
+        if covered[i] != covered[i - 1] and zs[i] < 0.5:
+            c = pos[i]
+            d = np.array([math.cos(ang[i]), math.sin(ang[i])])
+            od = -d if covered[i] else d      # 開いている側
+            for sg in (-1, 1):
+                o = nrm[i] * sg
+                q = c + o * (half + wt + 0.3)
+                g.a("k5_stone", bevel=0.03).sbox((q[0], q[1], zs[i] - 0.75), (q[0], q[1], 1.9), 1.0, 1.3)
+                e0 = c + o * (half + wt + 0.3) + od * 0.5
+                e1 = c + od * 9.0 + o * (half + wt + 0.3 + 3.2)
+                g.a("k5_stone", bevel=0.02).sbox((e0[0], e0[1], 0.45), (e1[0], e1[1], 0.45), 0.5, 1.9)
+            w = 2 * half + 2 * wt
+    gs.build()
 
 
 def apply_cuts():
@@ -186,22 +255,26 @@ def apply_cuts():
 def street(P, s0, s1, name="street", road_w=8.8, zfun=None):
     """併用軌道: 舗装道路・縁石・歩道・街灯・電車線柱(トロリ線)。レールは舗装面と面一。"""
     mats5()
+    if "asphalt" not in M:
+        M["asphalt"] = lib.mat_asphalt("k7_asphalt", worn=0.6, base=(0.072, 0.070, 0.066), crack_scale=3.5, crack_amt=0.3) if hasattr(lib, "mat_asphalt") else lib.mat_plain("k7_asphalt", (0.05, 0.05, 0.055), rough=0.92)
+    if "paving" not in M:
+        M["paving"] = lib.mat_plain("k7_paving", (0.38, 0.36, 0.32), rough=0.85)
     ss = np.arange(s0, s1 + 0.5, 3.0)
     pos, ang = frames_at(P, ss)
     nrm = np.stack([-np.sin(ang), np.cos(ang)], 1)
     pts = [tuple(p) for p in pos]
-    zr = 0.115
+    zr = 0.243
     core.ribbon(name + "_asph", pts, road_w, M["asphalt"] if "asphalt" in M else M["road"], z0=zr, rut=False, col="Roads")
     for sg in (-1, 1):
         wp = [tuple(p + n * sg * (road_w / 2 + 1.5)) for p, n in zip(pos, nrm)]
-        core.ribbon(f"{name}_walk{sg}", wp, 3.0, M["paving"] if "paving" in M else M["road"], z0=0.2, rut=False, col="Roads")
+        core.ribbon(f"{name}_walk{sg}", wp, 3.0, M["paving"], z0=0.33, rut=False, col="Roads")
     g = G(name + "_fit", "Props")
     for i in range(len(ss) - 1):
         a, b = pos[i], pos[i + 1]
         for sg in (-1, 1):
             c0 = a + nrm[i] * sg * (road_w / 2 + 0.06)
             c1 = b + nrm[i + 1] * sg * (road_w / 2 + 0.06)
-            g.a("k5_conc").sbox((c0[0], c0[1], 0.1), (c1[0], c1[1], 0.1), 0.18, 0.22)
+            g.a("k5_conc").sbox((c0[0], c0[1], 0.18), (c1[0], c1[1], 0.18), 0.18, 0.36)
         if i % 2 == 0:       # 車線境界の破線
             for sg in (-1, 1):
                 d0 = a + nrm[i] * sg * 2.9
@@ -262,3 +335,14 @@ def mono_link(P, s0, s1, name="mono", zfun=None, span=22.0):
         g.a("k5_steel").boxc(c[0], c[1], h + 0.47, 0.5, 0.5, 0.12, rz=float(pa[k]))                       # 支承
         g.a("concrete").boxc(c[0], c[1], -0.1, 2.4, 2.4, 0.3, rz=float(pa[k]))                            # 基礎フーチング
     g.build()
+
+
+def shaft_cut(x0, x1, y0, y1, name="shaft", z0=-2.5, z1=2.0):
+    """軸平行の箱形の切り欠き型(階段室・換気口など)。ゾーン局所座標。"""
+    V = np.array([(x0, y0, z0), (x1, y0, z0), (x1, y1, z0), (x0, y1, z0), (x0, y0, z1), (x1, y0, z1), (x1, y1, z1), (x0, y1, z1)], float)
+    T = np.array([(0, 2, 1), (0, 3, 2), (4, 5, 6), (4, 6, 7), (0, 1, 5), (0, 5, 4), (1, 2, 6), (1, 6, 5), (2, 3, 7), (2, 7, 6), (3, 0, 4), (3, 4, 7)])
+    ob = np_mesh(name, V, T, None, "Cutters")
+    _bm_clean(ob)
+    ob["is_cutter"] = 1
+    ob.hide_render = True
+    return ob

@@ -455,16 +455,16 @@ def mat_gravel(name, base=(0.46, 0.43, 0.37)):
     return m.m
 
 
-def mat_asphalt(name, base=(0.085, 0.085, 0.09), worn=0.5):
+def mat_asphalt(name, base=(0.085, 0.085, 0.09), worn=0.5, crack_scale=0.55, crack_amt=0.8):
     m = Mat(name)
     grain = m.voro(scale=140, feature='F1')
     patches = m.ramp(m.noise(scale=0.5, detail=5), [(0.3, (0.8, 0.8, 0.8)), (0.7, (1.5, 1.5, 1.5))])
     col = m.mix(1.0, base, patches, 'MULTIPLY')
     sand = m.ramp(m.noise(scale=45, detail=2), [(0.45, (1, 1, 1)), (0.8, (2.2, 2.2, 2.1))])
     col = m.mix(worn, col, m.mix(1.0, col, sand, 'MULTIPLY'))
-    crack = m.voro(scale=0.55, feature='DISTANCE_TO_EDGE')
+    crack = m.voro(scale=crack_scale, feature='DISTANCE_TO_EDGE')
     crack_m = m.ramp(crack, [(0.0, (0.2, 0.2, 0.2)), (0.025, (1, 1, 1))])
-    col = m.mix(0.8, col, m.mix(1.0, col, crack_m, 'MULTIPLY'))
+    col = m.mix(crack_amt, col, m.mix(1.0, col, crack_m, 'MULTIPLY'))
     h = m.math('ADD', m.math('MULTIPLY', grain, 0.6), m.math('MULTIPLY', m.maprange(crack, 0, 0.03, 0, 1), 0.7))
     nrm = m.bump(h, 0.7, 0.02)
     m.principled(**{'Base Color': col, 'Roughness': 0.85, 'Specular IOR Level': 0.35, 'Normal': nrm})

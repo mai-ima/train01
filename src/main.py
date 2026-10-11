@@ -368,6 +368,23 @@ scene.camera = cob
 # ------------------------------------------------------------------ render settings
 r = scene.render
 r.engine = 'CYCLES'
+bpy.context.view_layer.update()
+if os.environ.get('SECTION'):      # SECTION="y,-10,-1" : 平面 y=-10 の「-1側」を切り取って断面を見る(ゾーン局所座標・ゾーン単独ビルド用)
+    import bmesh
+    _ax, _val, _sg = os.environ['SECTION'].split(',')
+    _val, _sg = float(_val), float(_sg)
+    _no = (0, 1, 0) if _ax == 'y' else ((1, 0, 0) if _ax == 'x' else (0, 0, 1))
+    for _o in list(bpy.data.objects):
+        if _o.type != 'MESH' or not len(_o.data.polygons):
+            continue
+        _bm = bmesh.new(); _bm.from_mesh(_o.data); _mw = _o.matrix_world.copy(); _bm.transform(_mw)
+        _geom = list(_bm.verts) + list(_bm.edges) + list(_bm.faces)
+        bmesh.ops.bisect_plane(_bm, geom=_geom, plane_co=tuple(_val * n for n in _no), plane_no=_no, clear_outer=(_sg > 0), clear_inner=(_sg < 0))
+        _bm.transform(_mw.inverted()); _bm.to_mesh(_o.data); _bm.free()
+    print('SECTION left polys', sum(len(o.data.polygons) for o in bpy.data.objects if o.type == 'MESH'))
+for _hc in [x for x in os.environ.get('HIDE_COLS', '').split(',') if x]:
+    for _o in (bpy.data.collections[_hc].all_objects if _hc in bpy.data.collections else []):
+        _o.hide_render = True
 r.resolution_x = args.w
 r.resolution_y = int(args.w * 9 / 16)
 r.resolution_percentage = 100
@@ -470,6 +487,16 @@ if args.pano:
         r.filepath = f"{OUT}/pano/{nd['id']}.png"
         bpy.ops.render.render(write_still=True)
         print("PANO done", nd["id"], f"{time.time() - t0:.0f}s", flush=True)
+    sys.exit(0)
+if not args.no_render and os.environ.get('MULTICAM'):
+    for _i, _c in enumerate([x for x in os.environ['MULTICAM'].split(';') if x.strip()]):
+        _v = [float(t) for t in _c.split(',')]
+        cob.location = (_v[0], _v[1], _v[2])
+        cob.rotation_euler = (Vector((_v[3], _v[4], _v[5])) - Vector(cob.location)).to_track_quat('-Z', 'Y').to_euler()
+        cam.lens = _v[6] if len(_v) > 6 else 30
+        r.filepath = f"{OUT}/{args.out}_{_i}.png"
+        bpy.ops.render.render(write_still=True)
+        print(f"[{time.time() - t0:5.1f}s] multicam {_i} -> {r.filepath}", flush=True)
     sys.exit(0)
 if not args.no_render:
     r.filepath = f"{OUT}/{args.out}.png"

@@ -356,7 +356,7 @@ def build_links(only=None, verbose=True):
 
 EDGES = []
 SZ = {"K03": 7.5}
-DEPTH = 7.2                 # 地下駅・地下区間のレール面の深さ(m)
+DEPTH = UG_DEPTH            # 地下駅・地下区間のレール面の深さ(m)
 MONO_Z0, MONO_Z1 = 8.2, 9.0   # 大湊のモノレール桁高 → 湾岸公園          # 駅の線路の高さ(高架駅)
 
 
