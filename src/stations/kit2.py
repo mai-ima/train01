@@ -833,11 +833,15 @@ def build_design(sid):
             scatter_trees(rng, 0, -48, 150, 24, 60, kinds=("sugi",))
             scatter_trees(rng, 0, ryb + 40, 150, 28, 60, kinds=("sugi", "zelkova"))
         elif tkind == "sea":
+            _xs = np.arange(-600.0, 601.0, 12.0)
+            _ph = (zlib.crc32(sid.encode()) % 628) / 100.0
+            _sh = -52.0 + 5.5 * np.sin(_xs / 58.0 + _ph) + 3.0 * np.sin(_xs / 21.0 + 2 * _ph)       # 汀線(駅ごとに位相が違う曲線)
             wsea = lib.Acc("k2_sea", M["water"], "Ground")
-            wsea.box(-600, 600, -600, -52, -0.4, 0.03)
+            wsea.extrude_z([(-600.0, -600.0), (600.0, -600.0)] + [(float(x_), float(y_)) for x_, y_ in zip(_xs[::-1], _sh[::-1])], -0.4, 0.03)
             wsea.build()
             sand = lib.Acc("k2_sand", M.get("sand", M["plat_top"]), "Ground")
-            sand.box(-600, 600, -52, -38, -0.3, 0.015)
+            _wd = 11.0 + 4.0 * np.sin(_xs / 37.0 + _ph)                                              # 砂浜の幅も場所で変える
+            sand.extrude_z([(float(x_), float(y_)) for x_, y_ in zip(_xs, _sh)] + [(float(x_), float(y_ + w_)) for x_, y_, w_ in zip(_xs[::-1], _sh[::-1], _wd[::-1])], -0.3, 0.015)
             sand.build()
     # ---- roads + forecourt + town
     rp = road_pts(d["road"], ryb)
