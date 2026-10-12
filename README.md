@@ -162,6 +162,7 @@ python3 main.py --world markers --parts none --no-render      # 軌道グラフ 
 | `--zone SID` | 駅 ID のゾーンだけ構築 |
 | `--world markers\|all\|id,id` | 全駅(または指定駅)を世界座標に配置し駅間線路をつなぐ |
 | `--stock on\|off\|SID,..` | 停車車両の表示 |
+| `--people on\|off\|cars\|station` | 人物の表示(車内乗客=kind pax パート / 駅の People コレクション) |
 | `--interf` | ゾーンの検査(線路干渉・ドア・浮き・停車車両) |
 | `--save-blend` / `--pack` / `--tex-max N` | `.blend` 保存 / テクスチャのパック / テクスチャ縮小 |
 | `--pano nodes.json` / `--webexport DIR` | 360° パノラマ / three.js 向けの書き出し |

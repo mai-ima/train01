@@ -239,7 +239,9 @@ def _body(v, S):
     for s in (-1, 1):                       # 腰板(側板だけ: 室内を見通せるよう中空)
         v.A(lo, 0.012).box(-L / 2, L / 2, *sorted((s * (h - 0.07), s * h)), zb0, zs)
     v.A("t_grey", 0.01).box(-L / 2, L / 2, -h + 0.07, h - 0.07, zfl - 0.12, zfl)         # 床板
-    v.A(up, 0.01).extrude_x([(-h, zw1), (h, zw1), (h, zt), (-h, zt)], -L / 2, L / 2)   # 窓上の帯+天井
+    for s in (-1, 1):                                                                 # 窓上の帯(側板だけ。室内の天井高を確保するため中空)
+        v.A(up, 0.01).box(-L / 2, L / 2, *sorted((s * (h - 0.07), s * h)), zw1, zt)
+    v.A(up, 0.01).box(-L / 2, L / 2, -h + 0.07, h - 0.07, zt - 0.06, zt)             # 天井板(室内側は _interior の天井材が覆う)
     rs = S["roofshape"]
     if rs == "flat":
         prof = upper_profile(W, zt - 0.05, zt + 0.02, zr, n=5, inset=0.10)
