@@ -43,7 +43,8 @@ def mats():
         "t_moq_y": TK.moquette("t_moq_y", (0.70, 0.55, 0.14), scale=64.0),
         "t_bronze": P("t_bronze", (0.10, 0.055, 0.032), rough=0.22, rust=0.0, grime=0.10, metal=0.25),
         "t_champ": P("t_champ", (0.66, 0.54, 0.31), rough=0.22, rust=0.0, grime=0.08, metal=0.20, seams=False),
-        "t_carp": lib.mat_plain("t_carp", (0.20, 0.07, 0.07), rough=0.95, spec=0.05),
+        "t_carp": TK.carpet_lux("t_carp_lux"),
+        "t_mahog": lib.mat_pbr("t_mahog", "Planks023A", scale=0.7, hsv=(0.5, 0.95, 0.5), tint=(0.50, 0.20, 0.09), tint_amt=0.8, bump=0.5, spec=0.5, macro=0.25),
         "t_leat": lib.mat_plain("t_leat", (0.30, 0.16, 0.08), rough=0.55, spec=0.25),
         "t_cream2": lib.mat_plain("t_cream2", (0.80, 0.74, 0.60), rough=0.8, spec=0.05),
         "t_curt": lib.mat_plain("t_curt", (0.07, 0.13, 0.28), rough=0.92, spec=0.05),
@@ -1090,7 +1091,7 @@ TYPES.update({
 })
 
 _LUX = dict(
-    fs="holder", ss="none", ds="lux", ps="smooth", wc=(0.14, 0.14), lamp="globe", liner="t_wood",
+    fs="holder", ss="none", ds="lux", ps="smooth", wc=(0.14, 0.14), lamp="globe", liner="t_cream2",
     lo="t_bronze", up="t_champ", door="t_bronze", mask="t_bronze", pillar=0.10,
     front="vee", screens=2, lamps="led", roofshape="round", rake=0.30, pant_x=2.0,
     bogie=("air", 2.5, 0.43), under="skirtfull", seat="t_leat", standing=False, diesel=True,
@@ -1473,7 +1474,7 @@ def _lux_inside(v, S, tot, bays, segs, zones, rnd):
     st = S["interior"]
     ax = tot / 2 - 0.05
     v.A("t_carp").box(-ax, ax, -h + 0.08, h - 0.08, zfl + 0.02, zfl + 0.035)           # 全面の絨毯
-    v.A("t_wood", 0.01).box(-ax, ax, h - 0.092, h - 0.082, zfl + 0.035, zfl + 0.17)    # 幅木
+    v.A("t_mahog", 0.01).box(-ax, ax, h - 0.092, h - 0.082, zfl + 0.035, zfl + 0.17)    # 幅木
     # 天井の間接照明(温白色)と廻り縁
     for s_ in (-1, 1):
         v.A("t_champ").box(-ax, ax, *sorted((s_ * 0.62, s_ * 0.66)), zw1 - 0.04, zw1 - 0.02)
@@ -1487,32 +1488,32 @@ def _lux_inside(v, S, tot, bays, segs, zones, rnd):
             p = (b - a) / n
             for j in range(n + 1):
                 xw = a + p * j
-                v.A("t_wood").box(xw - 0.03, xw + 0.03, -h + 0.09, wy, zfl + 0.035, zw1 - 0.03)   # 客室の仕切壁
+                v.A("t_mahog").box(xw - 0.03, xw + 0.03, -h + 0.09, wy, zfl + 0.035, zw1 - 0.03)   # 客室の仕切壁
                 v.A("t_champ").box(xw - 0.035, xw + 0.035, wy - 0.02, wy + 0.01, zfl + 0.035, zw1 - 0.03)
             for j in range(n):
                 x0, x1 = a + p * j + 0.03, a + p * (j + 1) - 0.03
                 xc = (x0 + x1) / 2
                 # 廊下側の壁と扉(扉は壁の端に)
-                v.A("t_wood").box(x0, xc - 0.5, wy, wy + 0.04, zfl + 0.035, zw1 - 0.03)
-                v.A("t_wood").box(xc + 0.5, x1, wy, wy + 0.04, zfl + 0.035, zw1 - 0.03)
-                v.A("t_wood").box(xc - 0.5, xc + 0.5, wy, wy + 0.04, zw1 - 0.60, zw1 - 0.03)
+                v.A("t_mahog").box(x0, xc - 0.5, wy, wy + 0.04, zfl + 0.035, zw1 - 0.03)
+                v.A("t_mahog").box(xc + 0.5, x1, wy, wy + 0.04, zfl + 0.035, zw1 - 0.03)
+                v.A("t_mahog").box(xc - 0.5, xc + 0.5, wy, wy + 0.04, zw1 - 0.60, zw1 - 0.03)
                 v.A("t_champ").box(xc + 0.40, xc + 0.44, wy + 0.04, wy + 0.06, zfl + 1.0, zfl + 1.25)
                 # 窓側のソファ(窓向き)+ローテーブル+肘掛け椅子
                 v.A("t_leat", 0.04).box(xc - 1.15, xc + 0.35, -h + 0.14, -h + 0.66, zfl + 0.035, zfl + 0.44)
                 v.A("t_leat", 0.04).box(xc - 1.15, xc + 0.35, -h + 0.60, -h + 0.70, zfl + 0.44, zfl + 0.96)
-                v.A("t_wood").box(xc - 0.40, xc + 0.10, -h + 0.78, -h + 1.10, zfl + 0.035, zfl + 0.42)      # 低い机
+                v.A("t_mahog").box(xc - 0.40, xc + 0.10, -h + 0.78, -h + 1.10, zfl + 0.035, zfl + 0.42)      # 低い机
                 v.A("t_champ").box(xc - 0.40, xc + 0.10, -h + 0.78, -h + 1.10, zfl + 0.42, zfl + 0.44)
                 _armchair(v, xc + 0.85, -h + 0.55, zfl, -2, "t_leat")
                 # ベッド(日中はたたまれ、頭板だけ見える)+クローゼット
-                v.A("t_wood").box(xc - 1.3, xc - 0.95, wy - 0.10, wy - 0.04, zfl + 0.60, zfl + 1.50)
+                v.A("t_mahog").box(xc - 1.3, xc - 0.95, wy - 0.10, wy - 0.04, zfl + 0.60, zfl + 1.50)
                 v.A("t_cream2", 0.03).box(xc - 1.3, xc - 0.45, 0.05, wy - 0.12, zfl + 0.45, zfl + 0.62)
-                v.A("t_wood").box(x0 + 0.05, x0 + 0.40, wy - 0.42, wy - 0.02, zfl + 0.035, zfl + 1.90)       # 衣装棚
+                v.A("t_mahog").box(x0 + 0.05, x0 + 0.40, wy - 0.42, wy - 0.02, zfl + 0.035, zfl + 1.90)       # 衣装棚
                 # シャワー・洗面ユニット(扉つき小部屋の壁)
                 v.A("t_cream").box(x1 - 0.95, x1 - 0.05, wy - 0.12, wy - 0.07, zfl + 0.035, zw1 - 0.1)
                 v.A("lamp_glow").sphere((xc + 0.3, -0.35, zw1 - 0.12), (0.08, 0.08, 0.06), seg=10, rings=5)
                 v.A("lamp_glow").sphere((xc - 0.6, -h + 0.9, zw1 - 0.12), (0.08, 0.08, 0.06), seg=10, rings=5)
                 if st == "lux_grn":
-                    v.A("t_wood").box(x1 - 1.6, x1 - 0.2, -h + 0.12, -h + 0.85, zfl + 0.035, zfl + 0.62)       # 檜の浴槽
+                    v.A("t_mahog").box(x1 - 1.6, x1 - 0.2, -h + 0.12, -h + 0.85, zfl + 0.035, zfl + 0.62)       # 檜の浴槽
                     v.A("glass").box(x1 - 1.58, x1 - 0.22, -h + 0.16, -h + 0.81, zfl + 0.50, zfl + 0.52)
                     v.A("t_cream2", 0.01).box(xc - 1.5, xc - 0.2, 0.0, wy - 0.15, zfl + 0.035, zfl + 0.08)      # 畳の間
         v.A("t_champ").cyl((-ax, h - 0.20, zfl + 0.98), (ax, h - 0.20, zfl + 0.98), 0.016, 0.016, seg=6)      # 廊下の手すり
@@ -1526,7 +1527,7 @@ def _lux_inside(v, S, tot, bays, segs, zones, rnd):
                 continue
             for s_ in (-1, 1):
                 yy = s_ * (h - 0.80)
-                v.A("t_wood").cyl((x, yy, zfl + 0.035), (x, yy, zfl + 0.40), 0.20, 0.20, seg=14)
+                v.A("t_mahog").cyl((x, yy, zfl + 0.035), (x, yy, zfl + 0.40), 0.20, 0.20, seg=14)
                 v.A("t_champ").cyl((x, yy, zfl + 0.40), (x, yy, zfl + 0.42), 0.26, 0.26, seg=14)
                 for sx in (-1, 1):
                     _armchair(v, x + sx * 0.80, yy, zfl, -sx, "t_leat")
@@ -1534,7 +1535,7 @@ def _lux_inside(v, S, tot, bays, segs, zones, rnd):
                     _rider(v, x + 0.80, yy, zfl, 3.14, True, rnd=rnd)
         # バーカウンター(車端)
         bx = ax - 1.0
-        v.A("t_wood").box(bx - 0.5, bx + 0.5, -1.0, 0.2, zfl + 0.035, zfl + 1.05)
+        v.A("t_mahog").box(bx - 0.5, bx + 0.5, -1.0, 0.2, zfl + 0.035, zfl + 1.05)
         v.A("t_champ").box(bx - 0.55, bx + 0.55, -1.05, 0.25, zfl + 1.05, zfl + 1.08)
         for k in range(4):
             v.A("t_leat", 0.02).cyl((bx - 0.9, -0.75 + k * 0.35, zfl + 0.035), (bx - 0.9, -0.75 + k * 0.35, zfl + 0.70), 0.15, 0.13, seg=10)
@@ -1542,7 +1543,7 @@ def _lux_inside(v, S, tot, bays, segs, zones, rnd):
         for k in range(7):
             v.A("lamp_glow").cyl((bx + 0.44, -0.9 + k * 0.17, zfl + 1.3), (bx + 0.44, -0.9 + k * 0.17, zfl + 1.7), 0.04, 0.04, seg=6)
         # 暖炉風の飾り棚
-        v.A("t_wood").box(-ax + 0.1, -ax + 0.8, -0.8, 0.8, zfl + 0.035, zfl + 1.2)
+        v.A("t_mahog").box(-ax + 0.1, -ax + 0.8, -0.8, 0.8, zfl + 0.035, zfl + 1.2)
         v.A("black").box(-ax + 0.78, -ax + 0.8, -0.35, 0.35, zfl + 0.2, zfl + 0.8)
         v.A("lamp_glow").box(-ax + 0.77, -ax + 0.79, -0.30, 0.30, zfl + 0.22, zfl + 0.45)
     elif st == "lux_din":
@@ -1552,13 +1553,19 @@ def _lux_inside(v, S, tot, bays, segs, zones, rnd):
         v.A("lamp_glow").box(-ax + 0.3, kx - 0.4, -0.38, 0.38, zfl + 1.7, zfl + 1.74)
         v.A("t_champ").box(kx - 0.2, kx - 0.14, -h + 0.1, h - 0.1, zfl + 0.9, zfl + 0.96)
         for k in range(5):
-            v.A("t_wood", 0.02).box(kx - 0.2, kx - 0.15, -h + 0.1, -0.5, zfl + 0.035 + k * 0.0, zfl + 2.0) if k == 0 else None
+            v.A("t_mahog", 0.02).box(kx - 0.2, kx - 0.15, -h + 0.1, -0.5, zfl + 0.035 + k * 0.0, zfl + 2.0) if k == 0 else None
         for x in [kx + 0.9 + i * 1.75 for i in range(int((ax - kx - 1.2) / 1.75) + 1)]:
             for s_ in (-1, 1):
                 yy = s_ * (h - 0.66)
-                v.A("t_wood").box(x - 0.45, x + 0.45, yy - 0.50, yy + 0.50, zfl + 0.035, zfl + 0.20) if False else None
+                v.A("t_mahog").box(x - 0.45, x + 0.45, yy - 0.50, yy + 0.50, zfl + 0.035, zfl + 0.20) if False else None
                 v.A("t_cream2", 0.01).box(x - 0.40, x + 0.40, yy - 0.34, yy + 0.34, zfl + 0.76, zfl + 0.785)      # テーブルクロス
                 v.A("t_champ").cyl((x, yy, zfl + 0.035), (x, yy, zfl + 0.76), 0.03, 0.03, seg=6)
+                for sg2 in (-1, 1):                                                                              # 皿・グラス・ナプキン(両席)
+                    px = x + sg2 * 0.24
+                    v.A("t_white", 0.0, True).cyl((px, yy - 0.10, zfl + 0.785), (px, yy - 0.10, zfl + 0.80), 0.115, 0.10, seg=18)
+                    v.A("t_champ").cyl((px, yy - 0.10, zfl + 0.80), (px, yy - 0.10, zfl + 0.805), 0.06, 0.06, seg=14)
+                    v.A("glass").cyl((px + sg2 * 0.10, yy + 0.06, zfl + 0.785), (px + sg2 * 0.10, yy + 0.06, zfl + 0.90), 0.028, 0.034, seg=10)
+                    v.A("t_sred", 0.0, True).box(px - 0.05, px + 0.05, yy + 0.10, yy + 0.17, zfl + 0.785, zfl + 0.80)
                 v.A("lamp_glow").sphere((x, yy, zfl + 0.86), (0.04, 0.04, 0.055), seg=10, rings=6)
                 v.A("t_champ").cyl((x, yy, zfl + 0.785), (x, yy, zfl + 0.80), 0.06, 0.06, seg=10)
                 for sg in (-1, 1):
@@ -1573,9 +1580,9 @@ def _lux_inside(v, S, tot, bays, segs, zones, rnd):
                 _armchair(v, x, sy * 0.95, zfl, fe, "t_leat", w=0.70)
                 if rnd.random() < 0.5:
                     _rider(v, x, sy * 0.95, zfl, 0.0 if fe > 0 else 3.14, True, rnd=rnd)
-            v.A("t_wood").cyl((x + fe * 0.70, 0, zfl + 0.035), (x + fe * 0.70, 0, zfl + 0.42), 0.20, 0.20, seg=12) if i == 0 else None
+            v.A("t_mahog").cyl((x + fe * 0.70, 0, zfl + 0.035), (x + fe * 0.70, 0, zfl + 0.42), 0.20, 0.20, seg=12) if i == 0 else None
         bx = -fe * (ax - 1.2)
-        v.A("t_wood").box(bx - 0.5, bx + 0.5, -0.9, 0.9, zfl + 0.035, zfl + 1.0)
+        v.A("t_mahog").box(bx - 0.5, bx + 0.5, -0.9, 0.9, zfl + 0.035, zfl + 1.0)
         v.A("t_champ").box(bx - 0.55, bx + 0.55, -0.95, 0.95, zfl + 1.0, zfl + 1.03)
         for k in range(5):
             v.A("t_leat", 0.02).cyl((bx + fe * 0.9, -0.8 + k * 0.4, zfl + 0.035), (bx + fe * 0.9, -0.8 + k * 0.4, zfl + 0.70), 0.15, 0.13, seg=10)

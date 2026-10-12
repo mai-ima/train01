@@ -57,6 +57,20 @@ def moquette(name, color, scale=70.0, contrast=0.55):
     return m.m
 
 
+def carpet_lux(name):
+    """周遊列車の絨毯: 深紅の地に金の菱格子(ブリック状の目地を金糸に見立てる)+毛足ノイズ。"""
+    m = lib.Mat(name)
+    x, y, z = m.sep(m.obj)
+    br = m.node('ShaderNodeTexBrick')
+    m.setall(br, {'Vector': m.combine(m.math('ADD', x, y), m.math('SUBTRACT', x, y), 0.0), 'Scale': 4.2, 'Mortar Size': 0.022, 'Mortar Smooth': 0.2,
+                  'Brick Width': 0.5, 'Row Height': 0.5, 'Bias': 0.0})
+    fib = m.noise(scale=420.0, detail=3, rough=0.7)
+    base = m.mix(fib, (0.30, 0.035, 0.05), (0.22, 0.025, 0.04))
+    col = m.mix(br.outputs['Fac'], base, (0.42, 0.31, 0.12))
+    m.principled(**{'Base Color': col, 'Roughness': 0.98, 'Metallic': 0.0, 'Specular IOR Level': 0.1, 'Normal': m.bump(fib, 0.6, 0.003)})
+    return m.m
+
+
 def mat_veh_window(name, tint=(0.80, 0.90, 0.88)):
     """Clear glass: transparent with Fresnel reflection and a little dust, so the saloon shows through."""
     m = lib.Mat(name)
