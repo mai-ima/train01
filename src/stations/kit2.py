@@ -142,7 +142,7 @@ def make_ops(v, rng, zf, door_side='S'):
             for i in range(n):
                 c = a0 + (i + 0.5) * L / n
                 w = rng.choice([1.0, 1.2, 1.4]) if side in "SN" else 1.0
-                if f == 0 and side == door_side and i == n // 2:
+                if f == 0 and ((side == door_side and i == n // 2) or (side == v.get("door2") and i == n // 2)):
                     ops[side].append((c - 0.7, c + 0.7, zf, zf + 2.05, 'door' if side == 'N' else 'open'))
                 else:
                     ops[side].append((c - w / 2, c + w / 2, z0, z0 + 1.1 + rng.choice([0, 0.2, 0.4]), 'glass'))
@@ -714,9 +714,15 @@ def build_design(sid):
         plan = d["plan"]
         if plan == "OVER":
             vols = plan_volumes("I", w, dep, 1, "flat", d["wall"], rng)
+            vols[0]["door2"] = "N"                                    # 橋上駅舎は駅前(N側)にも出入口を設ける(旧: 駅前に扉が無かった)
             for v in vols:
                 volume(g, v, rng, st, interior=True)
             xc = w / 2
+            zf_ = Z_PLAT + 0.30                                       # 駅前の庇と柱
+            g.a("concrete", bevel=0.02).box(xc - 3.2, xc + 3.2, dep, dep + 2.6, zf_ + 2.75, zf_ + 2.95)
+            for xx in (xc - 3.0, xc + 3.0):
+                g.a("concrete", bevel=0.01).box(xx - 0.12, xx + 0.12, dep + 2.3, dep + 2.5, zf_, zf_ + 2.75)
+            g.a("stone").box(xc - 3.2, xc + 3.2, dep, dep + 2.8, zf_ - 0.25, zf_ - 0.02)               # 車寄せの床
             gb = G("k2_over", "Station")
             _of = track_offsets(d["plat"], d["ntr"])
             _ye = -4.4 + min(_of) - 3.2
