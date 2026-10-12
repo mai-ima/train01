@@ -27,6 +27,8 @@ def vpaint(name, color, rough=0.5, rust=0.25, grime=0.8, seams=True, metal=0.0, 
     col = m.mix(gm, col, dirt)
     fade = m.maprange(z, 2.6, 3.8, 0.0, 0.10)
     col = m.mix(fade, col, m.mix(0.5, color, (0.55, 0.52, 0.47), 'ADD'))
+    soot = m.math('MULTIPLY', m.maprange(z, 3.05, 3.55, 0.0, 0.5), m.ramp(m.noise(scale=4.0, detail=4), [(0.3, (0.3, 0.3, 0.3)), (0.7, (1.0, 1.0, 1.0))]))   # 屋根の煤
+    col = m.mix(soot, col, (0.035, 0.032, 0.03))
     h = m.math('ADD', m.math('MULTIPLY', rmask, n_f), m.math('MULTIPLY', n_f, 0.12))
     if seams:
         br = m.node('ShaderNodeTexBrick')

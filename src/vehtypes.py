@@ -141,7 +141,7 @@ TYPES.update({
     "kiha_std": dict(
         title="国鉄一般形気動車(2扉・ラジエーター)", L=20.0, W=2.80, z=(1.12, 1.80, 2.58, 2.98, 3.50), cab=1.75, zb0=0.92, diesel=True,
         fs="sabo", ss="sabo", ds="hing", ps="lap", wc=(0.04, 0.04), liner="t_cab", lamp="globe",
-        lo="t_verm", up="t_cream", door="t_verm", mask="t_verm", stripe=[],
+        lo="t_orange", up="t_cream", door="t_orange", mask="t_orange", stripe=[],
         pattern="w2 D w8 D w2", door_w=1.05, win="pair", pillar=0.11,
         front="gate", screens=2, lamps="roofc", roofshape="round", rake=0.12,
         roof=["radiator", "exhaust", "garland"], pant_x=0.0, bogie=("dt", 2.1, 0.43), under="engine",
@@ -149,9 +149,9 @@ TYPES.update({
     "kiha_exp": dict(
         title="国鉄急行形気動車(2扉デッキ・大窓)", L=21.0, W=2.90, z=(1.18, 1.86, 2.62, 3.04, 3.58), cab=2.0, zb0=0.92, diesel=True,
         fs="holder", ss="sabo", ds="deck", ps="beads", wc=(0.10, 0.02), liner="t_panel", lamp="tube",
-        lo="t_cream", up="t_cream", door="t_cream", mask="t_ltdred", stripe=[("t_ltdred", 1.62, 1.80), ("t_ltdred", 2.64, 2.78)],
+        lo="t_cream", up="t_cream", door="t_green", mask="t_green", stripe=[("t_green", 1.62, 1.80), ("t_navy", 2.64, 2.78)],
         pattern="D s w9 D", door_w=0.95, win="wide", pillar=0.08,
-        front="vee", screens=2, lamps="belt", roofshape="round", rake=0.26,
+        front="round", screens=2, lamps="belt", roofshape="round", nose=0.75,
         roof=["radiator", "exhaust", "bigvent"], pant_x=0.0, bogie=("air", 2.3, 0.43), under="engine",
         seat="t_moq_r", interior="box", standing=False),
     "kiha_hyb": dict(
@@ -165,7 +165,7 @@ TYPES.update({
     "kiha_ltd": dict(
         title="国鉄特急ハイブリッド気動車(展望前面)", L=21.0, W=2.95, z=(1.20, 1.92, 2.66, 3.06, 3.60), cab=2.1, zb0=0.9, diesel=True,
         fs="roll", ss="roll", ds="modern", ps="smooth", wc=(0.18, 0.18), liner="t_cream", lamp="strip",
-        lo="t_ivory", up="t_ivory", door="t_ivory", mask="t_ltdred", stripe=[("t_ltdred", 1.20, 1.46), ("t_navy", 2.70, 2.80)],
+        lo="t_ivory", up="t_ivory", door="t_ivory", mask="t_navy", stripe=[("t_navy", 1.20, 1.46), ("t_gold", 2.70, 2.76)],
         pattern="D s w9 D", door_w=0.95, win="ribbon", pillar=0.06,
         front="round", screens=3, lamps="round", roofshape="round", nose=1.25,
         roof=["pant", "hybrid", "acpod"], pant_x=6.0, bogie=("air", 2.3, 0.43), under="skirtfull",
@@ -173,7 +173,7 @@ TYPES.update({
     "kiha_sr": dict(
         title="山麓鉄道キハ200(丸形・片引き1扉)", L=16.0, W=2.65, z=(1.00, 1.66, 2.42, 2.78, 3.28), cab=1.5, zb0=0.88, diesel=True,
         fs="sabo", ss="sabo", ds="bus", ps="plank", wc=(0.14, 0.14), liner="t_wood", lamp="globe",
-        lo="t_maroon", up="t_ivory", door="t_maroon", mask="t_maroon", stripe=[("t_gold", 1.64, 1.70)],
+        lo="t_green", up="t_ivory", door="t_green", mask="t_green", stripe=[("t_gold", 1.64, 1.70)],
         pattern="w2 D w4 w1", door_w=1.05, win="bus", pillar=0.10,
         front="round", screens=3, lamps="round", roofshape="round", nose=0.55,
         roof=["radiator", "exhaust", "pods"], pant_x=0.0, bogie=("pedestal", 1.9, 0.40), under="engine",
@@ -1723,6 +1723,22 @@ def _tail(v, S, e, tot):
 
 
 # --------------------------------------------------------------------------- main entry
+def _front_extras(v, S, e, nose):
+    """前面下部の付帯物: 連結器(ナックル)・エアホース・ジャンパ栓受け・乗務員用ステップ・渡り板。"""
+    L = S["L"]
+    xo = L / 2 + (nose * 0.55 if S["front"] in ("bonnet", "round") else 0.0)
+    X = lambda d: e * (xo + d)
+    zfl = S["z"][0]
+    v.A("t_grey").cyl((X(-0.10), 0, 0.92), (X(0.32), 0, 0.92), 0.075, 0.07, seg=10)                           # 連結器の胴
+    v.A("t_grey").box(*sorted((X(0.30), X(0.46))), -0.11, 0.11, 0.86, 0.98)                                      # ナックル
+    for s_ in (-1, 1):
+        v.A("black").cyl((X(0.0), s_ * 0.30, 0.80), (X(0.20), s_ * 0.30, 0.82), 0.025, 0.025, seg=8)             # エアホース
+        v.A("steel").cyl((X(0.0), s_ * 0.50, 1.00), (X(0.05), s_ * 0.50, 1.00), 0.05, 0.05, seg=8)               # 栓受け
+        v.A("steel").box(*sorted((X(-0.02), X(0.22))), s_ * 0.62 - 0.14, s_ * 0.62 + 0.14, zfl - 0.30, zfl - 0.27)   # ステップ
+        v.A("steel").cyl((X(0.02), s_ * 0.74, zfl - 0.27), (X(0.02), s_ * 0.74, zfl + 0.55), 0.012, 0.012, seg=6)    # 乗務員用手すり
+    v.A("t_grey").box(*sorted((X(-0.05), X(0.10))), -0.45, 0.45, zfl - 0.24, zfl - 0.21)                         # 渡り板
+
+
 def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True):
     mats()
     S = dict(TYPES[tid], id=tid)
@@ -1743,6 +1759,7 @@ def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True)
     for e, kd in ((-1, ends[0]), (1, ends[1])):
         if kd == "cab":
             _cab(v, S, e, tot, nose)
+            _front_extras(v, S, e, nose)
         elif kd == "tail":
             _tail(v, S, e, tot)
         else:

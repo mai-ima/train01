@@ -118,3 +118,13 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 - (20:40) am1: lux椅子OK、モケット細密化OK。人物に関節球(肩/肘/膝/腰)と耳を追加(未撮影)。
 - (20:55) jt1: 人物の関節球で改善(依然マネキン調だが手足の継ぎ目は解消)。次: 形式別床材パレット。
 - (21:20) fp1: 形式別床材(木/緑/鋼板/青/タイル調)で形式差が出た。人物・座席は依然簡易CG水準(最新監査 最高52点)。次: F3c外観の形式別差別化(jnr_exp vs kiha_exp前面、kiha_sr/ltd、sl_*4型、jnr_dc側面撮り直し、tram_o)→外観再撮影→監査。
+- (21:25) 外観前面3/4 13形式を fx1 で撮影中(F3c確認)。
+- (21:50) fx1: 外観13形式の前面3/4を撮影(車体高さ補正後)。第1回の外観厳格監査をサブエージェントで実施(out/audit4)。
+## (22:05) 外観 第1回厳格監査(サブエージェント・fx1 13形式): 全不合格 43〜47点。環境⑤=全画像40点(vtestの砂地・短い線路=試験用環境)。
+- 似たペア: jnr_exp/kiha_exp/km/kiha_ltd(白+赤帯)、jnr_dc/jnr_sub(窓割同一)、ke/kiha_sr/kiha_std(赤茶)、jnr_ac/kiha_hyb、jnr_ltd/kiha_ltd。骨格(断面・屋根・台車・窓高)が共通。汚れが縦縞ノイズのみ、窓ガラスに厚み/映り込みなし、前面はワイパー/渡り板/ステップ不足、床下・台車が形式共通。
+- 次: ①同色ペアの塗り分け/窓割/ドア/前面を3点以上変更 ②汚れの因果(屋根煤・雨筋・台車油) ③前面ディテール(ワイパー・渡り板・ステップ・レンズ) ④床下機器/台車を型別 ⑤撮影環境(駅構内の地面・架線柱・遠景つき)で再撮影。
+- (22:25) 前面付帯物(連結器/ホース/ステップ/渡り板)・屋根煤・塗色の差別化(kiha_exp/ltd/sr/std)を実装、fe1撮影中。
+- (19:24→記録22:30) 【S-MG1】最優先: Claude Code移行パッケージ(migration/)+移行プロンプト作成。調査→HANDOFF/TASKS/CONTEXT/PROMPT。fe1撮影は並行で完了待ち。
+- 19:25 S-MG1: 公式docs本文を精読(memory/sessions/hooks/skills/subagents/headless/checkpointing)・ブログ・Anthropic engineering・GitHub事例を複数読む指示。
+- (19:28) 移行(S-MG1)でも既存情報は消さない: CLAUDE.md等は追記のみ、migration/ に新規作成。
+- (19:40) S-MG1: migration/(MIGRATION_PROMPT/HANDOFF/CONTEXT/USER_INSTRUCTIONS/KEY_FILES/COMMANDS/setup_workspace.sh)と dotclaude/(→.claude: hook/skills/agent)を作成。jsonlログのコピーは権限判定で拒否→同梱せず(README記載)。ドライラン検証済。次: sync→commit/push、fe1_sheet0確認、F3c再開。

@@ -45,6 +45,7 @@ for f in glob.glob(f'{S}/deliver/*'):
 for f in glob.glob(f'{S}/*.png'):
     conv(f,f'{R}/work/'+os.path.basename(f))
 P
+cp -r $S/migration $R/migration; mkdir -p $R/.claude && cp -r $S/dotclaude/. $R/.claude/
 find . -name '*emblem*' -not -path './.git/*' | head
 cat > .gitignore <<'G'
 *.blend

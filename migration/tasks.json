@@ -1,0 +1,922 @@
+[
+ {
+  "id": 1,
+  "status": "completed",
+  "subject": "環境確認(Blender / bpy)"
+ },
+ {
+  "id": 2,
+  "status": "completed",
+  "subject": "設計の確定(国鉄時代・素木駅舎・停車中の気動車・未舗装路)"
+ },
+ {
+  "id": 4,
+  "status": "completed",
+  "subject": "PBRマテリアルと昭和風看板テクスチャ"
+ },
+ {
+  "id": 5,
+  "status": "completed",
+  "subject": "地形・線路・ホーム・未舗装路"
+ },
+ {
+  "id": 6,
+  "status": "completed",
+  "subject": "駅舎の検証と修正(壁・看板・光の当たり方)"
+ },
+ {
+  "id": 9,
+  "status": "completed",
+  "subject": "構内: 4線(分岐つき)・島式ホーム・構内踏切"
+ },
+ {
+  "id": 10,
+  "status": "completed",
+  "subject": "車両: 共通部品と汎用ビルダー"
+ },
+ {
+  "id": 11,
+  "status": "completed",
+  "subject": "車両: 駅構内の停車車両(型違い5種)"
+ },
+ {
+  "id": 12,
+  "status": "completed",
+  "subject": "車両基地: 配置設計と土地・線路"
+ },
+ {
+  "id": 13,
+  "status": "completed",
+  "subject": "車両基地: 扇形庫・転車台・検修庫・工場・給水塔"
+ },
+ {
+  "id": 14,
+  "status": "completed",
+  "subject": "車両基地: 実在型・独自・製造中の車両"
+ },
+ {
+  "id": 15,
+  "status": "completed",
+  "subject": "小物: 駅前・電柱・信号機・看板・自転車・トラック"
+ },
+ {
+  "id": 16,
+  "status": "completed",
+  "subject": "植生・稲架・遠景・空"
+ },
+ {
+  "id": 18,
+  "status": "completed",
+  "subject": "最終レンダ(1920px×6視点+.blend)の完了確認"
+ },
+ {
+  "id": 19,
+  "status": "completed",
+  "subject": "未確認の要素を視覚確認(神社・鳥居、旅館、商店、蔵、信号機、踏切小屋、自転車、島式ホーム待合)"
+ },
+ {
+  "id": 20,
+  "status": "completed",
+  "subject": "車両基地の屋外小物(build_depot_props)を実装"
+ },
+ {
+  "id": 22,
+  "status": "completed",
+  "subject": "成果物の納品と報告"
+ },
+ {
+  "id": 23,
+  "status": "completed",
+  "subject": "車両基地と駅の接続(アクセス道・構内通路・踏切板・ポイント小物)"
+ },
+ {
+  "id": 27,
+  "status": "completed",
+  "subject": ".blend の外部テクスチャをパックして持ち出せる形にする"
+ },
+ {
+  "id": 29,
+  "status": "completed",
+  "subject": "【室内1】共通キット:中空の壁(開口付き)・透明ガラス窓・畳/障子/棚/家具ヘルパー"
+ },
+ {
+  "id": 30,
+  "status": "completed",
+  "subject": "【室内2】民家(7軒)"
+ },
+ {
+  "id": 31,
+  "status": "completed",
+  "subject": "【室内3】旅館(2階建)"
+ },
+ {
+  "id": 32,
+  "status": "completed",
+  "subject": "【室内4】商店・蔵・貨物上屋"
+ },
+ {
+  "id": 33,
+  "status": "completed",
+  "subject": "【室内5】踏切小屋・祠・トイレ棟・待合所・駅舎の再点検"
+ },
+ {
+  "id": 34,
+  "status": "completed",
+  "subject": "【室内6】車両基地の建物の内部"
+ },
+ {
+  "id": 35,
+  "status": "completed",
+  "subject": "【室内7】機関車の内部(DE10/DD51 運転室・機械室)"
+ },
+ {
+  "id": 36,
+  "status": "completed",
+  "subject": "【室内8】貨車・特殊車の内部"
+ },
+ {
+  "id": 38,
+  "status": "completed",
+  "subject": "【Q1】参照スペック表の作成と寸法照合"
+ },
+ {
+  "id": 39,
+  "status": "completed",
+  "subject": "【Q2】経年変化の統一処理"
+ },
+ {
+  "id": 40,
+  "status": "completed",
+  "subject": "【品質C】地面と道路の描き込み"
+ },
+ {
+  "id": 41,
+  "status": "completed",
+  "subject": "【品質D】生活感の追加"
+ },
+ {
+  "id": 42,
+  "status": "completed",
+  "subject": "【品質E】カメラと大気"
+ },
+ {
+  "id": 43,
+  "status": "pending",
+  "subject": "【Q3】描画の技術検査の自動化(白飛び/黒潰れ・ノイズ・テクスチャ欠け・貫通/浮き。K1/K2を統合)"
+ },
+ {
+  "id": 44,
+  "status": "completed",
+  "subject": "【最終a】最終監査用チェックリストと合格基準の明文化(audit_rubric.md)"
+ },
+ {
+  "id": 45,
+  "status": "completed",
+  "subject": "【最終2】全景の視覚確認と監査"
+ },
+ {
+  "id": 50,
+  "status": "pending",
+  "subject": "【Z-G1】(旧Z5)不合格の一括修正→再撮影→再判定(全合格まで繰り返す)"
+ },
+ {
+  "id": 51,
+  "status": "completed",
+  "subject": "【最終8】最終書き出しと最終確認"
+ },
+ {
+  "id": 52,
+  "status": "completed",
+  "subject": "【網A】路線図データ設計と路線図ページ公開"
+ },
+ {
+  "id": 59,
+  "status": "completed",
+  "subject": "【網A2】路線図拡張: 33駅・新3社・北浦の奥5駅・穂波野=本社/発祥の地"
+ },
+ {
+  "id": 60,
+  "status": "completed",
+  "subject": "【網B1】ゾーン枠+みずほ試作の調整と再撮影"
+ },
+ {
+  "id": 61,
+  "status": "completed",
+  "subject": "【網B2】駅タイプ別ビルダー群"
+ },
+ {
+  "id": 63,
+  "status": "pending",
+  "subject": "【C1】線路接続の残り(全駅入口/出口の座標・向き合わせ、他社・分岐・直通線の連結)"
+ },
+ {
+  "id": 64,
+  "status": "completed",
+  "subject": "【網D1】穂波野の拡張: 国鉄本社ビル・発祥記念碑・初代機関庫保存・鉄道記念館"
+ },
+ {
+  "id": 65,
+  "status": "completed",
+  "subject": "【網D2】超大規模駅都市「国都中央」"
+ },
+ {
+  "id": 66,
+  "status": "completed",
+  "subject": "【網D3】大規模駅「大湊」+他社と中規模駅「汐見」+汐見臨港鉄道"
+ },
+ {
+  "id": 67,
+  "status": "pending",
+  "subject": "【E1】全42駅のゾーン構築とレンダ確認(穂波野級・バッチ納品。室内・停車車両・車庫と線路接続を含む)"
+ },
+ {
+  "id": 68,
+  "status": "pending",
+  "subject": "【F1】車両(自社・他社・直通用・各社固有)の室内つき制作とテスト(train2.py)"
+ },
+ {
+  "id": 69,
+  "status": "pending",
+  "subject": "【G1】納品: 全景レンダ+.blend(ゾーン別・27MB以下)、パノラマ歩行ビューア拡張、元データ、路線図最終版、報告(機関車は公開諸元ベース等)"
+ },
+ {
+  "id": 70,
+  "status": "pending",
+  "subject": "【B1】駅ごとの象徴物(時計塔・給水塔・灯台・足湯・鉄橋・桟橋・展望台・温泉櫓・雪かき小屋など)の実装"
+ },
+ {
+  "id": 71,
+  "status": "pending",
+  "subject": "【Z1】全駅コンタクトシート(同一視点)で駅の違いを確認し、似た駅を再設計"
+ },
+ {
+  "id": 72,
+  "status": "completed",
+  "subject": "【網A3】路線図の詳細化"
+ },
+ {
+  "id": 73,
+  "status": "pending",
+  "subject": "【B2】駅様式の多様化(貨物駅・臨時乗降場・電留線・車庫・機関区、RC/煉瓦/鉄骨/石造/トタン駅舎)"
+ },
+ {
+  "id": 74,
+  "status": "completed",
+  "subject": "【網B3a】画像表現ジェネレータ"
+ },
+ {
+  "id": 75,
+  "status": "pending",
+  "subject": "【P2】画像表現の監査(可読性・原作性・多様性)と不合格の再生成"
+ },
+ {
+  "id": 76,
+  "status": "pending",
+  "subject": "【P3】画像の配置(貼り紙・看板建築・野立て看板・自販機・掲示板・メニュー・広告塔)"
+ },
+ {
+  "id": 77,
+  "status": "pending",
+  "subject": "【T1】街の密度向上"
+ },
+ {
+  "id": 78,
+  "status": "completed",
+  "subject": "【R1】随時: status.json 記録と路線図 v2.1 の再公開"
+ },
+ {
+  "id": 79,
+  "status": "completed",
+  "subject": "【最優先】路線図ページ修正"
+ },
+ {
+  "id": 80,
+  "status": "in_progress",
+  "subject": "【B3】テンプレ感の解消(平面形・屋根・階数・庇・ホーム曲線・向き・地形・道路・町の並びをすべて変える)"
+ },
+ {
+  "id": 81,
+  "status": "completed",
+  "subject": "【網A4】路線の配置・構成・内容の整理と拡張"
+ },
+ {
+  "id": 82,
+  "status": "completed",
+  "subject": "【最優先】画像のテンプレ感解消(make_posters v2)"
+ },
+ {
+  "id": 83,
+  "status": "pending",
+  "subject": "【X0】監査基準の全成果への適用と合否表の status.json/ページ反映"
+ },
+ {
+  "id": 84,
+  "status": "completed",
+  "subject": "【最優先】路線図ページの再構成"
+ },
+ {
+  "id": 85,
+  "status": "pending",
+  "subject": "【X1】B群完了時の厳格監査"
+ },
+ {
+  "id": 86,
+  "status": "pending",
+  "subject": "【X2】C・D・S群完了時の厳格監査"
+ },
+ {
+  "id": 87,
+  "status": "pending",
+  "subject": "【X3】E・F・V群バッチ完了ごとの厳格監査"
+ },
+ {
+  "id": 88,
+  "status": "pending",
+  "subject": "【X9】最終超超超監査(=最終超超超高レベル監査・完全な最後)"
+ },
+ {
+  "id": 89,
+  "status": "pending",
+  "subject": "【Z-B1】(旧Z2)全42駅の外観・上空・駅前を同一視点で撮影し超超超厳格判定"
+ },
+ {
+  "id": 90,
+  "status": "pending",
+  "subject": "【Z-C1】(旧Z3)全駅の室内・ホーム・画像を判定"
+ },
+ {
+  "id": 91,
+  "status": "pending",
+  "subject": "【Z-D1】(旧Z4)車両(室内含む)・車庫・留置線・貨物ヤードを判定"
+ },
+ {
+  "id": 92,
+  "status": "pending",
+  "subject": "【Z-F1】(旧Z6)納品物の整合確認"
+ },
+ {
+  "id": 93,
+  "status": "completed",
+  "subject": "【H1】各駅の生活感"
+ },
+ {
+  "id": 94,
+  "status": "completed",
+  "subject": "【運転準備】列車が後から滑らかに走れる構造(軌道グラフ・リグ。走行システム自体は作らない)"
+ },
+ {
+  "id": 95,
+  "status": "in_progress",
+  "subject": "【W1】ワールド合成基盤とゾーン.blend書き出し(テクスチャ共有/相対パス・27MB以下) 再開めど: Honamino分割(10ファイル)は済。残り=全42ゾーン.blendのテクスチャ共有(tex_common)化と27MB以下確認。最初の一手: main.py --save-blend のKEEP_COLS分割を全ゾーンに適用しサイズ一覧を出す。"
+ },
+ {
+  "id": 96,
+  "status": "completed",
+  "subject": "【網C3】分岐器・渡り線・信号・踏切の表現"
+ },
+ {
+  "id": 97,
+  "status": "pending",
+  "subject": "【S1】残る線路構造物(モノレール桁BM連絡など)の実装"
+ },
+ {
+  "id": 98,
+  "status": "completed",
+  "subject": "【最優先・ユーザー明記】路線図ページを最新情報に更新・最適化"
+ },
+ {
+  "id": 99,
+  "status": "completed",
+  "subject": "【C5】踏切の向き修正"
+ },
+ {
+  "id": 100,
+  "status": "completed",
+  "subject": "【C6】向きの総点検と自動検査"
+ },
+ {
+  "id": 101,
+  "status": "pending",
+  "subject": "【C7】構造物の監査(橋・トンネル・雪覆い・築堤・こ線橋・踏切)"
+ },
+ {
+  "id": 102,
+  "status": "completed",
+  "subject": "【I1】現実の車両基地・貨物駅・留置線の調査"
+ },
+ {
+  "id": 103,
+  "status": "pending",
+  "subject": "【I2】施設配置計画(穂波野の基地は除く)"
+ },
+ {
+  "id": 104,
+  "status": "pending",
+  "subject": "【I3】施設種別の改修"
+ },
+ {
+  "id": 105,
+  "status": "completed",
+  "subject": "【I4】路線図 v2.1"
+ },
+ {
+  "id": 106,
+  "status": "pending",
+  "subject": "【X4】車両基地・貨物駅・留置線の監査"
+ },
+ {
+  "id": 107,
+  "status": "completed",
+  "subject": "【N1】新支線の設計"
+ },
+ {
+  "id": 108,
+  "status": "completed",
+  "subject": "【N2】新支線のデータ実装"
+ },
+ {
+  "id": 109,
+  "status": "in_progress",
+  "subject": "【N3】新支線の駅(画像・停車車両・室内・キャンパス感) 再開めど: B6完了後。最初の一手: kit3.BUILD/kit6 に未実装の新支線駅IDを列挙し、B6の改札・券売機部品を流用して順に構築。"
+ },
+ {
+  "id": 110,
+  "status": "completed",
+  "subject": "【N4】路線図に新支線を反映"
+ },
+ {
+  "id": 111,
+  "status": "completed",
+  "subject": "【I6】国都中央の客車区と臨時電車区を統合"
+ },
+ {
+  "id": 112,
+  "status": "completed",
+  "subject": "【I7】実線路図の描画不良の修正"
+ },
+ {
+  "id": 114,
+  "status": "completed",
+  "subject": "【N5】穂波新都線の修正"
+ },
+ {
+  "id": 115,
+  "status": "completed",
+  "subject": "【C8】構造物と町の干渉解消"
+ },
+ {
+  "id": 116,
+  "status": "pending",
+  "subject": "【C9】電化区間の架線(駅間)と駅構内架線"
+ },
+ {
+  "id": 117,
+  "status": "completed",
+  "subject": "【K1】線路干渉の自動検出と修正"
+ },
+ {
+  "id": 118,
+  "status": "pending",
+  "subject": "【K2】ドア・階段の開口検査と修正"
+ },
+ {
+  "id": 119,
+  "status": "completed",
+  "subject": "【V1】駅ごとの車両の表示/非表示切替"
+ },
+ {
+  "id": 120,
+  "status": "completed",
+  "subject": "【K3】浮き・めり込み・地面との食い込み検査"
+ },
+ {
+  "id": 121,
+  "status": "completed",
+  "subject": "【K4】曲線駅の構造整合"
+ },
+ {
+  "id": 122,
+  "status": "completed",
+  "subject": "【K5】車両と構造物の干渉・編成の曲線追従・車両同士の重なり検査"
+ },
+ {
+  "id": 123,
+  "status": "completed",
+  "subject": "【V2】車両の台数・形式を駅ごとに設定"
+ },
+ {
+  "id": 124,
+  "status": "completed",
+  "subject": "【R2】路線図 v2.2"
+ },
+ {
+  "id": 125,
+  "status": "completed",
+  "subject": "【B4】駅構造の最適化と修正"
+ },
+ {
+  "id": 126,
+  "status": "completed",
+  "subject": "【R3】路線図 v2.3"
+ },
+ {
+  "id": 127,
+  "status": "completed",
+  "subject": "【B5】構造変更駅の視覚確認とストック再配置"
+ },
+ {
+  "id": 128,
+  "status": "completed",
+  "subject": "【Z7】数値検査のみだった項目の視覚確認"
+ },
+ {
+  "id": 129,
+  "status": "completed",
+  "subject": "【G2】github.com/mai-ima/train01 へコミット"
+ },
+ {
+  "id": 130,
+  "status": "completed",
+  "subject": "【S-R1】路線図 v2.4(最優先)"
+ },
+ {
+  "id": 131,
+  "status": "completed",
+  "subject": "【T2】全駅ゾーンの地面の描き込み"
+ },
+ {
+  "id": 132,
+  "status": "completed",
+  "subject": "【H2】穂波野(M06)を本来の高品質版に戻す"
+ },
+ {
+  "id": 133,
+  "status": "in_progress",
+  "subject": "【C10】全線路の完全接続(3D連続性の目視) 再開めど: Z-A3〜A6後。最初の一手: net/orient_graph.py と interf.py を再実行し、wl*画像を3視点で撮って継ぎ目を確認。"
+ },
+ {
+  "id": 134,
+  "status": "pending",
+  "subject": "【Z-A1】(旧Z8)構造種別監査: 地下鉄は地下・路面電車は路面・モノレールは高架・高架駅は高架"
+ },
+ {
+  "id": 135,
+  "status": "pending",
+  "subject": "【I8】車両基地・車庫・貨物施設の3D制作(室内込み)と駅との線路接続(FAC 30件中29件が計画のまま)"
+ },
+ {
+  "id": 136,
+  "status": "pending",
+  "subject": "【E2】国都中央M01の停車車両(24線に複数形式)と全駅の停車車両の本物検証"
+ },
+ {
+  "id": 137,
+  "status": "pending",
+  "subject": "【W2】360°パノラマ歩行ビューアを全駅に拡張"
+ },
+ {
+  "id": 138,
+  "status": "pending",
+  "subject": "【X5】status.json 駅別記録を再監査して実態に整合し路線図へ反映"
+ },
+ {
+  "id": 139,
+  "status": "pending",
+  "subject": "【Q4】超高品質化: 地形のうねり・植生の多層化・建物ディテール・遠景"
+ },
+ {
+  "id": 140,
+  "status": "pending",
+  "subject": "【P4】ポスター・看板画像の駅間重複/差別化の検査と再生成"
+ },
+ {
+  "id": 141,
+  "status": "pending",
+  "subject": "【G3】納品物の最終整備"
+ },
+ {
+  "id": 142,
+  "status": "pending",
+  "subject": "【Z-A2】(旧Z9)地下鉄は駅間の線路も地下"
+ },
+ {
+  "id": 143,
+  "status": "completed",
+  "subject": "【G4】GitHub のファイル・フォルダ整理と全収録"
+ },
+ {
+  "id": 144,
+  "status": "pending",
+  "subject": "【C11】駅間線路の作り込み"
+ },
+ {
+  "id": 145,
+  "status": "pending",
+  "subject": "【X6】駅間線路の監査"
+ },
+ {
+  "id": 146,
+  "status": "pending",
+  "subject": "【G5】GitHubのREADME充実(節目ごと更新)"
+ },
+ {
+  "id": 147,
+  "status": "completed",
+  "subject": "【G5】README.md の全面更新"
+ },
+ {
+  "id": 148,
+  "status": "pending",
+  "subject": "【B6】駅の内部構造の作り込み(改札・券売機・出札窓口・コンコース・階段/通路・案内板・売店・待合・トイレ・駅事務室・ホーム設備)を全駅で"
+ },
+ {
+  "id": 149,
+  "status": "pending",
+  "subject": "【D4】穂波野の新車庫計画: 引き揚げ線+超大型車庫の設計とデータ反映"
+ },
+ {
+  "id": 150,
+  "status": "pending",
+  "subject": "【D5】超大型車庫の3D制作"
+ },
+ {
+  "id": 151,
+  "status": "pending",
+  "subject": "【D6】現在の穂波野の車庫を新車庫の「ごく小さな一部」として移設・縮小統合"
+ },
+ {
+  "id": 152,
+  "status": "pending",
+  "subject": "【D9】穂波野駅の大幅拡張"
+ },
+ {
+  "id": 153,
+  "status": "pending",
+  "subject": "【D7】新車庫の社員管理棟群(室内まで)"
+ },
+ {
+  "id": 154,
+  "status": "pending",
+  "subject": "【D8】新車庫の技術開発棟群(券売機・改札・車両・運行/表示システムの開発。室内まで)"
+ },
+ {
+  "id": 155,
+  "status": "pending",
+  "subject": "【V3】人の表示/非表示システム(車内乗客は --people で実装済・駅の人物は People コレクション一括)"
+ },
+ {
+  "id": 156,
+  "status": "pending",
+  "subject": "【R4】路線図へ反映: 新車庫・引き揚げ線・穂波野拡張"
+ },
+ {
+  "id": 157,
+  "status": "pending",
+  "subject": "【X7】新車庫・拡張穂波野・技術開発棟の群監査"
+ },
+ {
+  "id": 158,
+  "status": "pending",
+  "subject": "【K6】検査の未了残"
+ },
+ {
+  "id": 159,
+  "status": "pending",
+  "subject": "【C12】駅構内の架線(未実装)と電化データの整合"
+ },
+ {
+  "id": 160,
+  "status": "pending",
+  "subject": "【E3】全42駅のコンタクト/目線/上空レンダの撮り直し"
+ },
+ {
+  "id": 161,
+  "status": "pending",
+  "subject": "【B7】象徴物の視覚確認と調整"
+ },
+ {
+  "id": 162,
+  "status": "pending",
+  "subject": "【T3】草散布の除外駅(M12/M13/L01=雪景色)の確認"
+ },
+ {
+  "id": 163,
+  "status": "pending",
+  "subject": "【C13】大湊(M19)の市電・モノレール駅内線路の整合"
+ },
+ {
+  "id": 164,
+  "status": "pending",
+  "subject": "【P5】古い画像を最新情報で再作成し路線図ページも更新"
+ },
+ {
+  "id": 165,
+  "status": "pending",
+  "subject": "【R5】路線図 v2.5(最新版)の作成と公開(v2.4/v2.4.5は残して別artifact)"
+ },
+ {
+  "id": 166,
+  "status": "completed",
+  "subject": "【S-CO1】コンテキスト圧縮の手順を整備"
+ },
+ {
+  "id": 167,
+  "status": "pending",
+  "subject": "【F3】車両品質の大幅向上(実在車両のデザインを参考にしてよい)"
+ },
+ {
+  "id": 168,
+  "status": "in_progress",
+  "subject": "【Z-A3】(旧Z10)地下鉄の修正(実装済→撮影確認中)"
+ },
+ {
+  "id": 169,
+  "status": "pending",
+  "subject": "【Z-A4】(旧Z11)路面電車の修正"
+ },
+ {
+  "id": 170,
+  "status": "pending",
+  "subject": "【Z-A5】(旧Z12)モノレールの修正"
+ },
+ {
+  "id": 171,
+  "status": "pending",
+  "subject": "【Z-A6】(旧Z13)高架駅K03の修正"
+ },
+ {
+  "id": 172,
+  "status": "pending",
+  "subject": "【Q5】品質棚卸し(net/quality_backlog.md)"
+ },
+ {
+  "id": 173,
+  "status": "pending",
+  "subject": "【Q6】低品質項目の高品質化"
+ },
+ {
+  "id": 174,
+  "status": "pending",
+  "subject": "【X10】監査済み項目の再監査(厳しめ・サブエージェント)"
+ },
+ {
+  "id": 175,
+  "status": "pending",
+  "subject": "【Z-A7】構造部材の素材刷新"
+ },
+ {
+  "id": 176,
+  "status": "pending",
+  "subject": "【Z-A8】構造物の駅ごとの意匠差別化"
+ },
+ {
+  "id": 177,
+  "status": "completed",
+  "subject": "【Z-A9】Z-A群の3回目監査(全不合格)"
+ },
+ {
+  "id": 178,
+  "status": "completed",
+  "subject": "【S-R6】路線図 v2.4.5"
+ },
+ {
+  "id": 179,
+  "status": "completed",
+  "subject": "【S-R6】路線図 v2.4.5(現状版)"
+ },
+ {
+  "id": 180,
+  "status": "completed",
+  "subject": "【S-CO2】コンテキスト圧縮の手順を再強化"
+ },
+ {
+  "id": 181,
+  "status": "completed",
+  "subject": "【S-R7】路線図v2.4.5の構造物台帳ほか一部UIの最適化"
+ },
+ {
+  "id": 182,
+  "status": "completed",
+  "subject": "【CO3】システムプロンプトの確認と事実確認"
+ },
+ {
+  "id": 183,
+  "status": "completed",
+  "subject": "【Z-A10】M19の市電車両を配置"
+ },
+ {
+  "id": 184,
+  "status": "completed",
+  "subject": "【Z-A11】地下鉄の坑口・開削断面・換気塔の作り直し"
+ },
+ {
+  "id": 185,
+  "status": "completed",
+  "subject": "【Z-A12】軌道桁・橋脚の形と軌道舗装"
+ },
+ {
+  "id": 186,
+  "status": "pending",
+  "subject": "【Z-A13】人物の造形と室内小物の作り直し(B6と連動)"
+ },
+ {
+  "id": 187,
+  "status": "pending",
+  "subject": "【Z-A14】K03のカメラ位置修正と高架下店舗"
+ },
+ {
+  "id": 188,
+  "status": "pending",
+  "subject": "【Z-A15】Z-A群の4回目監査"
+ },
+ {
+  "id": 189,
+  "status": "completed",
+  "subject": "【F3a】車両の現状棚卸し"
+ },
+ {
+  "id": 190,
+  "status": "completed",
+  "subject": "【F3b】形式ごとの設計仕様表"
+ },
+ {
+  "id": 191,
+  "status": "pending",
+  "subject": "【F3c】外観の形式別ビルダー実装(進捗: 前面付帯物/塗色差別化/床材は実装。外観監査1回目=43〜47点)"
+ },
+ {
+  "id": 192,
+  "status": "pending",
+  "subject": "【F3d】車内の作り込み"
+ },
+ {
+  "id": 193,
+  "status": "in_progress",
+  "subject": "【F3e】車両の複数視点確認と形式間差別化の判定(サブエージェント監査・コンタクトシート)"
+ },
+ {
+  "id": 194,
+  "status": "pending",
+  "subject": "【G6】GitHub のファイル・フォルダを徹底整理・最適化"
+ },
+ {
+  "id": 195,
+  "status": "pending",
+  "subject": "【P6】会社別ロゴ・画像素材の作成と使用"
+ },
+ {
+  "id": 196,
+  "status": "in_progress",
+  "subject": "【F3f】最新運行系統の車両対応(寝台特急「ほなみ」・みずほ・臨時・貨物・回送/試運転)"
+ },
+ {
+  "id": 197,
+  "status": "pending",
+  "subject": "【X11】画像監査"
+ },
+ {
+  "id": 198,
+  "status": "pending",
+  "subject": "【N6】不定期高級周遊列車「結」の運行設計とデータ反映"
+ },
+ {
+  "id": 199,
+  "status": "in_progress",
+  "subject": "【F4】周遊列車「結」の車両を超高品質で制作"
+ },
+ {
+  "id": 200,
+  "status": "completed",
+  "subject": "【P7】周遊列車「結」の画像"
+ },
+ {
+  "id": 201,
+  "status": "completed",
+  "subject": "【R8】路線図に周遊列車「結」を追加"
+ },
+ {
+  "id": 202,
+  "status": "pending",
+  "subject": "【X12】周遊列車「結」の監査"
+ },
+ {
+  "id": 203,
+  "status": "pending",
+  "subject": "【X13】監査の点数化と内装監査の導入"
+ },
+ {
+  "id": 204,
+  "status": "in_progress",
+  "subject": "【F3d2】車内の第1〜3回監査(平均27→34→約48点)の修正(照明・床材・天井高・座席バケット・頭当て・人物関節・--people・寝台はしご 実装済。全形式まだ不合格)"
+ },
+ {
+  "id": 205,
+  "status": "pending",
+  "subject": "【CO4】停止の再発防止(CLAUDE.md規則+continue_check.sh)"
+ },
+ {
+  "id": 206,
+  "status": "in_progress",
+  "subject": "【S-MG1】Claude Codeへの完全移行パッケージ作成(最優先・ユーザー明記)"
+ }
+]
