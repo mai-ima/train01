@@ -141,3 +141,7 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 - 停止防止: .claude/hooks/stop_guard.sh(Stop フック)。未完了タスクがある限り終了をブロック。解除は .claude/ALLOW_STOP。
 - F3c: vehtypes に前面 "slope"(style twin/pano/hatch)を追加し jnr_exp=twin/kiha_ltd=pano/jnr_ac=hatch に適用、jnr_ltd の鼻を赤塗装(豚鼻の解消)。sl1(4視点)で確認予定。
 - 並行作業許可(レンダ同時2本まで)。sync_repo.sh は使用禁止(HANDOFF §9)。
+## (12:40) F3c 前面差別化 第1段階完了(未監査)
+- 前面: slope(twin/pano/hatch)を jnr_exp/kiha_ltd/jnr_ac/kiha_sr に適用、jnr_ltd 鼻=赤・前照灯位置修正。all1_sheet0(13形式・同一3/4視点)で別形状を確認。--hq で1600px/128spl の高画質確認済(hq1_0)。
+- 残る近似: jnr_exp↔kiha_ltd(傾斜窓の構成)、kiha_exp↔ke(丸前面)。→骨格(断面・屋根・窓割)でさらに差別化。
+- 次: F3d2(座席の丸み・人物)→外観/内装の strict-auditor 再監査(X13)。
