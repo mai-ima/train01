@@ -96,14 +96,14 @@ TYPES = {
         title="急行形(2扉デッキ・大窓)", L=20.0, W=2.90, z=(1.15, 1.85, 2.60, 3.02, 3.60), cab=1.95, zb0=0.92,
         lo="t_verm", up="t_cream", door="t_verm", mask="t_verm", stripe=[("t_verm", 2.64, 2.76)],
         pattern="D s w8 D", door_w=0.95, win="wide", pillar=0.09,
-        front="vee", screens=2, lamps="roofc", roofshape="round", rake=0.30, headboard=True,
+        front="slope", slope="twin", nose=0.9, screens=2, lamps="roofc", roofshape="round", rake=0.30, headboard=True,
         roof=["pant", "bigvent", "duct"], pant_x=5.6, bogie=("air", 2.2, 0.43), under="boxes",
         seat="t_moq_r", interior="box", standing=False),
     "jnr_ltd": dict(
         fs="holder", ss="roll",
         ds="plug", ps="flute", wc=(0.16, 0.16), liner="t_cream", lamp="strip",
         title="特急形(ボンネット・リクライニング)", L=20.5, W=2.95, z=(1.22, 1.90, 2.70, 3.10, 3.66), cab=2.0, zb0=0.90,
-        lo="t_cream", up="t_cream", door="t_cream", mask="t_cream", stripe=[("t_ltdred", 1.10, 1.30), ("t_ltdred", 2.78, 2.98)],
+        lo="t_cream", up="t_cream", door="t_cream", mask="t_ltdred", stripe=[("t_ltdred", 1.10, 1.30), ("t_ltdred", 2.78, 2.98)],
         pattern="D s w9 D", door_w=0.90, win="wide", pillar=0.08,
         front="bonnet", screens=3, lamps="bonnet", roofshape="round", nose=2.1,
         roof=["pant", "acpod", "aerial"], pant_x=5.8, bogie=("air", 2.3, 0.43), under="skirtfull",
@@ -114,7 +114,7 @@ TYPES = {
         title="交流形(波板・碍子)", L=20.0, W=2.80, z=(1.10, 1.80, 2.60, 3.00, 3.46), cab=1.60, zb0=0.92,
         lo="t_ivory", up="t_ivory", door="t_navy", mask="t_navy", stripe=[("t_navy", 1.05, 1.32), ("t_navy", 2.70, 2.84)],
         pattern="w2 D w4 D w4 D w2", door_w=1.25, win="single", pillar=0.11,
-        front="flat", screens=3, lamps="high", roofshape="flat", corrug=True,
+        front="slope", slope="hatch", nose=0.38, screens=3, lamps="high", roofshape="flat", corrug=True,
         roof=["pant", "insul", "hvcable", "tvent"], pant_x=-5.0, bogie=("dt", 2.2, 0.43), under="xfmr",
         seat="t_moq_o", interior="mix", standing=True),
     "ke": dict(
@@ -167,7 +167,7 @@ TYPES.update({
         fs="roll", ss="roll", ds="modern", ps="smooth", wc=(0.18, 0.18), liner="t_cream", lamp="strip",
         lo="t_ivory", up="t_ivory", door="t_ivory", mask="t_navy", stripe=[("t_navy", 1.20, 1.46), ("t_gold", 2.70, 2.76)],
         pattern="D s w9 D", door_w=0.95, win="ribbon", pillar=0.06,
-        front="round", screens=3, lamps="round", roofshape="round", nose=1.25,
+        front="slope", slope="pano", screens=3, lamps="round", roofshape="round", nose=1.6, rake=0.1,
         roof=["pant", "hybrid", "acpod"], pant_x=6.0, bogie=("air", 2.3, 0.43), under="skirtfull",
         seat="t_moq_o", interior="recline", standing=False),
     "kiha_sr": dict(
@@ -587,7 +587,7 @@ def _cab(v, S, e, tot, nose):
     # ---- 前面
     _front(v, S, e, nose)
     # 連結器
-    ce = xe + (nose if fr in ("bonnet", "round") else 0.12)
+    ce = xe + (nose if fr in ("bonnet", "round", "slope") else 0.12)
     coupler(v, e, e * (ce + 0.05))
     v.A("iron", 0.01).box(*sorted((e * xe, e * (ce + 0.0))), -1.2, 1.2, 0.84, 1.00)         # 排障板/バッファ梁
     for s in (-1, 1):
@@ -615,6 +615,44 @@ def _front0(v, S, e, nose):
         b1 = (X(xs - rk), yc + wd / 2, zt_); b0 = (X(xs - rk), yc - wd / 2, zt_)
         _pane4(v.A(tkey), a0, a1, b1, b0, t=0.02 * e, n=(1, 0, 0))
 
+    if fr == "slope":
+        # 傾斜前面: 先端へ低く傾斜する鼻+前に倒した風防。窓構成は style: twin(2枚窓+中柱) / pano(1枚の大窓) / hatch(小窓2枚+中央貫通扉)
+        nl = nose
+        sty = S.get("slope", "twin")
+        secs = []
+        for i in range(9):
+            t = i / 8.0
+            w = (h - 0.03) * (1 - 0.14 * t ** 1.5)
+            ztop = zwt - (zwt - 1.52) * t ** 1.25
+            zb = 0.94 + 0.12 * t ** 2
+            secs.append((X(xe - 0.02 + nl * t), _sec(w, zb, ztop, 0.16 + 0.1 * t)))
+        v.A(mask, 0.01, True).loft_x(secs)
+        zt0 = lambda t: zwt - (zwt - 1.52) * t ** 1.25
+        ta = 0.62                                                 # 風防の下端(鼻の何割か)
+        xa_, za_ = xe - 0.02 + nl * ta, zt0(ta)
+        xb_, zb_ = xe - 0.06 - rake * 0.4, zwt - 0.05
+        hw = h - 0.14
+        if sty == "pano":
+            _pane4(gl, (X(xa_), -hw, za_ + 0.02), (X(xa_), hw, za_ + 0.02), (X(xb_), hw, zb_), (X(xb_), -hw, zb_), t=0.02 * e, n=(1, 0, 0))
+        elif sty == "hatch":
+            for sg in (-1, 1):
+                _pane4(gl, (X(xa_), sg * 0.42, za_ + 0.02), (X(xa_), sg * hw, za_ + 0.02), (X(xb_), sg * hw, zb_), (X(xb_), sg * 0.42, zb_), t=0.02 * e, n=(1, 0, 0))
+            v.A("t_steel", 0.005).box(*sorted((X(xb_ - 0.02), X(xa_ + 0.02))), -0.40, 0.40, za_ - 0.02, zb_)       # 貫通扉(窓なしの鋼製)
+            gl.box(*sorted((X(xa_ + 0.025), X(xa_ + 0.04))), -0.24, 0.24, za_ + 0.14, za_ + 0.36)
+        else:
+            for sg in (-1, 1):
+                _pane4(gl, (X(xa_), sg * 0.04, za_ + 0.02), (X(xa_), sg * hw, za_ + 0.02), (X(xb_), sg * hw, zb_), (X(xb_), sg * 0.04, zb_), t=0.02 * e, n=(1, 0, 0))
+            pil.box(*sorted((X(xb_ - 0.03), X(xa_ + 0.05))), -0.06, 0.06, za_, zb_)
+        for sg in (-1, 1):
+            pil.box(*sorted((X(xb_ - 0.03), X(xa_ + 0.04))), sg * (h - 0.12) - 0.05, sg * (h - 0.12) + 0.05, za_ - 0.04, zb_)
+        # 灯具: 鼻下部の角形2灯(前照灯)+尾灯、屋根上の標識灯
+        xl = xe + nl * 0.80
+        for sg in (-1, 1):
+            v.A("black", 0.01).box(*sorted((X(xl), X(xl + 0.06))), sg * 0.80 - 0.15, sg * 0.80 + 0.15, 1.18, 1.40)
+            v.A("lampglass").box(*sorted((X(xl + 0.06), X(xl + 0.074))), sg * 0.80 - 0.11, sg * 0.80 + 0.11, 1.22, 1.36)
+            v.A("t_sred").cyl((X(xl), sg * 0.40, 1.12), (X(xl + 0.05), sg * 0.40, 1.12), 0.05, 0.05, seg=10)
+        v.A("lampglass").cyl((X(xe + 0.02), 0, zt + 0.08), (X(xe + 0.07), 0, zt + 0.08), 0.09, 0.09, seg=12)
+        return
     if fr == "gate":
         # 貫通扉形(気動車): 中央に幅0.80の貫通扉、左右に小さな窓。前面は垂直で、腰に大きな前照灯ケース。
         v.A(mask, 0.006).box(*sorted((X(xe - 0.12), X(xe))), -h, h, 0.92, zwt + 0.02)
@@ -866,6 +904,9 @@ def _signs(v, S, e, nose):
     elif fr == "round":
         xp = xe + nose + 0.03
         zc = 1.34
+    elif fr == "slope":
+        xp = xe + nose * 0.97
+        zc = 1.50
     else:
         xp = xe + nose * 0.97
         zc = 1.62
@@ -1726,7 +1767,7 @@ def _tail(v, S, e, tot):
 def _front_extras(v, S, e, nose):
     """前面下部の付帯物: 連結器(ナックル)・エアホース・ジャンパ栓受け・乗務員用ステップ・渡り板。"""
     L = S["L"]
-    xo = L / 2 + (nose * 0.55 if S["front"] in ("bonnet", "round") else 0.0)
+    xo = L / 2 + (nose * 0.55 if S["front"] in ("bonnet", "round", "slope") else 0.0)
     X = lambda d: e * (xo + d)
     zfl = S["z"][0]
     v.A("t_grey").cyl((X(-0.10), 0, 0.92), (X(0.32), 0, 0.92), 0.075, 0.07, seg=10)                           # 連結器の胴
@@ -1751,7 +1792,7 @@ def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True)
     zfl, zs, zw1, zt, zr = S["z"]
     cl = S["cab"]
     tot = L - 2 * cl
-    nose = S.get("nose", 0.12) if S["front"] in ("bonnet", "round") else 0.12
+    nose = S.get("nose", 0.12) if S["front"] in ("bonnet", "round", "slope") else 0.12
     S["_ends"] = ends
     _body(v, S)
     doors, bays = _windows(v, S, tot, seed)
