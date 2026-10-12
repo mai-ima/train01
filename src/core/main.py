@@ -204,6 +204,9 @@ def _cam_clear(v):
 cam_loc, cam_tgt, cam_lens, sun_az, sun_el = CAMS[args.cam]
 
 # ------------------------------------------------------------------ build geometry
+if args.zone in ("M06", "M01"):      # E7: 穂波野・国都中央は専用の本体データがある。--zone の汎用ゾーン版で撮ると別物(新しい駅舎)になる
+    print(f"WARNING: --zone {args.zone} は汎用ゾーン版です。以前作成した本体データで撮るには --zone を付けず "
+          f"--parts core,station,depot,props,train,veg,hq,life (M06) を使ってください(scripts/e3b_post.sh 参照)。")
 if args.zone:
     import kit4  # CURVE_OVERRIDE 等を先に確定(ワールド合成と同じ形状で組む)
     import kit2 as kit

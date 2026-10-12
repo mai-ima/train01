@@ -9,6 +9,7 @@ print(' '.join(k for k in kit.ST))" 2>/dev/null)
 W=${E3_W:-960}; SPL=${E3_SPL:-24}
 worker() {
   for s in "$@"; do
+    [ "$s" = "M06" ] && continue   # E7: 穂波野は本体データ(--zone なし)で撮る → scripts/e3b_post.sh
     [ -f out/e3b/${s}_np_2.png ] && continue
     PEOPLE_BOTH=1 MULTICAM="@A;@E;@ZA" python3 main.py --zone $s --parts none --cam A --w $W --samples $SPL ${E3_OPTS---draft} --out e3b/$s > out/e3b/$s.log 2>&1
     python3 healthscan.py out/e3b/$s.log >> out/e3b/HEALTH.txt 2>&1 || echo "NG $s (ログに failed/Traceback)" >> out/e3b/HEALTH_NG.txt
