@@ -4,7 +4,20 @@
       {
         "matcher": "compact|resume|startup",
         "hooks": [
-          { "type": "command", "command": "cat \"$CLAUDE_PROJECT_DIR/.claude/hooks/reinject.md\"" }
+          {
+            "type": "command",
+            "command": "cat \"$CLAUDE_PROJECT_DIR/.claude/hooks/reinject.md\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop_guard.sh\""
+          }
         ]
       }
     ]

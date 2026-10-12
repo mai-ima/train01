@@ -42,7 +42,10 @@ ap.add_argument("--world", default="", help="markers | all | id,id,... : 全駅�
 ap.add_argument("--rig-export", default="", help="車両リグ構造+メタデータをJSON出力")
 ap.add_argument("--pano-start", type=int, default=0)
 ap.add_argument("--dof", type=float, default=0.0, help="f-stop; 0=off")
+ap.add_argument("--hq", action="store_true", help="高画質プロファイル(1600px以上・128サンプル・アルベド/法線つきデノイズ・細かい適応閾値)")
 args = ap.parse_args()
+if args.hq:
+    args.w = max(args.w, 1600); args.samples = max(args.samples, 128)
 
 t0 = time.time()
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -283,10 +286,10 @@ if "vtest" in parts:
             vehtypes.make(_t, f"vc_{_t}_{_j}", seed=20 + _j, ends=("cab" if _j == 0 else "gang", "cab" if _j == 2 else "gang")).place(40 + _j * _L, 8.0 * _k, 0)
     if os.environ.get("VGROUND", "1") == "1":
         import lib as _lib
-        _gm = _lib.mat_gravel("vt_ground"); _bm = _lib.mat_ballast("vt_ballast"); _rm = _lib.mat_rail("vt_rail", -0.02, 0.0)
+        _gm = _lib.mat_grass_ground("vt_ground"); _bm = _lib.mat_ballast("vt_ballast"); _rm = _lib.mat_rail("vt_rail", -0.02, 0.0)
         _g = _lib.Acc("vt_ground", _gm, "Station"); _b = _lib.Acc("vt_ballast", _bm, "Station"); _r = _lib.Acc("vt_rails", _rm, "Station"); _t = _lib.Acc("vt_ties", _lib.mat_plain("vt_tie", (0.12, 0.09, 0.07), rough=0.9), "Station")
         _g.box(-420, 260, -90, 1500, -0.62, -0.30)
-        _rows = [(30.0 * _i, -16, 16) for _i in range(len(vehtypes.TYPES))] + [(-12, -80, 52), (-40, -260, -26)] + [(8.0 * _k, 36, 120) for _k in range(3)]
+        _rows = [(30.0 * _i, -140, 140) for _i in range(len(vehtypes.TYPES))] + [(-12, -80, 52), (-40, -260, -26)] + [(8.0 * _k, 36, 120) for _k in range(3)]
         for _y, _x0, _x1 in _rows:
             _b.box(_x0, _x1, _y - 1.9, _y + 1.9, -0.30, -0.12)
             for _s in (-1, 1):
@@ -446,6 +449,14 @@ cy.transmission_bounces = 6
 cy.transparent_max_bounces = 8
 cy.sample_clamp_indirect = 8.0
 cy.sample_clamp_direct = 0.0
+if args.hq:
+    cy.adaptive_threshold = 0.008
+    cy.sample_clamp_indirect = 10.0
+    try:
+        cy.denoising_input_passes = 'RGB_ALBEDO_NORMAL'; cy.denoising_prefilter = 'ACCURATE'
+    except Exception as _e:
+        print('denoise opts', _e)
+    r.filter_size = 1.2
 cy.caustics_reflective = False
 cy.caustics_refractive = False
 scene.view_settings.view_transform = 'AgX'
