@@ -123,6 +123,30 @@ class Acc:
             last = i0 + (len(sections) - 1) * n
             self.F.append(tuple(last + k for k in range(n)))
 
+    def tube(self, p0, p1, prof, seg=12, side=None):
+        """軸 p0→p1 に沿う楕円断面のロフト。prof=[(t, rx, ry), ...]: t=0..1 の位置と半幅(side方向)/半奥行。端はキャップ。人体の胴・四肢の滑らかな造形用。"""
+        a = Vector(p1) - Vector(p0)
+        if a.length < 1e-9:
+            return
+        ax = a.normalized()
+        sd = Vector(side) if side is not None else (Vector((0, 1, 0)) if abs(ax.y) < 0.9 else Vector((1, 0, 0)))
+        sd = (sd - ax * sd.dot(ax)).normalized()
+        fw = ax.cross(sd).normalized()
+        i0 = len(self.V)
+        for (t, rx, ry) in prof:
+            c = Vector(p0) + a * t
+            for k in range(seg):
+                th = 2 * math.pi * k / seg
+                self.V.append(tuple(c + sd * (rx * math.cos(th)) + fw * (ry * math.sin(th))))
+        for t in range(len(prof) - 1):
+            ra, rb = i0 + t * seg, i0 + (t + 1) * seg
+            for k in range(seg):
+                k2 = (k + 1) % seg
+                self.F.append((ra + k, ra + k2, rb + k2, rb + k))
+        self.F.append(tuple(i0 + k for k in reversed(range(seg))))
+        last = i0 + (len(prof) - 1) * seg
+        self.F.append(tuple(last + k for k in range(seg)))
+
     def extrude_y(self, profile, y0, y1):
         """Extrude closed (x,z) polygon along Y."""
         i = len(self.V)

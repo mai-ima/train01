@@ -1231,73 +1231,82 @@ def _rider(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
 
 
 def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
-    """乗客(丸い胴・首・頭・髪・鼻・腕・脚・靴)。ang = 顔の向き(0=+x, π=-x, ±π/2=±y)。体格・服色・髪はランダム。"""
+    """乗客(滑らかな胴・四肢のロフト、頭・髪・顔・耳・手・靴)。ang = 顔の向き(0=+x, π=-x, ±π/2=±y)。体格・服色・髪・姿勢はランダム。"""
     rnd = rnd or random
     ca, sa = math.cos(ang), math.sin(ang)
     P = lambda u, w, z: (x + u * ca - w * sa, y + u * sa + w * ca, zfl + z)
+    SD = (-sa, ca, 0.0)                                                   # 体の左右方向(世界)
     jk = kind or rnd.choice(["cl1", "cl2", "cl3", "cl4", "cl5", "cl6", "cl7", "cl8", "cl9", "cl10"])
     tr = rnd.choice(["cl1", "cl2", "hair", "cl8", "cl7", "cl9"])
     k = rnd.uniform(0.93, 1.07)
-    tw = 0.15 * rnd.uniform(0.92, 1.12)
+    bw = rnd.uniform(0.92, 1.14)                                          # 体の幅(太さ)
     hs = rnd.choice(["hair", "hair", "hair", "t_grey"])
-    sw = 0.205 * k
+    sw = 0.200 * k * bw
+
+    def A(key):
+        return v.A(key, 0.0, True)
+
+    def limb(key, p0, p1, r0, r1):
+        A(key).tube(p0, p1, [(0, r0, r0), (0.5, (r0 + r1) / 2 * 1.04, (r0 + r1) / 2 * 1.04), (1, r1, r1)], seg=10, side=SD)
+        A(key).sphere(p1, (r1, r1, r1), seg=8, rings=5)
 
     def face(hz):
         for sd in (-1, 1):
-            v.A("hair", 0.0, True).sphere(P(0.083, sd * 0.034, hz + 0.02), (0.011, 0.012, 0.007), seg=10, rings=6)     # 目
-            v.A("hair", 0.0, True).box(*sorted((P(0.09, sd * 0.034 - 0.02, hz + 0.045)[0], P(0.09, sd * 0.034 + 0.02, hz + 0.045)[0] + 0.004)),
-                                       *sorted((P(0.09, sd * 0.034 - 0.02, hz + 0.045)[1], P(0.09, sd * 0.034 + 0.02, hz + 0.045)[1] + 0.004)), zfl + hz + 0.043, zfl + hz + 0.047)   # 眉
-        v.A("t_sred", 0.0, True).sphere(P(0.088, 0, hz - 0.045), (0.016, 0.022, 0.006), seg=10, rings=6)             # 口
-    if seated:
-        z_h = 0.47
-        v.A(jk, 0.0, True).cyl(P(-0.06, 0, z_h), P(-0.03, 0, z_h + 0.30 * k), tw * 0.86, tw * 0.80, seg=14)         # 腰(細め)
-        v.A(jk, 0.0, True).sphere(P(-0.03, 0, z_h + 0.40 * k), (0.085, sw * 0.90, 0.15 * k), seg=14, rings=8)       # 胸郭(広め)
-        v.A(jk, 0.0, True).sphere(P(-0.04, 0, z_h + 0.03), (0.11, tw * 1.12, 0.06), seg=12, rings=6)                 # 臀部
-        v.A(jk, 0.0, True).sbox(P(-0.02, -sw, z_h + 0.47 * k), P(-0.02, sw, z_h + 0.47 * k), 0.07, 0.09)         # 肩
-        v.A("skin", 0.0, True).cyl(P(-0.01, 0, z_h + 0.50 * k), P(0.0, 0, z_h + 0.60 * k), 0.045, 0.04, seg=12)    # 首
-        v.A("skin", 0.0, True).sphere(P(0.015, 0, z_h + 0.70 * k), (0.092, 0.078, 0.108), seg=10, rings=7)       # 頭
-        v.A(hs, 0.0, True).sphere(P(-0.02, 0, z_h + 0.74 * k), (0.096, 0.083, 0.098), seg=10, rings=6)           # 髪
-        v.A("skin", 0.0, True).sphere(P(0.10, 0, z_h + 0.68 * k), (0.016, 0.014, 0.022), seg=8, rings=6)         # 鼻
-        _hv = rnd.random()
-        if _hv < 0.30 and hs == "hair":      # 長髪(後ろへ流す)
-            v.A("hair", 0.0, True).sphere(P(-0.07, 0, z_h + 0.62 * k), (0.07, 0.085, 0.14), seg=10, rings=6)
-        elif _hv > 0.88:                     # 帽子(つば付き)
-            v.A("t_grey", 0.0, True).sphere(P(-0.01, 0, z_h + 0.77 * k), (0.10, 0.088, 0.055), seg=10, rings=5)
-            v.A("t_grey", 0.0, True).box(*sorted((P(0.07, 0, 0)[0], P(0.15, 0, 0)[0])), *sorted((P(0, -0.06, 0)[1], P(0, 0.06, 0)[1])), zfl + z_h + 0.76 * k, zfl + z_h + 0.775 * k) if abs(ca) > 0.9 else None
-        face(z_h + 0.70 * k)
+            A("hair").sphere(P(0.083, sd * 0.034, hz + 0.02), (0.011, 0.012, 0.007), seg=10, rings=6)     # 目
+            A("hair").box(*sorted((P(0.09, sd * 0.034 - 0.02, hz + 0.045)[0], P(0.09, sd * 0.034 + 0.02, hz + 0.045)[0] + 0.004)),
+                          *sorted((P(0.09, sd * 0.034 - 0.02, hz + 0.045)[1], P(0.09, sd * 0.034 + 0.02, hz + 0.045)[1] + 0.004)), zfl + hz + 0.043, zfl + hz + 0.047)   # 眉
+        A("t_sred").sphere(P(0.088, 0, hz - 0.045), (0.016, 0.022, 0.006), seg=10, rings=6)             # 口
+
+    def head(hz, kk):
+        A("skin").tube(P(0.0, 0, hz - 0.14 * kk), P(0.0, 0, hz - 0.06 * kk), [(0, 0.040, 0.040), (1, 0.043, 0.043)], seg=10, side=SD)   # 首
+        A("skin").sphere(P(0.015, 0, hz), (0.090, 0.077, 0.108), seg=12, rings=8)                      # 頭
+        A("skin").sphere(P(0.045, 0, hz - 0.05), (0.07, 0.066, 0.06), seg=10, rings=6)                  # 顎
+        A(hs).sphere(P(-0.02, 0, hz + 0.045), (0.096, 0.083, 0.095), seg=12, rings=7)                  # 髪
+        A("skin").sphere(P(0.10, 0, hz - 0.02), (0.016, 0.014, 0.022), seg=8, rings=6)                 # 鼻
+        face(hz)
         for sd in (-1, 1):
-            v.A(tr, 0.0, True).cyl(P(-0.02, sd * 0.09, z_h), P(0.40, sd * 0.09, z_h + 0.01), 0.075, 0.062, seg=14)     # 大腿
-            v.A(tr, 0.0, True).cyl(P(0.41, sd * 0.09, z_h), P(0.44, sd * 0.09, 0.08), 0.058, 0.045, seg=14)           # 脛
-            v.A("hair", 0.0, True).sphere(P(0.50, sd * 0.09, 0.035), (0.09, 0.05, 0.04), seg=10, rings=6)     # 靴
-            v.A(jk, 0.0, True).cyl(P(-0.02, sd * (sw + 0.02), z_h + 0.45 * k), P(0.06, sd * (sw + 0.03), z_h + 0.20), 0.04, 0.035, seg=12)  # 上腕
-            v.A(jk, 0.0, True).cyl(P(0.06, sd * (sw + 0.03), z_h + 0.20), P(0.30, sd * 0.13, z_h + 0.12), 0.034, 0.03, seg=12)        # 前腕
-            v.A("skin", 0.0, True).sphere(P(0.32, sd * 0.13, z_h + 0.11), (0.035, 0.03, 0.025), seg=10, rings=6)                    # 手
-            v.A(jk, 0.0, True).sphere(P(-0.02, sd * (sw + 0.01), z_h + 0.45 * k), (0.052, 0.052, 0.052), seg=10, rings=6)     # 肩の関節
-            v.A(jk, 0.0, True).sphere(P(0.06, sd * (sw + 0.03), z_h + 0.20), (0.04, 0.04, 0.04), seg=10, rings=6)           # 肘
-            v.A(tr, 0.0, True).sphere(P(0.41, sd * 0.09, z_h + 0.005), (0.062, 0.062, 0.062), seg=10, rings=6)               # 膝
-            v.A(tr, 0.0, True).sphere(P(-0.02, sd * 0.09, z_h), (0.078, 0.078, 0.078), seg=10, rings=6)                      # 腰
-            v.A("skin", 0.0, True).sphere(P(0.012, sd * 0.088, z_h + 0.70 * k), (0.016, 0.012, 0.03), seg=8, rings=5)         # 耳
-    else:
-        v.A(jk, 0.0, True).cyl(P(0, 0, 0.92), P(0.0, 0, 1.12 * k), tw * 0.86, tw * 0.80, seg=14)
-        v.A(jk, 0.0, True).sphere(P(0.0, 0, 1.24 * k), (0.085, sw * 0.90, 0.15 * k), seg=14, rings=8)
-        v.A(tr, 0.0, True).sphere(P(0.0, 0, 0.93), (0.10, tw * 1.10, 0.07), seg=12, rings=6)
-        v.A(jk, 0.0, True).sbox(P(0, -sw, 1.37 * k), P(0, sw, 1.37 * k), 0.07, 0.09)
-        v.A("skin", 0.0, True).cyl(P(0, 0, 1.38 * k), P(0.0, 0, 1.48 * k), 0.045, 0.04, seg=12)
-        v.A("skin", 0.0, True).sphere(P(0.015, 0, 1.58 * k), (0.092, 0.078, 0.108), seg=10, rings=7)
-        v.A(hs, 0.0, True).sphere(P(-0.02, 0, 1.62 * k), (0.096, 0.083, 0.098), seg=10, rings=6)
-        v.A("skin", 0.0, True).sphere(P(0.10, 0, 1.56 * k), (0.016, 0.014, 0.022), seg=8, rings=6)
+            A("skin").sphere(P(0.012, sd * 0.086, hz - 0.01), (0.016, 0.012, 0.03), seg=8, rings=5)     # 耳
         _hv = rnd.random()
         if _hv < 0.30 and hs == "hair":
-            v.A("hair", 0.0, True).sphere(P(-0.07, 0, 1.50 * k), (0.07, 0.085, 0.14), seg=10, rings=6)
+            A("hair").tube(P(-0.07, 0, hz + 0.02), P(-0.09, 0, hz - 0.20 * kk), [(0, 0.085, 0.06), (0.6, 0.085, 0.05), (1, 0.05, 0.03)], seg=10, side=SD)    # 長髪
         elif _hv > 0.88:
-            v.A("t_grey", 0.0, True).sphere(P(-0.01, 0, 1.65 * k), (0.10, 0.088, 0.055), seg=10, rings=5)
-        face(1.58 * k)
+            A("t_grey").sphere(P(-0.01, 0, hz + 0.075), (0.100, 0.088, 0.055), seg=10, rings=5)            # 帽子
+
+    def torso(z0, z1, lean):
+        """胴: 臀部→腰→胸→肩のロフト(半幅/半奥行は体格 bw で変える)。"""
+        prof = [(0.0, 0.150 * bw, 0.105), (0.22, 0.140 * bw, 0.097), (0.50, 0.168 * bw, 0.108), (0.82, 0.196 * bw, 0.098), (0.95, 0.150 * bw, 0.070), (1.0, 0.07, 0.055)]
+        A(jk).tube(P(-0.05, 0, z0), P(-0.05 + lean, 0, z1), prof, seg=14, side=SD)
+
+    if seated:
+        z_h = 0.47
+        torso(z_h, z_h + 0.56 * k, 0.04)
+        head(z_h + 0.74 * k, k)
         for sd in (-1, 1):
-            v.A(tr, 0.0, True).cyl(P(0, sd * 0.09, 0.90), P(0.0, sd * 0.095, 0.07), 0.08, 0.052, seg=14)
-            v.A("hair", 0.0, True).sphere(P(0.05, sd * 0.095, 0.035), (0.09, 0.05, 0.04), seg=10, rings=6)
-        v.A(jk, 0.0, True).cyl(P(0, -sw - 0.02, 1.32 * k), P(0.03, -sw - 0.03, 0.98), 0.04, 0.034, seg=12)
-        v.A(jk, 0.0, True).cyl(P(0, sw + 0.02, 1.32 * k), P(0.04, sw + 0.01, 1.70), 0.04, 0.034, seg=12)       # 吊り革につかまる腕
-        v.A("skin", 0.0, True).sphere(P(0.04, sw + 0.01, 1.73), (0.035, 0.03, 0.03), seg=10, rings=6)
+            hip = P(-0.03, sd * 0.09, z_h); knee = P(0.41, sd * 0.09, z_h + 0.005); ank = P(0.45, sd * 0.09, 0.09)
+            limb(tr, hip, knee, 0.085, 0.062)                                         # 大腿
+            limb(tr, knee, ank, 0.058, 0.044)                                         # 脛
+            A("hair").sphere(P(0.51, sd * 0.09, 0.04), (0.10, 0.05, 0.04), seg=10, rings=6)    # 靴
+            sh = P(-0.02, sd * (sw + 0.005), z_h + 0.46 * k); el = P(0.07, sd * (sw + 0.035), z_h + 0.20); hd = P(0.30, sd * 0.13, z_h + 0.12)
+            limb(jk, sh, el, 0.050, 0.040)                                            # 上腕
+            limb(jk, el, hd, 0.038, 0.030)                                            # 前腕
+            A("skin").sphere(hd, (0.040, 0.030, 0.022), seg=8, rings=5)               # 手
+    else:
+        z0 = 0.92
+        torso(z0, 1.40 * k, 0.0)
+        head(1.57 * k, k)
+        for sd in (-1, 1):
+            hip = P(0, sd * 0.09, z0 + 0.04); ank = P(0.0, sd * 0.095, 0.08)
+            limb(tr, hip, P(0.0, sd * 0.093, 0.50), 0.085, 0.060)                      # 大腿
+            limb(tr, P(0.0, sd * 0.093, 0.50), ank, 0.058, 0.044)                      # 脛
+            A("hair").sphere(P(0.05, sd * 0.095, 0.04), (0.10, 0.05, 0.04), seg=10, rings=6)
+        shL = P(0, -(sw + 0.005), 1.33 * k); shR = P(0, sw + 0.005, 1.33 * k)
+        limb(jk, shL, P(0.03, -(sw + 0.03), 1.02 * k), 0.050, 0.040)
+        limb(jk, P(0.03, -(sw + 0.03), 1.02 * k), P(0.08, -(sw + 0.02), 0.82 * k), 0.038, 0.030)
+        A("skin").sphere(P(0.08, -(sw + 0.02), 0.80 * k), (0.040, 0.030, 0.022), seg=8, rings=5)
+        hnd = P(0.04, sw + 0.01, 1.70)                                               # 吊り革につかまる腕
+        limb(jk, shR, P(0.02, sw + 0.02, 1.52 * k), 0.050, 0.040)
+        limb(jk, P(0.02, sw + 0.02, 1.52 * k), hnd, 0.038, 0.030)
+        A("skin").sphere(hnd, (0.035, 0.030, 0.032), seg=8, rings=5)
 
 
 def _door_zones(bays, tot, dw):
