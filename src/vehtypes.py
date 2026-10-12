@@ -175,7 +175,7 @@ TYPES.update({
         fs="sabo", ss="sabo", ds="bus", ps="plank", wc=(0.14, 0.14), liner="t_wood", lamp="globe",
         lo="t_green", up="t_ivory", door="t_green", mask="t_green", stripe=[("t_gold", 1.64, 1.70)],
         pattern="w2 D w4 w1", door_w=1.05, win="bus", pillar=0.10,
-        front="round", screens=3, lamps="round", roofshape="round", nose=0.55,
+        front="slope", slope="twin", nose=0.26, rake=0.05, screens=3, lamps="round", roofshape="round",
         roof=["radiator", "exhaust", "pods"], pant_x=0.0, bogie=("pedestal", 1.9, 0.40), under="engine",
         seat="t_wood", interior="long", standing=False),
     "kiha_hr": dict(
@@ -619,19 +619,22 @@ def _front0(v, S, e, nose):
         # 傾斜前面: 先端へ低く傾斜する鼻+前に倒した風防。窓構成は style: twin(2枚窓+中柱) / pano(1枚の大窓) / hatch(小窓2枚+中央貫通扉)
         nl = nose
         sty = S.get("slope", "twin")
+        ta = S.get("slope_ta", 0.72)                              # 風防の下端(鼻の何割か)
+        za_ = 1.62 + S.get("slope_zb", 0.0)                       # 風防の下端の高さ(低いほど大きな窓)
+        zt0 = lambda t: (za_ - 0.04) - (za_ - 0.04 - 1.40) * (max(0.0, t - ta) / (1 - ta)) ** 1.3
+        xa_ = xe - 0.02 + nl * ta
+        xb_, zb_ = xe - 0.06 - rake * 0.4, zwt - 0.05
+        zg = lambda x: za_ + (zb_ - za_) * (xa_ - x) / (xa_ - xb_)   # 風防の傾斜線
         secs = []
         for i in range(9):
             t = i / 8.0
             w = (h - 0.03) * (1 - 0.14 * t ** 1.5)
-            ztop = zwt - (zwt - 1.52) * t ** 1.25
+            xx = xe - 0.02 + nl * t
+            ztop = zt0(t) if t >= ta else min(zt0(t), zg(xx) - 0.035)
             zb = 0.94 + 0.12 * t ** 2
-            secs.append((X(xe - 0.02 + nl * t), _sec(w, zb, ztop, 0.16 + 0.1 * t)))
+            secs.append((X(xx), _sec(w, zb, ztop, 0.16 + 0.1 * t)))
         v.A(mask, 0.01, True).loft_x(secs)
-        zt0 = lambda t: zwt - (zwt - 1.52) * t ** 1.25
-        ta = 0.62                                                 # 風防の下端(鼻の何割か)
-        xa_, za_ = xe - 0.02 + nl * ta, zt0(ta)
-        xb_, zb_ = xe - 0.06 - rake * 0.4, zwt - 0.05
-        hw = h - 0.14
+        hw = h - 0.10
         if sty == "pano":
             _pane4(gl, (X(xa_), -hw, za_ + 0.02), (X(xa_), hw, za_ + 0.02), (X(xb_), hw, zb_), (X(xb_), -hw, zb_), t=0.02 * e, n=(1, 0, 0))
         elif sty == "hatch":
@@ -643,8 +646,12 @@ def _front0(v, S, e, nose):
             for sg in (-1, 1):
                 _pane4(gl, (X(xa_), sg * 0.04, za_ + 0.02), (X(xa_), sg * hw, za_ + 0.02), (X(xb_), sg * hw, zb_), (X(xb_), sg * 0.04, zb_), t=0.02 * e, n=(1, 0, 0))
             pil.box(*sorted((X(xb_ - 0.03), X(xa_ + 0.05))), -0.06, 0.06, za_, zb_)
-        for sg in (-1, 1):
-            pil.box(*sorted((X(xb_ - 0.03), X(xa_ + 0.04))), sg * (h - 0.12) - 0.05, sg * (h - 0.12) + 0.05, za_ - 0.04, zb_)
+        for sg in (-1, 1):                                       # 傾斜した側柱(窓の縁)
+            v.A(up, 0.004).sbox((X(xa_ + 0.02), sg * (h - 0.07), za_ - 0.03), (X(xb_ - 0.02), sg * (h - 0.07), zb_ + 0.03), 0.06, 0.065)
+        for sg in (-1, 1):                                       # 側面の三角を塞ぐ
+            _pane4(v.A(up, 0.004), (X(xa_), sg * (h - 0.025), za_ - 0.03), (X(xb_ - 0.02), sg * (h - 0.025), za_ - 0.03), (X(xb_ - 0.02), sg * (h - 0.025), zb_ + 0.02), (X(xa_ + 0.02), sg * (h - 0.025), za_ - 0.02), t=0.03, n=(0, sg, 0))
+        v.A(S["up"] if S["up"] != S["lo"] else mask, 0.006).box(*sorted((X(xb_ - 0.16), X(xb_ + 0.10))), -h, h, zb_ - 0.02, zt)    # 窓上の前面帯(屋根へつながる)
+        v.A(mask, 0.004).box(*sorted((X(xb_ - 0.16), X(xb_ + 0.12))), -h, h, zt - 0.10, zt)
         # 灯具: 鼻下部の角形2灯(前照灯)+尾灯、屋根上の標識灯
         xl = xe + nl * 0.80
         for sg in (-1, 1):
@@ -793,8 +800,8 @@ def _front0(v, S, e, nose):
         v.A("t_ltdred", 0.01).box(*sorted((X(xe - 0.05), X(xe + 0.05))), -h, h, 1.85, 2.08)       # 窓下の赤帯
         # ボンネット先端の前照灯(2灯)+ヘッドマーク+エアホーンカバー
         for s in (-1, 1):
-            v.A("black").cyl((X(xe + nl * 0.90), s * 0.62, 1.78), (X(xe + nl * 0.95), s * 0.62, 1.78), 0.18, 0.16, seg=16)
-            v.A("lampglass").cyl((X(xe + nl * 0.95), s * 0.62, 1.78), (X(xe + nl * 0.955 + 0.02 * e), s * 0.62, 1.78), 0.135, 0.13, seg=16)
+            v.A("black").cyl((X(xe + nl * 0.96), s * 0.70, 1.38), (X(xe + nl * 1.01), s * 0.70, 1.38), 0.13, 0.12, seg=16)
+            v.A("lampglass").cyl((X(xe + nl * 1.01), s * 0.70, 1.38), (X(xe + nl * 1.015 + 0.02 * e), s * 0.70, 1.38), 0.095, 0.09, seg=16)
             v.A("t_ltdred").cyl((X(xe + nl * 0.93), s * 0.88, 1.36), (X(xe + nl * 0.94), s * 0.88, 1.36), 0.06, 0.06, seg=10)
         v.A("t_white").box(*sorted((X(xe + nl * 0.60), X(xe + nl * 0.60 + 0.03 * e))), -0.38, 0.38, 1.40, 1.76) if False else None
         pass  # ヘッドマーク掛けは _signs で
