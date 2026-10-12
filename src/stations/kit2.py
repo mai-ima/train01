@@ -674,12 +674,12 @@ def build_design(sid):
         Pk = offs(P, off)
         if k >= 2:
             sl = Pk[LH - 90 + rng.randint(-30, 20): LH + 110 + rng.randint(-20, 30)]
-            trackkit.build_track(f"k2_trk{k}", sl, wooden=True, ballast=True, fittings=True, cam=None)
+            trackkit.build_track(f"k2_trk{k}", sl, wooden=True, ballast=True, fittings=True, cam=(None if os.environ.get("PEBBLES", "1") == "0" else (float(bx + w / 2.0), float(Pk[min(LH, len(Pk) - 1)][1]))), pebble_radius=70.0)
             e = sl[-1]
             trackkit.buffer_stop(float(e[0]), float(e[1]), math.degrees(math.atan2(*(sl[-1] - sl[-3])[::-1])))
         else:
             rb, rf = REACH.get(sid, (LH, LH))
-            trackkit.build_track(f"k2_trk{k}", Pk[LH - rb: LH + rf + 1], wooden=True, ballast=True, fittings=True, cam=None)
+            trackkit.build_track(f"k2_trk{k}", Pk[LH - rb: LH + rf + 1], wooden=True, ballast=True, fittings=True, cam=(None if os.environ.get("PEBBLES", "1") == "0" else (float(bx + w / 2.0), float(Pk[min(LH, len(Pk) - 1)][1]))), pebble_radius=70.0)
             if d.get("endbuf"):       # 終端駅だが頭端式ではない: ホームの先まで通過形で線路が延び、先端に車止め
                 sl2 = Pk[LH - rb: LH + rf + 1]
                 trackkit.buffer_stop(float(sl2[-1][0]), float(sl2[-1][1]), math.degrees(math.atan2(*(sl2[-1] - sl2[-3])[::-1])))
