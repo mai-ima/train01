@@ -198,6 +198,25 @@ def silo_group(x, y, name="sig_silo"):
     g.build()
 
 
+def farm_silo(x, y, name="sig_farmsilo"):
+    """農村: 円筒の穀物サイロ3基(円錐屋根・梯子・帯)+切妻の納屋+干し草(M07 果樹園)。"""
+    g = G(name, "Buildings")
+    for i, (dx, r, h) in enumerate([(0.0, 2.6, 13.0), (5.9, 2.6, 11.0), (11.8, 2.2, 9.0)]):
+        cx = x + dx
+        g.a("concrete", bevel=0.02).cyl((cx, y, 0), (cx, y, h), r, seg=28)
+        for k in range(1, 5):                                   # 横帯(型枠継ぎ目)
+            g.a("iron_black").cyl((cx, y, h * k / 5.0), (cx, y, h * k / 5.0 + 0.12), r + 0.05, seg=28)
+        g.a("tin").cyl((cx, y, h), (cx, y, h + 1.5), r + 0.15, 0.25, seg=28)       # 円錐屋根
+        g.a("iron_black").box(cx + r - 0.02, cx + r + 0.12, y - 0.25, y + 0.25, 0.3, h - 0.5)   # 梯子
+    bx, by = x - 4.0, y + 12.0
+    g.a("wood_dark", bevel=0.03).box(bx - 9, bx + 9, by - 5, by + 5, 0.0, 5.5)
+    g.a("tin").extrude_x([(by - 5.6, 5.4), (by, 8.8), (by + 5.6, 5.4), (by + 5.6, 5.2), (by, 8.55), (by - 5.6, 5.2)], bx - 9.6, bx + 9.6)
+    g.a("iron_black").box(bx - 2.0, bx + 2.0, by - 5.02, by - 4.9, 0.0, 4.2)      # 大戸
+    for i in range(5):
+        g.a("yellow_grass" if "yellow_grass" in M else "wood_dark").cyl((bx + 12 + i * 2.2, by - 3, 0.0), (bx + 12 + i * 2.2, by - 3, 1.3), 0.9, seg=14)  # 干し草(丸ロール)
+    g.build()
+
+
 def apt_tower(x, y, name="sig_apt"):
     """ニュータウン: 14階建て高層住棟(バルコニー縞)。"""
     g = G(name, "Buildings")
@@ -297,7 +316,7 @@ def fire_tower(x, y, h=16.0, name="sig_firetower"):
 KINDS = {"clock": clock_tower, "water": water_tower, "lighthouse": lighthouse, "onsen": onsen_hut, "footbath": foot_bath,
          "crane": quay_crane, "pier": pier, "bridge": truss_bridge, "deck": obs_deck, "chimney": chimney, "snowhut": snow_hut,
          "sigtower": signal_tower, "monument": monument,
-         "atc": atc_tower, "radar": radar_dome, "windsock": windsock, "gate": campus_gate, "silo": silo_group, "apt": apt_tower, "field": sports_field, "torii": torii, "logstack": logstack, "skilift": ski_lift, "firetower": fire_tower}
+         "atc": atc_tower, "radar": radar_dome, "windsock": windsock, "gate": campus_gate, "silo": silo_group, "farm_silo": farm_silo, "apt": apt_tower, "field": sports_field, "torii": torii, "logstack": logstack, "skilift": ski_lift, "firetower": fire_tower}
 # station id -> [(kind, x, y)]  (local coords: y>0 forecourt side, y<0 far side)
 SIG = {
  "M01": [("clock", 40, 40), ("chimney", -30, 40)], "M02": [("water", -40, 22)], "M03": [("clock", 10, 24)],
