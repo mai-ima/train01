@@ -610,6 +610,12 @@ if not args.no_render and os.environ.get('MULTICAM'):
             _big = {"M01": 2.6, "M06": 1.8}.get(getattr(args, "zone", ""), 1.0)   # 大規模駅は俯瞰/斜めを遠ざける
             if _big != 1.0 and _c.strip()[1:] in ("ZA", "E"):
                 _v[0] *= _big; _v[1] *= _big; _v[2] *= _big
+            if _c.strip()[1:] == "ZA" and getattr(args, "zone", ""):      # 俯瞰の方位を駅ごとに変え、全駅が同じ構図に見えないようにする(±50°)
+                import zlib as _zl
+                _ang = math.radians(((_zl.crc32(args.zone.encode()) % 11) - 5) * 10.0)
+                _dx, _dy = _v[0] - _v[3], _v[1] - _v[4]
+                _v[0] = _v[3] + _dx * math.cos(_ang) - _dy * math.sin(_ang)
+                _v[1] = _v[4] + _dx * math.sin(_ang) + _dy * math.cos(_ang)
         else:
             _v = [float(t) for t in _c.split(',')]
         if _c.strip().startswith('@') and _c.strip()[1:] in ("A", "E"):      # 構造物に視界を塞がれるカメラは横にずらす(E3 所見: M03 の A が壁で遮られた)
