@@ -1116,5 +1116,65 @@
   "subject": "【E6】各駅カメラの複数増設(@F駅舎正面・@P ホーム目線・@T 町並み・@R 線路脇 + 既存A/E/ZA/L)",
   "status": "in_progress",
   "description": "main.py に @F/@P/@T/@R 実装済み(未検証)。M03で試し撮り→全駅撮影→コンタクトシート確認。"
+ },
+ {
+  "id": 245,
+  "subject": "【E7】撮影ルールの是正: 穂波野(M06)・国都中央(M01)は --zone でなく本体データ+専用カメラで撮る(バッチ除外・警告)",
+  "status": "in_progress",
+  "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
+ },
+ {
+  "id": 246,
+  "subject": "【Q11】撮影カメラの自動品質検査(視界スコア・遮蔽・見切れを数値化し、低い視点は自動で再撮リスト化)",
+  "status": "pending",
+  "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
+ },
+ {
+  "id": 247,
+  "subject": "【T4】水辺(海・川・池)の質感と岸(波・反射・泡・護岸・汀線・桟橋まわり)",
+  "status": "in_progress",
+  "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
+ },
+ {
+  "id": 248,
+  "subject": "【F3h】除雪車(ラッセル)・蒸機・客車の本格モデル化(暫定ラッセル車の作り直し・公開諸元ベース)",
+  "status": "pending",
+  "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
+ },
+ {
+  "id": 249,
+  "subject": "【H1】生活感(駅の人物の造形・配置・動き・荷物・動物)",
+  "status": "pending",
+  "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
+ },
+ {
+  "id": 250,
+  "subject": "【B9】港・沿岸駅の作り込み(R02埠頭: コンテナ・荷役線・倉庫群・岸壁・船の質感、M14/M16/M18/M19)",
+  "status": "in_progress",
+  "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
+ },
+ {
+  "id": 251,
+  "subject": "【X17】カメラ・構図の監査(遮蔽・見切れ・主題の有無・駅ごとの個性)を全駅の撮影物に実施",
+  "status": "pending",
+  "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
+ },
+ {
+  "id": 252,
+  "subject": "【G10】成果画像の整理(JPEG q88・命名規則・ギャラリー docs/gallery.md・コンタクトシートの保存)",
+  "status": "pending",
+  "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
+ },
+ {
+  "id": 253,
+  "subject": "【R9】路線図v2.4.5(現状版)へ検査結果と撮影状況の反映(カメラ数・検査合否・駅ごとの代表画像)",
+  "status": "pending",
+  "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
+ },
+ {
+  "id": 254,
+  "subject": "【W5】撮影バッチ運用の整備(並列2・draft/hqの使い分け・後処理自動化・再撮リスト自動生成)",
+  "status": "in_progress",
+  "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
  }
 ]
