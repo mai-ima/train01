@@ -493,3 +493,38 @@ def export_rig(path):
         out.append(dict(name=ob.name, location=[round(v, 3) for v in ob.location], yaw=round(ob.rotation_euler[2], 4), parts=sorted(parts, key=lambda p: p["name"]), **meta))
     json.dump(dict(convention="車両ルート空オブジェクト>台車(bogie,z軸)>輪軸(ws,y軸)・連結器(coupler,z軸)。原点=回転中心。レール上面=ローカルz0。", vehicles=out), open(path, "w"), ensure_ascii=False, indent=1)
     return len(out)
+
+
+def make_plow(name="plow", seed=7):
+    """除雪車(ラッセル式・汎用): 運転室つき車体+V字の雪かき翼(公開の一般的な形を参考にした汎用モデル。実在形式の寸法ではない)。
+    +x 端が前(雪かき側)。主翼=平面V字の傾斜板2枚+中央の鼻、上部の雪切り板、下端のフランジ刃。"""
+    rnd = random.Random(seed)
+    v = Veh(name)
+    L, W = 10.6, 2.70
+    freight_frame(v, L=L, W=W, wb=5.8)
+    red = "post_red"
+    v.A("black", 0.01).box(-L / 2, L / 2, -1.2, 1.2, 0.98, 1.06)
+    # 運転室(後半): 高い箱形+切妻風の屋根+窓
+    v.A(red, 0.02).box(-4.9, 1.6, -W / 2, W / 2, 1.06, 3.55)
+    v.A("roof", 0.015).box(-5.0, 1.7, -W / 2 - 0.08, W / 2 + 0.08, 3.55, 3.65)
+    v.A("iron", 0.01).box(-1.9, -1.3, -0.45, 0.45, 3.65, 4.35)                     # 煙突/換気塔
+    gl = v.A("glass")
+    for s in (-1, 1):
+        for xs in (-4.3, -3.2, -2.1, -0.9):
+            gl.box(xs, xs + 0.75, *sorted((s * W / 2, s * (W / 2 + 0.012))), 2.1, 3.0)
+    gl.box(1.6, 1.612, -1.0, 1.0, 2.3, 3.1)                                         # 前面窓(翼の後ろ)
+    # 前部: 排土板(V字)。後端 x=1.6 から先端 x=5.6 へ
+    for s in (-1, 1):
+        v.A(red, 0.02).sbox((1.6, s * 1.35, 2.1), (5.5, s * 0.12, 1.75), 0.10, 2.15, up=(0, 0, 1))     # 主翼(縦板)
+        v.A("iron", 0.01).sbox((1.6, s * 1.35, 3.18), (5.4, s * 0.12, 2.82), 0.12, 0.30, up=(0, 0, 1))  # 上縁補強帯
+        v.A(red, 0.02).sbox((1.7, s * 1.30, 3.28), (4.0, s * 0.55, 3.55), 0.08, 0.9, up=(0.2 * s, 0, 1))  # 雪切り上板
+        v.A("steel").box(1.6, 5.5, *sorted((s * 1.33, s * 0.12)), 0.99, 1.03) if False else None
+    v.A("steel", 0.01).sbox((1.6, -1.40, 1.00), (5.5, 0.0, 0.88), 0.06, 0.16, up=(0, 0, 1))     # フランジ刃(左)
+    v.A("steel", 0.01).sbox((1.6, 1.40, 1.00), (5.5, 0.0, 0.88), 0.06, 0.16, up=(0, 0, 1))      # フランジ刃(右)
+    v.A(red, 0.02).box(5.1, 5.7, -0.22, 0.22, 0.9, 2.55)                                        # 中央の鼻
+    v.A("iron", 0.01).box(5.7, 5.8, -0.22, 0.22, 0.9, 2.55)
+    for s in (-1, 1):                                                                           # 側面の手すり・梯子
+        grab_rail(v, (-4.6, s * (W / 2 + 0.05), 1.1), (-4.6, s * (W / 2 + 0.05), 3.4), 0.02, "iron")
+        v.A("iron", 0.004).box(-4.75, -4.45, *sorted((s * W / 2, s * (W / 2 + 0.2))), 1.1, 1.14)
+    v.side_plane("logo_new.png", 1, -2.0, 0.5, 1.4, 1.9, W / 2 + 0.012) if hasattr(v, "side_plane") else None
+    return v

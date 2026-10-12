@@ -299,6 +299,14 @@ def _place_auto(sid):
             x = cx - 25.0
             tp = _tpoint(sid, k, x)
             if tp is None: continue
+            if opt.get("plow"):                       # 除雪列車: ラッセル車(先頭・+x向き)+蒸機(後ろ押し)
+                train.make_plow(f"stk_{sid}_{k}_plow", seed=k).place(tp[0], tp[1], tp[2], z=zrail + 0.274)
+                tp2 = _tpoint(sid, k, x - 15.5)
+                if tp2 is not None:
+                    steam2.make_steam2(f"stk_{sid}_{k}_sl", kind="D51").place(tp2[0], tp2[1], tp2[2] + math.pi, z=zrail + 0.274)
+                    placed += 1
+                placed += 1
+                continue
             yaw0 = math.pi if rng.random() < 0.5 else 0.0
             steam2.make_steam2(f"stk_{sid}_{k}_sl", kind="D51").place(tp[0], tp[1], tp[2] + yaw0, z=zrail + 0.274)
             for w in range(2):
