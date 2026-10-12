@@ -39,7 +39,7 @@ def mats2():
         for k, c in (("pl_green", (0.33, 0.45, 0.36)), ("pl_cream", (0.78, 0.72, 0.52)), ("pl_blue", (0.36, 0.50, 0.62)),
                      ("pl_pink", (0.72, 0.52, 0.48)), ("pl_ochre", (0.70, 0.52, 0.22)), ("pl_grey", (0.55, 0.56, 0.54))):
             M[k] = lib.mat_plaster("kit_" + k, c, dirt=0.7)
-        M["water"] = lib.mat_plain("kit_water", (0.05, 0.12, 0.14), rough=0.04, spec=0.9)
+        M["water"] = lib.mat_water("kit_water")
         M["sand"] = lib.mat_plain("kit_sand", (0.60, 0.53, 0.37), rough=0.97)
         M["tin_blue"] = lib.mat_paint("kit_tinblue", (0.20, 0.30, 0.42), rough=0.5, rust=0.5)
         M["tin_green"] = lib.mat_paint("kit_tingreen", (0.18, 0.34, 0.24), rough=0.5, rust=0.5)
@@ -111,6 +111,13 @@ def platform_strip(P, d0, d1, xa, xb, name):
     strip(P, d0 + 0.5 * s, d1 - 0.05 * s, xa + 0.05, xb - 0.05, Z_PLAT - 0.06, Z_PLAT, M["plat_top"], name + "_top")
     strip(P, d0, d0 + 0.5 * s, xa, xb, Z_PLAT - 0.06, Z_PLAT + 0.03, M["concrete"], name + "_edge")
     strip(P, d0 + 0.6 * s, d0 + 0.68 * s, xa, xb, Z_PLAT, Z_PLAT + 0.008, M["white_line"], name + "_line")
+    # 穂波野(core.build_platform)に倣う: 縁の石の笠木 と ホーム両端のスロープ(階段状に低くなる)
+    if "stone" in M:
+        strip(P, d0, d0 + 0.16 * s, xa, xb, Z_PLAT + 0.02, Z_PLAT + 0.07, M["stone"], name + "_cope")
+    for i in range(5):
+        top = Z_PLAT * (1.0 - (i + 1) / 5.5)
+        strip(P, d0 + 0.5 * s, d1 - 0.05 * s, xb + 0.9 * i, xb + 0.9 * (i + 1), -0.25, top, M["concrete"], f"{name}_rampB{i}")
+        strip(P, d0 + 0.5 * s, d1 - 0.05 * s, xa - 0.9 * (i + 1), xa - 0.9 * i, -0.25, top, M["concrete"], f"{name}_rampA{i}")
 
 
 # ----------------------------------------------------------------- station building volumes

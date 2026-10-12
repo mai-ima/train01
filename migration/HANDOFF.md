@@ -73,3 +73,12 @@
 - 重大バグ修正: 停車車両の配置(zone_stock の _len/_nose2)。**旧レンダの駅には車両がない**ため全駅を撮り直し中(E3a: scripts/e3_batch.sh、出力 out/e3b/、`--draft`)。
 - 車両・車内の独立監査は2回とも全件不合格(外観約55・車内約45)。**手続き型の天井**。ユーザー判断待ち: docs/REQUESTS_TO_USER.md B-1。
 - 次: E3a の確認と healthscan → G1a/G1b(納品の先行完成)→ F5b〜e → 群監査。待機は短い呼び出し+Monitor、長い同期待機をしない(CLAUDE.md の運用ルール)。
+
+## 12. Claude Code セッションの到達点(2026-10-12 夜〜深夜)と次の一手
+- **撮影基盤**: E3a 全駅バッチ(out/e3b、--draft・人物あり/なし)ほぼ完了(42駅中40以上)。後処理 `scripts/e3b_post.sh`(穂波野M06=本体データ+専用カメラ、撮り直し駅 A/E/ZA/L、他駅 @L)→ `e3b_post2.sh`(健全性+コンタクトシート+`parts_audit.sh`)→ `world_seg.sh`(M04-M05世界合成)→ `x18_shots.sh`。完了フラグ: out/e3b/done.txt, out/e3b2/done.txt, out/parts_done.txt, out/seg/done.txt, out/x18/done.txt。
+- **カメラ**: main.py MULTICAM に `@A @E @ZA`(+障害物回避 `_cam_clear`・視界スコア)、`@L`(象徴物)、`@F`(駅舎正面)、`@P`(ホーム目線)、`@T`(町並み)、`@R`(線路脇)、穂波野用 `@H @C @B @D @G @Z1 @ZT @HQ1 @HQ2`。`--zone M06/M01` は警告(本体データで撮る)。`DBG_NEAR="x,y,z,r"` で視界を塞ぐ物を特定。
+- **今日の修正**: Z_PLAT 0.60→1.10(車両が浮いて見える)/橋上通路(窓・床版・駅前出入口と庇)/M07農村サイロ/M11-13停車車両(蒸機+客車、ラッセル車は暫定)/沿岸(砂浜素材・曲線汀線・海面)/R02(船・クレーン作り直し)/M19クレーン向き/停車編成長の乱数化/ホーム縁の笠木+端スロープ/汎用ゾーンに砂利散布(B10)/水面素材 mat_water(T4)/例外の可視化(W4)。
+- **検査ツール**: `vehcheck.py`(23形式0件)・`trackcheck.py`(線路規格10項目OK)・`cam_report.py`・`contact_sheet.py`・`healthscan.py`。
+- **ルール**: docs/TASK_RULES.md(タスク追加・割り込み)、docs/INSTRUCTIONS_CHECK.md(指示の照合)、net/session_state.md 冒頭の自己チェック。
+- **正直な所見**: 汎用ゾーン駅は穂波野(本体データ)より明らかに低品質=B10。全駅の構図が似る/駅ごとの個性が弱い(B3/B1/B2)。車両・人物は監査で全件不合格のまま(X13)。
+- **次の一手**: ①バッチ完了後 e3b2/seg/parts/x18 の画像を確認(3視点以上)②B10(穂波野との差分②ホーム縁・端スロープ/③草・小物)③C14/C15(駅間線路・踏切・橋)④B6 駅内部 ⑤車両 F5b〜e/F3c/F3d2 → 群監査。詳細な順序は docs/TASK_ORDER.md。

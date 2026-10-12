@@ -444,6 +444,18 @@ def mat_plain(name, color, rough=0.6, metal=0.0, spec=0.5):
     return m.m
 
 
+def mat_water(name, deep=(0.03, 0.10, 0.13), shallow=(0.10, 0.22, 0.24)):
+    """海・池の水面: 大きなうねり+細かな波紋の法線(Bump)+深さ方向の色むら+強い映り込み(低ラフネス)。単色の板に見えないようにする(T4)。"""
+    m = Mat(name)
+    big = m.noise(scale=0.05, detail=3, rough=0.5)
+    rip = m.noise(scale=0.9, detail=5, rough=0.55)
+    h = m.mix(1.0, (0.5, 0.5, 0.5), rip, 'ADD') if hasattr(m, 'mix') else rip
+    nrm = m.bump(rip, strength=0.35, dist=0.25)
+    col = m.ramp(big, [(0.30, deep), (0.75, shallow)])
+    m.principled(**{'Base Color': col, 'Roughness': 0.05, 'Specular IOR Level': 0.9, 'Normal': nrm})
+    return m.m
+
+
 def mat_concrete(name, base=(0.50, 0.49, 0.46), stain=0.5, seam=None, grain=1.0, seam_rot=(0, 0, 0), offset=0.0):
     """Weathered concrete. seam=(w, h) draws joints every w x h metres in the (rotated) XY plane."""
     m = Mat(name)

@@ -1,7 +1,7 @@
 """【X15】線路部品の静的数値検査(bpy不要): 軌間・レール頭高・レール断面・バラスト断面・ホーム高・車両限界を実物の規格値と照合する。
 使い方: python3 trackcheck.py   終了コード: 0=全て許容内 / 1=逸脱あり
 基準(国鉄在来線・狭軌): 軌間1,067 mm、37kgレール 高さ約122 mm・頭幅約63 mm、バラスト肩幅(枕木長2.1〜2.4 m)、ホーム高=レール頭+0.76〜0.92 m(低床ホーム)、車両限界 幅3.0 m。"""
-import os as _os, sys
+import os as _os, sys, re
 _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 sys.path.insert(0, _R)
 import common, trackkit
@@ -33,5 +33,9 @@ if _m:
     chk("トロリ線高 直流(m)", float(_m.group(2)), 5.0, 5.5)
 else:
     print("NG トロリ線高の定義が見つからない"); bad.append("catenary")
+import inspect
+_src = inspect.getsource(trackkit.build_track)
+_m = re.search(r"sleeper_step=([0-9.]+)", _src)
+if _m: chk("枕木間隔(m)", float(_m.group(1)), 0.55, 0.65)          # 実物は約0.58〜0.62 m(1kmあたり1,600〜1,760本)
 print("\n逸脱", len(bad), "件" if bad else "件(全て許容内)")
 sys.exit(1 if bad else 0)
