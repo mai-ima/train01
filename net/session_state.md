@@ -73,3 +73,10 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 - [03:57] 周遊列車は公式等複数ソースで調査(net/research_tour.md に出典記録)
 - [04:25] F4/N6/P7: services.py に TC1-4、research_tour.md、vehtypes に lx_* 5形式(未撮影)、hm_yui.png。vall(全型一括撮影 out/vall_*)実行中→完了後 F3e監査、続いて lx 10両(vtest)撮影
 - [04:50] N6/F4/P7: net/tour.py(TOUR設定)、tex/logo_yui・yui_menu・yui_ticket・yui_poster・hm_yui、zone_stock に LUX_ST(M01)。vall2(全23形式クリーン撮影 out/vall2_*, ラベルは /tmp/claude-0/labels2.txt)実行中→終了後 sheet.py で確認しF3e/X12監査(Agent)。次: R8路線図、X11画像監査
+- (04:50) 圧縮手順実行・回復完了。路線図v2.4.5に周遊列車タブ公開済(version4)。Monitor bvs8vsa6u が vall2 完了待ち。次: sheet.py で確認→lx修正→lx10両再撮影→F3e/X12監査→commit。
+## (05:25) F3e/X12 第1回監査(サブエージェント・画像のみ): 23形式すべて不合格(0/23)。周遊列車「結」も不合格。
+- 修正済み(再撮影未了の分あり): lx塗装を新車仕様(t_bronze/t_champ grime/rust低減)・ガラス埃を全車両で低減・kiha_exp前面(vee+赤マスク)・kiha_hyb前面(t_steelマスク)。確認画像 lx2_*, lx3_*。
+- 監査指摘トップ: ①撮影環境に線路/地面なし(vtestは海グラデで浮いて見える→線路+バラスト+地面つき撮影) ②窓ガラス質感 ③lx_*5形式の差別化(ラウンジ=床まで窓/ダイニング=キッチン側小窓/グリーン=二層窓割/展望=パノラマ前面) ④幌・車端(sl_*の黒い空洞・屋根上の輪) ⑤前面形状の差別化(kiha_exp/ltd/sr/jnr_exp、jnr_dc/km/jnr_ac/kiha_hyb) ⑥sl_*4型の差別化 ⑦jnr_dc側面の撮り直し ⑧tram_o前面ガラス ⑨路線図タブに車両画像・ヘッドマーク・ルート強調・時刻/停車時間。
+- 次: 上記を F3c/F4 の修正ループ(Z-G系)として順に実施。監査指摘のうち未確認と書かれた項目(車内・パンタ・幌)は事実確認してから直す。
+## (05:40) 修正ループ1: vtestに線路+地面(VGROUND)、sl_*尾端の貫通扉閉鎖、lx塗装新車化(クリーム/ブロンズ)、lx_lng=arch窓/lx_din=厨房側pair窓、kiha_exp前面=vee+赤マスク、kiha_hyb=銀マスク、ガラス埃低減。路線図v2.4.5(version5)に「結」画像4点・日別時刻・客室内訳・経路強調ボタンを公開。
+- 未了: lx_obsパノラマ前面の質感(ゴースト状の車内反射)、幌/車端の連結時の見え方、前面差別化(jnr_exp/kiha_ltd/kiha_sr, jnr_dc/km/jnr_ac/kiha_hyb)、sl_*4型の差別化、jnr_dc側面撮り直し、tram_o前面ガラス、lx_grnメゾネット二層窓、再監査(F3e/X12)。

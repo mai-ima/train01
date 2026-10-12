@@ -280,6 +280,21 @@ if "vtest" in parts:
         _L = vehtypes.TYPES[_t]["L"] + 0.55
         for _j in range(3):
             vehtypes.make(_t, f"vc_{_t}_{_j}", seed=20 + _j, ends=("cab" if _j == 0 else "gang", "cab" if _j == 2 else "gang")).place(40 + _j * _L, 8.0 * _k, 0)
+    if os.environ.get("VGROUND", "1") == "1":
+        import lib as _lib
+        _gm = _lib.mat_gravel("vt_ground"); _bm = _lib.mat_ballast("vt_ballast"); _rm = _lib.mat_rail("vt_rail", -0.02, 0.0)
+        _g = _lib.Acc("vt_ground", _gm, "Station"); _b = _lib.Acc("vt_ballast", _bm, "Station"); _r = _lib.Acc("vt_rails", _rm, "Station"); _t = _lib.Acc("vt_ties", _lib.mat_plain("vt_tie", (0.12, 0.09, 0.07), rough=0.9), "Station")
+        _g.box(-420, 260, -90, 1500, -0.62, -0.30)
+        _rows = [(30.0 * _i, -16, 16) for _i in range(len(vehtypes.TYPES))] + [(-12, -80, 52), (-40, -260, -26)] + [(8.0 * _k, 36, 120) for _k in range(3)]
+        for _y, _x0, _x1 in _rows:
+            _b.box(_x0, _x1, _y - 1.9, _y + 1.9, -0.30, -0.12)
+            for _s in (-1, 1):
+                _r.box(_x0, _x1, _y + _s * 0.5335 - 0.035, _y + _s * 0.5335 + 0.035, -0.14, 0.0)
+            _x = _x0
+            while _x < _x1:
+                _t.box(_x, _x + 0.24, _y - 1.35, _y + 1.35, -0.14, -0.02); _x += 0.62
+        for _a in (_g, _b, _r, _t):
+            _a.build()
 if "tst" in parts:
     import tst
     tst.build()

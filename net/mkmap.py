@@ -21,6 +21,20 @@ net["plan"]=json.load(open("station_plan.json"))
 net["struct"]=json.load(open("structures.json"))
 net["sspec"]=json.load(open("station_spec.json"))
 net["fspec"]=json.load(open("facility_spec.json"))
+from tour import TOUR
+import copy, base64, io, os
+from PIL import Image
+_T = copy.deepcopy(TOUR)
+def _img(path, w, fmt="JPEG"):
+    im = Image.open(path).convert("RGB"); im.thumbnail((w, w * 2))
+    b = io.BytesIO(); im.save(b, fmt, quality=82) if fmt == "JPEG" else im.save(b, fmt)
+    return "data:image/%s;base64," % fmt.lower() + base64.b64encode(b.getvalue()).decode()
+_T["imgs"] = []
+for p, cap, w in _T.get("img_src", []):
+    fp = os.path.join(os.path.dirname(__file__), "..", p)
+    if os.path.exists(fp):
+        _T["imgs"].append([_img(fp, w), cap])
+net["tour"]=_T
 net["meta"]={"edges":len(g["edges"]),"nodes":len(g["nodes"]),"stops":len(g["stops"])}
 html=open("map_tmpl_v245.html").read().replace("__NET__",json.dumps(net,ensure_ascii=False))
 open("routemap.html","w").write(html)

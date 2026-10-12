@@ -48,7 +48,7 @@ def mat_veh_window(name, tint=(0.80, 0.90, 0.88)):
     m.setall(gl, {'Color': (0.9, 0.95, 1.0), 'Roughness': 0.04})
     fr = m.node('ShaderNodeFresnel')
     m.set(fr.inputs['IOR'], 1.5)
-    dust = m.ramp(m.noise(scale=6, detail=4), [(0.35, (0.0, 0.0, 0.0)), (0.8, (0.10, 0.10, 0.10))])
+    dust = m.ramp(m.noise(scale=6, detail=4), [(0.35, (0.0, 0.0, 0.0)), (0.8, (0.025, 0.025, 0.025))])
     fac = m.math('ADD', fr.outputs['Fac'], dust)
     mx = m.node('ShaderNodeMixShader')
     m.set(mx.inputs[0], fac)

@@ -41,8 +41,8 @@ def mats():
         "t_moq_o": lib.mat_plain("t_moq_o", (0.52, 0.27, 0.07), rough=0.9, spec=0.1),
         "t_moq_k": lib.mat_plain("t_moq_k", (0.05, 0.05, 0.06), rough=0.9, spec=0.1),
         "t_moq_y": lib.mat_plain("t_moq_y", (0.70, 0.55, 0.14), rough=0.9, spec=0.1),
-        "t_bronze": P("t_bronze", (0.15, 0.085, 0.045), rough=0.30, rust=0.05, metal=0.55),
-        "t_champ": P("t_champ", (0.72, 0.60, 0.36), rough=0.28, rust=0.03, metal=0.75, seams=False),
+        "t_bronze": P("t_bronze", (0.10, 0.055, 0.032), rough=0.22, rust=0.0, grime=0.10, metal=0.25),
+        "t_champ": P("t_champ", (0.66, 0.54, 0.31), rough=0.22, rust=0.0, grime=0.08, metal=0.20, seams=False),
         "t_carp": lib.mat_plain("t_carp", (0.20, 0.07, 0.07), rough=0.95, spec=0.05),
         "t_leat": lib.mat_plain("t_leat", (0.30, 0.16, 0.08), rough=0.55, spec=0.25),
         "t_cream2": lib.mat_plain("t_cream2", (0.80, 0.74, 0.60), rough=0.8, spec=0.05),
@@ -139,15 +139,15 @@ TYPES.update({
     "kiha_exp": dict(
         title="国鉄急行形気動車(2扉デッキ・大窓)", L=21.0, W=2.90, z=(1.18, 1.86, 2.62, 3.04, 3.58), cab=2.0, zb0=0.92, diesel=True,
         fs="holder", ss="sabo", ds="deck", ps="beads", wc=(0.10, 0.02), liner="t_panel", lamp="tube",
-        lo="t_cream", up="t_cream", door="t_cream", mask="t_cream", stripe=[("t_ltdred", 1.62, 1.80), ("t_ltdred", 2.64, 2.78)],
+        lo="t_cream", up="t_cream", door="t_cream", mask="t_ltdred", stripe=[("t_ltdred", 1.62, 1.80), ("t_ltdred", 2.64, 2.78)],
         pattern="D s w9 D", door_w=0.95, win="wide", pillar=0.08,
-        front="flat", screens=2, lamps="belt", roofshape="round", rake=0.28,
+        front="vee", screens=2, lamps="belt", roofshape="round", rake=0.26,
         roof=["radiator", "exhaust", "bigvent"], pant_x=0.0, bogie=("air", 2.3, 0.43), under="engine",
         seat="t_moq_r", interior="box", standing=False),
     "kiha_hyb": dict(
         title="国鉄ハイブリッド汎用気動車(3扉・パンタ付)", L=20.0, W=2.95, z=(1.06, 1.72, 2.50, 2.88, 3.36), cab=1.45, zb0=0.88, diesel=True,
         fs="roll", ss="roll", ds="modern", ps="smooth", wc=(0.12, 0.12), liner="t_white", lamp="strip",
-        lo="t_steel", up="t_steel", door="t_orange", mask="black", stripe=[("t_orange", 1.30, 1.52), ("t_green", 2.56, 2.66)],
+        lo="t_steel", up="t_steel", door="t_orange", mask="t_steel", stripe=[("t_orange", 1.30, 1.52), ("t_green", 2.56, 2.66)],
         pattern="w1 D w3 D w3 D w1", door_w=1.30, win="ribbon", pillar=0.07,
         front="flat", screens=2, lamps="led", roofshape="flat", rake=0.34,
         roof=["pant", "hybrid", "aerial"], pant_x=-5.2, bogie=("dt", 2.1, 0.43), under="skirtfull",
@@ -1087,10 +1087,10 @@ TYPES.update({
         pattern="D w16 D", pattern2="D w9 D", win="square", win2="grand", door_w=0.95, roof=["hybrid", "aerial"], interior="lux_ste"),
     "lx_lng": dict(_LUX, title="周遊列車「結」ラウンジ「結の間」(床まで大窓・唯一の乗降口)", L=21.0, W=2.95, z=(1.20, 1.38, 2.80, 3.12, 3.74), cab=1.1, zb0=0.9,
         stripe=[("t_champ", 1.04, 1.12), ("t_champ", 2.86, 2.92)], lamp="strip",
-        pattern="w4 D w4", pattern2="w4 D w4", win="grand", door_w=1.10, roof=["acpod", "aerial"], interior="lux_lng"),
+        pattern="w4 D w4", pattern2="w4 D w4", win="arch", door_w=1.10, roof=["acpod", "aerial"], interior="lux_lng"),
     "lx_din": dict(_LUX, title="周遊列車「結」ダイニング「穂波膳」(大窓・ライブキッチン)", L=21.0, W=2.95, z=(1.20, 1.38, 2.80, 3.12, 3.74), cab=1.1, zb0=0.9,
         stripe=[("t_champ", 1.04, 1.12), ("t_ltdred", 2.86, 2.92)],
-        pattern="D w8 D", pattern2="D w8 D", win="grand", door_w=0.95, roof=["acpod", "kvent"], interior="lux_din"),
+        pattern="D w8 D", pattern2="D w5 D", win="grand", win2="pair", door_w=0.95, roof=["acpod", "kvent"], interior="lux_din"),
     "lx_grn": dict(_LUX, title="周遊列車「結」特別スイート(メゾネット・檜風呂)", L=21.0, W=2.95, z=(1.20, 1.45, 2.80, 3.12, 3.74), cab=1.1, zb0=0.9,
         stripe=[("t_champ", 1.08, 1.30), ("t_champ", 2.84, 2.90)],
         pattern="D w10 D", pattern2="D w4 D", win="square", win2="grand", door_w=0.95, roof=["hybrid", "acpod"], interior="lux_grn"),
@@ -1538,6 +1538,11 @@ def _tail(v, S, e, tot):
     for s in (-1, 1):
         v.A("t_steel").box(*sorted((X(xe + 0.02), X(xe + 0.10))), s * 1.02 - 0.14, s * 1.02 + 0.14, zfl + 0.62, zfl + 0.92)   # 尾灯の枠
         v.A("lamp_glow").box(*sorted((X(xe + 0.10), X(xe + 0.12))), s * 1.02 - 0.10, s * 1.02 + 0.10, zfl + 0.67, zfl + 0.87)
+    v.A(S["door"], 0.004).box(*sorted((X(xe + 0.01), X(xe + 0.045))), -0.46, 0.46, zfl + 0.02, zfl + 1.96)       # 貫通扉(閉)
+    v.A("glass").box(*sorted((X(xe + 0.045), X(xe + 0.055))), -0.30, 0.30, zfl + 1.05, zfl + 1.72)
+    v.A("t_steel").box(*sorted((X(xe + 0.045), X(xe + 0.06))), -0.34, 0.34, zfl + 1.02, zfl + 1.05)
+    v.A("t_steel").box(*sorted((X(xe + 0.045), X(xe + 0.06))), -0.34, 0.34, zfl + 1.72, zfl + 1.75)
+    v.A("t_steel").box(*sorted((X(xe + 0.045), X(xe + 0.07))), 0.36, 0.40, zfl + 0.95, zfl + 1.10)         # 把手
     v.A("t_steel").box(*sorted((X(xe + 0.02), X(xe + 0.07))), -0.30, 0.30, zfl + 2.05, zfl + 2.12)      # テールマーク掛け(空)
     v.A("t_steel").torus((X(xe + 0.10), 0.0, zfl + 2.62), "x", 0.30, 0.025, segR=28, segr=6)
     v.A("t_steel").box(*sorted((X(xe + 0.04), X(xe + 0.10))), -0.015, 0.015, zfl + 2.12, zfl + 2.34)
