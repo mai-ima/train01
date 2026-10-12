@@ -941,22 +941,22 @@
  },
  {
   "id": 211,
-  "status": "pending",
+  "status": "completed",
   "subject": "【R9】路線図 v2.4.5 を再出力し、内部(設定)情報を再確認して整合させる"
  },
  {
   "id": 212,
-  "status": "pending",
+  "status": "completed",
   "subject": "【X14】監査基準を超超超厳格へ強化(docs/audit_rubric.md 追記: 実車写真との並置比較・減点表・軸追加)"
  },
  {
   "id": 213,
-  "status": "pending",
+  "status": "completed",
   "subject": "【V4】撮影バッチを人物『非表示』と『表示』の両方で撮る(列車/内装/町/駅)。--people on|off は実装済み、撮影ラッパーで両撮り"
  },
  {
   "id": 214,
-  "status": "pending",
+  "status": "completed",
   "subject": "【W3】実行速度の向上(品質維持): シーンキャッシュ・.blend化、レンダ並列/適応サンプリング/デノイズ設定、bpy.ops 回避、バッチの並列化"
  },
  {
@@ -971,7 +971,7 @@
  },
  {
   "id": 217,
-  "status": "in_progress",
+  "status": "completed",
   "subject": "【B6a】(B6の細分) 地上駅舎の待合室に改札・券売機・出札窓口・運賃表を追加(kit8.concourse 実装済み・確認レンダ待ち)→全駅へ展開"
  },
  {

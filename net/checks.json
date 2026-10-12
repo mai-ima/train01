@@ -2,7 +2,7 @@
  "M01": {
   "shape": "専用設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "未",
@@ -11,7 +11,7 @@
  "M02": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -20,7 +20,7 @@
  "F01": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -29,7 +29,7 @@
  "M03": {
   "shape": "型別設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -38,7 +38,7 @@
  "M04": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -47,7 +47,7 @@
  "M05": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -56,7 +56,7 @@
  "M06": {
   "shape": "原型(穂波野)",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -65,7 +65,7 @@
  "M07": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -74,7 +74,7 @@
  "M08": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -83,7 +83,7 @@
  "M09": {
   "shape": "型別設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -92,7 +92,7 @@
  "M10": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -101,7 +101,7 @@
  "M11": {
   "shape": "型別設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -110,7 +110,7 @@
  "M12": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -119,7 +119,7 @@
  "M13": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -128,7 +128,7 @@
  "L01": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -137,7 +137,7 @@
  "M14": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -146,7 +146,7 @@
  "M15": {
   "shape": "型別設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -155,7 +155,7 @@
  "M16": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -164,7 +164,7 @@
  "M17": {
   "shape": "型別設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -173,7 +173,7 @@
  "M18": {
   "shape": "型別設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -182,7 +182,7 @@
  "M19": {
   "shape": "専用設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -191,7 +191,7 @@
  "R02": {
   "shape": "専用設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -200,7 +200,7 @@
  "TR02": {
   "shape": "専用設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -209,7 +209,7 @@
  "B02": {
   "shape": "専用設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -218,7 +218,7 @@
  "SH02": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -227,7 +227,7 @@
  "SH03": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -236,7 +236,7 @@
  "SH04": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -245,7 +245,7 @@
  "SH05": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -254,7 +254,7 @@
  "SH06": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -263,7 +263,7 @@
  "SH07": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -272,7 +272,7 @@
  "SH08": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -281,7 +281,7 @@
  "Y02": {
   "shape": "型別設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -290,7 +290,7 @@
  "Y03": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -299,7 +299,7 @@
  "Y04": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -308,7 +308,7 @@
  "K02": {
   "shape": "専用設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -317,7 +317,7 @@
  "K03": {
   "shape": "専用設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -326,7 +326,7 @@
  "T02": {
   "shape": "専用設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -335,7 +335,7 @@
  "T03": {
   "shape": "専用設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -344,7 +344,7 @@
  "T04": {
   "shape": "専用設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -353,7 +353,7 @@
  "S02": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -362,7 +362,7 @@
  "S03": {
   "shape": "型別設計",
   "images": 19,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",
@@ -371,7 +371,7 @@
  "S04": {
   "shape": "型別設計",
   "images": 18,
-  "render": true,
+  "render": false,
   "track": true,
   "interior": "あり",
   "trains": "あり",

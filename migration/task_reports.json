@@ -604,5 +604,35 @@
   "id": 220,
   "basis": "Claude Code",
   "report": "【S-T1】新タスク一覧 docs/TASK_LIST.md を作成: 全198件(未実行はそのまま・進行中は報告つき・完了100件は実行順+報告+根拠)。完了順は旧ログが失われているため git/セッション要約/ID順(推定)の根拠を明記。生成スクリプト net/mktasklist.py。"
+ },
+ {
+  "order": 102,
+  "id": 211,
+  "basis": "Claude Code",
+  "report": "路線図 v2.4.5 を再出力(network→stn_demand→plan_geo→refresh_status→patch_tour→mkmap)し、Playwright で PC/スマホの JS エラー・横はみ出し・表示を検査(0件)。内部設定(42駅・9路線7社・41構造物・厳格監査合格0駅)が台帳と一致。再出力で周遊列車の写真2点(out/tourpic_*.jpg)が元ファイルなしで欠落するのを検出し、旧HTMLから復元して assets/textures/ に保存、tour.py の参照を更新。artifact Ae51R2sD6GyV81wgfMWG5A を Version 6 に更新。"
+ },
+ {
+  "order": 103,
+  "id": 212,
+  "basis": "Claude Code",
+  "report": "監査基準を超超超厳格へ強化(docs/audit_rubric.md・net/audit_rubric.md 追記、strict-auditor.md に反映): 8視点以上・人物ON/OFF・実車寸法の数値照合・減点上限60点・並置での差別化・独立監査員2名以上(低い方を採用)。"
+ },
+ {
+  "order": 104,
+  "id": 213,
+  "basis": "Claude Code",
+  "report": "人物の表示/非表示の両撮りを実装: PEOPLE_BOTH=1 で1回の構築から <out>_<n>.png(人物あり)と <out>_np_<n>.png(人物なし)を撮影。MULTICAM は @A のようなプリセット名も指定可。M02 で差分を確認(人物が窓から消える)。"
+ },
+ {
+  "order": 105,
+  "id": 214,
+  "basis": "Claude Code",
+  "report": "速度向上(品質維持): ①zone_grass を BVH 化して構築195秒→20秒(約10倍・出力等価) ②複数カメラ1回構築+Persistent Data ③人物ON/OFFを同一構築で ④全駅バッチを2並列・1駅6枚の方式へ。残: レンダ自体(サンプル/デノイズ)の最適化は品質との兼ね合いで継続。"
+ },
+ {
+  "order": 106,
+  "id": 217,
+  "basis": "Claude Code",
+  "report": "地上駅舎の待合室に改札柵(改札口の開口つき)・改札掛の机・出札窓口(木枠+ガラス+鉄格子+台)・運賃表・時計・券売機2台・室内照明を追加(kit8.concourse を kit2.volume から呼ぶ)。SH04 で確認(cc2)。途中、G.a の引数誤りで失敗(healthscan で検出)→修正。残: 特殊駅(M01/M19/kit6)と全駅での目視確認(E3a)。"
  }
 ]
