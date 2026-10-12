@@ -1201,8 +1201,8 @@ def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
     if seated:
         z_h = 0.47
         v.A(jk, 0.0, True).cyl(P(-0.06, 0, z_h), P(-0.03, 0, z_h + 0.30 * k), tw * 0.86, tw * 0.80, seg=14)         # 腰(細め)
-        v.A(jk, 0.0, True).sphere(P(-0.03, 0, z_h + 0.36 * k), (0.115, sw * 0.98, 0.19 * k), seg=14, rings=8)       # 胸郭(広め)
-        v.A(jk, 0.0, True).sphere(P(-0.05, 0, z_h + 0.04), (0.14, tw * 1.30, 0.09), seg=12, rings=6)                 # 臀部
+        v.A(jk, 0.0, True).sphere(P(-0.03, 0, z_h + 0.40 * k), (0.085, sw * 0.90, 0.15 * k), seg=14, rings=8)       # 胸郭(広め)
+        v.A(jk, 0.0, True).sphere(P(-0.04, 0, z_h + 0.03), (0.11, tw * 1.12, 0.06), seg=12, rings=6)                 # 臀部
         v.A(jk, 0.0, True).sbox(P(-0.02, -sw, z_h + 0.47 * k), P(-0.02, sw, z_h + 0.47 * k), 0.07, 0.09)         # 肩
         v.A("skin", 0.0, True).cyl(P(-0.01, 0, z_h + 0.50 * k), P(0.0, 0, z_h + 0.60 * k), 0.045, 0.04, seg=12)    # 首
         v.A("skin", 0.0, True).sphere(P(0.015, 0, z_h + 0.70 * k), (0.092, 0.078, 0.108), seg=10, rings=7)       # 頭
@@ -1223,8 +1223,8 @@ def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
             v.A("skin", 0.0, True).sphere(P(0.012, sd * 0.088, z_h + 0.70 * k), (0.016, 0.012, 0.03), seg=8, rings=5)         # 耳
     else:
         v.A(jk, 0.0, True).cyl(P(0, 0, 0.92), P(0.0, 0, 1.12 * k), tw * 0.86, tw * 0.80, seg=14)
-        v.A(jk, 0.0, True).sphere(P(0.0, 0, 1.20 * k), (0.115, sw * 0.98, 0.19 * k), seg=14, rings=8)
-        v.A(tr, 0.0, True).sphere(P(0.0, 0, 0.92), (0.13, tw * 1.30, 0.10), seg=12, rings=6)
+        v.A(jk, 0.0, True).sphere(P(0.0, 0, 1.24 * k), (0.085, sw * 0.90, 0.15 * k), seg=14, rings=8)
+        v.A(tr, 0.0, True).sphere(P(0.0, 0, 0.93), (0.10, tw * 1.10, 0.07), seg=12, rings=6)
         v.A(jk, 0.0, True).sbox(P(0, -sw, 1.37 * k), P(0, sw, 1.37 * k), 0.07, 0.09)
         v.A("skin", 0.0, True).cyl(P(0, 0, 1.38 * k), P(0.0, 0, 1.48 * k), 0.045, 0.04, seg=12)
         v.A("skin", 0.0, True).sphere(P(0.015, 0, 1.58 * k), (0.092, 0.078, 0.108), seg=10, rings=7)
