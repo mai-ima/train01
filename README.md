@@ -175,6 +175,8 @@ python3 main.py --world markers --parts none --no-render      # 軌道グラフ 
 
 環境変数: `MULTICAM`(複数カメラ。`x,y,z,tx,ty,tz,lens;…` または `@A;@E;@ZA` のプリセット名。Persistent Data で2枚目以降が速い)、`PEOPLE_BOTH=1`(1回の構築から人物あり `<out>_<n>.png` と なし `<out>_np_<n>.png` の両方を撮る)、`HDRI`/`HDRI_ROT`/`HDRI_STR`(実写HDRI。vtest は既定で assets/hdri を使用)、`STATION_ROOT`(作業ディレクトリ。既定はファイルのある場所)、`ZGRASS_SLOW=1`(草の散布を旧方式に)、`VEG_LIGHT`(葉カード数の倍率。既定 1、書き出し時 0.35)、`WEATHER`(1=経年変化を適用)、`WEATHER_K`(強さ 0.5)、`ZGRASS`(1=ゾーンの草を散布)、`KEEP_COLS`(保存時に残すコレクション名のカンマ区切り=**コレクション別分割**)、`VEGONLY`/`VEGSLICE`(植生の分割)。
 
+**撮影カメラの自動調整(2026-10-12 追加)**: `@A`/`@E` は視線の前が構造物で塞がれていれば横へずらす(`main._cam_clear`)。`@ZA` の俯瞰は駅名から決まる方位(±50°)で回転し、全駅が同じ構図に見えないようにする。M01・M06 は距離を伸ばす。穂波野(M06)の全景は `--zone` を使わない本体データ(`--parts core,station,depot,props,train,veg,hq,life`)を専用カメラ(`@H;@C;@B;@D;@G;@Z1;@ZT`)で撮る(`scripts/e3b_post.sh`)。検査: `src/checks/vehcheck.py`(車両)・`trackcheck.py`(線路規格)・`healthscan.py`(ログ)。
+
 ## 座標系と設計の約束
 - **局所座標(駅ゾーン)**: 線路は +x 方向、ホーム側が y=0、駅前が +y。穂波野の基準を `common.py` に定義。
 - **世界座標**: 北が上、単位はメートル。`kit4.origin(sid)` と `kit4.yaw_of(sid)` で駅を配置。
