@@ -146,6 +146,43 @@ if _os.environ.get("DBCAM"):
     _v = [float(t) for t in _os.environ["DBCAM"].split(",")]
     CAMS["DB"] = ((_v[0], _v[1], _v[2]), (_v[3], _v[4], _v[5]), _v[6] if len(_v) > 6 else 30, 215, 40)
     args.cam = "DB"
+_CLR_BVH = []
+def _cam_clear(v):
+    """カメラ(v[0..2])→注視点(v[3..5])の視線と±12°の視線が手前で障害物に当たるなら、視線に直交する水平方向へずらした位置を返す。"""
+    import math as _m
+    import veg
+    from mathutils import Vector as _V
+    if not _CLR_BVH:
+        _CLR_BVH.append(veg._scene_bvh(-400, 400, -400, 400))
+    B = _CLR_BVH[0]
+    if not B:
+        return v[0], v[1]
+    tree = B[0]
+    tgt = _V((v[3], v[4], v[5]))
+    base = _V((v[0], v[1], v[2]))
+    def ok(p):
+        d = tgt - p
+        L = d.length
+        a0 = _m.atan2(d.y, d.x)
+        for da in (0.0, -0.25, 0.25, -0.5, 0.5):
+            dv = _V((_m.cos(a0 + da), _m.sin(a0 + da), d.z / max(d.xy.length, 1e-6) * 1.0)).normalized()
+            hit = tree.ray_cast(p, dv, L * 0.85)
+            if hit[0] is not None and hit[3] < L * 0.55:
+                return False
+        return True
+    if ok(base):
+        return v[0], v[1]
+    d = tgt - base
+    n = _V((-d.y, d.x, 0)).normalized()
+    for k in (3, -3, 6, -6, 10, -10, 15, -15, 22, -22):
+        p = base + n * k
+        if ok(p):
+            print(f"[cam] 障害物回避: {k:+d} m ずらした")
+            return p.x, p.y
+    print("[cam] 障害物回避: 見つからず(そのまま)")
+    return v[0], v[1]
+
+
 cam_loc, cam_tgt, cam_lens, sun_az, sun_el = CAMS[args.cam]
 
 # ------------------------------------------------------------------ build geometry
@@ -570,8 +607,13 @@ if not args.no_render and os.environ.get('MULTICAM'):
         if _c.strip().startswith('@'):                  # @A のようにプリセットカメラ名で指定できる
             _cc = CAMS[_c.strip()[1:]]
             _v = [*_cc[0], *_cc[1], _cc[2]]
+            _big = {"M01": 2.6, "M06": 1.8}.get(getattr(args, "zone", ""), 1.0)   # 大規模駅は俯瞰/斜めを遠ざける
+            if _big != 1.0 and _c.strip()[1:] in ("ZA", "E"):
+                _v[0] *= _big; _v[1] *= _big; _v[2] *= _big
         else:
             _v = [float(t) for t in _c.split(',')]
+        if _c.strip().startswith('@') and _c.strip()[1:] in ("A", "E"):      # 構造物に視界を塞がれるカメラは横にずらす(E3 所見: M03 の A が壁で遮られた)
+            _v[0], _v[1] = _cam_clear(_v)
         cob.location = (_v[0], _v[1], _v[2])
         cob.rotation_euler = (Vector((_v[3], _v[4], _v[5])) - Vector(cob.location)).to_track_quat('-Z', 'Y').to_euler()
         cam.lens = _v[6] if len(_v) > 6 else 30
