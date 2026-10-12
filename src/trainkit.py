@@ -119,6 +119,7 @@ class Veh:
         self.parts = {}                 # path -> dict(origin, parent, axis, kind, r)
         self.meta = {"bogies": [], "wheelsets": [], "couplers": []}
         self._n = {}
+        self.lights = []                # 車内灯(area): (x,y,z,長さ,幅,W,色)
 
     def part(self, kind, origin, axis="z", r=None):
         import contextlib
@@ -193,6 +194,14 @@ class Veh:
             pe, po = empties[cur]
             ob.parent = pe
             ob.location = tuple(-q for q in po)
+        for li_i, (lx, ly, lz, ll, lw, watt, col) in enumerate(self.lights):
+            ld = bpy.data.lights.new(f"{self.name}_in{li_i}", 'AREA')
+            ld.shape = 'RECTANGLE'; ld.size, ld.size_y = ll, lw
+            ld.energy = watt; ld.color = col
+            lo = bpy.data.objects.new(f"{self.name}_in{li_i}", ld)
+            link(lo, "Trains")
+            lo.parent = e; lo.location = (lx, ly, lz)
+            lo.rotation_euler = (0, 0, 0)
         for i, (img, corners, kw) in enumerate(self.planes):
             ob = lib.image_plane(f"{self.name}_decal{i}", corners, img, kw or {"rough": 0.5, "spec": 0.25}, col="Trains", alpha=True)
             ob.parent = e
