@@ -541,7 +541,7 @@ def m19():
     gf.build()
     for (cx, cy_) in ((xq - 12, -60.0), (xq - 12, 85.0)):
         try:
-            sig.KINDS["crane"](cx, cy_, name=f"lm_m19_crane_{int(cy_)}")
+            sig.KINDS["crane"](cx, cy_, name=f"lm_m19_crane_{int(cy_)}", arm=1, swap=True)
         except Exception as e:
             print("crane fail", e)
     gw = G("m19_wh", "Buildings")

@@ -56,10 +56,23 @@ def foot_bath(x, y, name="sig_footbath"):
     g.build()
 
 
-def quay_crane(x, y, name="sig_crane", arm=1):
+def quay_crane(x, y, name="sig_crane", arm=1, swap=False):
     """岸壁の門型ジブクレーン(ポータルフレーム+旋回する機械室+トラス状ジブ+フック・ケーブル+カウンターウェイト)。arm=+1/-1 でジブを出す向き(y方向)。"""
-    g = G(name, "Props")
+    g0 = G(name, "Props")
     ir, ib, yel = "iron_rust", "iron_black", "post_red"
+    if swap:                       # swap=True: 岸壁が y 方向に走る場合(ジブを x 方向へ出す)。x と y を入れ替えて描く
+        x, y = y, x
+        class _S:
+            def __init__(s_, a): s_.a_ = a
+            def box(s_, x0, x1, y0, y1, z0, z1): return s_.a_.box(y0, y1, x0, x1, z0, z1)
+            def sbox(s_, p0, p1, w, h, up=(0, 0, 1)): return s_.a_.sbox((p0[1], p0[0], p0[2]), (p1[1], p1[0], p1[2]), w, h, up=(up[1], up[0], up[2]))
+            def cyl(s_, p0, p1, *a, **k): return s_.a_.cyl((p0[1], p0[0], p0[2]), (p1[1], p1[0], p1[2]), *a, **k)
+        class _G:
+            def a(s_, *a, **k): return _S(g0.a(*a, **k))
+            def build(s_): return g0.build()
+        g = _G()
+    else:
+        g = g0
     for dx in (-4.2, 4.2):                                  # 走行レールと脚(2つの門型)
         g.a(ib).box(x + dx - 0.15, x + dx + 0.15, y - 5.0, y + 5.0, 0.0, 0.2)
         for dy in (-3.8, 3.8):
