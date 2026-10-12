@@ -1238,7 +1238,7 @@ def _interior(v, S, tot, bays, seed):
     lamp = v.A("lamp_in")
     ls = S.get("lamp", "tube")
     _lc = (0.88, 0.95, 1.0) if ls == "tube" else ((1.0, 0.86, 0.66) if ls == "strip" else (1.0, 0.76, 0.48))     # 色温度は灯具の種類で変える
-    _w = 160.0 if tot < 18 else 220.0
+    _w = (160.0 if tot < 18 else 220.0) * (1.8 if (st in ('bunk', 'compart', 'dining', 'genset') or st.startswith('lux_')) else 1.0)
     for s_ in (-1, 1):
         v.lights.append((0.0, s_ * 0.55, zw1 - 0.06, max(2.0, 2 * ax - 1.0), 0.5, _w, _lc))
     if ls == "tube":           # 長手2列の蛍光灯(カバー付き)
@@ -1319,6 +1319,8 @@ def _interior(v, S, tot, bays, seed):
                             for yy in (h - 0.38, 0.62):
                                 v.A(seat, 0.02).box(xx - 0.22, xx + 0.22, *sorted((s * (yy - 0.20), s * (yy + 0.20))), zfl + 0.02, zfl + 0.42)
                             v.A(seat, 0.02).box(xx + sg * 0.20 - 0.04, xx + sg * 0.20 + 0.04, *sorted((s * 0.40, s * (h - 0.10))), zfl + 0.42, zfl + 1.05)
+                            v.A("t_white", 0.01).box(xx + sg * 0.20 - 0.05, xx + sg * 0.20 + 0.05, *sorted((s * 0.46, s * (h - 0.16))), zfl + 0.84, zfl + 1.05)     # 頭当てカバー
+                            v.A("steel").box(xx - 0.03, xx + 0.03, *sorted((s * 0.40, s * 0.43)), zfl + 0.42, zfl + 0.56)   # 通路側の肘掛け
                         v.A("t_wood").box(xc - 0.20, xc + 0.20, *sorted((s * (h - 0.09), s * (h - 0.34))), zfl + 0.70, zfl + 0.73)
                         v.A("steel").box(xc - 0.01, xc + 0.01, *sorted((s * (h - 0.30), s * (h - 0.31))), zfl + 0.02, zfl + 0.70)
                         if rnd.random() < 0.5:
@@ -1341,6 +1343,8 @@ def _interior(v, S, tot, bays, seed):
                                 v.A("t_grey").box(x + 0.0, x + 0.2, cy - 0.23, cy - 0.21, zfl + 0.45, zfl + 0.70) if False else None
                             else:
                                 sbk.box(x - 0.30, x - 0.22, cy - 0.26, cy + 0.26, zfl + 0.40, zfl + 0.98)
+                                v.A("t_white", 0.01).box(x - 0.31, x - 0.215, cy - 0.17, cy + 0.17, zfl + 0.80, zfl + 0.98)     # 頭当て
+                                v.A("t_steel").box(x - 0.18, x + 0.20, *sorted((cy - s * 0.27, cy - s * 0.29)), zfl + 0.40, zfl + 0.56)   # 肘掛け
                             if rnd.random() < 0.28:
                                 _rider(v, x - 0.02, cy, zfl, 0.0, True, rnd=rnd)
                     # 肘掛け

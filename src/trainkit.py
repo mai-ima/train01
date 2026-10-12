@@ -49,10 +49,15 @@ def moquette(name, color, scale=70.0, contrast=0.55):
     wear = m.ramp(m.noise(scale=5.0, detail=4), [(0.45, (1.0, 1.0, 1.0)), (0.80, (0.72, 0.70, 0.66))])
     dark = tuple(c * (1.0 - contrast * 0.5) for c in color)
     light = tuple(min(1.0, c * (1.0 + contrast * 0.35)) for c in color)
-    col = m.mix(ck.outputs['Fac'], dark, light)
+    ck2 = m.node('ShaderNodeTexChecker')
+    m.setall(ck2, {'Vector': m.combine(m.math('SUBTRACT', x, z), m.math('ADD', y, z), 0.0), 'Scale': scale * 2.7})     # 斜め綾(細かい二重織り)
+    ckm = m.math('MULTIPLY', m.math('ADD', ck.outputs['Fac'], ck2.outputs['Fac']), 0.5)
+    blot = m.ramp(m.noise(scale=3.0, detail=5), [(0.35, (0.80, 0.80, 0.80)), (0.7, (1.0, 1.0, 1.0))])     # 座面ごとの色むら・へたり
+    col = m.mix(ckm, dark, light)
+    col = m.mix(1.0, col, blot, 'MULTIPLY')
     col = m.mix(fib, col, tuple(c * 0.8 for c in color))
     col = m.mix(m.math('MULTIPLY', wear, 0.0), col, col) if False else col
-    h = m.math('ADD', m.math('MULTIPLY', ck.outputs['Fac'], 0.4), m.math('MULTIPLY', fib, 0.6))
+    h = m.math('ADD', m.math('MULTIPLY', ckm, 0.4), m.math('MULTIPLY', fib, 0.6))
     m.principled(**{'Base Color': col, 'Roughness': 0.96, 'Metallic': 0.0, 'Specular IOR Level': 0.12, 'Normal': m.bump(h, 0.4, 0.004)})
     return m.m
 
