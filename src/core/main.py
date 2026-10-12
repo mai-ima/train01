@@ -633,7 +633,24 @@ if not args.no_render and os.environ.get('MULTICAM'):
             bpy.data.collections["People"].hide_render = not show
     for _i, _c in enumerate([x for x in os.environ['MULTICAM'].split(';') if x.strip()]):
         if _c.strip().startswith('@'):                  # @A のようにプリセットカメラ名で指定できる
-            if _c.strip()[1:] == "L":                       # @L: 駅の象徴物(landmark)を主題にしたカメラ(駅ごとに構図が変わる)
+            if _c.strip()[1:] in ("F", "P", "T", "R"):       # 駅ごとの追加カメラ: F=駅舎正面(駅前広場から) P=ホーム上の目線 T=駅前の町並み R=線路脇の低い目線
+                import kit2 as _k2
+                _d = _k2.DESIGN.get(getattr(args, "zone", ""))
+                if _d:
+                    _bx, _w, _dp = float(_d["bx"]), float(_d["w"]), float(_d["d"])
+                    _cx = _bx + _w / 2.0
+                    _k = _c.strip()[1:]
+                    if _k == "F":
+                        _v = [_cx, _dp + 30.0, 3.0, _cx, _dp * 0.5 + 2.0, 3.5, 28]
+                    elif _k == "P":
+                        _v = [_bx - 25.0, -4.0, 2.75, _bx + 40.0, -4.0, 2.9, 28]
+                    elif _k == "T":
+                        _v = [_cx + 25.0, _dp + 18.0, 2.5, _cx - 20.0, _dp + 26.0, 3.0, 30]
+                    else:
+                        _v = [_bx + _w + 18.0, 3.0, 1.1, _bx - 10.0, -4.0, 1.6, 32]
+                else:
+                    _v = [*CAMS["B"][0], *CAMS["B"][1], CAMS["B"][2]]
+            elif _c.strip()[1:] == "L":                       # @L: 駅の象徴物(landmark)を主題にしたカメラ(駅ごとに構図が変わる)
                 import kit2 as _k2
                 _lm = _k2.DESIGN.get(getattr(args, "zone", ""), {}).get("lm") or []
                 if _lm:
@@ -655,7 +672,7 @@ if not args.no_render and os.environ.get('MULTICAM'):
                 _v[1] = _v[4] + _dx * math.sin(_ang) + _dy * math.cos(_ang)
         else:
             _v = [float(t) for t in _c.split(',')]
-        if _c.strip().startswith('@') and _c.strip()[1:] in ("A", "E", "L"):      # 構造物に視界を塞がれるカメラは横にずらす(E3 所見: M03 の A が壁で遮られた)
+        if _c.strip().startswith('@') and _c.strip()[1:] in ("A", "E", "L", "F", "P", "T", "R"):      # 構造物に視界を塞がれるカメラは横にずらす(E3 所見: M03 の A が壁で遮られた)
             _v[0], _v[1], _v[2] = _cam_clear(_v)
         cob.location = (_v[0], _v[1], _v[2])
         cob.rotation_euler = (Vector((_v[3], _v[4], _v[5])) - Vector(cob.location)).to_track_quat('-Z', 'Y').to_euler()
