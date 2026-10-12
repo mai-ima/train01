@@ -169,6 +169,22 @@ class Veh:
                 self.cur = prev
         return cm()
 
+    def pax(self):
+        """乗客専用のパート(kind='pax')。同じ親の下で1つを再利用し、人物のON/OFFを切替可能にする。"""
+        import contextlib
+
+        @contextlib.contextmanager
+        def cm():
+            path = f"{self.cur}.pax" if self.cur else "pax"
+            if path not in self.parts:
+                self.parts[path] = dict(origin=(0.0, 0.0, 0.0), parent=self.cur, axis="z", kind="pax", r=None)
+            prev, self.cur = self.cur, path
+            try:
+                yield path
+            finally:
+                self.cur = prev
+        return cm()
+
     def A(self, key, bevel=0.0, smooth=False):
         k = (self.cur, key, bevel, smooth)
         if k not in self.accs:

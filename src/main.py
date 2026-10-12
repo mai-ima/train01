@@ -34,6 +34,7 @@ ap.add_argument("--pack", action="store_true")
 ap.add_argument("--pano", default="", help="json nodes file -> equirect panoramas")
 ap.add_argument("--webexport", default="")
 ap.add_argument("--stats", action="store_true")
+ap.add_argument("--people", default="on", help="人物の表示: on | off | cars(車内の乗客のみ) | station(駅の人物のみ)")
 ap.add_argument("--stock", default="on", help="停車車両の表示: on | off | 駅ID,駅ID(その駅のみ表示)")
 ap.add_argument("--interf", action="store_true", help="線路干渉検査(--zone)")
 ap.add_argument("--zone", default="", help="station id -> kit zone only")
@@ -413,6 +414,16 @@ if os.environ.get('SECTION'):      # SECTION="y,-10,-1" : 平面 y=-10 の「-1�
 for _hc in [x for x in os.environ.get('HIDE_COLS', '').split(',') if x]:
     for _o in (bpy.data.collections[_hc].all_objects if _hc in bpy.data.collections else []):
         _o.hide_render = True
+# ---- 人物の表示/非表示(--people): 車内乗客(rig_kind=pax の子)と駅の人物(People コレクション)
+_pm = args.people
+_hide_cars = _pm in ("off", "station")
+_hide_stn = _pm in ("off", "cars")
+for _o in bpy.data.objects:
+    if _hide_cars and (_o.get("rig_kind") == "pax" or (_o.parent is not None and _o.parent.get("rig_kind") == "pax")):
+        _o.hide_render = True; _o.hide_viewport = True
+if _hide_stn and "People" in bpy.data.collections:
+    bpy.data.collections["People"].hide_render = True
+    bpy.data.collections["People"].hide_viewport = True
 r.resolution_x = args.w
 r.resolution_y = int(args.w * 9 / 16)
 r.resolution_percentage = 100

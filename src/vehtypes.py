@@ -1123,6 +1123,11 @@ TYPES.update({
 
 # --------------------------------------------------------------------------- interior
 def _rider(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
+    with v.pax():
+        _rider_body(v, x, y, zfl, ang, seated, kind, rnd)
+
+
+def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
     """乗客(丸い胴・首・頭・髪・鼻・腕・脚・靴)。ang = 顔の向き(0=+x, π=-x, ±π/2=±y)。体格・服色・髪はランダム。"""
     rnd = rnd or random
     ca, sa = math.cos(ang), math.sin(ang)
@@ -1199,6 +1204,8 @@ def _interior(v, S, tot, bays, seed):
     L, W = S["L"], S["W"]
     h = W / 2
     zfl, zs, zw1, zt, zr = S["z"]
+    zwin = zw1
+    zw1 = zt - 0.06      # 室内の天井高(屋根の殻の直下)。窓上端 zwin とは別
     rnd = random.Random(seed)
     st = S["interior"]
     seat = S["seat"]
@@ -1208,6 +1215,17 @@ def _interior(v, S, tot, bays, seed):
     ax = tot / 2 - 0.05
     floor = "t_lino2" if st in ("cross", "recline", "box") else "t_lino"
     v.A(floor).box(-ax, ax, -h + 0.08, h - 0.08, zfl, zfl + 0.02)
+    if st in ("cross", "recline", "box", "mix"):       # 窓の日除け(下げ幅を窓ごとに変える)+カーテン束
+        _x = -tot / 2
+        for kind, w in bays:
+            if kind == "W":
+                dr = rnd.choice([0.10, 0.18, 0.30, 0.45, 0.10])
+                cm = "t_curt" if st in ("cross", "recline") else "t_cream"
+                for s_ in (-1, 1):
+                    v.A(cm).box(_x + 0.03, _x + w - 0.03, *sorted((s_ * (h - 0.105), s_ * (h - 0.12))), zwin - dr - 0.05, zwin - 0.05)
+                    if st == "recline":
+                        v.A(cm).box(_x + 0.02, _x + 0.12, *sorted((s_ * (h - 0.10), s_ * (h - 0.16))), zs + 0.05, zwin - 0.05)
+            _x += w
     if st == "recline":
         v.A("t_moq_r").box(-ax + 0.1, ax - 0.1, -0.22, 0.22, zfl + 0.02, zfl + 0.025)    # 通路のカーペット
     # 内張り(窓下)・天井・照明(形式ごとに違う)
@@ -1255,8 +1273,14 @@ def _interior(v, S, tot, bays, seed):
             lng = (st in ("long", "subway")) or (st == "mix" and ai % 2 == 1) or (st == "mix" and len(segs) == 1)
             for s in (-1, 1):
                 if lng:       # ロングシート
-                    v.A(seat, 0.015).box(a, b, *sorted((s * (h - 0.09), s * (h - 0.58))), zfl + 0.02, zfl + 0.42)
-                    v.A(seat, 0.015).box(a, b, *sorted((s * (h - 0.09), s * (h - 0.16))), zfl + 0.42, zfl + 0.88)
+                    v.A("t_steel" if st == "subway" else "t_grey").box(a, b, *sorted((s * (h - 0.09), s * (h - 0.58))), zfl + 0.02, zfl + 0.30)   # 座面の下の蹴込み
+                    _ns = max(1, int((b - a) / (0.46 if st == "subway" else 0.52)))
+                    _sp = (b - a) / _ns
+                    for _k in range(_ns):                                   # 1人分ずつのバケット(座面+傾いた背ずり)
+                        _x0 = a + _k * _sp + 0.012
+                        _x1 = a + (_k + 1) * _sp - 0.012
+                        v.A(seat, 0.03).box(_x0, _x1, *sorted((s * (h - 0.09), s * (h - 0.56))), zfl + 0.30, zfl + 0.42 - (0.015 if _k % 2 else 0))
+                        v.A(seat, 0.03).sbox(((_x0 + _x1) / 2, s * (h - 0.20), zfl + 0.42), ((_x0 + _x1) / 2, s * (h - 0.115), zfl + 0.90), _x1 - _x0, 0.075)
                     v.A("t_steel" if st == "subway" else "t_grey").box(a, a + 0.03, *sorted((s * (h - 0.09), s * (h - 0.58))), zfl + 0.02, zfl + 0.98)   # 袖仕切
                     v.A("t_steel" if st == "subway" else "t_grey").box(b - 0.03, b, *sorted((s * (h - 0.09), s * (h - 0.58))), zfl + 0.02, zfl + 0.98)
                     # 乗客
@@ -1392,6 +1416,8 @@ def _sleep_inside(v, S, tot, bays, segs, zones, rnd):
     """寝台車・食堂車・電源車の室内。通路は +y 側、寝台/個室は -y 側。"""
     h = S["W"] / 2
     zfl, zs, zw1, zt, zr = S["z"]
+    zwin = zw1
+    zw1 = zt - 0.06      # 室内の天井高(屋根の殻の直下)。窓上端 zwin とは別
     st = S["interior"]
     ax = tot / 2 - 0.05
     ya, yb = -h + 0.12, 0.50              # 寝台側の奥行 (≒1.8m)
@@ -1533,6 +1559,8 @@ def _lux_inside(v, S, tot, bays, segs, zones, rnd):
     """周遊列車の室内。廊下は +y 側(小窓)、客室は -y 側(大窓)。"""
     h = S["W"] / 2
     zfl, zs, zw1, zt, zr = S["z"]
+    zwin = zw1
+    zw1 = zt - 0.06      # 室内の天井高(屋根の殻の直下)。窓上端 zwin とは別
     st = S["interior"]
     ax = tot / 2 - 0.05
     v.A("t_carp").box(-ax, ax, -h + 0.08, h - 0.08, zfl + 0.02, zfl + 0.035)           # 全面の絨毯
@@ -1724,3 +1752,12 @@ def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True)
     v.meta["title"] = S["title"]
     v.meta["length"] = L
     return v
+
+
+# 車体の高さの是正(ユーザー指示 17:16「天井が低い」): 窓上端+0.12 / 軒+0.22 / 屋根頂+0.20。
+# 室内天井(軒の直下)を床上約2.0〜2.1mにし、実車の室内高(約2.1〜2.3m)へ近づける。
+for _k, _sp in TYPES.items():
+    if not _sp.get("_zfix") and "z" in _sp:
+        _f, _a, _b, _c, _d = _sp["z"]
+        _sp["z"] = (_f, _a, _b + 0.12, _c + 0.22, _d + 0.20)
+        _sp["_zfix"] = True
