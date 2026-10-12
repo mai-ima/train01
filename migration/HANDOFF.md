@@ -49,3 +49,8 @@
 ## 7. 未検証・限界
 - この移行パッケージは Claude Code 実環境でまだ動かしていない(setup_workspace.sh はこの環境で構文確認のみ)。初回で差分が出たら本節に追記すること。
 - 旧セッションの bpy 以外の依存(PIL, numpy, Playwright など)は setup_workspace.sh が確認するが、移行先に無ければ `pip install --break-system-packages` が必要。
+
+## 8. Claude Code 初回実走の結果(2026-10-12・移行先環境)
+- setup_workspace.sh は成功。bpy は未導入だったため `pip install --break-system-packages bpy==5.2.2`(Python 3.13)で導入でき、`import bpy` は 5.2.2 LTS。
+- 煙テスト `python3 main.py --zone SH04 --parts none --cam ZA --w 400 --samples 4 --out smoke` は成功(約2分27秒、4コア)。警告: CUEW 初期化失敗(CPUレンダでは無害)、World.use_nodes の非推奨警告。
+- 未検証: Playwright(路線図の検査用)の有無。
