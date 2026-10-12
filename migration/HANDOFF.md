@@ -61,3 +61,4 @@
 - **`net/vehicle_spec.md` は古い**(自動生成: spec_table.py。例: kiha_std の前面は現行 gate だが表は vee)。F3c の変更後に `net/mkspec.py` 等で再生成する。
 - `scripts/continue_check.sh` と `recovery_snapshot.sh` は /home/claude/station・/home/claude/train01 固定(setup が sed で置換するのは展開先のコピーのみ。repo 側の scripts/ は元のまま)。
 - 会話ログ jsonl の探索パスは /root/.claude/projects/-home-claude*/ 固定。ここでは該当なし(旧ログは migration/transcripts/ のみ)。
+- **重大バグ修正(2026-10-12)**: `zone_stock._place_auto` が未定義の `_len` / `_nose2` を呼んで全駅で停車車両の配置に失敗していた(前任セッション末の編集で混入。ゾーン構築ログに "stock failed … name '_len' is not defined")。`_len`(車両全長)と `_nose2`(連結間隔=0)を定義して解消。**駅ゾーンの旧レンダ(renders/ 以下)は車両なし/旧車両のため撮り直しが必要(E3)**。

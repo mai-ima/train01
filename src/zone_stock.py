@@ -70,6 +70,19 @@ def _free_x(sid):
     return 0.0, False
 
 
+def _len(kn, opt):
+    """編成の1両の全長(m)。"""
+    if kn in ("emu", "kiha"):
+        import vehtypes
+        return float(vehtypes.TYPES[opt.get("kind", "jnr_dc" if kn == "emu" else "kiha_std")]["L"])
+    return float(LEN.get(kn, 20.0))
+
+
+def _nose2(kn, opt):
+    """連結面の追加間隔(先頭の鼻は編成の外側へ伸びるだけなので 0)。"""
+    return 0.0
+
+
 def _consist(kindname, opt, n, seed):
     import train, train2, diesel2
     out = []
