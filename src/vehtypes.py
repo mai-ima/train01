@@ -1441,30 +1441,73 @@ def _sleep_inside(v, S, tot, bays, segs, zones, rnd):
                     if rnd.random() < 0.45:
                         _rider(v, x + sg * 0.62, yy, zfl, 0.0 if sg < 0 else 3.14, True, rnd=rnd)
         v.A("t_moq_r").box(kx, ax, -0.32, 0.32, zfl + 0.02, zfl + 0.03)                                    # 通路の絨毯
-    else:   # genset
-        v.A("iron", 0.02).box(-ax + 1.0, -ax + 4.4, -0.85, 0.85, zfl + 0.05, zfl + 1.45)                   # ディーゼル機関
+    else:   # genset(電源車の機関室: 床は縞鋼板、機関・発電機・配電盤・配管・消火器)
+        zf = zfl
+        zs_, zw_ = S["z"][1], S["z"][2]
+        v.A("t_steel").box(-ax, ax, -h + 0.08, h - 0.08, zf + 0.02, zf + 0.04)                                  # 縞鋼板の床
+        for k in range(int(2 * ax / 0.35)):
+            v.A("t_grey").box(-ax + k * 0.35, -ax + k * 0.35 + 0.02, -h + 0.08, h - 0.08, zf + 0.04, zf + 0.046)  # 縞目
+        x0 = -ax + 1.0
+        v.A("iron", 0.03).box(x0, x0 + 3.4, -0.80, 0.80, zf + 0.10, zf + 1.10)                                  # 機関本体(シリンダブロック)
+        v.A("t_grey", 0.02).box(x0 + 0.1, x0 + 3.3, -0.84, 0.84, zf + 0.04, zf + 0.12)                          # 台板
         for k in range(6):
-            v.A("steel").cyl((-ax + 1.4 + k * 0.5, 0, zfl + 1.45), (-ax + 1.4 + k * 0.5, 0, zfl + 1.75), 0.10, 0.10, seg=8)
-        v.A("iron", 0.02).box(-ax + 4.4, -ax + 6.2, -0.7, 0.7, zfl + 0.05, zfl + 1.15)                     # 発電機
-        v.A("t_warn").box(-ax + 6.8, -ax + 7.6, h - 0.5, h - 0.12, zfl + 0.02, zfl + 1.7)                  # 配電盤
-        v.A("t_grey").box(-ax + 8.4, ax - 0.6, -0.6, 0.9, zfl + 0.02, zfl + 0.9)                            # 荷物室の荷
-        v.A("t_wood").box(-ax + 8.6, ax - 0.9, -0.5, 0.7, zfl + 0.9, zfl + 1.6)
+            cx = x0 + 0.35 + k * 0.54
+            v.A("steel", 0.01).cyl((cx, -0.45, zf + 1.10), (cx, -0.45, zf + 1.38), 0.14, 0.12, seg=14)           # シリンダヘッドカバー
+            v.A("steel", 0.01).cyl((cx, 0.45, zf + 1.10), (cx, 0.45, zf + 1.38), 0.14, 0.12, seg=14)
+            for sy in (-1, 1):
+                for bx_, by_ in ((-0.09, -0.09), (0.09, 0.09)):
+                    v.A("black").cyl((cx + bx_, sy * 0.45 + by_, zf + 1.38), (cx + bx_, sy * 0.45 + by_, zf + 1.41), 0.018, 0.018, seg=6)   # ボルト頭
+        v.A("t_steel").cyl((x0 + 0.2, 0, zf + 1.55), (x0 + 3.2, 0, zf + 1.55), 0.10, 0.10, seg=12)                # 吸気マニホールド
+        v.A("t_steel").cyl((x0 + 0.3, 0.0, zf + 1.45), (x0 + 0.3, 0.0, zw_ - 0.05), 0.07, 0.07, seg=10)           # 排気管(天井へ)
+        for sy in (-1, 1):
+            v.A("t_gold").cyl((x0 + 0.1, sy * 0.88, zf + 0.35), (x0 + 3.3, sy * 0.88, zf + 0.35), 0.03, 0.03, seg=8)   # 燃料・油配管
+            v.A("t_sred").cyl((x0 + 0.1, sy * 0.88, zf + 0.55), (x0 + 3.3, sy * 0.88, zf + 0.55), 0.025, 0.025, seg=8)
+        gx = x0 + 3.4
+        v.A("iron", 0.02).cyl((gx + 0.1, 0, zf + 0.65), (gx + 1.9, 0, zf + 0.65), 0.56, 0.56, seg=24)           # 発電機(円筒)
+        v.A("steel").cyl((gx + 0.0, 0, zf + 0.65), (gx + 0.12, 0, zf + 0.65), 0.20, 0.20, seg=16)               # 継手
+        v.A("t_warn").box(gx + 1.0, gx + 1.5, -0.35, 0.35, zf + 1.20, zf + 1.45)                                # 端子箱
+        v.A("t_grey").box(gx + 0.1, gx + 1.9, -0.62, 0.62, zf + 0.04, zf + 0.12)
+        # 配電盤(+y側の壁沿いに6面)
+        px0 = gx + 2.3
+        for k in range(6):
+            cx = px0 + k * 0.62
+            if cx + 0.6 > ax - 0.4:
+                break
+            v.A("t_grey", 0.01).box(cx, cx + 0.58, h - 0.62, h - 0.12, zf + 0.04, zf + 1.95)
+            v.A("black").box(cx + 0.04, cx + 0.54, h - 0.625, h - 0.615, zf + 0.20, zf + 1.85)                    # 扉の合わせ目
+            v.A("t_white").cyl((cx + 0.20, h - 0.64, zf + 1.55), (cx + 0.20, h - 0.65, zf + 1.55), 0.07, 0.07, seg=14)   # 計器
+            v.A("lamp_glow").sphere((cx + 0.40, h - 0.65, zf + 1.55), (0.018, 0.012, 0.018), seg=6, rings=4)         # 表示灯
+            v.A("t_sred").sphere((cx + 0.46, h - 0.65, zf + 1.55), (0.018, 0.012, 0.018), seg=6, rings=4)
+            v.A("steel").box(cx + 0.46, cx + 0.52, h - 0.645, h - 0.62, zf + 1.0, zf + 1.1)                      # 取っ手
+        v.A("t_pole").cyl((x0 - 0.2, -0.95, zf + 0.04), (x0 - 0.2, -0.95, zf + 1.1), 0.025, 0.025, seg=8)          # 手すり(黄)
+        v.A("t_pole").cyl((x0 - 0.2, -0.95, zf + 1.1), (gx + 1.9, -0.95, zf + 1.1), 0.025, 0.025, seg=8)
+        v.A("t_sred").cyl((ax - 0.5, -h + 0.25, zf + 0.04), (ax - 0.5, -h + 0.25, zf + 0.55), 0.07, 0.07, seg=12)    # 消火器
+        v.A("steel").cyl((ax - 0.5, -h + 0.25, zf + 0.55), (ax - 0.5, -h + 0.25, zf + 0.62), 0.03, 0.03, seg=8)
+        v.A("steel").box(-ax + 0.2, ax - 0.2, -0.35, 0.35, zw_ - 0.14, zw_ - 0.09)                              # 天井のケーブルトレイ
 
 def _armchair(v, x, y, zfl, face, key="t_leat", w=0.62):
-    """肘掛け椅子。face=+1: +x 向き(背もたれは -x 側), -1: -x 向き, +2: +y向き, -2: -y向き。"""
-    if abs(face) == 1:
-        v.A(key, 0.03).box(x - 0.30, x + 0.30, y - w / 2, y + w / 2, zfl + 0.02, zfl + 0.42)
-        bx = x - face * 0.27
-        v.A(key, 0.04).box(bx - 0.05, bx + 0.05, y - w / 2, y + w / 2, zfl + 0.42, zfl + 0.98)
-        for sy in (-1, 1):
-            v.A("t_wood").box(x - 0.28, x + 0.28, y + sy * (w / 2 - 0.02) - 0.025, y + sy * (w / 2 - 0.02) + 0.025, zfl + 0.42, zfl + 0.60)
-    else:
-        sg = 1 if face > 0 else -1
-        v.A(key, 0.03).box(x - w / 2, x + w / 2, y - 0.30, y + 0.30, zfl + 0.02, zfl + 0.42)
-        by = y - sg * 0.27
-        v.A(key, 0.04).box(x - w / 2, x + w / 2, by - 0.05, by + 0.05, zfl + 0.42, zfl + 0.98)
-        for sx in (-1, 1):
-            v.A("t_wood").box(x + sx * (w / 2 - 0.02) - 0.025, x + sx * (w / 2 - 0.02) + 0.025, y - 0.28, y + 0.28, zfl + 0.42, zfl + 0.60)
+    """肘掛け椅子(台座・厚い座面・傾いた背もたれ・ヘッドレスト・木の肘掛け)。face=+1: +x向き, -1: -x向き, +2: +y向き, -2: -y向き。"""
+    f = 1 if face > 0 else -1
+    alongx = abs(face) == 1
+
+    def B(u0, u1, w0, w1, z0, z1, k, bev=0.0):
+        if alongx:
+            xs, ys = sorted((x + f * u0, x + f * u1)), sorted((y + w0, y + w1))
+        else:
+            xs, ys = sorted((x + w0, x + w1)), sorted((y + f * u0, y + f * u1))
+        v.A(k, bev).box(xs[0], xs[1], ys[0], ys[1], zfl + z0, zfl + z1)
+
+    hw = w / 2
+    B(-0.25, 0.26, -hw + 0.04, hw - 0.04, 0.02, 0.26, "t_mahog")                 # 台座
+    B(-0.24, 0.30, -hw + 0.05, hw - 0.05, 0.26, 0.43, key, 0.05)                 # 座面クッション
+    for k in range(3):                                                           # 背もたれ(上ほど後ろへ傾く・面は連続)
+        z0 = 0.43 + k * 0.18
+        B(-0.27 - k * 0.025, -0.17 - k * 0.025, -hw + 0.06, hw - 0.06, z0, z0 + 0.185, key, 0.012)
+    B(-0.36, -0.23, -hw * 0.55, hw * 0.55, 0.97, 1.11, key, 0.03)                   # ヘッドレスト
+    for sd in (-1, 1):
+        wy = sd * (hw - 0.025)
+        B(-0.22, 0.26, wy - 0.025, wy + 0.025, 0.58, 0.62, "t_mahog", 0.01)        # 肘掛け天板
+        B(0.20, 0.24, wy - 0.02, wy + 0.02, 0.26, 0.58, "t_mahog")                 # 肘掛け支柱
 
 
 def _lux_inside(v, S, tot, bays, segs, zones, rnd):
