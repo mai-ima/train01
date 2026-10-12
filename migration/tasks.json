@@ -841,7 +841,7 @@
  },
  {
   "id": 191,
-  "status": "pending",
+  "status": "in_progress",
   "subject": "【F3c】外観の形式別ビルダー実装(進捗: 前面付帯物/塗色差別化/床材は実装。外観監査1回目=43〜47点)"
  },
  {
@@ -921,7 +921,7 @@
  },
  {
   "id": 207,
-  "status": "in_progress",
+  "status": "completed",
   "subject": "【S-M1】モデリング調査(最優先): Blender公式・高速高品質モデリング・AIモデリングを調べ全文を読み、AI関連と『どれをどう直すか』を報告"
  },
  {
@@ -961,7 +961,7 @@
  },
  {
   "id": 215,
-  "status": "in_progress",
+  "status": "completed",
   "subject": "【U1】ユーザーへの要求ドキュメント docs/REQUESTS_TO_USER.md を新規作成し随時更新(必要画像・広告・方向幕・確認事項は1回まとめて提示)"
  },
  {
@@ -981,7 +981,12 @@
  },
  {
   "id": 219,
-  "status": "in_progress",
+  "status": "completed",
   "subject": "【S-G8】GitHub上のファイルとドキュメントの整理(フォルダ化・索引・参照パス更新)。旧【G6】を統合"
+ },
+ {
+  "id": 220,
+  "status": "completed",
+  "subject": "【S-T1】新タスク一覧ファイル docs/TASK_LIST.md の作成(全タスク・未実行はそのまま・実行済みは実行順・各タスクの報告つき)"
  }
 ]

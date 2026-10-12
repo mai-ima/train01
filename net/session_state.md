@@ -159,3 +159,6 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 ## (15:20) ユーザー割り込み指示(10項目)を受領 → CLAUDE.md 末尾に記録。S-最優先=モデリング調査(公式/AI)。現在の作業(B6 concourse確認レンダ)は継続。
 - (15:55) 【CO5】このチャットのユーザー発言を再確認: 初回プロンプトの『3〜10行報告』未実施・『コミットは節目に』未遵守・14:38指示の大半が未実施 と判明 → 報告済み・台帳へ追加(#207〜#218)。旧ログ(transcripts)は圧縮要約2件+last-promptのみで新規の見逃しなし。
 ## (16:10) 【S-G8】最優先: GitHub整理に着手(git mvで履歴保持・参照パス更新・docs索引)
+## (16:40) 【S-G8】完了(ac951a4 push): src/scripts/renders を機能別へ・索引README・docs/README.md。【S-M1】調査完了(migration/research_modeling.md)。【U1】docs/REQUESTS_TO_USER.md 作成。実施済み改善: --hq・HDRI・PEOPLE_BOTH・Persistent Data・停車車両バグ修正。進行: e3b全駅バッチ(人物ON/OFF)・B6a確認・W3プロファイル解析。
+## (16:50) 【S-T1】最優先: 新タスク一覧(docs/TASK_LIST.md)を作成中。元資料=git履歴・status.json log・session_state.md・TASKS.md
+## (17:10) 【S-T1】完了: docs/TASK_LIST.md(全198件。完了100件は実行順+報告+根拠)。生成 net/mktasklist.py。タスクを完了したら migration/task_reports.json に追記して再実行。

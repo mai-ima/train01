@@ -7,7 +7,8 @@
 | [`../CLAUDE.md`](../CLAUDE.md) | 運用ルールとユーザー指示の全履歴(正) |
 | [`REQUESTS_TO_USER.md`](REQUESTS_TO_USER.md) | **ユーザーへの要求・確認事項**(随時更新) |
 | [`../migration/HANDOFF.md`](../migration/HANDOFF.md) | 引き継ぎ書(概要・構造・現状・次の一手・落とし穴) |
-| [`../migration/tasks.json`](../migration/tasks.json) / [`TASKS.md`](../migration/TASKS.md) | **タスク台帳**(状態の正は JSON) |
+| [`TASK_LIST.md`](TASK_LIST.md) | **新タスク一覧**(全タスク・未実行・進行中の報告・完了の実行順と報告)。生成: `python3 net/mktasklist.py` |
+| [`../migration/tasks.json`](../migration/tasks.json) / [`TASKS.md`](../migration/TASKS.md) | タスク台帳(状態の正は JSON。TASKS.md は旧形式の一覧) |
 | [`../net/session_state.md`](../net/session_state.md) | 作業ログ(末尾が最新) |
 
 ## 規則・基準

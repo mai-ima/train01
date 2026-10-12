@@ -1,0 +1,608 @@
+[
+ {
+  "order": 1,
+  "id": 1,
+  "basis": "ID順(推定)",
+  "report": "Blender は bpy 5.x(LTS)をヘッドレスで使用、Cycles は CPU。以後の全制作の前提。(旧セッション。個別ログなし)"
+ },
+ {
+  "order": 2,
+  "id": 2,
+  "basis": "ID順(推定)",
+  "report": "設計方針を確定: 国鉄時代・素木の木造駅舎・停車中の気動車・未舗装路(CLAUDE.md『既存の恒久方針』)。"
+ },
+ {
+  "order": 3,
+  "id": 4,
+  "basis": "ID順(推定)",
+  "report": "PBR マテリアル基盤(ambientCG CC0 を lib.mat_pbr/pbr_layer で利用)と昭和風の看板テクスチャ(make_textures*.py)を整備。"
+ },
+ {
+  "order": 4,
+  "id": 5,
+  "basis": "ID順(推定)",
+  "report": "地形・水田・線路・ホーム・未舗装路(src/honamino/core.py)。"
+ },
+ {
+  "order": 5,
+  "id": 6,
+  "basis": "ID順(推定)",
+  "report": "木造駅舎(src/honamino/station.py)の壁・看板・光の当たり方を検証して修正。"
+ },
+ {
+  "order": 6,
+  "id": 9,
+  "basis": "ID順(推定)",
+  "report": "構内4線(分岐つき)・島式ホーム・構内踏切(core.py)。"
+ },
+ {
+  "order": 7,
+  "id": 10,
+  "basis": "ID順(推定)",
+  "report": "車両の共通部品(台車・窓・ドア・室内)と汎用ビルダー(src/vehicles/trainkit.py)。"
+ },
+ {
+  "order": 8,
+  "id": 11,
+  "basis": "ID順(推定)",
+  "report": "駅構内の停車車両(型違い5種。train.py)。"
+ },
+ {
+  "order": 9,
+  "id": 12,
+  "basis": "ID順(推定)",
+  "report": "車両基地の配置設計・土地・線路(depot.py)。"
+ },
+ {
+  "order": 10,
+  "id": 13,
+  "basis": "ID順(推定)",
+  "report": "扇形庫・転車台・検修庫・組立工場・給水塔(depot.py)。"
+ },
+ {
+  "order": 11,
+  "id": 14,
+  "basis": "ID順(推定)",
+  "report": "車両基地内の車両: 実在型(公開諸元ベース)・独自・製造中(steam2.py/diesel2.py/depot_stock.py)。機関車は実物写真を参照できず公開諸元ベース=納品時に必ず伝える。"
+ },
+ {
+  "order": 12,
+  "id": 15,
+  "basis": "ID順(推定)",
+  "report": "小物: 駅前・電柱・信号機・看板・自転車・トラック(props.py)。"
+ },
+ {
+  "order": 13,
+  "id": 16,
+  "basis": "ID順(推定)",
+  "report": "植生・稲架・遠景・空(veg.py)。"
+ },
+ {
+  "order": 14,
+  "id": 19,
+  "basis": "ID順(推定)",
+  "report": "未確認だった要素(神社・鳥居、旅館、商店、蔵、信号機、踏切小屋、自転車、島式ホーム待合)を視覚確認。"
+ },
+ {
+  "order": 15,
+  "id": 20,
+  "basis": "ID順(推定)",
+  "report": "車両基地の屋外小物(build_depot_props)。"
+ },
+ {
+  "order": 16,
+  "id": 23,
+  "basis": "ID順(推定)",
+  "report": "車両基地と駅の接続(アクセス道・構内通路・踏切板・ポイント小物)。"
+ },
+ {
+  "order": 17,
+  "id": 29,
+  "basis": "ID順(推定)",
+  "report": "室内の共通キット: 中空の壁(開口付き)・透明ガラス・畳/障子/棚/家具(rooms.py)。"
+ },
+ {
+  "order": 18,
+  "id": 30,
+  "basis": "ID順(推定)",
+  "report": "民家7軒の室内(houses.py)。"
+ },
+ {
+  "order": 19,
+  "id": 31,
+  "basis": "ID順(推定)",
+  "report": "旅館(2階建)の室内(houses.py)。"
+ },
+ {
+  "order": 20,
+  "id": 32,
+  "basis": "ID順(推定)",
+  "report": "商店・蔵・貨物上屋の室内(houses.py)。"
+ },
+ {
+  "order": 21,
+  "id": 33,
+  "basis": "ID順(推定)",
+  "report": "踏切小屋・祠・トイレ棟・待合所・駅舎の室内を再点検。"
+ },
+ {
+  "order": 22,
+  "id": 34,
+  "basis": "ID順(推定)",
+  "report": "車両基地の建物の内部(depot_in.py)。"
+ },
+ {
+  "order": 23,
+  "id": 35,
+  "basis": "ID順(推定)",
+  "report": "機関車の内部(DE10/DD51 の運転室・機械室。cabkit.py/diesel2.py)。"
+ },
+ {
+  "order": 24,
+  "id": 36,
+  "basis": "ID順(推定)",
+  "report": "貨車・特殊車の内部。"
+ },
+ {
+  "order": 25,
+  "id": 18,
+  "basis": "ID順(推定)",
+  "report": "最終レンダ(1920px×6視点+.blend)の完了確認(scripts/batch/final.sh)。"
+ },
+ {
+  "order": 26,
+  "id": 22,
+  "basis": "ID順(推定)",
+  "report": "穂波野の成果物の納品と報告。"
+ },
+ {
+  "order": 27,
+  "id": 27,
+  "basis": "ID順(推定)",
+  "report": "外部テクスチャをパックして持ち出せる .blend にした(後に『ゾーン別27MB以下』方針へ発展)。"
+ },
+ {
+  "order": 28,
+  "id": 40,
+  "basis": "ID順(推定)",
+  "report": "地面と道路の描き込み(mat_road: 轍・中央の草)。"
+ },
+ {
+  "order": 29,
+  "id": 41,
+  "basis": "ID順(推定)",
+  "report": "生活感の追加(life.py: 人物・動物・落ち葉・水たまり)。"
+ },
+ {
+  "order": 30,
+  "id": 42,
+  "basis": "ID順(推定)",
+  "report": "カメラと大気(AgX・空・遠景の霞)。"
+ },
+ {
+  "order": 31,
+  "id": 44,
+  "basis": "ID順(推定)",
+  "report": "最終監査のチェックリストと合格基準を明文化(docs/audit_rubric.md の原型)。"
+ },
+ {
+  "order": 32,
+  "id": 45,
+  "basis": "ID順(推定)",
+  "report": "全景の視覚確認と監査。"
+ },
+ {
+  "order": 33,
+  "id": 51,
+  "basis": "ID順(推定)",
+  "report": "最終書き出しと最終確認。"
+ },
+ {
+  "order": 34,
+  "id": 38,
+  "basis": "ID順(推定)",
+  "report": "参照スペック表(net/specs.md、src/core/specs.py)を作り、軌間1067・ホーム高・車体寸法をシーン実測と照合。"
+ },
+ {
+  "order": 35,
+  "id": 52,
+  "basis": "ID順(推定)",
+  "report": "路線図データ設計と路線図ページの初公開(net/network.py → mkmap.py)。"
+ },
+ {
+  "order": 36,
+  "id": 59,
+  "basis": "ID順(推定)",
+  "report": "路線図を33駅・新3社・北浦の奥5駅へ拡張。穂波野=国鉄本社/発祥の地。"
+ },
+ {
+  "order": 37,
+  "id": 60,
+  "basis": "ID順(推定)",
+  "report": "ゾーン枠(駅ごとの局所座標)とみずほ試作の調整・再撮影(kit.py)。"
+ },
+ {
+  "order": 38,
+  "id": 61,
+  "basis": "ID順(推定)",
+  "report": "駅タイプ別ビルダー群(kit2.py: 曲線配線・多量塊の駅舎・上屋・地形・道路・町)。"
+ },
+ {
+  "order": 39,
+  "id": 64,
+  "basis": "ID順(推定)",
+  "report": "穂波野の拡張: 国鉄本社ビル・発祥記念碑・初代機関庫保存・鉄道記念館(hq.py)。"
+ },
+ {
+  "order": 40,
+  "id": 65,
+  "basis": "ID順(推定)",
+  "report": "超大規模駅都市「国都中央 M01」(kit3.py)。"
+ },
+ {
+  "order": 41,
+  "id": 66,
+  "basis": "ID順(推定)",
+  "report": "大規模駅「大湊 M19」と他社・中規模駅「汐見」+汐見臨港鉄道。"
+ },
+ {
+  "order": 42,
+  "id": 72,
+  "basis": "ID順(推定)",
+  "report": "路線図の詳細化(駅の詳細・配線・施設。net/details.py)。"
+ },
+ {
+  "order": 43,
+  "id": 74,
+  "basis": "ID順(推定)",
+  "report": "画像表現ジェネレータ(駅ごとに画風・書体・配色の違うポスター/看板。make_posters*.py)。"
+ },
+ {
+  "order": 44,
+  "id": 78,
+  "basis": "ID順(推定)",
+  "report": "状態表 status.json の記録と路線図 v2.1 の再公開。"
+ },
+ {
+  "order": 45,
+  "id": 79,
+  "basis": "ID順(推定)",
+  "report": "【最優先】路線図ページの修正。"
+ },
+ {
+  "order": 46,
+  "id": 81,
+  "basis": "ID順(推定)",
+  "report": "路線の配置・構成・内容の整理と拡張(標高・区間表・構造物・運行系統)。"
+ },
+ {
+  "order": 47,
+  "id": 82,
+  "basis": "ID順(推定)",
+  "report": "【最優先】画像のテンプレ感を解消(make_posters v2)。"
+ },
+ {
+  "order": 48,
+  "id": 84,
+  "basis": "ID順(推定)",
+  "report": "【最優先】路線図ページの再構成。"
+ },
+ {
+  "order": 49,
+  "id": 94,
+  "basis": "ID順(推定)",
+  "report": "運転準備: 軌道グラフ net/track_graph.json、車両リグ net/vehicle_rig.json、規約 net/rig_convention.md(走行システム自体は作らない)。"
+ },
+ {
+  "order": 50,
+  "id": 96,
+  "basis": "ID順(推定)",
+  "report": "分岐器・渡り線・信号・踏切の表現(kit5.py turnout)。"
+ },
+ {
+  "order": 51,
+  "id": 98,
+  "basis": "ID順(推定)",
+  "report": "【最優先・ユーザー明記】路線図ページを最新情報に更新・最適化。"
+ },
+ {
+  "order": 52,
+  "id": 99,
+  "basis": "ID順(推定)",
+  "report": "踏切の向き(線路方向 t と道路方向 n の取り違え)を修正。"
+ },
+ {
+  "order": 53,
+  "id": 100,
+  "basis": "ID順(推定)",
+  "report": "向きの総点検と自動検査(net/orient_graph.py)。"
+ },
+ {
+  "order": 54,
+  "id": 102,
+  "basis": "ID順(推定)",
+  "report": "現実の車両基地・貨物駅・留置線の調査(net/facilities_research.md)。"
+ },
+ {
+  "order": 55,
+  "id": 105,
+  "basis": "ID順(推定)",
+  "report": "路線図 v2.1。"
+ },
+ {
+  "order": 56,
+  "id": 107,
+  "basis": "ID順(推定)",
+  "report": "新支線(穂波空港線=正式名 穂波新都線・SH)の設計。"
+ },
+ {
+  "order": 57,
+  "id": 108,
+  "basis": "ID順(推定)",
+  "report": "新支線のデータ実装。"
+ },
+ {
+  "order": 58,
+  "id": 110,
+  "basis": "ID順(推定)",
+  "report": "路線図に新支線を反映。"
+ },
+ {
+  "order": 59,
+  "id": 111,
+  "basis": "ID順(推定)",
+  "report": "国都中央の客車区と臨時電車区を統合(常設18線+拡張16線)。"
+ },
+ {
+  "order": 60,
+  "id": 112,
+  "basis": "ID順(推定)",
+  "report": "実線路図の描画不良を修正(北が上=y反転)。"
+ },
+ {
+  "order": 61,
+  "id": 114,
+  "basis": "ID順(推定)",
+  "report": "穂波新都線の修正。"
+ },
+ {
+  "order": 62,
+  "id": 115,
+  "basis": "ID順(推定)",
+  "report": "構造物と町の干渉を解消(kit2.struct_excl)。"
+ },
+ {
+  "order": 63,
+  "id": 117,
+  "basis": "ID順(推定)",
+  "report": "線路干渉の自動検出と修正(src/checks/interf.py)。"
+ },
+ {
+  "order": 64,
+  "id": 119,
+  "basis": "ID順(推定)",
+  "report": "駅ごとの車両の表示/非表示切替(--stock on|off|駅ID。Stock_<SID> コレクション)。"
+ },
+ {
+  "order": 65,
+  "id": 120,
+  "basis": "ID順(推定)",
+  "report": "浮き・めり込み・食い込みの検査(floatcheck.py)。"
+ },
+ {
+  "order": 66,
+  "id": 121,
+  "basis": "ID順(推定)",
+  "report": "曲線駅の構造整合。"
+ },
+ {
+  "order": 67,
+  "id": 122,
+  "basis": "ID順(推定)",
+  "report": "車両と構造物の干渉・編成の曲線追従・車両同士の重なり検査(stockcheck.py)。"
+ },
+ {
+  "order": 68,
+  "id": 123,
+  "basis": "ID順(推定)",
+  "report": "車両の台数・形式を駅ごとに設定(net/stock_cfg.json 上書き)。"
+ },
+ {
+  "order": 69,
+  "id": 124,
+  "basis": "ID順(推定)",
+  "report": "路線図 v2.2。"
+ },
+ {
+  "order": 70,
+  "id": 125,
+  "basis": "セッション要約",
+  "report": "駅構造の最適化と修正: 路線図データ(net/details.py の線数・配線)を正として M03=4 SH02=3 SH04=4 SH05=3 M09=2 M10=4 M12=3 M05=4 ほかへ変更。"
+ },
+ {
+  "order": 71,
+  "id": 126,
+  "basis": "セッション要約",
+  "report": "路線図 v2.3。"
+ },
+ {
+  "order": 72,
+  "id": 127,
+  "basis": "セッション要約",
+  "report": "構造変更駅の視覚確認とストック再配置。"
+ },
+ {
+  "order": 73,
+  "id": 128,
+  "basis": "セッション要約",
+  "report": "数値検査だけだった項目(ドア/階段/浮き/停車車両/スペック/向き)を視覚確認。残: 約10件のドア『塞がり』は多くが隣接する町の建物による誤検出。"
+ },
+ {
+  "order": 74,
+  "id": 130,
+  "basis": "セッション要約",
+  "report": "【S-R1】路線図 v2.4(iPhone/PC それぞれの UI 最適化、UI崩れの解消、最新内容へ更新)。多視点マトリクス検査に合格。"
+ },
+ {
+  "order": 75,
+  "id": 131,
+  "basis": "セッション要約",
+  "report": "全駅ゾーンの地面の描き込み(草の散布 zone_grass 等)。"
+ },
+ {
+  "order": 76,
+  "id": 132,
+  "basis": "セッション要約",
+  "report": "穂波野(M06)を本来の高品質版に戻した。"
+ },
+ {
+  "order": 77,
+  "id": 93,
+  "basis": "git",
+  "report": "【H1】各駅の生活感: ホーム上の人物を全駅に追加(commit 80927f6)。"
+ },
+ {
+  "order": 78,
+  "id": 39,
+  "basis": "git",
+  "report": "【Q2】経年変化の統一パス weather.py(隅の汚れ・泥はね・埃・雨だれ)を全マテリアルへ(commit 79305f6)。"
+ },
+ {
+  "order": 79,
+  "id": 129,
+  "basis": "git",
+  "report": "【G2】github.com/mai-ima/train01 へ初コミット・push(ユーザー指示 13:09 の『あとで』。実際のコミットは 10/11 夜)。"
+ },
+ {
+  "order": 80,
+  "id": 143,
+  "basis": "git",
+  "report": "【G4】GitHub を整理(src/scripts/net/data/docs/assets/renders)し、使用画像・撮影画像・初代紋章も全収録(commit 9643947。21:41 の指示で紋章除外は無効に)。"
+ },
+ {
+  "order": 81,
+  "id": 147,
+  "basis": "git",
+  "report": "【G5】README.md を全面更新(構成・ソース一覧・使い方・検査・納品・現状。commit e7c447d)。"
+ },
+ {
+  "order": 82,
+  "id": 166,
+  "basis": "セッション要約",
+  "report": "【S-CO1】コンテキスト圧縮後の回復手順 docs/RECOVERY.md と作業状態 net/session_state.md を整備。"
+ },
+ {
+  "order": 83,
+  "id": 178,
+  "basis": "git",
+  "report": "【S-R6】路線図 v2.4.5(現状版)を作成・最適化(別 artifact。v2.4 は残置)。構造物台帳・断面図17種・路線別縦断面・駅/施設の仕様(commit dedc0d8)。"
+ },
+ {
+  "order": 84,
+  "id": 179,
+  "basis": "git",
+  "report": "【S-R6】路線図 v2.4.5(現状版)の公開(artifact Ae51R2sD6GyV81wgfMWG5A)。"
+ },
+ {
+  "order": 85,
+  "id": 180,
+  "basis": "セッション要約",
+  "report": "【S-CO2】圧縮手順の再強化(recovery_snapshot.sh 追加、旧方式+強化版の両方を毎回実施)。"
+ },
+ {
+  "order": 86,
+  "id": 181,
+  "basis": "git",
+  "report": "【S-R7】構造物台帳のリスト化、会社の詳細・運行系統・直通の詳細、踏切を監査対象に追加(commit 4f6fcbe、bdccc20)。"
+ },
+ {
+  "order": 87,
+  "id": 182,
+  "basis": "セッション要約",
+  "report": "【CO3】システムプロンプトを読み直し、守る点を再確認(嘘をつかない・中断しない等)。"
+ },
+ {
+  "order": 88,
+  "id": 177,
+  "basis": "git",
+  "report": "【Z-A9】Z-A群(地下鉄・路面電車・モノレール・K03)の3回目厳格監査: 0/5 合格(commit 56f0c52)。"
+ },
+ {
+  "order": 89,
+  "id": 183,
+  "basis": "git",
+  "report": "【Z-A10】M19 の市電・モノレール車両を折れ線座標へ直接配置(zone_stock._place_m19_special。commit 56f0c52)。"
+ },
+ {
+  "order": 90,
+  "id": 184,
+  "basis": "git",
+  "report": "【Z-A11】地下鉄の坑口(階段状擁壁・笠石)・換気塔4型・軒蛇腹と扁額・控え壁(commit b4aa60a)。"
+ },
+ {
+  "order": 91,
+  "id": 185,
+  "basis": "git",
+  "report": "【Z-A12】軌道桁(面取りPC桁・非常歩廊)・橋脚(八角テーパ)・併用軌道の敷石と溝(commit e57f25d)。"
+ },
+ {
+  "order": 92,
+  "id": 189,
+  "basis": "git",
+  "report": "【F3a】車両の現状棚卸し。電車7形式を形式別に作り直す土台(commit f6470e1)。"
+ },
+ {
+  "order": 93,
+  "id": 190,
+  "basis": "git",
+  "report": "【F3b】形式ごとの設計仕様表 net/vehicle_spec.md(自動生成 spec_table.py)。"
+ },
+ {
+  "order": 94,
+  "id": 200,
+  "basis": "git",
+  "report": "【P7】周遊列車「結」の画像(エンブレム・献立・乗車券・旅程ポスター・ヘッドマーク。commit 07ed454)。"
+ },
+ {
+  "order": 95,
+  "id": 201,
+  "basis": "git",
+  "report": "【R8】路線図 v2.4.5 に周遊列車タブを追加(日別時刻・客室内訳・経路強調ボタン)。"
+ },
+ {
+  "order": 96,
+  "id": 206,
+  "basis": "git",
+  "report": "【S-MG1】Claude Code への移行パッケージ(migration/・.claude/)を作成(commit 09508a4)。"
+ },
+ {
+  "order": 97,
+  "id": 208,
+  "basis": "Claude Code",
+  "report": "【CO5】会話ログ全確認: 旧ログは圧縮要約2件+last-prompt のみで新規の見逃しなし。このチャットの確認で『初回の3〜10行報告の未実施』『コミットを節目にまとめる』を見逃していたことが判明し是正。"
+ },
+ {
+  "order": 98,
+  "id": 207,
+  "basis": "Claude Code",
+  "report": "【S-M1】モデリング調査(最優先): Blender公式(Sampling/Performance/Reducing Noise/Bevel)、LL3M論文、blender-llm-addin、BlenderMCP、AI 3D 生成ツール比較、bpy 高速化(foreach_set/ops回避)を読み、migration/research_modeling.md に出典つきで整理。実施済み: --hq(Albedo+Normalデノイズ・Prefilter Accurate)、Persistent Data、HDRI。"
+ },
+ {
+  "order": 99,
+  "id": 215,
+  "basis": "Claude Code",
+  "report": "【U1】ユーザーへの要求ドキュメント docs/REQUESTS_TO_USER.md を新規作成(素材提供・方針確認・回答欄)。随時更新。"
+ },
+ {
+  "order": 100,
+  "id": 219,
+  "basis": "Claude Code",
+  "report": "【S-G8】リポジトリ整理(commit ac951a4): src/ を7機能フォルダ、scripts/ を運用+batch/、renders/work を5用途へ git mv(履歴保持)。各フォルダに索引 README、docs/README.md、setup_workspace.sh/sync_safe.sh をフラット展開対応。展開テストで .py ファイル集合が作業側と一致。"
+ },
+ {
+  "order": 101,
+  "id": 220,
+  "basis": "Claude Code",
+  "report": "【S-T1】新タスク一覧 docs/TASK_LIST.md を作成: 全198件(未実行はそのまま・進行中は報告つき・完了100件は実行順+報告+根拠)。完了順は旧ログが失われているため git/セッション要約/ID順(推定)の根拠を明記。生成スクリプト net/mktasklist.py。"
+ }
+]
