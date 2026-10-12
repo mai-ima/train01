@@ -139,10 +139,10 @@ TYPES = {
 
 TYPES.update({
     "kiha_std": dict(
-        title="国鉄一般形気動車(2扉・ラジエーター)", L=21.3, W=2.93, z=(1.12, 1.80, 2.58, 2.98, 3.645), cab=1.75, zb0=0.92, diesel=True,
+        title="国鉄一般形気動車(2扉・ラジエーター)", L=21.3, W=2.94, z=(1.12, 1.80, 2.58, 2.98, 3.645), cab=1.75, zb0=0.92, diesel=True,
         fs="sabo", ss="sabo", ds="hing", ps="lap", wc=(0.04, 0.04), liner="t_cab", lamp="globe",
         lo="t_orange", up="t_cream", door="t_orange", mask="t_orange", stripe=[],
-        pattern="w2 D w8 D w2", door_w=1.05, win="pair", pillar=0.11,
+        pattern="w2 D w8 D w2", door_w=0.85, win="pair", pillar=0.11,
         front="gate", screens=2, lamps="roofc", roofshape="round", rake=0.12,
         roof=["radiator", "exhaust", "garland"], pant_x=0.0, bogie=("dt", 2.1, 0.43), under="engine",
         seat="t_moq_g", interior="box", standing=False),
@@ -1459,7 +1459,7 @@ def _interior(v, S, tot, bays, seed):
         whole = [(-ax + 0.1, ax - 0.1)] if st != "box" else segs
         for (a, b) in (segs if st != "box" else segs):
             if st == "box":
-                m = max(1, int((b - a) / 1.52))
+                m = max(1, int((b - a) / 1.49))
                 pitch = (b - a) / m
                 for j in range(m):
                     xc = a + pitch * (j + 0.5)
