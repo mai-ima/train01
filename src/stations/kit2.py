@@ -154,7 +154,7 @@ def volume(g, v, rng, st, interior=False):
     zh = zf + 2.9 + (nfl - 1) * 3.0
     x0, x1, y0, y1 = v["x0"], v["x1"], v["y0"], v["y1"]
     wall = v.get("wall", "wall")
-    g.a("stone", bevel=0.015).box(x0 - 0.08, x1 + 0.08, y0 - 0.08, y1 + 0.08, -0.25, zf - 0.02)
+    g.a("stone", bevel=0.015).box(x0 - 0.08, x1 + 0.08, y0 - 0.08, y1 + 0.08, (-0.25 if v.get("ground", True) else zf - 0.7), zf - 0.02)   # 橋上通路は床版のみ(旧: 地面まで中実の石ブロックで線路を塞いでいた)
     ops = make_ops(v, rng, zf, v.get("door", 'S'))
     rooms.shell(g, x0, x1, y0, y1, zf - 0.02, zh, t=0.14, ops=ops, wall=wall)
     for cx, cy in ((x0, y0), (x1, y0), (x0, y1), (x1, y1)):
@@ -720,7 +720,7 @@ def build_design(sid):
             _of = track_offsets(d["plat"], d["ntr"])
             _ye = -4.4 + min(_of) - 3.2
             _pb = -4.4 - (4.6 + 1.7 + 4.4) / 2          # B面ホームの中央(橋脚はホーム上と線路の外側だけ)
-            volume(gb, dict(x0=xc - 4.0, x1=xc + 4.0, y0=_ye - 0.4, y1=-0.4, nfl=1, roof="flat", wall="pl_grey", ground=False, zf=5.7, skip=("E", "W"), door="S"), rng, st)
+            volume(gb, dict(x0=xc - 4.0, x1=xc + 4.0, y0=_ye - 0.4, y1=-0.4, nfl=1, roof="flat", wall="pl_grey", ground=False, zf=5.7, skip=(), door="S"), rng, st)   # 橋上通路: 長辺(E/W)にも窓を開ける(旧: skip=E,W で無窓の壁だった)
             for yy in (-1.4, _pb, _ye + 0.6):
                 for xx in (xc - 3.6, xc + 3.6):
                     gb.a("concrete", bevel=0.02).box(xx - 0.3, xx + 0.3, yy - 0.3, yy + 0.3, 0.0, 5.6)
