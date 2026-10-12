@@ -662,7 +662,7 @@ def r02():
         for sy in (-61.6, -36.4):
             gs.a("iron_black").cyl((x, sy, 4.0), (x, sy, 5.0), 0.03, seg=5)
     gs.build()
-    sig.KINDS["crane"](100.0, -20.0, name="k6_R02_crane")
+    sig.KINDS["crane"](100.0, -20.0, name="k6_R02_crane", arm=-1)
     sig.KINDS["water"](-34, 32, name="k6_R02_water")
     sig.KINDS["lighthouse"](118, -30, name="k6_R02_lh")
     # 海(桟橋まわり)

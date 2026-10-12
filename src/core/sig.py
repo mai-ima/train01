@@ -56,14 +56,35 @@ def foot_bath(x, y, name="sig_footbath"):
     g.build()
 
 
-def quay_crane(x, y, name="sig_crane"):
+def quay_crane(x, y, name="sig_crane", arm=1):
+    """岸壁の門型ジブクレーン(ポータルフレーム+旋回する機械室+トラス状ジブ+フック・ケーブル+カウンターウェイト)。arm=+1/-1 でジブを出す向き(y方向)。"""
     g = G(name, "Props")
-    for dx in (-3, 3):
-        for dy in (-2, 2):
-            g.a("iron_rust").cyl((x + dx, y + dy, 0), (x + dx * 0.6, y + dy * 0.6, 12.0), 0.2, seg=8)
-    g.a("iron_rust").sbox((x, y - 2, 12.0), (x, y + 18, 12.0), 0.5, 0.7, up=(1, 0, 0))
-    g.a("iron_black").cyl((x, y + 14, 12.0), (x, y + 14, 6.0), 0.04, seg=6)
-    g.a("iron_black").box(x - 0.5, x + 0.5, y + 13.5, y + 14.5, 5.2, 6.0)
+    ir, ib, yel = "iron_rust", "iron_black", "post_red"
+    for dx in (-4.2, 4.2):                                  # 走行レールと脚(2つの門型)
+        g.a(ib).box(x + dx - 0.15, x + dx + 0.15, y - 5.0, y + 5.0, 0.0, 0.2)
+        for dy in (-3.8, 3.8):
+            g.a(ir, bevel=0.01).box(x + dx - 0.25, x + dx + 0.25, y + dy - 0.25, y + dy + 0.25, 0.2, 9.5)
+            g.a(ib).box(x + dx - 0.5, x + dx + 0.5, y + dy - 0.5, y + dy + 0.5, 0.0, 0.5)             # 台車
+        g.a(ir, bevel=0.01).box(x + dx - 0.3, x + dx + 0.3, y - 4.1, y + 4.1, 9.2, 9.8)               # 上梁
+        for k in (-1, 1):
+            g.a(ir).sbox((x + dx, y + k * 3.8, 3.0), (x + dx, y, 9.4), 0.14, 0.14, up=(1, 0, 0))      # 斜材
+    g.a(ir, bevel=0.01).box(x - 4.6, x + 4.6, y - 0.4, y + 0.4, 9.8, 10.3)                              # 脚間の渡し梁
+    g.a(yel, bevel=0.02).box(x - 2.2, x + 2.2, y - 2.0, y + 2.0, 10.3, 14.0)                             # 機械室(旋回台の上)
+    g.a("dark_glass").box(x - 2.0, x + 2.0, y + arm * 2.0, y + arm * 2.03, 11.6, 13.4)                  # 運転室の窓(ジブ側)
+    g.a(ib).box(x - 2.4, x + 2.4, y - 2.2, y + 2.2, 14.0, 14.3)                                         # 屋根
+    # トラス状ジブ(2本の弦材+斜材)を海側へ
+    a0 = (x, y + arm * 1.5, 13.0); a1 = (x, y + arm * 24.0, 19.5)
+    for dx in (-0.6, 0.6):
+        g.a(ir).sbox((a0[0] + dx, a0[1], a0[2]), (a1[0] + dx, a1[1], a1[2]), 0.14, 0.14, up=(1, 0, 0))
+        g.a(ir).sbox((a0[0] + dx, a0[1], a0[2] - 1.4), (a1[0] + dx, a1[1], a1[2] - 0.6), 0.12, 0.12, up=(1, 0, 0))
+    for t in np.linspace(0.05, 0.95, 12):
+        p0 = (x - 0.6, a0[1] + (a1[1] - a0[1]) * t, a0[2] + (a1[2] - a0[2]) * t)
+        p1 = (x + 0.6, a0[1] + (a1[1] - a0[1]) * (t + 0.04), a0[2] - 1.4 + (a1[2] - 0.6 - (a0[2] - 1.4)) * (t + 0.04))
+        g.a(ir).sbox(p0, p1, 0.07, 0.07, up=(1, 0, 0))
+    g.a(ir).sbox((x, y - arm * 1.0, 14.3), (x, y + arm * 24.0, 19.6), 0.08, 0.08, up=(1, 0, 0))              # 吊り索
+    g.a(ib).box(x - 2.0, x + 2.0, y - arm * 6.0 - 1.5, y - arm * 6.0 + 1.5, 10.3, 13.2)                 # カウンターウェイト
+    g.a(ib).cyl((x, y + arm * 20.0, 18.4), (x, y + arm * 20.0, 6.5), 0.03, seg=6)                       # フックのケーブル
+    g.a(yel).box(x - 0.35, x + 0.35, y + arm * 20.0 - 0.3, y + arm * 20.0 + 0.3, 5.4, 6.5)               # フック/スプレッダ
     g.build()
 
 
