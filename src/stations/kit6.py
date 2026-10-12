@@ -653,7 +653,7 @@ def r02():
     sig.KINDS["lighthouse"](118, -30, name="k6_R02_lh")
     # 海(桟橋まわり)
     gw = G("k6_R02_sea", "Ground")
-    gw.a("water").box(-30, 160, -160, -26.0, -0.55, -0.06)
+    gw.a("water").box(-30, 160, -160, -26.0, -0.55, 0.03)   # 旧: 上面-0.06が地面(-0.01)の下で海が見えなかった
     gw.build()
     _ekimei(sid, 30.0, 5.9, 3.6, w=6.0, name="k6_R02_nm")
     face_plane("k6_R02_pier_nm", f"kit_{sid}_facade.png", 'S', 60.0, -33.05, 2.2, 6.0, h=1.4)
