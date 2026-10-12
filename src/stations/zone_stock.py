@@ -20,6 +20,8 @@ LEN = {"emu": 20.0, "tram": 12.6, "mono": 14.0}
 
 
 def _kind(s):
+    if "蒸機" in s or "補機" in s: return ("steam", {})          # M11/M12: 補機(D51)+客車
+    if "ラッセル" in s: return ("steam", dict(plow=True))       # M13: 除雪列車(ラッセル車モデル未作成のため蒸機+客車で代用。F3f で作る)
     if "モノレール" in s: return ("mono", {})
     if "市電" in s: return ("tram", {})
     if "地下鉄" in s: return ("emu", dict(kind="km"))
@@ -32,6 +34,7 @@ def _kind(s):
     if "特急" in s: return ("kiha", dict(kind="kiha_ltd"))     # 非電化区間の特急は気動車(電車の特急形は電化区間の国都中央のみ)
     if "近郊" in s: return ("emu", dict(kind="jnr_sub"))
     if "気動車" in s: return ("kiha", dict(kind="kiha_std"))
+    if s.startswith("国鉄(") or s == "国鉄": return ("kiha", dict(kind="kiha_std"))
     if "電車" in s: return ("emu", dict(kind="jnr_dc"))
     if "貨物" in s or "コンテナ" in s: return ("freight", {})
     return None
@@ -290,6 +293,20 @@ def _place_auto(sid):
             jobs.append((len(jobs), frt[0]))
     for k, (kn, opt) in jobs:
         if k >= ntr:
+            continue
+        if kn == "steam":
+            import steam2, train
+            x = cx - 25.0
+            tp = _tpoint(sid, k, x)
+            if tp is None: continue
+            yaw0 = math.pi if rng.random() < 0.5 else 0.0
+            steam2.make_steam2(f"stk_{sid}_{k}_sl", kind="D51").place(tp[0], tp[1], tp[2] + yaw0, z=zrail + 0.274)
+            for w in range(2):
+                tp = _tpoint(sid, k, x + (-1 if yaw0 else 1) * (13.5 + w * 20.6))
+                if tp is None: continue
+                train.make_coach(f"stk_{sid}_{k}_c{w}", variant=w, seed=w + k).place(tp[0], tp[1], tp[2] + yaw0, z=zrail + 0.274)
+                placed += 1
+            placed += 1
             continue
         if kn == "freight":
             import diesel2
