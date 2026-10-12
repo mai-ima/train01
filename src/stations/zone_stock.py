@@ -330,7 +330,12 @@ def _place_auto(sid):
                 v.place(tp[0], tp[1], tp[2] + (math.pi if w % 2 else 0.0), z=zrail + 0.274)
                 placed += 1
             continue
-        n = 2 if ntr <= 2 or sid.startswith(("S", "Y")) else 3
+        if ntr <= 2 or sid.startswith(("S", "Y")):
+            n = rng.choice([2, 2, 3])                           # 小駅: 2〜3両
+        elif sid in getattr(kit4, "SMALL", {}):
+            n = rng.choice([2, 3, 3])                           # ホームの短い駅: 2〜3両
+        else:
+            n = rng.choice([3, 3, 4, 4] if kn == "emu" else [2, 3, 3, 4])   # 編成長を駅ごとに変える(同じ長さの複製に見せない)
         cars = _consist(kn, opt, n, seed=_h(sid, k) % 9000)
         L = _len(kn, opt)
         pitch = L + 0.55 + _nose2(kn, opt)
