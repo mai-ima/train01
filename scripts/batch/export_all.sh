@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/claude/station
+cd "$(dirname "$(readlink -f "$0")")"
 mkdir -p out/zones; rm -f out/zones/done.txt out/zones/sizes.txt
 ids=$(python3 -c "
 import kit

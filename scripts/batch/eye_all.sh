@@ -1,4 +1,4 @@
-cd /home/claude/station
+cd "$(dirname "$(readlink -f "$0")")"
 rm -f out/eye/done.txt
 ids=$(python3 -c "
 import kit

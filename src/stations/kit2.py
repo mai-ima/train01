@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """kit2: per-station bespoke design. Curved alignments, multi-volume station buildings, canopies, terrain, road networks, road-aligned towns.
 Every object is built in a local frame and parented via (Sub)Zone empties."""
 import json, math, random, os, zlib
@@ -196,7 +197,7 @@ def volume(g, v, rng, st, interior=False):
         rooms.shelf(g, xo + 0.5, min(x1 - 0.5, xo + 3.0), y1 - 0.45, zf, face='S', goods="jars", seed=3)
         for k_, nm_ in enumerate(("poster0", "poster1", "notice", "poster2")):
             ip = f"kit/{st['id']}_{nm_}.png"
-            if os.path.exists(f"/home/claude/station/tex/{ip}"):
+            if os.path.exists(f"{_R}/tex/{ip}"):
                 face_plane(f"k2in_{st['id']}_{k_}", ip, 'S', x0 + 1.5 + k_ * 1.4, y1 - 0.16, zf + 1.1, 0.75, h=1.0, off=0.0)
         try:
             import kit8
@@ -459,7 +460,7 @@ def struct_excl(sid):
     out = []
     try:
         import json, os
-        gp = "/home/claude/station/net/geo.json"
+        gp = f"{_R}/net/geo.json"
         g = json.load(open(gp))
         st = g["stations"].get(sid)
         if st:

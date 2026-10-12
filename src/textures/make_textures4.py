@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Railway-company mark (fictional abbreviation 'JPR' = 日本鉄道公社), headmark and first-generation emblem plaque.
 All artwork original; the company, abbreviation and marks are fictional."""
 import sys
@@ -5,7 +6,7 @@ sys.argv = sys.argv[:1]
 from make_textures2 import *
 from PIL import Image, ImageDraw, ImageFilter
 
-OUTD = "/home/claude/station/tex"
+OUTD = f"{_R}/tex"
 BLUE = (16, 54, 112, 255)
 WHITE = (240, 238, 228, 255)
 RED = (196, 40, 32, 255)

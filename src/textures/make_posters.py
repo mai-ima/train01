@@ -1,12 +1,13 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Original (fictional) posters, signboards, menus, timetables and maps for every station of the network."""
 import json, math, random, sys, os
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 import make_textures2 as mt
 
-NET = json.load(open("/home/claude/station/net/network.json"))
+NET = json.load(open(f"{_R}/net/network.json"))
 ST = {s["id"]: s for s in NET["stations"]}
-OUT = "/home/claude/station/tex/kit"
+OUT = f"{_R}/tex/kit"
 SANS, SERIF, text = mt.SANS, mt.SERIF, mt.text
 
 THEME = {"M01": "city", "M02": "suburb", "M03": "city", "M04": "suburb", "M05": "farm", "M06": "origin", "M07": "farm", "M08": "forest",

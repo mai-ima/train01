@@ -1,9 +1,10 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Street furniture, vehicles on the road, houses, poles, signs - everything around the station (fictional Honamino)."""
 from common import *
 import lib
 from PIL import Image
 
-TEXD = lib.TEX if hasattr(lib, "TEX") else "/home/claude/station/tex"
+TEXD = lib.TEX if hasattr(lib, "TEX") else f"{_R}/tex"
 _MATS = {}
 FOOT = []   # building footprints (x0,x1,y0,y1) for vegetation exclusion
 

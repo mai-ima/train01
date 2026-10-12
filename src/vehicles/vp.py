@@ -1,6 +1,7 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """視点生成: python3 vp.py EDGE_ID s side dist height  [...] → MULTICAM 文字列 (線路上の点 s[m] を、進行方向に対し side(+左/-右) dist[m] 横、height[m] 高から見る)"""
 import json, sys, math
-g = json.load(open('/home/claude/station/net/track_graph.json'))
+g = json.load(open(f'{_R}/net/track_graph.json'))
 E = {e['id']: e for e in g['edges']}
 def one(eid, s, side, dist, h, lens=32, zt=0.0, back=0.0):
     e = E[eid]; P = e['pts']; i = min(len(P) - 2, max(0, int(s / 2.0)))

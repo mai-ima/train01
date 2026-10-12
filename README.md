@@ -166,12 +166,14 @@ python3 main.py --world markers --parts none --no-render      # 軌道グラフ 
 | `--world markers\|all\|id,id` | 全駅(または指定駅)を世界座標に配置し駅間線路をつなぐ |
 | `--stock on\|off\|SID,..` | 停車車両の表示 |
 | `--people on\|off\|cars\|station` | 人物の表示(車内乗客=kind pax パート / 駅の People コレクション) |
+| `--hq` | 高画質プロファイル(1600px以上・128サンプル・Albedo+Normalデノイズ・適応閾値0.008。最終納品用) |
+| `--draft` | ドラフト画質(確認用: サンプル12・バウンス削減。数倍速い) |
 | `--interf` | ゾーンの検査(線路干渉・ドア・浮き・停車車両) |
 | `--save-blend` / `--pack` / `--tex-max N` | `.blend` 保存 / テクスチャのパック / テクスチャ縮小 |
 | `--pano nodes.json` / `--webexport DIR` | 360° パノラマ / three.js 向けの書き出し |
 | `--rig-export FILE` | 車両リグ構造とメタデータの JSON 出力 |
 
-環境変数: `VEG_LIGHT`(葉カード数の倍率。既定 1、書き出し時 0.35)、`WEATHER`(1=経年変化を適用)、`WEATHER_K`(強さ 0.5)、`ZGRASS`(1=ゾーンの草を散布)、`KEEP_COLS`(保存時に残すコレクション名のカンマ区切り=**コレクション別分割**)、`VEGONLY`/`VEGSLICE`(植生の分割)。
+環境変数: `MULTICAM`(複数カメラ。`x,y,z,tx,ty,tz,lens;…` または `@A;@E;@ZA` のプリセット名。Persistent Data で2枚目以降が速い)、`PEOPLE_BOTH=1`(1回の構築から人物あり `<out>_<n>.png` と なし `<out>_np_<n>.png` の両方を撮る)、`HDRI`/`HDRI_ROT`/`HDRI_STR`(実写HDRI。vtest は既定で assets/hdri を使用)、`STATION_ROOT`(作業ディレクトリ。既定はファイルのある場所)、`ZGRASS_SLOW=1`(草の散布を旧方式に)、`VEG_LIGHT`(葉カード数の倍率。既定 1、書き出し時 0.35)、`WEATHER`(1=経年変化を適用)、`WEATHER_K`(強さ 0.5)、`ZGRASS`(1=ゾーンの草を散布)、`KEEP_COLS`(保存時に残すコレクション名のカンマ区切り=**コレクション別分割**)、`VEGONLY`/`VEGSLICE`(植生の分割)。
 
 ## 座標系と設計の約束
 - **局所座標(駅ゾーン)**: 線路は +x 方向、ホーム側が y=0、駅前が +y。穂波野の基準を `common.py` に定義。

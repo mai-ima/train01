@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Parametric station-zone kit. Each station is built in LOCAL coordinates (main line along +x, track y=0, platform to +y,
 town on both sides) and all new objects are parented to an Empty placed in the world."""
 import json, math, random, os
@@ -6,9 +7,9 @@ import lib, props, rooms, houses, core, trackkit
 from props import G, face_plane
 import make_textures2 as mt
 
-NET = json.load(open("/home/claude/station/net/network.json"))
+NET = json.load(open(f"{_R}/net/network.json"))
 ST = {s["id"]: s for s in NET["stations"]}
-TEX = "/home/claude/station/tex"
+TEX = f"{_R}/tex"
 
 
 class Zone:
@@ -137,7 +138,7 @@ def station_building(x0, x1, y0, y1, st, tx, interior=True, rng=None, wall="wall
         rooms.shelf(g, xo + 0.5, xo + 3.2, y1 - 0.45, zf, face='S', goods="jars", seed=3)
         for k_, nm_ in enumerate(("poster0", "poster1", "notice", "poster2")):
             ip = f"kit/{st['id']}_{nm_}.png"
-            if os.path.exists(f"/home/claude/station/tex/{ip}"):
+            if os.path.exists(f"{_R}/tex/{ip}"):
                 face_plane(f"kit_in_{st['id']}_{k_}", ip, 'S', x0 + 2.0 + k_ * 1.5, y1 - 0.14, zf + 1.1, 0.75, h=1.0, off=0.0)
         rooms.lamp_point(x0 + L * 0.3, (y0 + y1) / 2, zh - 0.5, 40)
         rooms.lamp_point(xo + 2.0, (y0 + y1) / 2, zh - 0.5, 40)

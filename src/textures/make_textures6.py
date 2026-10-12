@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """P6: 会社別ロゴ・社紋、ヘッドマーク(作成のみ・未装着)、方向幕(行先表示)、中吊り広告、車内路線図、番号板。
 すべて原作オリジナル(実在の社名・標章は使わない)。tex/ に保存。"""
 import sys
@@ -6,7 +7,7 @@ import math
 from make_textures2 import *
 from PIL import Image, ImageDraw
 
-OUTD = "/home/claude/station/tex"
+OUTD = f"{_R}/tex"
 
 # 会社: id → (名称, 主色, 副色)
 CO = {

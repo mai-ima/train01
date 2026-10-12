@@ -1,8 +1,9 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """out/<prefix>_<n>.png を N枚ずつコンタクトシートにする。 usage: sheet.py prefix per_sheet cols [labels...]"""
 import sys, glob, re
 from PIL import Image, ImageDraw
 prefix, per, cols = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
-files = sorted(glob.glob(f"/home/claude/station/out/{prefix}_[0-9]*.png"), key=lambda p: int(re.findall(r"_(\d+)\.png", p)[-1]))
+files = sorted(glob.glob(f"{_R}/out/{prefix}_[0-9]*.png"), key=lambda p: int(re.findall(r"_(\d+)\.png", p)[-1]))
 labels = sys.argv[4:]
 tw, th = 640, 360
 for si in range(0, len(files), per):
@@ -16,5 +17,5 @@ for si in range(0, len(files), per):
         d.rectangle([0, 0, 150, 18], fill=(0, 0, 0))
         d.text((4, 3), (labels[idx] if idx < len(labels) else str(idx)), fill=(255, 255, 255))
         W.paste(im, ((i % cols) * tw, (i // cols) * th))
-    out = f"/home/claude/station/out/{prefix}_sheet{si // per}.png"
+    out = f"{_R}/out/{prefix}_sheet{si // per}.png"
     W.save(out); print(out)

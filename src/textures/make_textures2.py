@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Showa / national-railway-era signboards for the fictional Honamino station.
 All artwork is original: invented town, invented advertisers, no real logos or marks.
 """
@@ -7,7 +8,7 @@ import random
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-OUT = "/home/claude/station/tex"
+OUT = f"{_R}/tex"
 FD = "/usr/share/fonts/opentype/noto/"
 random.seed(21)
 np.random.seed(21)

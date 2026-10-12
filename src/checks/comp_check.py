@@ -1,5 +1,6 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 import json
-g=json.load(open('/home/claude/station/net/track_graph.json'))
+g=json.load(open(f'{_R}/net/track_graph.json'))
 par={}
 def f(x):
     par.setdefault(x,x)

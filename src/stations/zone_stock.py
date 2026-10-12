@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """ゾーン内の停車車両: 駅ごとの stock(会社別)に応じ、線路上に編成を置く。リグ規約に従う(Veh.place)。
 kit2.build_zone から Zone 内で呼ぶ(車両は自動的にゾーン空empty配下になる)。"""
 import math
@@ -141,7 +142,7 @@ def set_stock(show):
 def _cfg(sid):
     """net/stock_cfg.json: {"SID": {"enabled": bool, "consists": [{"track":k,"kind":"emu|kiha|tram|mono|freight","opt":{..},"n":3,"x":0.0,"flip":false}]}}"""
     import json, os
-    p = "/home/claude/station/net/stock_cfg.json"
+    p = f"{_R}/net/stock_cfg.json"
     try:
         return json.load(open(p)).get(sid, {}) if os.path.exists(p) else {}
     except Exception as e:

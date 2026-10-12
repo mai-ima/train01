@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Helpers: mesh accumulation + procedural materials for the Honamino station scene."""
 import math
 import os
@@ -8,7 +9,7 @@ import bpy
 import numpy as np
 from mathutils import Vector
 
-TEX = "/home/claude/station/tex"
+TEX = f"{_R}/tex"
 
 # ============================================================== collections / linking
 _cols = {}
@@ -750,7 +751,7 @@ def mat_tactile(name, color=(0.78, 0.60, 0.04)):
 
 
 # ============================================================== real-photo PBR materials (ambientCG, CC0)
-PBR = "/home/claude/station/pbr"
+PBR = f"{_R}/pbr"
 
 
 def pbr_layer(m, tid, scale=1.0, rot=(0, 0, 0), vec=None):

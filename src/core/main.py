@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Build + render the Honamino station (national-railway era). Usage:
 python3 main.py --cam A --w 960 --samples 24 --parts core,station --out test
 """
@@ -7,7 +8,7 @@ import os
 import sys
 import time
 
-sys.path.insert(0, "/home/claude/station")
+sys.path.insert(0, f"{_R}")
 import bpy
 from mathutils import Vector
 
@@ -42,6 +43,7 @@ ap.add_argument("--world", default="", help="markers | all | id,id,... : 全駅�
 ap.add_argument("--rig-export", default="", help="車両リグ構造+メタデータをJSON出力")
 ap.add_argument("--pano-start", type=int, default=0)
 ap.add_argument("--dof", type=float, default=0.0, help="f-stop; 0=off")
+ap.add_argument("--draft", action="store_true", help="ドラフト画質(確認用): サンプル12・光路を浅く・ガラス/透過のバウンス削減。構築後のレンダが数倍速い")
 ap.add_argument("--hq", action="store_true", help="高画質プロファイル(1600px以上・128サンプル・アルベド/法線つきデノイズ・細かい適応閾値)")
 args = ap.parse_args()
 if args.hq:
@@ -183,18 +185,18 @@ if args.zone:
     _zs.set_stock(True if args.stock == "on" else (False if args.stock == "off" else set(args.stock.split(","))))
     if args.interf:
         import interf
-        _r = interf.run(args.zone, f"/home/claude/station/out/interf_{args.zone}.json")
+        _r = interf.run(args.zone, f"{_R}/out/interf_{args.zone}.json")
         import doorcheck, json as _j
         _bad, _nd = doorcheck.run()
-        _j.dump(_bad, open(f"/home/claude/station/out/doors_{args.zone}.json", "w"), ensure_ascii=False)
+        _j.dump(_bad, open(f"{_R}/out/doors_{args.zone}.json", "w"), ensure_ascii=False)
         print("DOORS", args.zone, _nd, "blocked", len(_bad), _bad[:5])
         print("INTERF", args.zone, {k: (v["n"], v["verts"]) for k, v in _r.items()})
         import floatcheck
         _f = floatcheck.run(args.zone)
-        _j.dump(_f, open(f"/home/claude/station/out/float_{args.zone}.json", "w"), ensure_ascii=False)
+        _j.dump(_f, open(f"{_R}/out/float_{args.zone}.json", "w"), ensure_ascii=False)
         import stockcheck
         _s5 = stockcheck.run(args.zone)
-        _j.dump(_s5, open(f"/home/claude/station/out/stockhit_{args.zone}.json", "w"), ensure_ascii=False)
+        _j.dump(_s5, open(f"{_R}/out/stockhit_{args.zone}.json", "w"), ensure_ascii=False)
         print("STOCKHIT", args.zone, len(_s5), list(_s5.items())[:6])
         print("FLOAT", args.zone, len(_f), list(_f.items())[:6])
 if args.world:
@@ -469,6 +471,12 @@ if args.hq:
     r.filter_size = 1.2
 cy.caustics_reflective = False
 cy.caustics_refractive = False
+if args.draft:                       # 確認用の速い設定(最終納品は --hq)。Blender公式: バウンスを減らすとノイズも時間も減る
+    cy.samples = min(cy.samples, 12)
+    cy.adaptive_threshold = 0.06
+    cy.max_bounces = 4; cy.diffuse_bounces = 2; cy.glossy_bounces = 2
+    cy.transmission_bounces = 3; cy.transparent_max_bounces = 4
+    cy.sample_clamp_indirect = 4.0     # 公式の例(間接のみクランプ 4)
 if os.environ.get('MULTICAM'):
     r.use_persistent_data = True       # 同一シーンを複数カメラで撮る時、BVH等を再利用して2枚目以降を速くする(Blender公式 Performance > Persistent Data)
 scene.view_settings.view_transform = 'AgX'

@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Poster / signboard generator v2: every station gets its own palette, its own style mix (woodblock / enamel / watercolour / retro halftone / photo postcard / handwritten notice / newspaper / nobori),
 its own motif set and copy. Original artwork only."""
 import json, math, random, sys, os, colorsys
@@ -5,10 +6,10 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageChops
 import make_textures2 as mt
 
-NET = json.load(open("/home/claude/station/net/network.json"))
+NET = json.load(open(f"{_R}/net/network.json"))
 ST = {s["id"]: s for s in NET["stations"]}
 IDX = {s["id"]: i for i, s in enumerate(NET["stations"])}
-OUT = "/home/claude/station/tex/kit"
+OUT = f"{_R}/tex/kit"
 SANS, SERIF = mt.SANS, mt.SERIF
 STYLES = ["woodblock", "enamel", "watercolor", "retro", "photo", "newspaper", "hand", "nobori"]
 MOT = {"mountain": ["山", "峠", "高嶺", "高原", "岳"], "sea": ["港", "海", "浦", "汐", "湊", "灯台", "岬", "磯", "埠頭"], "onsen": ["湯", "温泉", "足湯"],
@@ -314,7 +315,7 @@ def st_retro(sid, k, P, rng, W=760, H=1080):
 
 def st_photo(sid, k, P, rng, W=900, H=700):
     st = ST[sid]
-    src = f"/home/claude/station/out/z_{sid}.png"
+    src = f"{_R}/out/z_{sid}.png"
     if os.path.exists(src):
         ph = Image.open(src).convert("RGB")
         ph = ph.resize((W - 120, int((W - 120) * ph.height / ph.width)))

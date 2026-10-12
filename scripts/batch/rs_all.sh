@@ -1,4 +1,4 @@
-cd /home/claude/station
+cd "$(dirname "$(readlink -f "$0")")"
 mkdir -p out/contact; rm -f out/contact/done.txt
 ids=$(python3 -c "
 import sys; sys.argv=['x']

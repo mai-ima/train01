@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """kit3: bespoke builders for special stations (megaterminal 国都中央 first).  Local frame: tracks along +x ending at buffer stops x=0,
 headhouse at x>0, forecourt further +x.  Wrapped by kit.Zone from kit2.build_zone."""
 import math, random
@@ -10,7 +11,7 @@ from kit import ST, platform, mats
 import kit_town as KT
 
 ZP = Z_PLAT
-TEX = kit.TEX if hasattr(kit, "TEX") else "/home/claude/station/tex"
+TEX = kit.TEX if hasattr(kit, "TEX") else f"{_R}/tex"
 import os
 
 

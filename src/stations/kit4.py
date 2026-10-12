@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """kit4: 線路網。各駅ゾーンの入口/出口(座標・向き)を合わせ、駅間線路をエルミート曲線で連結する(自社・他社すべて)。
 局所座標: +x = 路線の進行方向(order順)。終端駅は列車が入ってくる向きが +x。"""
 import math, json
@@ -552,7 +553,7 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None):
             props.pole(poles, float(q[0]), float(q[1]), h=8.0, arms=((7.4, 0.9, 3),), axis='y', old=True)
 
 
-def export_graph(path="/home/claude/station/net/track_graph.json"):
+def export_graph(path=f"{_R}/net/track_graph.json"):
     """運転準備: 軌道グラフ(後から列車を走らせるためのデータ)。座標はワールド(m)、折れ線は2m間隔、s=弧長。"""
     sect = {(s[0], s[1]): s for s in NET["sect"]}
     edges, stops = [], []

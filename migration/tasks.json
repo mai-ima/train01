@@ -931,7 +931,7 @@
  },
  {
   "id": 209,
-  "status": "in_progress",
+  "status": "completed",
   "subject": "【CO6】全 .md の再読と台帳整理(タスクのルール確認・順番最適化・細分化・旧割り込み指示の追加)"
  },
  {
@@ -996,7 +996,7 @@
  },
  {
   "id": 222,
-  "status": "pending",
+  "status": "completed",
   "subject": "【Q8】絶対パス '/home/claude/station' の一元化(common.ROOT / 環境変数 STATION_ROOT)。52ファイル39箇所を置換し setup の sed を不要にする"
  },
  {
@@ -1006,7 +1006,7 @@
  },
  {
   "id": 224,
-  "status": "pending",
+  "status": "completed",
   "subject": "【Q10】車両の数値検査 vehcheck.py(寸法・接地・部品の接続・仕様値との照合。VLMが見逃す空間誤差を決定論的に検出)"
  },
  {
@@ -1018,5 +1018,55 @@
   "id": 226,
   "status": "in_progress",
   "subject": "【W4】撮影バッチの健全性スキャン(healthscan.py)導入・既存の握りつぶし except の見直し"
+ },
+ {
+  "id": 227,
+  "status": "completed",
+  "subject": "【F5a】実車の参照表(net/vehicle_reference.md): 検証できた寸法の記録と照合(103系・113系・165系・181系・キハ52・DT21)。jnr_dc/kiha_std を実車値へ"
+ },
+ {
+  "id": 228,
+  "status": "pending",
+  "subject": "【F5b】実車準拠: 窓割・扉位置・窓寸法(日本語版資料・ユーザー提供の図面で補う。未確認項目を埋める)"
+ },
+ {
+  "id": 229,
+  "status": "pending",
+  "subject": "【F5c】実車準拠: 前面形状・灯具・ワイパー・運転台(形式ごと)"
+ },
+ {
+  "id": 230,
+  "status": "pending",
+  "subject": "【F5d】実車準拠: 台車の型別化(DT21/DT33/DT22/DT23/TR系の形状差)と床下機器の配置"
+ },
+ {
+  "id": 231,
+  "status": "pending",
+  "subject": "【F5e】実車準拠: 座席・通路・つり革の寸法(ピッチ1,490等)と内装の形式別仕様"
+ },
+ {
+  "id": 232,
+  "status": "pending",
+  "subject": "【B6b】駅内部: 特殊駅(M01/M19/kit6系8駅)の改札・券売機・出札・コンコース(kit8.ticket_hall の流用と全駅展開)"
+ },
+ {
+  "id": 233,
+  "status": "pending",
+  "subject": "【B6c】駅内部: ホーム設備(ベンチ・案内板・時計・売店・自販機)を駅ごとに配置"
+ },
+ {
+  "id": 234,
+  "status": "pending",
+  "subject": "【B6d】駅内部: 階段・通路・案内標識・トイレ・駅事務室・待合の作り込みと照明"
+ },
+ {
+  "id": 235,
+  "status": "pending",
+  "subject": "【G1a】納品の先行完成: 全42ゾーン.blend(27MB以下・テクスチャ共有)の書き出しと一覧(W1)"
+ },
+ {
+  "id": 236,
+  "status": "pending",
+  "subject": "【G1b】納品の先行完成: 全駅の全景/目線/俯瞰レンダ(人物あり/なし・--hq)と360°パノラマの更新"
  }
 ]

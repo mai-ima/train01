@@ -75,7 +75,7 @@ TYPES = {
     "jnr_dc": dict(
         fs="sabo", ss="sabo",
         ds="two", ps="weld", wc=(0.05, 0.05), liner="t_white", lamp="tube",
-        title="通勤形(平妻・4扉)", L=20.0, W=2.80, z=(1.10, 1.80, 2.62, 3.00, 3.52), cab=1.55, zb0=0.92,
+        title="通勤形(平妻・4扉)", L=20.0, W=2.80, z=(1.10, 1.80, 2.62, 3.00, 3.655), cab=1.55, zb0=0.92,
         lo="t_sky", up="t_sky", door="t_grey", mask="t_warn", stripe=[],
         pattern="w1 D w3 D w3 D w3 D w1", door_w=1.30, win="single", pillar=0.13,
         front="flat", screens=2, lamps="belt", roofshape="round",
@@ -93,7 +93,7 @@ TYPES = {
     "jnr_exp": dict(
         fs="holder", ss="sabo",
         ds="deck", ps="rivets", wc=(0.12, 0.0), liner="t_panel", lamp="tube",
-        title="急行形(2扉デッキ・大窓)", L=20.0, W=2.90, z=(1.15, 1.85, 2.60, 3.02, 3.60), cab=1.95, zb0=0.92,
+        title="急行形(2扉デッキ・大窓)", L=19.1, W=2.90, z=(1.15, 1.85, 2.60, 3.02, 3.60), cab=1.95, zb0=0.92,
         lo="t_verm", up="t_cream", door="t_verm", mask="t_verm", stripe=[("t_verm", 2.64, 2.76)],
         pattern="D s w8 D", door_w=0.95, win="wide", pillar=0.09,
         front="slope", slope="twin", nose=0.9, screens=2, lamps="roofc", roofshape="round", rake=0.30, headboard=True,
@@ -102,10 +102,10 @@ TYPES = {
     "jnr_ltd": dict(
         fs="holder", ss="roll",
         ds="plug", ps="flute", wc=(0.16, 0.16), liner="t_cream", lamp="strip",
-        title="特急形(ボンネット・リクライニング)", L=20.5, W=2.95, z=(1.22, 1.90, 2.70, 3.10, 3.66), cab=2.0, zb0=0.90,
+        title="特急形(ボンネット・リクライニング)", L=19.4, W=2.95, z=(1.22, 1.90, 2.70, 3.10, 3.66), cab=2.0, zb0=0.90,
         lo="t_cream", up="t_cream", door="t_cream", mask="t_ltdred", stripe=[("t_ltdred", 1.10, 1.30), ("t_ltdred", 2.78, 2.98)],
         pattern="D s w9 D", door_w=0.90, win="wide", pillar=0.08,
-        front="bonnet", screens=3, lamps="bonnet", roofshape="round", nose=2.1,
+        front="bonnet", screens=3, lamps="bonnet", roofshape="round", nose=1.1,
         roof=["pant", "acpod", "aerial"], pant_x=5.8, bogie=("air", 2.3, 0.43), under="skirtfull",
         seat="t_moq_y", interior="recline", standing=False),
     "jnr_ac": dict(
@@ -139,7 +139,7 @@ TYPES = {
 
 TYPES.update({
     "kiha_std": dict(
-        title="国鉄一般形気動車(2扉・ラジエーター)", L=20.0, W=2.80, z=(1.12, 1.80, 2.58, 2.98, 3.50), cab=1.75, zb0=0.92, diesel=True,
+        title="国鉄一般形気動車(2扉・ラジエーター)", L=21.3, W=2.93, z=(1.12, 1.80, 2.58, 2.98, 3.645), cab=1.75, zb0=0.92, diesel=True,
         fs="sabo", ss="sabo", ds="hing", ps="lap", wc=(0.04, 0.04), liner="t_cab", lamp="globe",
         lo="t_orange", up="t_cream", door="t_orange", mask="t_orange", stripe=[],
         pattern="w2 D w8 D w2", door_w=1.05, win="pair", pillar=0.11,
@@ -147,7 +147,7 @@ TYPES.update({
         roof=["radiator", "exhaust", "garland"], pant_x=0.0, bogie=("dt", 2.1, 0.43), under="engine",
         seat="t_moq_g", interior="box", standing=False),
     "kiha_exp": dict(
-        title="国鉄急行形気動車(2扉デッキ・大窓)", L=21.0, W=2.90, z=(1.18, 1.86, 2.62, 3.04, 3.58), cab=2.0, zb0=0.92, diesel=True,
+        title="国鉄急行形気動車(2扉デッキ・大窓)", L=20.3, W=2.90, z=(1.18, 1.86, 2.62, 3.04, 3.58), cab=2.0, zb0=0.92, diesel=True,
         fs="holder", ss="sabo", ds="deck", ps="beads", wc=(0.10, 0.02), liner="t_panel", lamp="tube",
         lo="t_cream", up="t_cream", door="t_green", mask="t_green", stripe=[("t_green", 1.62, 1.80), ("t_navy", 2.64, 2.78)],
         pattern="D s w9 D", door_w=0.95, win="wide", pillar=0.08,
@@ -163,11 +163,11 @@ TYPES.update({
         roof=["pant", "hybrid", "aerial"], pant_x=-5.2, bogie=("dt", 2.1, 0.43), under="skirtfull",
         seat="t_moq_b", interior="mix", standing=True),
     "kiha_ltd": dict(
-        title="国鉄特急ハイブリッド気動車(展望前面)", L=21.0, W=2.95, z=(1.20, 1.92, 2.66, 3.06, 3.60), cab=2.1, zb0=0.9, diesel=True,
+        title="国鉄特急ハイブリッド気動車(展望前面)", L=19.8, W=2.95, z=(1.20, 1.92, 2.66, 3.06, 3.60), cab=2.1, zb0=0.9, diesel=True,
         fs="roll", ss="roll", ds="modern", ps="smooth", wc=(0.18, 0.18), liner="t_cream", lamp="strip",
         lo="t_ivory", up="t_ivory", door="t_ivory", mask="t_navy", stripe=[("t_navy", 1.20, 1.46), ("t_gold", 2.70, 2.76)],
         pattern="D s w9 D", door_w=0.95, win="ribbon", pillar=0.06,
-        front="slope", slope="pano", screens=3, lamps="round", roofshape="round", nose=1.6, rake=0.1,
+        front="slope", slope="pano", screens=3, lamps="round", roofshape="round", nose=1.2, rake=0.1,
         roof=["pant", "hybrid", "acpod"], pant_x=6.0, bogie=("air", 2.3, 0.43), under="skirtfull",
         seat="t_moq_o", interior="recline", standing=False),
     "kiha_sr": dict(
@@ -1432,7 +1432,7 @@ def _interior(v, S, tot, bays, seed):
                         _x0 = a + _k * _sp + 0.012
                         _x1 = a + (_k + 1) * _sp - 0.012
                         _rbox(v, seat, _x0, _x1, *sorted((s * (h - 0.09), s * (h - 0.56))), zfl + 0.30, zfl + 0.42 - (0.015 if _k % 2 else 0), r=0.04)
-                        v.A(seat, 0.03).sbox(((_x0 + _x1) / 2, s * (h - 0.20), zfl + 0.42), ((_x0 + _x1) / 2, s * (h - 0.115), zfl + 0.90), _x1 - _x0, 0.075)
+                        v.A(seat, 0.03).sbox(((_x0 + _x1) / 2, s * (h - 0.20), zfl + 0.42), ((_x0 + _x1) / 2, s * (h - 0.115), zfl + 0.90), _x1 - _x0, 0.075, up=(0, 1, 0))   # 幅を x 方向に(旧: 90°横向きで壁を貫通していた=vehcheck が検出)
                     v.A("t_steel" if st == "subway" else "t_grey").box(a, a + 0.03, *sorted((s * (h - 0.09), s * (h - 0.58))), zfl + 0.02, zfl + 0.98)   # 袖仕切
                     v.A("t_steel" if st == "subway" else "t_grey").box(b - 0.03, b, *sorted((s * (h - 0.09), s * (h - 0.58))), zfl + 0.02, zfl + 0.98)
                     # 乗客

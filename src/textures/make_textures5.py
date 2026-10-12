@@ -1,9 +1,10 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Shop/inn/shrine/depot/goods signs and menus (all fictional names)."""
 import sys
 sys.argv = sys.argv[:1]
 from make_textures2 import *
 from PIL import Image, ImageDraw
-OUTD = "/home/claude/station/tex"
+OUTD = f"{_R}/tex"
 
 
 def board(W, H, base=(206, 184, 140), edge=(60, 40, 22)):

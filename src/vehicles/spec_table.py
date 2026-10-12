@@ -1,6 +1,7 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """vehtypes.py の TYPES(dict(...)リテラル)から net/vehicle_spec.md を生成する(bpy不要)。"""
 import ast
-src = open("/home/claude/station/vehtypes.py").read()
+src = open(f"{_R}/vehtypes.py").read()
 tree = ast.parse(src)
 rows = {}
 for n in ast.walk(tree):
@@ -26,5 +27,5 @@ for t, d in rows.items():
     seen.setdefault(k, []).append(t)
 dup = [v for v in seen.values() if len(v) > 1]
 out += ["", "## 差別化チェック(窓扉割・扉・外板・前面が全て同じ形式の組)", "なし" if not dup else "\n".join("- " + ", ".join(v) for v in dup)]
-open("/home/claude/station/net/vehicle_spec.md", "w").write("\n".join(out) + "\n")
+open(f"{_R}/net/vehicle_spec.md", "w").write("\n".join(out) + "\n")
 print(len(rows), "types; dup:", dup)

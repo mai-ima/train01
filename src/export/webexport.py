@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Export the built Blender scene to a compact real-time format (chunked binary + manifest) for the three.js viewer."""
 import gzip
 import json
@@ -11,7 +12,7 @@ import numpy as np
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
-OUT = "/home/claude/station/web"
+OUT = f"{_R}/web"
 VCOL_NAMES = ("Col", "Color", "col", "color")
 
 

@@ -67,3 +67,9 @@
 - `src/` は機能別(`core/ honamino/ stations/ vehicles/ textures/ checks/ export/`)、`scripts/` は運用(直下)と一括系(`batch/`)、`renders/work/` は用途別(`vehicles/ interiors/ stations/ structures/ misc/`)、路線図キャプチャは `renders/routemap/`。履歴は `git mv` で保持。
 - **作業はこれまでどおりフラットな作業ディレクトリ**(`bash migration/setup_workspace.sh` が `src/**/*.py` と `scripts/**/*.sh` をフラットに展開)。作業側の変更は `bash scripts/sync_safe.sh` で repo の機能別構成へ書き戻す(同名ファイルは元の場所へ、新規は `src/misc/`・`scripts/batch/`)。
 - 文書の入口は `docs/README.md`。**`net/` の .md(taxonomy / session_state / research_tour など)は CLAUDE.md や hook から参照されるため動かしていない**。以前の記述にある `src/xxx.py`・`scripts/xxx.sh` は、それぞれ機能別/batch 配下に移動している(ファイル名で検索)。
+
+## 11. Claude Code セッションの到達点(2026-10-12 夜時点)と次の一手
+- 完了(最優先): S-G8 リポジトリ整理 / S-T1 新タスク一覧(docs/TASK_LIST.md) / S-M1 モデリング調査(migration/research_modeling.md) / S-Q7 根本原因(docs/ROOT_CAUSES.md)。ほか R9 路線図再出力(artifact Version 6)・X14 超超超厳格基準・V4 人物ON/OFF両撮り・W3 速度(草の散布BVH化で構築10倍速・--hq/--draft・Persistent Data)・B6a 駅舎の改札/券売機・Q8 絶対パス一元化・F5a 実車参照表(net/vehicle_reference.md)。
+- 重大バグ修正: 停車車両の配置(zone_stock の _len/_nose2)。**旧レンダの駅には車両がない**ため全駅を撮り直し中(E3a: scripts/e3_batch.sh、出力 out/e3b/、`--draft`)。
+- 車両・車内の独立監査は2回とも全件不合格(外観約55・車内約45)。**手続き型の天井**。ユーザー判断待ち: docs/REQUESTS_TO_USER.md B-1。
+- 次: E3a の確認と healthscan → G1a/G1b(納品の先行完成)→ F5b〜e → 群監査。待機は短い呼び出し+Monitor、長い同期待機をしない(CLAUDE.md の運用ルール)。

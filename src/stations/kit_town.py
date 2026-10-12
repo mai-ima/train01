@@ -1,15 +1,16 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Dense town around a kit station: shopfront rows (signboard architecture), billboards, vending machines, fences, poster boards."""
 import os, math, random
 from common import *
 import lib, props
 from props import G, face_plane
 
-KIT = "/home/claude/station/tex/kit"
+KIT = f"{_R}/tex/kit"
 
 
 def img(sid, name):
     p = f"kit/{sid}_{name}.png"
-    return p if os.path.exists(f"/home/claude/station/tex/{p}") else None
+    return p if os.path.exists(f"{_R}/tex/{p}") else None
 
 
 def shopfront(sid, x, y, w, d, floors, wall, sign, face='S', name="sf", roof="gable", poster=None, rng=None):

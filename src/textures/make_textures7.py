@@ -1,6 +1,7 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """P7: 周遊列車「結」の画像(エンブレム・献立・乗車券・旅程ポスター)。原作オリジナル。tex/ に保存。"""
 import sys
-sys.path.insert(0, "/home/claude/station/net")
+sys.path.insert(0, f"{_R}/net")
 import math
 import make_textures6 as m
 from make_textures6 import canvas, fin, SERIF, SANS, S, OUTD

@@ -1,7 +1,8 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """穂波野 本社区画の看板画像(オリジナル)。"""
 from PIL import Image, ImageDraw
 import make_textures as T
-OUT = "/home/claude/station/tex"
+OUT = f"{_R}/tex"
 
 
 def plate(name, lines, W=1600, H=420, bg=(28, 36, 33), fg=(226, 205, 140), sub=None, border=(150, 130, 80)):

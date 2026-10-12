@@ -1,10 +1,11 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Shared layout constants + material registry for the Honamino station scene (national-railway era)."""
 import math
 import os
 import random
 import sys
 
-sys.path.insert(0, "/home/claude/station")
+sys.path.insert(0, f"{_R}")
 
 import bpy
 import numpy as np
@@ -13,7 +14,7 @@ from mathutils import Vector
 import lib
 from lib import Acc, Mat, collection, image_plane, link, np_mesh
 
-OUT = "/home/claude/station/out"
+OUT = f"{_R}/out"
 os.makedirs(OUT, exist_ok=True)
 
 # ------------------------------------------------------------------ layout (metres, Z up, track along X)

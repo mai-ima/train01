@@ -1,4 +1,4 @@
-cd /home/claude/station
+cd "$(dirname "$(readlink -f "$0")")"
 for s in $(python3 -c "
 import sys; sys.argv=['x']
 import kit

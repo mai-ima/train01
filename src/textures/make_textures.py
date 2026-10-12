@@ -1,3 +1,4 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
 """Generate sign / poster textures for the fictional rural station (Honamino).
 Everything here is original artwork; no real logos or brands.
 """
@@ -5,7 +6,7 @@ import os
 import random
 from PIL import Image, ImageDraw, ImageFont
 
-OUT = "/home/claude/station/tex"
+OUT = f"{_R}/tex"
 os.makedirs(OUT, exist_ok=True)
 FD = "/usr/share/fonts/opentype/noto/"
 
