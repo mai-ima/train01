@@ -54,3 +54,10 @@
 - setup_workspace.sh は成功。bpy は未導入だったため `pip install --break-system-packages bpy==5.2.2`(Python 3.13)で導入でき、`import bpy` は 5.2.2 LTS。
 - 煙テスト `python3 main.py --zone SH04 --parts none --cam ZA --w 400 --samples 4 --out smoke` は成功(約2分27秒、4コア)。警告: CUEW 初期化失敗(CPUレンダでは無害)、World.use_nodes の非推奨警告。
 - 未検証: Playwright(路線図の検査用)の有無。
+
+## 9. 全ファイル確認で見つかった不整合(2026-10-12・Claude Code 側)
+- **点数基準の置き場**: 点数化・厳格化(95/90、未確認=0)は元々 `net/audit_rubric.md` にだけあり、`docs/audit_rubric.md`(strict-auditor が参照)には無かった → docs 側へ追記して一致させた(`net/` 側は残置)。
+- **`scripts/sync_repo.sh` は使用禁止**: repo を .git と CLAUDE.md 以外すべて削除して再コピーする上、パスが /home/claude/train01 固定・`dotclaude/` を前提にしており、この環境(repo=/home/user/train01)では repo を破壊しうる。コミットは通常の `git add/commit/push` で行う。必要なら作業側→repo の一方向コピーだけを行う安全版を別途作る。
+- **`net/vehicle_spec.md` は古い**(自動生成: spec_table.py。例: kiha_std の前面は現行 gate だが表は vee)。F3c の変更後に `net/mkspec.py` 等で再生成する。
+- `scripts/continue_check.sh` と `recovery_snapshot.sh` は /home/claude/station・/home/claude/train01 固定(setup が sed で置換するのは展開先のコピーのみ。repo 側の scripts/ は元のまま)。
+- 会話ログ jsonl の探索パスは /root/.claude/projects/-home-claude*/ 固定。ここでは該当なし(旧ログは migration/transcripts/ のみ)。
