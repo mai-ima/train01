@@ -1176,5 +1176,11 @@
   "subject": "【W5】撮影バッチ運用の整備(並列2・draft/hqの使い分け・後処理自動化・再撮リスト自動生成)",
   "status": "in_progress",
   "description": "2026-10-12 追加(ユーザー指示: 必要なタスクを全て追加)。詳細は TaskList / session_state 参照。"
+ },
+ {
+  "id": 255,
+  "subject": "【CO8】タスクルールの集約(docs/TASK_RULES.md)と運用の徹底",
+  "status": "completed",
+  "description": "割り込み指示・タスク追加依頼・自主追加・優先度の読み方を1枚に集約。以後これに従う。"
  }
 ]
