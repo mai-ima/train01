@@ -633,8 +633,17 @@ if not args.no_render and os.environ.get('MULTICAM'):
             bpy.data.collections["People"].hide_render = not show
     for _i, _c in enumerate([x for x in os.environ['MULTICAM'].split(';') if x.strip()]):
         if _c.strip().startswith('@'):                  # @A のようにプリセットカメラ名で指定できる
-            _cc = CAMS[_c.strip()[1:]]
-            _v = [*_cc[0], *_cc[1], _cc[2]]
+            if _c.strip()[1:] == "L":                       # @L: 駅の象徴物(landmark)を主題にしたカメラ(駅ごとに構図が変わる)
+                import kit2 as _k2
+                _lm = _k2.DESIGN.get(getattr(args, "zone", ""), {}).get("lm") or []
+                if _lm:
+                    _lx, _ly = float(_lm[0][1]), float(_lm[0][2])
+                    _v = [_lx - 28.0, _ly - 40.0, 3.0, _lx, _ly, 9.0, 24]
+                else:
+                    _v = [*CAMS["B"][0], *CAMS["B"][1], CAMS["B"][2]]
+            else:
+                _cc = CAMS[_c.strip()[1:]]
+                _v = [*_cc[0], *_cc[1], _cc[2]]
             _big = {"M01": 2.6, "M06": 1.8}.get(getattr(args, "zone", ""), 1.0)   # 大規模駅は俯瞰/斜めを遠ざける
             if _big != 1.0 and _c.strip()[1:] in ("ZA", "E"):
                 _v[0] *= _big; _v[1] *= _big; _v[2] *= _big
@@ -646,7 +655,7 @@ if not args.no_render and os.environ.get('MULTICAM'):
                 _v[1] = _v[4] + _dx * math.sin(_ang) + _dy * math.cos(_ang)
         else:
             _v = [float(t) for t in _c.split(',')]
-        if _c.strip().startswith('@') and _c.strip()[1:] in ("A", "E"):      # 構造物に視界を塞がれるカメラは横にずらす(E3 所見: M03 の A が壁で遮られた)
+        if _c.strip().startswith('@') and _c.strip()[1:] in ("A", "E", "L"):      # 構造物に視界を塞がれるカメラは横にずらす(E3 所見: M03 の A が壁で遮られた)
             _v[0], _v[1], _v[2] = _cam_clear(_v)
         cob.location = (_v[0], _v[1], _v[2])
         cob.rotation_euler = (Vector((_v[3], _v[4], _v[5])) - Vector(cob.location)).to_track_quat('-Z', 'Y').to_euler()
