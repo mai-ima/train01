@@ -1490,7 +1490,7 @@ def _interior(v, S, tot, bays, seed):
                                 v.A("t_grey").box(x + 0.0, x + 0.2, cy - 0.23, cy - 0.21, zfl + 0.45, zfl + 0.70) if False else None
                             else:
                                 _rbox(v, seat, x - 0.31, x - 0.21, cy - 0.26, cy + 0.26, zfl + 0.40, zfl + 0.98, r=0.045)
-                                v.A("t_white", 0.01).box(x - 0.31, x - 0.215, cy - 0.17, cy + 0.17, zfl + 0.80, zfl + 0.98)     # 頭当て
+                                _rbox(v, "t_white", x - 0.325, x - 0.205, cy - 0.17, cy + 0.17, zfl + 0.78, zfl + 0.99, r=0.03)     # 頭当て
                                 v.A("t_steel").box(x - 0.18, x + 0.20, *sorted((cy - s * 0.27, cy - s * 0.29)), zfl + 0.40, zfl + 0.56)   # 肘掛け
                             if rnd.random() < 0.28:
                                 _rider(v, x - 0.02, cy, zfl, 0.0, True, rnd=rnd)
