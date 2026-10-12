@@ -266,6 +266,36 @@ def _body(v, S):
     # 雨どい
     for s in (-1, 1):
         v.A("t_grey", 0.003).box(-L / 2, L / 2, *sorted((s * (h - 0.005), s * (h + 0.04))), zt - 0.02, zt + 0.02)
+    # 窓まわりの縁(シル/ヘッダー)と外板の仕上げ(形式ごとに別: リベット列/下見板/縦ビード/流線の溝/溶接線)
+    ps = S.get("ps", "weld")
+    sillk = "t_steel" if ps in ("rivets", "beads", "flute", "ribs") else up
+    for s in (-1, 1):
+        v.A(sillk, 0.003).box(-L / 2 + 0.05, L / 2 - 0.05, *sorted((s * (h - 0.002), s * (h + 0.022))), zs - 0.035, zs)           # 窓台(シル)
+        v.A(sillk, 0.003).box(-L / 2 + 0.05, L / 2 - 0.05, *sorted((s * (h - 0.002), s * (h + 0.016))), zw1, zw1 + 0.022)          # 窓上(ヘッダー)
+        yy = sorted((s * h, s * (h + 0.008)))
+        if ps == "rivets":
+            a = v.A("steel", 0.002)
+            for zz in (zb0 + 0.06, zs - 0.10):
+                x = -L / 2 + 0.2
+                while x < L / 2 - 0.2:
+                    a.box(x - 0.011, x + 0.011, *sorted((s * h, s * (h + 0.012))), zz - 0.011, zz + 0.011); x += 0.115
+        elif ps == "lap":
+            for k in range(int((zs - zb0 - 0.05) / 0.11)):
+                v.A("t_grey", 0.002).box(-L / 2 + 0.03, L / 2 - 0.03, *sorted((s * h, s * (h + 0.007))), zb0 + 0.06 + k * 0.11, zb0 + 0.068 + k * 0.11)
+        elif ps == "beads":
+            x = -L / 2 + 0.3
+            while x < L / 2 - 0.3:
+                v.A("t_grey", 0.002).box(x - 0.012, x + 0.012, *sorted((s * h, s * (h + 0.012))), zb0 + 0.04, zs - 0.04); x += 0.46
+        elif ps == "flute":
+            for k in range(7):
+                v.A("t_grey", 0.002).box(-L / 2 + 0.2, L / 2 - 0.2, *sorted((s * h, s * (h + 0.006))), zb0 + 0.10 + k * 0.095, zb0 + 0.106 + k * 0.095)
+        elif ps == "plank":
+            for k in range(int((zs - zb0 - 0.05) / 0.14)):
+                v.A("t_grey", 0.002).box(-L / 2 + 0.03, L / 2 - 0.03, *sorted((s * h, s * (h + 0.005))), zb0 + 0.07 + k * 0.14, zb0 + 0.074 + k * 0.14)
+        elif ps == "weld":
+            x = -L / 2 + 1.3
+            while x < L / 2 - 1.0:
+                v.A("t_grey", 0.002).box(x - 0.006, x + 0.006, *sorted((s * h, s * (h + 0.005))), zb0 + 0.02, zs - 0.02); x += 1.9
 
 
 def _fillet(v, key, xc, zc, r, sx, sz, ya, yb):
