@@ -21,7 +21,7 @@ def vpaint(name, color, rough=0.5, rust=0.25, grime=0.8, seams=True, metal=0.0, 
     st = m.ramp(streak, [(0.45, (0, 0, 0)), (0.75, (1, 1, 1))])
     low = m.maprange(z, 0.45, 2.4, 1.0, 0.0)
     low = m.math('MULTIPLY', low, m.ramp(m.noise(scale=2.2, detail=5), [(0.25, (0.5, 0.5, 0.5)), (0.7, (1.2, 1.2, 1.2))]))
-    gm = m.math('ADD', m.math('MULTIPLY', low, 0.95), m.math('MULTIPLY', st, 0.55), clamp=True)
+    gm = m.math('ADD', m.math('MULTIPLY', low, 0.95), m.math('MULTIPLY', st, 0.38), clamp=True)
     gm = m.math('MULTIPLY', gm, grime)
     dirt = m.mix(m.noise(scale=7, detail=2), (0.055, 0.042, 0.034), (0.11, 0.085, 0.06))
     col = m.mix(gm, col, dirt)
