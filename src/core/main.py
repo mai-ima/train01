@@ -156,31 +156,49 @@ def _cam_clear(v):
         _CLR_BVH.append(veg._scene_bvh(-400, 400, -400, 400))
     B = _CLR_BVH[0]
     if not B:
-        return v[0], v[1]
+        return v[0], v[1], v[2]
     tree = B[0]
     tgt = _V((v[3], v[4], v[5]))
     base = _V((v[0], v[1], v[2]))
-    def ok(p):
+    def score(p):
+        """視界の抜け具合(0〜1)。5本の視線の最短ヒット距離/注視点距離の最小値。壁際/内部は0。"""
+        _n = 0
+        for _dv in (_V((1, 0, 0)), _V((-1, 0, 0)), _V((0, 1, 0)), _V((0, -1, 0))):
+            if tree.ray_cast(p, _dv, 2.0)[0] is not None:
+                _n += 1
+        if _n >= 3:
+            return 0.0
         d = tgt - p
         L = d.length
         a0 = _m.atan2(d.y, d.x)
+        sc = 1.0
         for da in (0.0, -0.25, 0.25, -0.5, 0.5):
             dv = _V((_m.cos(a0 + da), _m.sin(a0 + da), d.z / max(d.xy.length, 1e-6) * 1.0)).normalized()
             hit = tree.ray_cast(p, dv, L * 0.85)
-            if hit[0] is not None and hit[3] < L * 0.55:
-                return False
-        return True
-    if ok(base):
-        return v[0], v[1]
+            if hit[0] is not None:
+                sc = min(sc, hit[3] / (L * 0.55))
+        return min(sc, 1.0)
+    base_sc = score(base)
+    if base_sc >= 1.0:
+        return v[0], v[1], v[2]
     d = tgt - base
     n = _V((-d.y, d.x, 0)).normalized()
-    for k in (3, -3, 6, -6, 10, -10, 15, -15, 22, -22):
-        p = base + n * k
-        if ok(p):
-            print(f"[cam] 障害物回避: {k:+d} m ずらした")
-            return p.x, p.y
-    print("[cam] 障害物回避: 見つからず(そのまま)")
-    return v[0], v[1]
+    fwd = _V((d.x, d.y, 0)).normalized()
+    best = (base_sc, base, "")
+    for b in (0.0, -6.0, -12.0, 5.0):                    # 視線方向の前後・高さも試す(密集した駅で横ずらしだけでは見つからないため)
+        for dz in (0.0, 2.5):
+            for k in (3, -3, 6, -6, 10, -10, 15, -15, 22, -22):
+                p = base + n * k + fwd * b + _V((0, 0, dz))
+                sc = score(p) - 0.002 * (abs(k) + abs(b) + 3 * dz)      # 元の位置から遠いほど少し減点
+                if sc > best[0]:
+                    best = (sc, p, f"横{k:+d} m 前後{b:+.0f} m 高さ+{dz:.1f} m")
+                if sc >= 0.98:
+                    break
+    if best[2]:
+        print(f"[cam] 障害物回避: {best[2]} (視界スコア {base_sc:.2f}→{best[0]:.2f})")
+        return best[1].x, best[1].y, best[1].z
+    print(f"[cam] 障害物回避: 改善なし(視界スコア {base_sc:.2f})")
+    return v[0], v[1], v[2]
 
 
 cam_loc, cam_tgt, cam_lens, sun_az, sun_el = CAMS[args.cam]
@@ -629,7 +647,7 @@ if not args.no_render and os.environ.get('MULTICAM'):
         else:
             _v = [float(t) for t in _c.split(',')]
         if _c.strip().startswith('@') and _c.strip()[1:] in ("A", "E"):      # 構造物に視界を塞がれるカメラは横にずらす(E3 所見: M03 の A が壁で遮られた)
-            _v[0], _v[1] = _cam_clear(_v)
+            _v[0], _v[1], _v[2] = _cam_clear(_v)
         cob.location = (_v[0], _v[1], _v[2])
         cob.rotation_euler = (Vector((_v[3], _v[4], _v[5])) - Vector(cob.location)).to_track_quat('-Z', 'Y').to_euler()
         cam.lens = _v[6] if len(_v) > 6 else 30
