@@ -290,14 +290,18 @@ def wheelset(v, x, r=0.43, y_g=0.5335, spokes=False):
 
 
 def _wheelset(v, x, r=0.43, y_g=0.5335, spokes=False):
-    a = v.A("wheel")
+    a = v.A("wheel", 0.0, True)
     for s in (-1, 1):
         y = s * y_g
-        a.cyl((x, y - 0.065, r), (x, y + 0.065, r), r, r, seg=20)
-        a.cyl((x, y - s * 0.078, r), (x, y - s * 0.052, r), r + 0.03, r + 0.03, seg=20)
-        a.cyl((x, y + s * 0.06, r), (x, y + s * 0.10, r), 0.15, 0.15, seg=10)
-        a.cyl((x, y - s * 0.07, r), (x, y - s * 0.068, r), r - 0.05, r - 0.05, seg=20)
-    a.cyl((x, -y_g - 0.07, r), (x, y_g + 0.07, r), 0.058, 0.058, seg=8)
+        a.cyl((x, y - 0.065, r), (x, y + 0.065, r), r, r, seg=40)                           # 踏面
+        a.cyl((x, y - s * 0.078, r), (x, y - s * 0.052, r), r + 0.03, r + 0.03, seg=40)    # フランジ
+        a.cyl((x, y + s * 0.06, r), (x, y + s * 0.10, r), 0.15, 0.15, seg=16)              # ハブ
+        a.cyl((x, y - s * 0.07, r), (x, y - s * 0.068, r), r - 0.05, r - 0.05, seg=40)     # 円板の凹み
+        for k in range(8):                                                                  # 円板のリブ(8本)
+            th = 2 * math.pi * k / 8
+            a.sbox((x + 0.17 * math.cos(th), y + s * 0.072, r + 0.17 * math.sin(th)), (x + (r - 0.07) * math.cos(th), y + s * 0.072, r + (r - 0.07) * math.sin(th)), 0.02, 0.012)
+        v.A("steel").cyl((x, s * (y_g + 0.20), r), (x, s * (y_g + 0.25), r), 0.075, 0.07, seg=14)   # 軸端のキャップ
+    a.cyl((x, -y_g - 0.07, r), (x, y_g + 0.07, r), 0.058, 0.058, seg=10)
 
 
 def axle_box(v, x, y_off=0.88, r=0.43):
