@@ -24,5 +24,14 @@ bw = trackkit.BALLAST_PROFILE
 chk("バラスト天端幅(m)", (bw[2][0] - bw[1][0]), 3.5, 4.4)
 chk("バラスト天端高(m)", common.Z_BAL, 0.05, 0.15)
 chk("ホーム高(レール頭上, m)", common.Z_PLAT - common.Z_RAIL, 0.76, 0.92)
+
+import re
+_k5 = open(_os.path.join(_R, "kit5.py"), encoding="utf-8").read()
+_m = re.search(r"hc = ([0-9.]+) if ac else ([0-9.]+)", _k5)
+if _m:
+    chk("トロリ線高 交流(m)", float(_m.group(1)), 5.2, 5.6)
+    chk("トロリ線高 直流(m)", float(_m.group(2)), 5.0, 5.5)
+else:
+    print("NG トロリ線高の定義が見つからない"); bad.append("catenary")
 print("\n逸脱", len(bad), "件" if bad else "件(全て許容内)")
 sys.exit(1 if bad else 0)

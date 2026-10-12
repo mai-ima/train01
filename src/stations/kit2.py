@@ -40,6 +40,7 @@ def mats2():
                      ("pl_pink", (0.72, 0.52, 0.48)), ("pl_ochre", (0.70, 0.52, 0.22)), ("pl_grey", (0.55, 0.56, 0.54))):
             M[k] = lib.mat_plaster("kit_" + k, c, dirt=0.7)
         M["water"] = lib.mat_plain("kit_water", (0.05, 0.12, 0.14), rough=0.04, spec=0.9)
+        M["sand"] = lib.mat_plain("kit_sand", (0.60, 0.53, 0.37), rough=0.97)
         M["tin_blue"] = lib.mat_paint("kit_tinblue", (0.20, 0.30, 0.42), rough=0.5, rust=0.5)
         M["tin_green"] = lib.mat_paint("kit_tingreen", (0.18, 0.34, 0.24), rough=0.5, rust=0.5)
         M["snow"] = lib.mat_plain("kit_snow", (0.86, 0.90, 0.96), rough=0.9, spec=0.25)
@@ -835,7 +836,7 @@ def build_design(sid):
             wsea = lib.Acc("k2_sea", M["water"], "Ground")
             wsea.box(-600, 600, -600, -52, -0.4, 0.03)
             wsea.build()
-            sand = lib.Acc("k2_sand", M["plat_top"], "Ground")
+            sand = lib.Acc("k2_sand", M.get("sand", M["plat_top"]), "Ground")
             sand.box(-600, 600, -52, -38, -0.3, 0.015)
             sand.build()
     # ---- roads + forecourt + town
