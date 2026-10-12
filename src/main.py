@@ -380,6 +380,16 @@ bg.inputs['Strength'].default_value = args.sky
 nt.links.new(sky_col, bg.inputs['Color'])
 wout = nt.nodes.new('ShaderNodeOutputWorld')
 nt.links.new(bg.outputs['Background'], wout.inputs['Surface'])
+if 'vtest' in parts and not os.environ.get('HDRI') and os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hdri', 'autumn_field_1k.hdr')) and os.environ.get('VT_NOHDRI') != '1':
+    os.environ['HDRI'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hdri', 'autumn_field_1k.hdr'); args.sun = min(args.sun, 2.0)   # 車両試験は実写HDRIの環境で撮る
+if os.environ.get('HDRI'):      # HDRI=パス [HDRI_ROT=度 HDRI_STR=強さ]: 実写の屋外環境で照明・反射(車両試験用)
+    _et = nt.nodes.new('ShaderNodeTexEnvironment')
+    _et.image = bpy.data.images.load(os.environ['HDRI'])
+    _mp = nt.nodes.new('ShaderNodeMapping'); _mp.inputs['Rotation'].default_value[2] = math.radians(float(os.environ.get('HDRI_ROT', '0')))
+    _tc = nt.nodes.new('ShaderNodeTexCoord')
+    nt.links.new(_tc.outputs['Generated'], _mp.inputs['Vector']); nt.links.new(_mp.outputs['Vector'], _et.inputs['Vector'])
+    nt.links.new(_et.outputs['Color'], bg.inputs['Color'])
+    bg.inputs['Strength'].default_value = float(os.environ.get('HDRI_STR', '1.0'))
 
 # ------------------------------------------------------------------ camera
 cam = bpy.data.cameras.new("Cam" + args.cam)

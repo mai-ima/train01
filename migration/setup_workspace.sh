@@ -10,6 +10,7 @@ cp -n "$REPO"/src/*.py "$DST"/ 2>/dev/null || true
 cp -n "$REPO"/scripts/*.sh "$DST"/ 2>/dev/null || true
 cp -n "$REPO"/data/*.json "$DST"/ 2>/dev/null || true
 cp -rn "$REPO"/net/. "$DST/net/" 2>/dev/null || true
+[ -d "$REPO/assets/hdri" ] && mkdir -p "$DST/hdri" && cp -rn "$REPO"/assets/hdri/. "$DST/hdri/"
 [ -d "$REPO/assets/textures" ] && mkdir -p "$DST/tex" && cp -rn "$REPO"/assets/textures/. "$DST/tex/"
 [ -d "$REPO/assets/pbr_textures" ] && mkdir -p "$DST/pbr" && cp -rn "$REPO"/assets/pbr_textures/. "$DST/pbr/"
 [ -d "$REPO/assets/candidates" ] && mkdir -p "$DST/cand" && cp -rn "$REPO"/assets/candidates/. "$DST/cand/"
