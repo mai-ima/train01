@@ -55,6 +55,9 @@ def mats():
         "t_cab": lib.mat_plain("t_cab", (0.18, 0.28, 0.20), rough=0.7, spec=0.1),
         "t_pole": lib.mat_plain("t_pole", (0.72, 0.30, 0.04), rough=0.4, metal=0.5),
         "t_lino": lib.mat_pbr("t_lino", "Planks023A", scale=0.9, hsv=(0.5, 0.8, 0.45), tint=(0.30, 0.20, 0.12), tint_amt=0.8, bump=0.4, spec=0.35, macro=0.3, dirt=0.4),
+        "t_fl_gr": lib.mat_pbr("t_fl_gr", "Concrete034", scale=1.4, hsv=(0.5, 0.5, 0.7), tint=(0.30, 0.42, 0.30), tint_amt=0.8, bump=0.2, spec=0.35, macro=0.3, dirt=0.3),
+        "t_fl_st": lib.mat_pbr("t_fl_st", "Metal041B", scale=1.0, hsv=(0.5, 0.3, 0.55), tint=(0.45, 0.47, 0.50), tint_amt=0.6, bump=0.4, spec=0.5, macro=0.25, dirt=0.4),
+        "t_fl_bl": lib.mat_pbr("t_fl_bl", "Concrete034", scale=1.2, hsv=(0.5, 0.5, 0.6), tint=(0.28, 0.32, 0.45), tint_amt=0.8, bump=0.2, spec=0.35, macro=0.3, dirt=0.3),
         "t_lino2": lib.mat_pbr("t_lino2", "Concrete034", scale=1.2, hsv=(0.5, 0.6, 0.8), tint=(0.55, 0.38, 0.22), tint_amt=0.7, bump=0.25, spec=0.3, macro=0.3, dirt=0.3),
         "cl5": lib.mat_plain("veh_cl5", (0.42, 0.14, 0.08), rough=0.9),
         "cl6": lib.mat_plain("veh_cl6", (0.16, 0.30, 0.20), rough=0.9),
@@ -1163,6 +1166,11 @@ def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
             v.A(jk, 0.0, True).cyl(P(-0.02, sd * (sw + 0.02), z_h + 0.45 * k), P(0.06, sd * (sw + 0.03), z_h + 0.20), 0.04, 0.035, seg=12)  # 上腕
             v.A(jk, 0.0, True).cyl(P(0.06, sd * (sw + 0.03), z_h + 0.20), P(0.30, sd * 0.13, z_h + 0.12), 0.034, 0.03, seg=12)        # 前腕
             v.A("skin", 0.0, True).sphere(P(0.32, sd * 0.13, z_h + 0.11), (0.035, 0.03, 0.025), seg=10, rings=6)                    # 手
+            v.A(jk, 0.0, True).sphere(P(-0.02, sd * (sw + 0.01), z_h + 0.45 * k), (0.052, 0.052, 0.052), seg=10, rings=6)     # 肩の関節
+            v.A(jk, 0.0, True).sphere(P(0.06, sd * (sw + 0.03), z_h + 0.20), (0.04, 0.04, 0.04), seg=10, rings=6)           # 肘
+            v.A(tr, 0.0, True).sphere(P(0.41, sd * 0.09, z_h + 0.005), (0.062, 0.062, 0.062), seg=10, rings=6)               # 膝
+            v.A(tr, 0.0, True).sphere(P(-0.02, sd * 0.09, z_h), (0.078, 0.078, 0.078), seg=10, rings=6)                      # 腰
+            v.A("skin", 0.0, True).sphere(P(0.012, sd * 0.088, z_h + 0.70 * k), (0.016, 0.012, 0.03), seg=8, rings=5)         # 耳
     else:
         v.A(jk, 0.0, True).cyl(P(0, 0, 0.88), P(0.0, 0, 1.38 * k), tw * 1.05, tw, seg=14)
         v.A(jk, 0.0, True).sbox(P(0, -sw, 1.37 * k), P(0, sw, 1.37 * k), 0.07, 0.09)
@@ -1215,7 +1223,7 @@ def _interior(v, S, tot, bays, seed):
     segs = _segments(tot, zones)
     cl = ["cl1", "cl2", "cl3", "cl4"]
     ax = tot / 2 - 0.05
-    floor = "t_lino2" if st in ("cross", "recline", "box") else "t_lino"
+    floor = S.get("floor") or ("t_lino2" if st in ("cross", "recline", "box") else "t_lino")
     v.A(floor).box(-ax, ax, -h + 0.08, h - 0.08, zfl, zfl + 0.02)
     if st in ("cross", "recline", "box", "mix"):       # 窓の日除け(下げ幅を窓ごとに変える)+カーテン束
         _x = -tot / 2
@@ -1441,6 +1449,13 @@ def _sleep_inside(v, S, tot, bays, segs, zones, rnd):
                 v.A("t_white", 0.03).box(xc - 0.26, xc + 0.26, ya + 0.04, ya + 0.32, zfl + 1.58, zfl + 1.66)
                 if j % 2 == 1:                                                                             # 区画の仕切り
                     v.A("t_wood").box(xc - p / 2 - 0.015, xc - p / 2 + 0.015, ya + 0.02, yb, zfl + 0.02, zfl + 1.75)
+                if j % 2 == 0:                                                                             # 上段へのはしご(通路側の仕切に取付け)
+                    xl = xc - p / 2 + 0.10
+                    for dx in (-0.14, 0.14):
+                        v.A("steel").cyl((xl + dx, yb + 0.03, zfl + 0.45), (xl + dx, yb + 0.03, zfl + 1.50), 0.012, 0.012, seg=8)
+                    for rz in range(5):
+                        v.A("steel").cyl((xl - 0.14, yb + 0.03, zfl + 0.62 + rz * 0.20), (xl + 0.14, yb + 0.03, zfl + 0.62 + rz * 0.20), 0.011, 0.011, seg=6)
+                v.A("t_champ").sphere((xc, ya + 0.10, zfl + 1.05), (0.05, 0.05, 0.035), seg=10, rings=6)        # 読書灯
                 if rnd.random() < 0.6:                                                                      # 通路側のカーテン(半分閉)
                     k = rnd.choice((0.0, 0.5))
                     v.A("t_curt", 0.01).box(xc - 0.33 + k * 0.5, xc + 0.33, yb, yb + 0.02, zfl + 0.30, zfl + 1.80)
@@ -1551,9 +1566,10 @@ def _armchair(v, x, y, zfl, face, key="t_leat", w=0.62):
     hw = w / 2
     B(-0.25, 0.26, -hw + 0.04, hw - 0.04, 0.02, 0.26, "t_mahog")                 # 台座
     B(-0.24, 0.30, -hw + 0.05, hw - 0.05, 0.26, 0.43, key, 0.05)                 # 座面クッション
-    for k in range(3):                                                           # 背もたれ(上ほど後ろへ傾く・面は連続)
-        z0 = 0.43 + k * 0.18
-        B(-0.27 - k * 0.025, -0.17 - k * 0.025, -hw + 0.06, hw - 0.06, z0, z0 + 0.185, key, 0.012)
+    def Pw(u, w_, z):
+        return ((x + f * u, y + w_, zfl + z) if alongx else (x + w_, y + f * u, zfl + z))
+    v.A(key, 0.045).sbox(Pw(-0.22, 0, 0.43), Pw(-0.335, 0, 0.98), w - 0.12, 0.13)         # 背もたれ(一枚の傾斜クッション)
+    v.A(key, 0.06).sbox(Pw(-0.17, 0, 0.55), Pw(-0.19, 0, 0.72), w - 0.20, 0.08)           # 腰当て(ふくらみ)
     B(-0.36, -0.23, -hw * 0.55, hw * 0.55, 0.97, 1.11, key, 0.03)                   # ヘッドレスト
     for sd in (-1, 1):
         wy = sd * (hw - 0.025)
@@ -1767,3 +1783,10 @@ for _k, _sp in TYPES.items():
         _f, _a, _b, _c, _d = _sp["z"]
         _sp["z"] = (_f, _a, _b + 0.12, _c + 0.22, _d + 0.20)
         _sp["_zfix"] = True
+
+# 形式別の床材(色違いテンプレ禁止: 木床/タイル調/緑リノリウム/鋼板/青リノリウム)
+_FLOOR = {"jnr_dc": "t_lino", "jnr_sub": "t_fl_gr", "jnr_exp": "t_lino2", "jnr_ac": "t_fl_bl", "ke": "t_lino", "km": "t_fl_st",
+          "kiha_std": "t_lino", "kiha_exp": "t_lino2", "kiha_hyb": "t_fl_bl", "kiha_sr": "t_fl_gr", "kiha_hr": "t_lino", "kiha_ltd": "t_lino2"}
+for _k, _f in _FLOOR.items():
+    if _k in TYPES:
+        TYPES[_k].setdefault("floor", _f)
