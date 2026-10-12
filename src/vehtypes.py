@@ -133,7 +133,7 @@ TYPES.update({
         fs="sabo", ss="sabo", ds="hing", ps="lap", wc=(0.04, 0.04), liner="t_cab", lamp="globe",
         lo="t_verm", up="t_cream", door="t_verm", mask="t_verm", stripe=[],
         pattern="w2 D w8 D w2", door_w=1.05, win="pair", pillar=0.11,
-        front="vee", screens=2, lamps="roofc", roofshape="round", rake=0.12,
+        front="gate", screens=2, lamps="roofc", roofshape="round", rake=0.12,
         roof=["radiator", "exhaust", "garland"], pant_x=0.0, bogie=("dt", 2.1, 0.43), under="engine",
         seat="t_moq_g", interior="box", standing=False),
     "kiha_exp": dict(
@@ -603,6 +603,20 @@ def _front0(v, S, e, nose):
         b1 = (X(xs - rk), yc + wd / 2, zt_); b0 = (X(xs - rk), yc - wd / 2, zt_)
         _pane4(v.A(tkey), a0, a1, b1, b0, t=0.02 * e, n=(1, 0, 0))
 
+    if fr == "gate":
+        # 貫通扉形(気動車): 中央に幅0.80の貫通扉、左右に小さな窓。前面は垂直で、腰に大きな前照灯ケース。
+        v.A(mask, 0.006).box(*sorted((X(xe - 0.12), X(xe))), -h, h, 0.92, zwt + 0.02)
+        v.A(mask, 0.006).box(*sorted((X(xe - 0.12), X(xe))), -h, h, zwt, zt)
+        v.A("t_steel", 0.005).box(*sorted((X(xe - 0.12), X(xe + 0.02))), -0.40, 0.40, zfl + 0.06, zwt)
+        v.A("t_grey").box(*sorted((X(xe + 0.02), X(xe + 0.03))), -0.34, 0.34, zfl + 0.20, zfl + 0.24)
+        gl.box(*sorted((X(xe + 0.02), X(xe + 0.034))), -0.30, 0.30, zws + 0.40, zwt - 0.10)
+        for sgn in (-1, 1):
+            screen(xe + 0.015, sgn * 0.88, 0.62, zws + 0.12, zwt - 0.10, S.get("rake", 0.0))
+            pil.box(*sorted((X(xe - 0.08), X(xe + 0.04))), sgn * 0.52 - 0.05, sgn * 0.52 + 0.05, zws, zwt)
+            v.A("t_steel").cyl((X(xe + 0.0), sgn * 1.12, zfl + 0.52), (X(xe + 0.09), sgn * 1.12, zfl + 0.52), 0.15, 0.15, seg=16)
+            v.A("lampglass").cyl((X(xe + 0.09), sgn * 1.12, zfl + 0.52), (X(xe + 0.10), sgn * 1.12, zfl + 0.52), 0.115, 0.115, seg=16)
+        v.A("t_steel").box(*sorted((X(xe + 0.0), X(xe + 0.04))), -0.12, 0.12, zt + 0.02, zt + 0.12)      # 屋根上の標識灯
+        return
     if fr in ("flat", "subfront"):
         # 平妻: 前面板(マスク色)+窓
         v.A(mask, 0.006).box(*sorted((X(xe - 0.12), X(xe))), -h, h, 0.92, zws)
@@ -831,6 +845,9 @@ def _signs(v, S, e, nose):
     if fr in ("flat", "subfront"):
         xp = xe + 0.03
         zc = 1.46
+    elif fr == "gate":
+        xp = xe + 0.036
+        zc = 1.20 + 0.10
     elif fr == "vee":
         xp = xe + (0.55 if zr > 3.55 else 0.45) * 0.88 + 0.03
         zc = 1.46
