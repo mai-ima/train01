@@ -520,6 +520,44 @@ def build_veg(cam_loc):
     build_trees()
 
 
+def _scene_bvh(x0, x1, y0, y1):
+    """可視メッシュ全部(三角形化・ワールド座標)から1つの BVH を作る。範囲 x0..x1,y0..y1 と重なるオブジェクトだけ。
+    戻り値: (BVHTree, 三角形→オブジェクト番号の配列, オブジェクト名リスト)。失敗時は None(呼び出し側で従来方式にフォールバック)。"""
+    import bpy
+    from mathutils.bvhtree import BVHTree
+    try:
+        bpy.context.view_layer.update()
+        V, T, own, names, off = [], [], [], [], 0
+        for o in bpy.context.scene.objects:
+            if o.type != 'MESH' or o.hide_viewport or o.hide_render:
+                continue
+            me = o.data
+            if not len(me.polygons):
+                continue
+            n = len(me.vertices)
+            co = np.empty(n * 3, np.float32)
+            me.vertices.foreach_get('co', co)
+            co = co.reshape(-1, 3).astype(np.float64)
+            M = np.array(o.matrix_world, dtype=np.float64)
+            co = co @ M[:3, :3].T + M[:3, 3]
+            if co[:, 0].max() < x0 or co[:, 0].min() > x1 or co[:, 1].max() < y0 or co[:, 1].min() > y1:
+                continue
+            me.calc_loop_triangles()
+            nt = len(me.loop_triangles)
+            if not nt:
+                continue
+            tr = np.empty(nt * 3, np.int32)
+            me.loop_triangles.foreach_get('vertices', tr)
+            V.append(co); T.append(tr.reshape(-1, 3) + off); own.append(np.full(nt, len(names), np.int32)); names.append(o.name)
+            off += n
+        Va, Ta, Oa = np.vstack(V), np.vstack(T), np.concatenate(own)
+        tree = BVHTree.FromPolygons([tuple(p) for p in Va.tolist()], [tuple(t) for t in Ta.tolist()], all_triangles=True)
+        return tree, Oa, names
+    except Exception as e:
+        print('scene_bvh failed -> slow path', e)
+        return None
+
+
 # ------------------------------------------------------------------ zone grass (全駅ゾーン共通)
 GROUND_RE = None
 
@@ -542,9 +580,18 @@ def zone_grass(cam, x0=-110, x1=110, y0=-70, y1=95, step=0.5, light=None):
     D = _V((0, 0, -1))
     free = np.zeros((len(gx), len(gy)), dtype=bool)
     zz = np.zeros((len(gx), len(gy)))
+    _bvh = _scene_bvh(x0 - 2, x1 + 2, y0 - 2, y1 + 2) if os.environ.get('ZGRASS_SLOW') != '1' else None
     for i, x in enumerate(gx):
         for j, y in enumerate(gy):
             xx, yy = x + rng.uniform(-0.3, 0.3), y + rng.uniform(-0.3, 0.3)
+            if _bvh is not None:                      # 高速経路: 事前に作った BVH を引く(従来は scene.ray_cast を14万回 → 約175秒)
+                tree, own, names = _bvh
+                loc, n, fidx, _d = tree.ray_cast(_V((xx, yy, 80.0)), D, 200.0)
+                if loc is not None and n[2] > 0.8 and GROUND_RE.match(names[own[fidx]]):
+                    free[i, j] = True
+                    zz[i, j] = loc.z
+                    pts.append((xx, yy, loc.z))
+                continue
             ok, loc, n, idx, ob, mat = sc.ray_cast(dg, _V((xx, yy, 80.0)), D, distance=200.0)
             if ok and GROUND_RE.match(ob.name) and n[2] > 0.8:
                 free[i, j] = True

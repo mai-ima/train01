@@ -17,4 +17,6 @@ put sh scripts batch
 rsync -a --exclude='__pycache__' --exclude='*.blend*' --exclude='*.png' "$S/net/" "$R/net/" 2>/dev/null || cp -ru "$S/net/." "$R/net/"
 [ -d "$S/tex" ] && mkdir -p "$R/assets/textures" && cp -ru "$S/tex/." "$R/assets/textures/"
 [ -d "$S/hdri" ] && mkdir -p "$R/assets/hdri" && cp -ru "$S/hdri/." "$R/assets/hdri/"
+[ -f "$R/net/mktasklist.py" ] && (cd "$R" && python3 net/mktasklist.py >/dev/null) && echo "TASK_LIST.md を再生成"
+[ -x "$R/scripts/size_guard.sh" ] && bash "$R/scripts/size_guard.sh" "$R"
 echo "同期完了(削除なし): $S → $R"

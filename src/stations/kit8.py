@@ -176,7 +176,7 @@ def concourse(g, x0, x1, y0, y1, zf, xo, c, st, rng):
             gi.a("iron_black").cyl((xx, yg, zf), (xx, yg, zf + 0.96), 0.022, 0.022, seg=8)
     for xx in (c - 0.55, c + 0.55):                                          # 改札口の太い支柱+鋏の台
         gi.a("iron_black").cyl((xx, yg, zf), (xx, yg, zf + 1.05), 0.045, 0.045, seg=10)
-        gi.a("wood_dark", 0.01).box(xx - 0.09, xx + 0.09, yg - 0.09, yg + 0.09, zf + 1.05, zf + 1.13)
+        gi.a("wood_dark", bevel=0.01).box(xx - 0.09, xx + 0.09, yg - 0.09, yg + 0.09, zf + 1.05, zf + 1.13)
         gi.a("iron_black").cyl((xx, yg, zf + 1.13), (xx, yg, zf + 1.22), 0.012, 0.012, seg=6)
     # 改札掛の机と案内灯
     desk(gi, min(xb - 0.7, c + 1.3), y0 + 1.0, zf, w=0.9, d=0.55, face='N', papers=True)
@@ -205,4 +205,7 @@ def concourse(g, x0, x1, y0, y1, zf, xo, c, st, rng):
                 A(gi, "iron_black").box(xx - 0.27 + cc * 0.17, xx - 0.27 + cc * 0.17 + 0.11, fy - 0.02, fy, zf + 1.10 + r * 0.13, zf + 1.20 + r * 0.13)
         A(gi, "iron_black").box(xx - 0.08, xx + 0.08, fy - 0.03, fy, zf + 0.92, zf + 0.97)
         A(gi, "iron_black").box(xx - 0.18, xx + 0.18, fy - 0.05, fy, zf + 0.60, zf + 0.74)
+    for xl in (x0 + (xo - x0) * 0.25, x0 + (xo - x0) * 0.75):                                      # 待合室の照明(暗すぎないように)
+        lamp_point(xl, (y0 + y1) / 2, zf + 2.6, watt=140.0)
+        gi.a("lamp_glow").box(xl - 0.45, xl + 0.45, (y0 + y1) / 2 - 0.12, (y0 + y1) / 2 + 0.12, zf + 2.78, zf + 2.84)
     gi.build()

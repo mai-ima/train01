@@ -5,6 +5,7 @@
 | 文書 | 内容 |
 |---|---|
 | [`../CLAUDE.md`](../CLAUDE.md) | 運用ルールとユーザー指示の全履歴(正) |
+| [`ROOT_CAUSES.md`](ROOT_CAUSES.md) | **根本原因と対策**(問題→原因→対策→状況。【S-Q7】) |
 | [`REQUESTS_TO_USER.md`](REQUESTS_TO_USER.md) | **ユーザーへの要求・確認事項**(随時更新) |
 | [`../migration/HANDOFF.md`](../migration/HANDOFF.md) | 引き継ぎ書(概要・構造・現状・次の一手・落とし穴) |
 | [`TASK_LIST.md`](TASK_LIST.md) | **新タスク一覧**(全タスク・未実行・進行中の報告・完了の実行順と報告)。生成: `python3 net/mktasklist.py` |

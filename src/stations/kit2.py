@@ -206,8 +206,8 @@ def volume(g, v, rng, st, interior=False):
                 kit8.concourse(g, x0 + 0.14, x1 - 0.14, y0 + 0.14, y1 - 0.14, zf, xo, _c, st, rng)
         except Exception as _e:
             print("concourse failed", st.get("id"), _e)
-        rooms.lamp_point(x0 + (xo - x0) * 0.5, (y0 + y1) / 2, zf + 2.5, 40)
-        rooms.lamp_point(xo + 2.0, (y0 + y1) / 2, zf + 2.5, 40)
+        rooms.lamp_point(x0 + (xo - x0) * 0.5, (y0 + y1) / 2, zf + 2.5, 90)
+        rooms.lamp_point(xo + 2.0, (y0 + y1) / 2, zf + 2.5, 90)
     return zh
 
 

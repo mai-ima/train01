@@ -13,5 +13,7 @@
  "216": "コミット運用。これまで1作業ごとにコミットしていたのを是正し、節目(整理・監査・大きな機能)ごとにまとめる運用へ変更(S-G8 のコミットが最初の例)。",
  "217": "B6a: kit8.concourse を実装し kit2.volume から呼ぶ(改札柵・券売機・出札窓口・運賃表・時計)。確認レンダ(cc1)は撮影済み・未確認。全駅への展開と目視は未了。",
  "218": "E3a: 全駅バッチ e3_batch.sh を『1回の構築で3カメラ×人物 表示/非表示』方式に変更して実行中(out/e3b/)。構築が支配的だったため所要時間はほぼ半分。",
- "220": "【S-T1】本ファイルの作成。生成スクリプト net/mktasklist.py、データ migration/task_reports.json(完了順・報告)と task_progress.json(進行中の報告)。"
+ "220": "【S-T1】本ファイルの作成。生成スクリプト net/mktasklist.py、データ migration/task_reports.json(完了順・報告)と task_progress.json(進行中の報告)。",
+ "226": "healthscan.py を追加し e3_batch.sh に組み込み(HEALTH.txt/HEALTH_NG.txt/HEALTH_SUMMARY.txt)。既存の except の全面見直しは未了。",
+ "221": "docs/ROOT_CAUSES.md に12項目(問題→根本原因→対策→状況)を整理。実施済み: 静かな失敗の検出・草散布のBVH化(構築10倍速)・人物ON/OFF両撮り・長い待機の廃止ルール・作業画像のJPEG化。未実施: 絶対パス一元化・監査較正・vehcheck・肥大対策(新規タスク Q8〜G9)。"
 }

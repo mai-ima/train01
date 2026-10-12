@@ -988,5 +988,35 @@
   "id": 220,
   "status": "completed",
   "subject": "【S-T1】新タスク一覧ファイル docs/TASK_LIST.md の作成(全タスク・未実行はそのまま・実行済みは実行順・各タスクの報告つき)"
+ },
+ {
+  "id": 221,
+  "status": "in_progress",
+  "subject": "【S-Q7】現在存在する(危惧される)問題の根本原因を特定し、解決策を実施(docs/ROOT_CAUSES.md)"
+ },
+ {
+  "id": 222,
+  "status": "pending",
+  "subject": "【Q8】絶対パス '/home/claude/station' の一元化(common.ROOT / 環境変数 STATION_ROOT)。52ファイル39箇所を置換し setup の sed を不要にする"
+ },
+ {
+  "id": 223,
+  "status": "pending",
+  "subject": "【Q9】監査プロトコルの較正: 固定画像セット(人物あり/なし)・2名以上の独立監査員の平均・軸別チェックリスト・実車寸法の確認項目"
+ },
+ {
+  "id": 224,
+  "status": "pending",
+  "subject": "【Q10】車両の数値検査 vehcheck.py(寸法・接地・部品の接続・仕様値との照合。VLMが見逃す空間誤差を決定論的に検出)"
+ },
+ {
+  "id": 225,
+  "status": "pending",
+  "subject": "【G9】リポジトリ肥大対策(.git 775MB): JPEG運用・Git LFS/リリース分離の判断(ユーザー判断待ち)"
+ },
+ {
+  "id": 226,
+  "status": "in_progress",
+  "subject": "【W4】撮影バッチの健全性スキャン(healthscan.py)導入・既存の握りつぶし except の見直し"
  }
 ]

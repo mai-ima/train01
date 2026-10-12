@@ -162,3 +162,4 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 ## (16:40) 【S-G8】完了(ac951a4 push): src/scripts/renders を機能別へ・索引README・docs/README.md。【S-M1】調査完了(migration/research_modeling.md)。【U1】docs/REQUESTS_TO_USER.md 作成。実施済み改善: --hq・HDRI・PEOPLE_BOTH・Persistent Data・停車車両バグ修正。進行: e3b全駅バッチ(人物ON/OFF)・B6a確認・W3プロファイル解析。
 ## (16:50) 【S-T1】最優先: 新タスク一覧(docs/TASK_LIST.md)を作成中。元資料=git履歴・status.json log・session_state.md・TASKS.md
 ## (17:10) 【S-T1】完了: docs/TASK_LIST.md(全198件。完了100件は実行順+報告+根拠)。生成 net/mktasklist.py。タスクを完了したら migration/task_reports.json に追記して再実行。
+## (17:30) 【S-Q7】最優先: 根本問題の洗い出し開始(静かな失敗・絶対パス・長い待機・作業/repo二重化・品質天井・台帳肥大)

@@ -11,6 +11,7 @@ worker() {
   for s in "$@"; do
     [ -f out/e3b/${s}_np_2.png ] && continue
     PEOPLE_BOTH=1 MULTICAM="@A;@E;@ZA" python3 main.py --zone $s --parts none --cam A --w $W --samples $SPL --out e3b/$s > out/e3b/$s.log 2>&1
+    python3 healthscan.py out/e3b/$s.log >> out/e3b/HEALTH.txt 2>&1 || echo "NG $s (ログに failed/Traceback)" >> out/e3b/HEALTH_NG.txt
   done
 }
 set -- $ids
@@ -19,4 +20,5 @@ for s in "$@"; do if [ $((i%2)) -eq 0 ]; then A+=($s); else B+=($s); fi; i=$((i+
 worker "${A[@]}" &
 worker "${B[@]}" &
 wait
+python3 healthscan.py "out/e3b/*.log" > out/e3b/HEALTH_SUMMARY.txt 2>&1
 echo done > out/e3b/done.txt
