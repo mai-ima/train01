@@ -56,6 +56,12 @@ def mats():
         "t_pole": lib.mat_plain("t_pole", (0.72, 0.30, 0.04), rough=0.4, metal=0.5),
         "t_lino": lib.mat_plain("t_lino", (0.12, 0.10, 0.08), rough=0.7, spec=0.1),
         "t_lino2": lib.mat_plain("t_lino2", (0.33, 0.22, 0.12), rough=0.7, spec=0.1),
+        "cl5": lib.mat_plain("veh_cl5", (0.42, 0.14, 0.08), rough=0.9),
+        "cl6": lib.mat_plain("veh_cl6", (0.16, 0.30, 0.20), rough=0.9),
+        "cl7": lib.mat_plain("veh_cl7", (0.55, 0.50, 0.38), rough=0.9),
+        "cl8": lib.mat_plain("veh_cl8", (0.07, 0.07, 0.09), rough=0.9),
+        "cl9": lib.mat_plain("veh_cl9", (0.45, 0.40, 0.46), rough=0.9),
+        "cl10": lib.mat_plain("veh_cl10", (0.62, 0.58, 0.52), rough=0.9),
         "t_ins": lib.mat_plain("t_ins", (0.55, 0.28, 0.12), rough=0.15, spec=0.8),
     })
 
@@ -1121,8 +1127,8 @@ def _rider(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
     rnd = rnd or random
     ca, sa = math.cos(ang), math.sin(ang)
     P = lambda u, w, z: (x + u * ca - w * sa, y + u * sa + w * ca, zfl + z)
-    jk = kind or rnd.choice(["cl1", "cl2", "cl3", "cl4"])
-    tr = rnd.choice(["cl1", "cl2", "hair"])
+    jk = kind or rnd.choice(["cl1", "cl2", "cl3", "cl4", "cl5", "cl6", "cl7", "cl8", "cl9", "cl10"])
+    tr = rnd.choice(["cl1", "cl2", "hair", "cl8", "cl7", "cl9"])
     k = rnd.uniform(0.93, 1.07)
     tw = 0.15 * rnd.uniform(0.92, 1.12)
     hs = rnd.choice(["hair", "hair", "hair", "t_grey"])
@@ -1331,6 +1337,19 @@ def _interior(v, S, tot, bays, seed):
                 for i in range(int(2 * ax / 0.8) + 1):
                     xx = -ax + i * 0.8
                     v.A("steel").box(xx - 0.008, xx + 0.008, *sorted((s * (h - 0.09), s * (h - 0.42))), zw1 - 0.30, zw1 - 0.22)
+    if st in ("long", "mix", "subway", "box"):
+        for i in range(int(2 * ax / 2.0)):                    # 中吊り広告(通路上・両面)
+            x = -ax + 1.0 + i * 2.0
+            if any(a < x < b for a, b in zones):
+                continue
+            for s in (-1, 1):
+                img = f"car_ad_{(i * 2 + (0 if s > 0 else 1) + seed) % 6}.png"
+                y = s * 0.50
+                zt_, zb_ = zw1 - 0.10, zw1 - 0.56
+                v.plane(img, [(x - 0.30, y - 0.004, zb_), (x + 0.30, y - 0.004, zb_), (x + 0.30, y - 0.004, zt_), (x - 0.30, y - 0.004, zt_)])
+                v.plane(img, [(x + 0.30, y + 0.004, zb_), (x - 0.30, y + 0.004, zb_), (x - 0.30, y + 0.004, zt_), (x + 0.30, y + 0.004, zt_)])
+                v.A("steel").cyl((x - 0.25, y, zt_), (x - 0.25, y, zw1 - 0.02), 0.003, 0.003, seg=4)
+                v.A("steel").cyl((x + 0.25, y, zt_), (x + 0.25, y, zw1 - 0.02), 0.003, 0.003, seg=4)
     if st in ("long", "mix", "subway") or S.get("standing"):
         for s in (-1, 1):
             v.A("t_steel" if st == "subway" else "steel").cyl((-ax, s * 0.52, zw1 - 0.12), (ax, s * 0.52, zw1 - 0.12), 0.013, 0.013, seg=6)   # つり革レール
