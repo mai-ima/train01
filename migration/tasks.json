@@ -918,5 +918,70 @@
   "id": 206,
   "status": "completed",
   "subject": "【S-MG1】Claude Codeへの完全移行パッケージ作成(最優先・ユーザー明記)"
+ },
+ {
+  "id": 207,
+  "status": "in_progress",
+  "subject": "【S-M1】モデリング調査(最優先): Blender公式・高速高品質モデリング・AIモデリングを調べ全文を読み、AI関連と『どれをどう直すか』を報告"
+ },
+ {
+  "id": 208,
+  "status": "completed",
+  "subject": "【CO5】会話ログ全確認(旧ログ=圧縮要約2件+last-prompt、このチャット)で見逃し指示を回収"
+ },
+ {
+  "id": 209,
+  "status": "in_progress",
+  "subject": "【CO6】全 .md の再読と台帳整理(タスクのルール確認・順番最適化・細分化・旧割り込み指示の追加)"
+ },
+ {
+  "id": 210,
+  "status": "pending",
+  "subject": "【F5】車両を現実の車両と同水準へ: 実車(形式別の写真・図面・諸元)を調べ参照仕様表を作り、寸法・窓割・台車・前面・屋根上機器を実車準拠で作り直す"
+ },
+ {
+  "id": 211,
+  "status": "pending",
+  "subject": "【R9】路線図 v2.4.5 を再出力し、内部(設定)情報を再確認して整合させる"
+ },
+ {
+  "id": 212,
+  "status": "pending",
+  "subject": "【X14】監査基準を超超超厳格へ強化(docs/audit_rubric.md 追記: 実車写真との並置比較・減点表・軸追加)"
+ },
+ {
+  "id": 213,
+  "status": "pending",
+  "subject": "【V4】撮影バッチを人物『非表示』と『表示』の両方で撮る(列車/内装/町/駅)。--people on|off は実装済み、撮影ラッパーで両撮り"
+ },
+ {
+  "id": 214,
+  "status": "pending",
+  "subject": "【W3】実行速度の向上(品質維持): シーンキャッシュ・.blend化、レンダ並列/適応サンプリング/デノイズ設定、bpy.ops 回避、バッチの並列化"
+ },
+ {
+  "id": 215,
+  "status": "in_progress",
+  "subject": "【U1】ユーザーへの要求ドキュメント docs/REQUESTS_TO_USER.md を新規作成し随時更新(必要画像・広告・方向幕・確認事項は1回まとめて提示)"
+ },
+ {
+  "id": 216,
+  "status": "in_progress",
+  "subject": "【G7】コミット運用: 回数を減らし、キリのいい節目でまとめてコミット/push"
+ },
+ {
+  "id": 217,
+  "status": "in_progress",
+  "subject": "【B6a】(B6の細分) 地上駅舎の待合室に改札・券売機・出札窓口・運賃表を追加(kit8.concourse 実装済み・確認レンダ待ち)→全駅へ展開"
+ },
+ {
+  "id": 218,
+  "status": "in_progress",
+  "subject": "【E3a】全駅の目線/斜め撮影バッチ(e3_batch.sh 実行中)を人物ON/OFF両方で撮り直す"
+ },
+ {
+  "id": 219,
+  "status": "in_progress",
+  "subject": "【S-G8】GitHub上のファイルとドキュメントの整理(フォルダ化・索引・参照パス更新)。旧【G6】を統合"
  }
 ]

@@ -6,8 +6,8 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 DST="${1:-/home/claude/station}"
 echo "リポジトリ: $REPO → 作業: $DST"
 mkdir -p "$DST/out" "$DST/net"
-cp -n "$REPO"/src/*.py "$DST"/ 2>/dev/null || true
-cp -n "$REPO"/scripts/*.sh "$DST"/ 2>/dev/null || true
+find "$REPO/src" -name "*.py" -exec cp -n {} "$DST"/ \; 2>/dev/null || true      # src/<機能別>/ → 作業用フラット形式へ展開
+find "$REPO/scripts" -name "*.sh" -exec cp -n {} "$DST"/ \; 2>/dev/null || true  # scripts/<用途別>/ → フラットへ
 cp -n "$REPO"/data/*.json "$DST"/ 2>/dev/null || true
 cp -rn "$REPO"/net/. "$DST/net/" 2>/dev/null || true
 [ -d "$REPO/assets/hdri" ] && mkdir -p "$DST/hdri" && cp -rn "$REPO"/assets/hdri/. "$DST/hdri/"

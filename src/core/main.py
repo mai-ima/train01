@@ -469,6 +469,8 @@ if args.hq:
     r.filter_size = 1.2
 cy.caustics_reflective = False
 cy.caustics_refractive = False
+if os.environ.get('MULTICAM'):
+    r.use_persistent_data = True       # 同一シーンを複数カメラで撮る時、BVH等を再利用して2枚目以降を速くする(Blender公式 Performance > Persistent Data)
 scene.view_settings.view_transform = 'AgX'
 for look in ("Medium High Contrast", "AgX - Medium High Contrast", "High Contrast"):
     try:
@@ -549,14 +551,32 @@ if args.pano:
         print("PANO done", nd["id"], f"{time.time() - t0:.0f}s", flush=True)
     sys.exit(0)
 if not args.no_render and os.environ.get('MULTICAM'):
+    _both = os.environ.get('PEOPLE_BOTH') == '1'      # 1回の構築で 人物表示/非表示 の両方を撮る(出力: <out>_<n>.png=表示, <out>_np_<n>.png=非表示)
+    _pp = [o for o in bpy.data.objects if o.get("rig_kind") == "pax" or (o.parent is not None and o.parent.get("rig_kind") == "pax")]
+    def _people(show):
+        for _o in _pp:
+            _o.hide_render = not show
+        if "People" in bpy.data.collections:
+            bpy.data.collections["People"].hide_render = not show
     for _i, _c in enumerate([x for x in os.environ['MULTICAM'].split(';') if x.strip()]):
-        _v = [float(t) for t in _c.split(',')]
+        if _c.strip().startswith('@'):                  # @A のようにプリセットカメラ名で指定できる
+            _cc = CAMS[_c.strip()[1:]]
+            _v = [*_cc[0], *_cc[1], _cc[2]]
+        else:
+            _v = [float(t) for t in _c.split(',')]
         cob.location = (_v[0], _v[1], _v[2])
         cob.rotation_euler = (Vector((_v[3], _v[4], _v[5])) - Vector(cob.location)).to_track_quat('-Z', 'Y').to_euler()
         cam.lens = _v[6] if len(_v) > 6 else 30
+        if _both:
+            _people(True)
         r.filepath = f"{OUT}/{args.out}_{_i}.png"
         bpy.ops.render.render(write_still=True)
         print(f"[{time.time() - t0:5.1f}s] multicam {_i} -> {r.filepath}", flush=True)
+        if _both:
+            _people(False)
+            r.filepath = f"{OUT}/{args.out}_np_{_i}.png"
+            bpy.ops.render.render(write_still=True)
+            print(f"[{time.time() - t0:5.1f}s] multicam {_i} (人物なし) -> {r.filepath}", flush=True)
     sys.exit(0)
 if not args.no_render:
     r.filepath = f"{OUT}/{args.out}.png"

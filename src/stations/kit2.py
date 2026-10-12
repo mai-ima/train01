@@ -198,6 +198,14 @@ def volume(g, v, rng, st, interior=False):
             ip = f"kit/{st['id']}_{nm_}.png"
             if os.path.exists(f"/home/claude/station/tex/{ip}"):
                 face_plane(f"k2in_{st['id']}_{k_}", ip, 'S', x0 + 1.5 + k_ * 1.4, y1 - 0.16, zf + 1.1, 0.75, h=1.0, off=0.0)
+        try:
+            import kit8
+            _opn = [o for o in ops.get(v.get("door", "S"), []) if o[4] in ("open", "door")]
+            _c = (_opn[0][0] + _opn[0][1]) / 2 if _opn else (x0 + xo) / 2
+            if (xo - x0) >= 6.0 and (y1 - y0) >= 5.0 and v.get("door", "S") == "S":
+                kit8.concourse(g, x0 + 0.14, x1 - 0.14, y0 + 0.14, y1 - 0.14, zf, xo, _c, st, rng)
+        except Exception as _e:
+            print("concourse failed", st.get("id"), _e)
         rooms.lamp_point(x0 + (xo - x0) * 0.5, (y0 + y1) / 2, zf + 2.5, 40)
         rooms.lamp_point(xo + 2.0, (y0 + y1) / 2, zf + 2.5, 40)
     return zh

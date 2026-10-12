@@ -39,7 +39,8 @@ Blender(`bpy`、ヘッドレス)で、**架空の昭和・国鉄時代の路線�
 
 ```bash
 # 1) ソースとテクスチャを作業ディレクトリへ(リポジトリ形式 → 作業形式)
-mkdir -p station && cp -r src/*.py scripts/*.sh data/*.json station/ && cp -r net station/net
+bash migration/setup_workspace.sh    # src/・scripts/(機能別)→ 作業用フラット形式(既定 /home/claude/station)へ展開。以下の手動手順の代わり
+# 手動の場合: mkdir -p station && find src -name "*.py" -exec cp {} station/ \; && find scripts -name "*.sh" -exec cp {} station/ \; && cp data/*.json station/ && cp -r net station/net
 cp -r assets/textures station/tex && cp -r assets/pbr_textures station/pbr
 cd station
 
@@ -57,11 +58,10 @@ python3 main.py --world markers --parts none --no-render      # 軌道グラフ 
 ## リポジトリの構成
 | パス | 内容 |
 |---|---|
-| `src/` | Python ソース全部(入口は `main.py`)。詳細は下の[ソースコード一覧](#ソースコード一覧) |
-| `scripts/` | 一括実行・検査・書き出しのシェル(`export_all.sh`, `rs_all.sh`, `eye_all.sh`, `ia.sh`, `sync_repo.sh` ほか) |
+| `src/` | Python ソース(機能別: `core/ honamino/ stations/ vehicles/ textures/ checks/ export/`。入口は `core/main.py`)。[索引](src/README.md)・[ソースコード一覧](#ソースコード一覧) |
+| `scripts/` | シェル(運用は直下、一括系は `batch/`)。[索引](scripts/README.md)(`export_all.sh`, `rs_all.sh`, `eye_all.sh`, `ia.sh`, `sync_repo.sh` ほか) |
 | `net/` | 路線網データ・路線図・状態表・軌道グラフ(`network.py`, `details.py`, `facilities.py`, `services.py`, `track_graph.json`, `status.json`, `routemap_v*.html` ほか) |
 | `data/` | 路線網の元データ(`network.json`, `nodes.json`, `sky_nodes.json`) |
-| `docs/` | 監査基準(`audit_rubric.md`) |
 | `assets/textures/` | **生成したテクスチャ全部**: 看板・ポスター・駅名標・メニュー・時刻表・車両標記・初代紋章 ほか(`kit/` は駅別キット画像) |
 | `assets/pbr_textures/` | PBR マテリアルの画像(色・法線・粗さ ほか。`.blend`/`.usdc` は除外) |
 | `assets/candidates/` | 候補・比較用の画像(ロゴ案・看板案・屋根/地面の見本 など) |
@@ -71,7 +71,10 @@ python3 main.py --world markers --parts none --no-render      # 軌道グラフ 
 | `renders/eye/` | 全駅の目線レンダ(ホーム上の目の高さ) |
 | `renders/pano/` | パノラマ・特殊視点・検査用の撮影 |
 | `renders/zones/` | 駅ゾーンのレンダ(各駅 1 枚以上) |
-| `renders/work/` | 作業過程の撮影画像(修正前後・検査・試作など。JPEG) |
+| `renders/work/` | 作業過程の撮影画像(`vehicles/ interiors/ stations/ structures/ misc/`。JPEG)。[索引](renders/README.md) |
+| `renders/routemap/` | 路線図ページの画面キャプチャ |
+| `docs/` | **ドキュメント索引**([docs/README.md](docs/README.md))・監査基準・ユーザーへの要求(`REQUESTS_TO_USER.md`) |
+| `migration/` | 引き継ぎ・タスク台帳・調査・移行手順 |
 | `viewer/` | three.js ビューア(v1)と関連ファイル |
 | `CLAUDE.md` | 運用ルール・監査基準・指示の履歴(開発の約束事。下記[開発ルール](#開発ルール)) |
 
@@ -186,7 +189,7 @@ python3 main.py --world markers --parts none --no-render      # 軌道グラフ 
 ## 検査(自動チェック)
 ```bash
 python3 main.py --zone SH05 --parts none --no-render --interf    # 干渉・ドア・浮き・停車車両を1駅で検査
-bash scripts/ia.sh                                              # 全駅バッチ(完了で out/ia_done.txt)
+bash scripts/batch/ia.sh                                        # 全駅バッチ(完了で out/ia_done.txt)
 python3 comp_check.py                                           # 軌道グラフの連結成分
 python3 net/orient_graph.py                                     # 向き(接続角)の検査
 ```

@@ -153,3 +153,56 @@ def ticket_hall(sid, x_in, sg, yc, name=None, tone="ug_plaster"):
     g.build()
     gi.build()
     return nm
+
+
+def concourse(g, x0, x1, y0, y1, zf, xo, c, st, rng):
+    """【B6】地上駅舎の待合室(x0〜xo)に改札・券売機・出札窓口・運賃表・時計を足す。
+    S壁=ホーム側の出入口(中心 x=c)。改札柵を S壁の 1.8m 内側に平行に置き、出入口の正面だけ 1.0m 開ける(改札口)。"""
+    sid = st["id"]
+    _mat()
+    gi = G(f"k8c_{sid}", "Props")
+    yg = y0 + 1.9                               # 改札柵の y
+    xa, xb = x0 + 0.20, xo - 0.20
+    k = A(gi, "iron_black")
+    seg = [(xa, c - 0.55), (c + 0.55, xb)]
+    for (a, b) in seg:
+        if b - a < 0.4:
+            continue
+        for yy in (0.95, 0.50):                                              # 上下の横桟
+            gi.a("iron_black").box(a, b, yg - 0.02, yg + 0.02, zf + yy - 0.02, zf + yy + 0.02)
+        n = max(2, int((b - a) / 0.7))
+        for i in range(n + 1):
+            xx = a + i * (b - a) / n
+            gi.a("iron_black").cyl((xx, yg, zf), (xx, yg, zf + 0.96), 0.022, 0.022, seg=8)
+    for xx in (c - 0.55, c + 0.55):                                          # 改札口の太い支柱+鋏の台
+        gi.a("iron_black").cyl((xx, yg, zf), (xx, yg, zf + 1.05), 0.045, 0.045, seg=10)
+        gi.a("wood_dark", 0.01).box(xx - 0.09, xx + 0.09, yg - 0.09, yg + 0.09, zf + 1.05, zf + 1.13)
+        gi.a("iron_black").cyl((xx, yg, zf + 1.13), (xx, yg, zf + 1.22), 0.012, 0.012, seg=6)
+    # 改札掛の机と案内灯
+    desk(gi, min(xb - 0.7, c + 1.3), y0 + 1.0, zf, w=0.9, d=0.55, face='N', papers=True)
+    gi.a("lamp_glow").box(c - 0.4, c + 0.4, y0 + 0.5, y0 + 0.62, zf + 2.3, zf + 2.38)
+    # 出札窓口: 事務室との仕切り(x=xo)の待合室側に、木枠+ガラス+鉄格子+台を付ける
+    yw = (y0 + y1) / 2 + 1.7
+    A(gi, "wood_dark", 0.01).box(xo - 0.16, xo - 0.06, yw - 0.75, yw + 0.75, zf + 0.95, zf + 2.05)        # 窓枠
+    A(gi, "glass").box(xo - 0.09, xo - 0.075, yw - 0.65, yw + 0.65, zf + 1.05, zf + 1.95)
+    for yy in np.arange(yw - 0.6, yw + 0.61, 0.15):
+        A(gi, "iron_black").box(xo - 0.10, xo - 0.085, yy - 0.01, yy + 0.01, zf + 1.05, zf + 1.95)
+    A(gi, "desk", 0.01).box(xo - 0.45, xo - 0.05, yw - 0.85, yw + 0.85, zf + 0.95, zf + 1.0)                # 台(ここで切符を買う)
+    A(gi, "wood_dark", 0.01).box(xo - 0.42, xo - 0.08, yw - 0.8, yw + 0.8, zf, zf + 0.95)
+    fb = _img(sid, "fare", None) or "fare_board.png"
+    face_plane(f"k8c_{sid}_fare", fb, 'W', xo - 0.17, yw, zf + 2.1, 1.3, h=0.85)
+    face_plane(f"k8c_{sid}_clock", "clock.png", 'W', xo - 0.17, yw + 1.2, zf + 2.2, 0.55, h=0.55)
+    # 券売機(N壁際の東端)
+    v_ = ["pl_blue", "post_red", "pl_green"]
+    for kk, xx in enumerate((xo - 1.0, xo - 2.0)):
+        vk = v_[(kk + rng.randrange(3)) % 3]
+        vk = vk if vk in M else "iron_black"
+        A(gi, vk, 0.02).box(xx - 0.4, xx + 0.4, y1 - 0.62, y1 - 0.16, zf, zf + 1.7)
+        fy = y1 - 0.62
+        A(gi, "white" if "white" in M else "concrete").box(xx - 0.34, xx + 0.34, fy - 0.012, fy, zf + 1.05, zf + 1.55)
+        for r in range(3):
+            for cc in range(4):
+                A(gi, "iron_black").box(xx - 0.27 + cc * 0.17, xx - 0.27 + cc * 0.17 + 0.11, fy - 0.02, fy, zf + 1.10 + r * 0.13, zf + 1.20 + r * 0.13)
+        A(gi, "iron_black").box(xx - 0.08, xx + 0.08, fy - 0.03, fy, zf + 0.92, zf + 0.97)
+        A(gi, "iron_black").box(xx - 0.18, xx + 0.18, fy - 0.05, fy, zf + 0.60, zf + 0.74)
+    gi.build()

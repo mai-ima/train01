@@ -62,3 +62,8 @@
 - `scripts/continue_check.sh` と `recovery_snapshot.sh` は /home/claude/station・/home/claude/train01 固定(setup が sed で置換するのは展開先のコピーのみ。repo 側の scripts/ は元のまま)。
 - 会話ログ jsonl の探索パスは /root/.claude/projects/-home-claude*/ 固定。ここでは該当なし(旧ログは migration/transcripts/ のみ)。
 - **重大バグ修正(2026-10-12)**: `zone_stock._place_auto` が未定義の `_len` / `_nose2` を呼んで全駅で停車車両の配置に失敗していた(前任セッション末の編集で混入。ゾーン構築ログに "stock failed … name '_len' is not defined")。`_len`(車両全長)と `_nose2`(連結間隔=0)を定義して解消。**駅ゾーンの旧レンダ(renders/ 以下)は車両なし/旧車両のため撮り直しが必要(E3)**。
+
+## 10. リポジトリ構成の整理(2026-10-12・【S-G8】)
+- `src/` は機能別(`core/ honamino/ stations/ vehicles/ textures/ checks/ export/`)、`scripts/` は運用(直下)と一括系(`batch/`)、`renders/work/` は用途別(`vehicles/ interiors/ stations/ structures/ misc/`)、路線図キャプチャは `renders/routemap/`。履歴は `git mv` で保持。
+- **作業はこれまでどおりフラットな作業ディレクトリ**(`bash migration/setup_workspace.sh` が `src/**/*.py` と `scripts/**/*.sh` をフラットに展開)。作業側の変更は `bash scripts/sync_safe.sh` で repo の機能別構成へ書き戻す(同名ファイルは元の場所へ、新規は `src/misc/`・`scripts/batch/`)。
+- 文書の入口は `docs/README.md`。**`net/` の .md(taxonomy / session_state / research_tour など)は CLAUDE.md や hook から参照されるため動かしていない**。以前の記述にある `src/xxx.py`・`scripts/xxx.sh` は、それぞれ機能別/batch 配下に移動している(ファイル名で検索)。
