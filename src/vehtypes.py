@@ -614,6 +614,9 @@ def _cab(v, S, e, tot, nose):
         v.A("hair", 0.0, True).sphere((dx - 0.85, yd, zfl + 1.04), (0.088, 0.08, 0.09), seg=8, rings=5)
     # 助士側の座席(補助席)
     v.A("t_moq_k", 0.02).box(*sorted((dx - e * 1.0, dx - e * 0.75)), 0.35, 0.65, zfl, zfl + 0.38)
+    v.lights.append((e * (xe - 0.8), 0.0, zw1 - 0.12, 0.9, 0.9, 40.0, (1.0, 0.88, 0.70)))    # 運転室の灯り(前面窓から内部が見えるように)
+    if fr == "slope":                                                                          # 傾斜前面は風防の直後にも灯りを置く(窓が真っ黒にならないように)
+        v.lights.append((e * (xe - 0.12), 0.0, zt - 0.18, 0.35, 0.6, 30.0, (1.0, 0.90, 0.75)))
     # ---- 前面
     _front(v, S, e, nose)
     # 連結器
@@ -651,7 +654,7 @@ def _front0(v, S, e, nose):
         sty = S.get("slope", "twin")
         ta = S.get("slope_ta", 0.72)                              # 風防の下端(鼻の何割か)
         za_ = 1.62 + S.get("slope_zb", 0.0)                       # 風防の下端の高さ(低いほど大きな窓)
-        zt0 = lambda t: (za_ - 0.04) - (za_ - 0.04 - 1.40) * (max(0.0, t - ta) / (1 - ta)) ** 1.3
+        zt0 = lambda t: (za_ - 0.28) - (za_ - 0.28 - 1.40) * (max(0.0, t - ta) / (1 - ta)) ** 1.3
         xa_ = xe - 0.02 + nl * ta
         xb_, zb_ = xe - 0.06 - rake * 0.4, zwt - 0.05
         zg = lambda x: za_ + (zb_ - za_) * (xa_ - x) / (xa_ - xb_)   # 風防の傾斜線
@@ -660,7 +663,7 @@ def _front0(v, S, e, nose):
             t = i / 8.0
             w = (h - 0.03) * (1 - 0.14 * t ** 1.5)
             xx = xe - 0.02 + nl * t
-            ztop = zt0(t) if t >= ta else min(zt0(t), zg(xx) - 0.035)
+            ztop = zt0(t) if t >= ta else min(zt0(t), zg(xx) - 0.26)
             zb = 0.94 + 0.12 * t ** 2
             secs.append((X(xx), _sec(w, zb, ztop, 0.16 + 0.1 * t)))
         v.A(mask, 0.01, True).loft_x(secs)
@@ -676,6 +679,8 @@ def _front0(v, S, e, nose):
             for sg in (-1, 1):
                 _pane4(gl, (X(xa_), sg * 0.04, za_ + 0.02), (X(xa_), sg * hw, za_ + 0.02), (X(xb_), sg * hw, zb_), (X(xb_), sg * 0.04, zb_), t=0.02 * e, n=(1, 0, 0))
             pil.box(*sorted((X(xb_ - 0.03), X(xa_ + 0.05))), -0.06, 0.06, za_, zb_)
+        v.A(mask, 0.006).box(*sorted((X(xa_ - 0.03), X(xa_ + 0.05))), -hw, hw, za_ - 0.30, za_ + 0.01)        # 風防下のカウル(段差)
+        v.A("black").box(*sorted((X(xa_ - 0.30 * 0.0), X(xa_ - 0.20))), -hw + 0.05, hw - 0.05, za_ - 0.02, za_ - 0.0) if False else None
         for sg in (-1, 1):                                       # 傾斜した側柱(窓の縁)
             v.A(up, 0.004).sbox((X(xa_ + 0.02), sg * (h - 0.07), za_ - 0.03), (X(xb_ - 0.02), sg * (h - 0.07), zb_ + 0.03), 0.06, 0.065)
         for sg in (-1, 1):                                       # 側面の三角を塞ぐ
@@ -1238,7 +1243,7 @@ def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
     SD = (-sa, ca, 0.0)                                                   # 体の左右方向(世界)
     jk = kind or rnd.choice(["cl1", "cl2", "cl3", "cl4", "cl5", "cl6", "cl7", "cl8", "cl9", "cl10"])
     tr = rnd.choice(["cl1", "cl2", "hair", "cl8", "cl7", "cl9"])
-    k = rnd.uniform(0.93, 1.07)
+    k = rnd.uniform(0.86, 1.00)                                           # 身長(昭和の平均 約1.5〜1.7m)
     bw = rnd.uniform(0.92, 1.14)                                          # 体の幅(太さ)
     hs = rnd.choice(["hair", "hair", "hair", "t_grey"])
     sw = 0.200 * k * bw
@@ -1937,7 +1942,7 @@ def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True)
 for _k, _sp in TYPES.items():
     if not _sp.get("_zfix") and "z" in _sp:
         _f, _a, _b, _c, _d = _sp["z"]
-        _sp["z"] = (_f, _a, _b + 0.12, _c + 0.22, _d + 0.20)
+        _sp["z"] = (_f, _a, _b + 0.14, _c + 0.31, _d + 0.28)
         _sp["_zfix"] = True
 
 # 形式別の床材(色違いテンプレ禁止: 木床/タイル調/緑リノリウム/鋼板/青リノリウム)

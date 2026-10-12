@@ -257,6 +257,10 @@ class Veh:
             link(lo, "Trains")
             lo.parent = e; lo.location = (lx, ly, lz)
             lo.rotation_euler = (0, 0, 0)
+            try:
+                lo.visible_camera = False          # 面光源そのものはカメラに映さない(窓越しに白い板として見えるのを防ぐ)
+            except Exception:
+                pass
         for i, (img, corners, kw) in enumerate(self.planes):
             ob = lib.image_plane(f"{self.name}_decal{i}", corners, img, kw or {"rough": 0.5, "spec": 0.25}, col="Trains", alpha=True)
             ob.parent = e
