@@ -504,7 +504,7 @@ if args.hq:
     try:
         cy.denoising_input_passes = 'RGB_ALBEDO_NORMAL'; cy.denoising_prefilter = 'ACCURATE'
     except Exception as _e:
-        print('denoise opts', _e)
+        print('denoise opts failed', _e)
     r.filter_size = 1.2
 cy.caustics_reflective = False
 cy.caustics_refractive = False

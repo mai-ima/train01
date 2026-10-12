@@ -155,3 +155,5 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 - E3a完了後に再撮: M01(カメラ)/M03(橋上通路)/M07(サイロ)/M11-M13(停車車両)/M06(距離)。旧ロジックで撮られた駅のリスト化は out/e3b_redo.txt
 - E3後処理: e3b_post.sh(バッチ完了後に M06=本体データ(--zone なし)と redo駅を out/e3b2 へ撮影)を背景起動済み。M06 の e3b 画像(ゾーン生成版)は破棄扱い。
 - M06(穂波野)は本体データ(--zone なし)を専用カメラ H,C,B,D,G,Z1,ZT で撮る(e3b_post.sh 更新)
+- X15準備: parts_audit.sh(M04で線路周りの近接6視点)。バッチ完了後に実行→strict-auditorへ。
+- W4: 握りつぶしexceptの見直し(print文言に failed を付与/sugi・depot apron の無言passを出力化)

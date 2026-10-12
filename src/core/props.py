@@ -958,8 +958,8 @@ def build_depot_props():
     try:
         import core
         core.apron("depot_mat_yard", 47.0, -62.0, 8.5, 11.0, M["road"], noise_amp=0.08, z0=0.016)
-    except Exception:
-        pass
+    except Exception as _e:
+        print("depot apron failed", _e)
     rail_stack(gm, 44.0, -54.0, 0.05)
     rail_stack(gm, 44.0, -57.2, -0.03, n=4, length=7.0)
     sleeper_pile(gm, 50.5, -55.0, 0.0)

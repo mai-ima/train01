@@ -257,7 +257,7 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=34.0, inner_w=2
             with SubZone((float(p3[0]), float(p3[1]), float(p3[2]) - 0.3), rng_t.uniform(0, 6.28)):
                 veg.sugi(0.0, 0.0, rng_t.uniform(9, 17), seed=rng_t.randrange(10 ** 6))
     except Exception as e:
-        print("hill trees skipped", e)
+        print("hill trees failed (skipped)", e)
     # 坑口の切り立った面(石積み): 丘の断面の下を埋め、トンネル口の部分だけ開ける
     for (i, flipc) in ((0, True), (len(ss) - 1, False)):
         verts, tris = [], []
@@ -471,8 +471,8 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             p = pos[i] + nrm[i] * off
             try:
                 veg.sugi(float(p[0]), float(p[1]), rng.uniform(9, 16))
-            except Exception:
-                pass
+            except Exception as _e:
+                print("sugi failed", _e)
 
 
 def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0):
