@@ -1,4 +1,6 @@
 #!/bin/bash
+# 【警告 2026-10-12】このスクリプトは repo を全削除してから再コピーします。パスも /home/claude 固定。通常は使わず scripts/sync_safe.sh(一方向・非破壊)を使うこと。
+[ "${FORCE_DESTRUCTIVE_SYNC:-0}" = "1" ] || { echo "中止: sync_repo.sh は破壊的です。scripts/sync_safe.sh を使ってください(強行は FORCE_DESTRUCTIVE_SYNC=1)"; exit 1; }
 # 作業ディレクトリ(/home/claude/station)→ GitHub用リポジトリ(/home/claude/train01)へ整理して同期する
 S=/home/claude/station; R=/home/claude/train01
 cd $R

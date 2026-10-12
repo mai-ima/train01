@@ -1208,6 +1208,12 @@ def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
         v.A("skin", 0.0, True).sphere(P(0.015, 0, z_h + 0.70 * k), (0.092, 0.078, 0.108), seg=10, rings=7)       # 頭
         v.A(hs, 0.0, True).sphere(P(-0.02, 0, z_h + 0.74 * k), (0.096, 0.083, 0.098), seg=10, rings=6)           # 髪
         v.A("skin", 0.0, True).sphere(P(0.10, 0, z_h + 0.68 * k), (0.016, 0.014, 0.022), seg=8, rings=6)         # 鼻
+        _hv = rnd.random()
+        if _hv < 0.30 and hs == "hair":      # 長髪(後ろへ流す)
+            v.A("hair", 0.0, True).sphere(P(-0.07, 0, z_h + 0.62 * k), (0.07, 0.085, 0.14), seg=10, rings=6)
+        elif _hv > 0.88:                     # 帽子(つば付き)
+            v.A("t_grey", 0.0, True).sphere(P(-0.01, 0, z_h + 0.77 * k), (0.10, 0.088, 0.055), seg=10, rings=5)
+            v.A("t_grey", 0.0, True).box(*sorted((P(0.07, 0, 0)[0], P(0.15, 0, 0)[0])), *sorted((P(0, -0.06, 0)[1], P(0, 0.06, 0)[1])), zfl + z_h + 0.76 * k, zfl + z_h + 0.775 * k) if abs(ca) > 0.9 else None
         face(z_h + 0.70 * k)
         for sd in (-1, 1):
             v.A(tr, 0.0, True).cyl(P(-0.02, sd * 0.09, z_h), P(0.40, sd * 0.09, z_h + 0.01), 0.075, 0.062, seg=14)     # 大腿
@@ -1230,6 +1236,11 @@ def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
         v.A("skin", 0.0, True).sphere(P(0.015, 0, 1.58 * k), (0.092, 0.078, 0.108), seg=10, rings=7)
         v.A(hs, 0.0, True).sphere(P(-0.02, 0, 1.62 * k), (0.096, 0.083, 0.098), seg=10, rings=6)
         v.A("skin", 0.0, True).sphere(P(0.10, 0, 1.56 * k), (0.016, 0.014, 0.022), seg=8, rings=6)
+        _hv = rnd.random()
+        if _hv < 0.30 and hs == "hair":
+            v.A("hair", 0.0, True).sphere(P(-0.07, 0, 1.50 * k), (0.07, 0.085, 0.14), seg=10, rings=6)
+        elif _hv > 0.88:
+            v.A("t_grey", 0.0, True).sphere(P(-0.01, 0, 1.65 * k), (0.10, 0.088, 0.055), seg=10, rings=5)
         face(1.58 * k)
         for sd in (-1, 1):
             v.A(tr, 0.0, True).cyl(P(0, sd * 0.09, 0.90), P(0.0, sd * 0.095, 0.07), 0.08, 0.052, seg=14)
