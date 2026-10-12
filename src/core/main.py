@@ -525,6 +525,16 @@ for look in ("Medium High Contrast", "AgX - Medium High Contrast", "High Contras
         continue
 scene.view_settings.exposure = args.exposure
 print(f"[{time.time() - t0:5.1f}s] scene ready; objects={len(bpy.data.objects)}")
+if os.environ.get("DBG_NEAR"):      # デバッグ: "x,y,z,r" の球内に入るオブジェクト名とマテリアルを列挙(視界を塞ぐ黒い面などの特定用)
+    _p = [float(t) for t in os.environ["DBG_NEAR"].split(",")]
+    bpy.context.view_layer.update()
+    for _o in bpy.data.objects:
+        if _o.type != 'MESH':
+            continue
+        _c = [(_o.matrix_world @ Vector(b)) for b in _o.bound_box]
+        _mn = [min(v[i] for v in _c) for i in range(3)]; _mx = [max(v[i] for v in _c) for i in range(3)]
+        if all(_mn[i] - _p[3] <= _p[i] <= _mx[i] + _p[3] for i in range(3)):
+            print("[near]", _o.name, [m.name for m in _o.data.materials][:2], [round(v, 1) for v in _mn], [round(v, 1) for v in _mx])
 
 if args.tex_max:
     for im in bpy.data.images:
