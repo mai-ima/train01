@@ -1200,7 +1200,9 @@ def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
         v.A("t_sred", 0.0, True).sphere(P(0.088, 0, hz - 0.045), (0.016, 0.022, 0.006), seg=10, rings=6)             # 口
     if seated:
         z_h = 0.47
-        v.A(jk, 0.0, True).cyl(P(-0.07, 0, z_h), P(-0.02, 0, z_h + 0.50 * k), tw * 1.05, tw, seg=14)               # 胴
+        v.A(jk, 0.0, True).cyl(P(-0.06, 0, z_h), P(-0.03, 0, z_h + 0.30 * k), tw * 0.86, tw * 0.80, seg=14)         # 腰(細め)
+        v.A(jk, 0.0, True).sphere(P(-0.03, 0, z_h + 0.36 * k), (0.115, sw * 0.98, 0.19 * k), seg=14, rings=8)       # 胸郭(広め)
+        v.A(jk, 0.0, True).sphere(P(-0.05, 0, z_h + 0.04), (0.14, tw * 1.30, 0.09), seg=12, rings=6)                 # 臀部
         v.A(jk, 0.0, True).sbox(P(-0.02, -sw, z_h + 0.47 * k), P(-0.02, sw, z_h + 0.47 * k), 0.07, 0.09)         # 肩
         v.A("skin", 0.0, True).cyl(P(-0.01, 0, z_h + 0.50 * k), P(0.0, 0, z_h + 0.60 * k), 0.045, 0.04, seg=12)    # 首
         v.A("skin", 0.0, True).sphere(P(0.015, 0, z_h + 0.70 * k), (0.092, 0.078, 0.108), seg=10, rings=7)       # 頭
@@ -1220,7 +1222,9 @@ def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
             v.A(tr, 0.0, True).sphere(P(-0.02, sd * 0.09, z_h), (0.078, 0.078, 0.078), seg=10, rings=6)                      # 腰
             v.A("skin", 0.0, True).sphere(P(0.012, sd * 0.088, z_h + 0.70 * k), (0.016, 0.012, 0.03), seg=8, rings=5)         # 耳
     else:
-        v.A(jk, 0.0, True).cyl(P(0, 0, 0.88), P(0.0, 0, 1.38 * k), tw * 1.05, tw, seg=14)
+        v.A(jk, 0.0, True).cyl(P(0, 0, 0.92), P(0.0, 0, 1.12 * k), tw * 0.86, tw * 0.80, seg=14)
+        v.A(jk, 0.0, True).sphere(P(0.0, 0, 1.20 * k), (0.115, sw * 0.98, 0.19 * k), seg=14, rings=8)
+        v.A(tr, 0.0, True).sphere(P(0.0, 0, 0.92), (0.13, tw * 1.30, 0.10), seg=12, rings=6)
         v.A(jk, 0.0, True).sbox(P(0, -sw, 1.37 * k), P(0, sw, 1.37 * k), 0.07, 0.09)
         v.A("skin", 0.0, True).cyl(P(0, 0, 1.38 * k), P(0.0, 0, 1.48 * k), 0.045, 0.04, seg=12)
         v.A("skin", 0.0, True).sphere(P(0.015, 0, 1.58 * k), (0.092, 0.078, 0.108), seg=10, rings=7)
@@ -1256,6 +1260,21 @@ def _segments(tot, zones):
     if tot / 2 - 0.05 - cur > 0.5:
         segs.append((cur, tot / 2 - 0.05))
     return segs
+
+
+def _rbox(v, key, x0, x1, y0, y1, z0, z1, r=0.035, rough=0.02):
+    """角を丸めたクッション/背ずり: 芯の箱+上面の縁を巻いた円柱+角の球(直方体の連続に見えないように)。"""
+    r = min(r, (x1 - x0) / 3, (y1 - y0) / 3, (z1 - z0) / 2.2)
+    a = v.A(key, rough, True)
+    a.box(x0 + r, x1 - r, y0, y1, z0, z1 - r * 0.2)
+    a.box(x0, x1, y0 + r, y1 - r, z0, z1 - r * 0.2)
+    a.box(x0 + r * 0.4, x1 - r * 0.4, y0 + r * 0.4, y1 - r * 0.4, z0, z1)
+    zc = z1 - r
+    for (xa, ya, xb, yb) in ((x0 + r, y0 + r, x1 - r, y0 + r), (x0 + r, y1 - r, x1 - r, y1 - r), (x0 + r, y0 + r, x0 + r, y1 - r), (x1 - r, y0 + r, x1 - r, y1 - r)):
+        a.cyl((xa, ya, zc), (xb, yb, zc), r, r, seg=8)
+    for xx in (x0 + r, x1 - r):
+        for yy in (y0 + r, y1 - r):
+            a.sphere((xx, yy, zc), (r, r, r), seg=8, rings=5)
 
 
 def _interior(v, S, tot, bays, seed):
@@ -1337,7 +1356,7 @@ def _interior(v, S, tot, bays, seed):
                     for _k in range(_ns):                                   # 1人分ずつのバケット(座面+傾いた背ずり)
                         _x0 = a + _k * _sp + 0.012
                         _x1 = a + (_k + 1) * _sp - 0.012
-                        v.A(seat, 0.03).box(_x0, _x1, *sorted((s * (h - 0.09), s * (h - 0.56))), zfl + 0.30, zfl + 0.42 - (0.015 if _k % 2 else 0))
+                        _rbox(v, seat, _x0, _x1, *sorted((s * (h - 0.09), s * (h - 0.56))), zfl + 0.30, zfl + 0.42 - (0.015 if _k % 2 else 0), r=0.04)
                         v.A(seat, 0.03).sbox(((_x0 + _x1) / 2, s * (h - 0.20), zfl + 0.42), ((_x0 + _x1) / 2, s * (h - 0.115), zfl + 0.90), _x1 - _x0, 0.075)
                     v.A("t_steel" if st == "subway" else "t_grey").box(a, a + 0.03, *sorted((s * (h - 0.09), s * (h - 0.58))), zfl + 0.02, zfl + 0.98)   # 袖仕切
                     v.A("t_steel" if st == "subway" else "t_grey").box(b - 0.03, b, *sorted((s * (h - 0.09), s * (h - 0.58))), zfl + 0.02, zfl + 0.98)
@@ -1373,8 +1392,9 @@ def _interior(v, S, tot, bays, seed):
                         for sg in (-1, 1):                             # 向かい合う2席(窓側+通路側)
                             xx = xc + sg * 0.50
                             for yy in (h - 0.38, 0.62):
-                                v.A(seat, 0.02).box(xx - 0.22, xx + 0.22, *sorted((s * (yy - 0.20), s * (yy + 0.20))), zfl + 0.02, zfl + 0.42)
-                            v.A(seat, 0.02).box(xx + sg * 0.20 - 0.04, xx + sg * 0.20 + 0.04, *sorted((s * 0.40, s * (h - 0.10))), zfl + 0.42, zfl + 1.05)
+                                _rbox(v, seat, xx - 0.22, xx + 0.22, *sorted((s * (yy - 0.20), s * (yy + 0.20))), zfl + 0.24, zfl + 0.42, r=0.045)
+                                v.A("under").box(xx - 0.20, xx + 0.20, *sorted((s * (yy - 0.18), s * (yy + 0.18))), zfl + 0.02, zfl + 0.24)
+                            _rbox(v, seat, xx + sg * 0.20 - 0.045, xx + sg * 0.20 + 0.045, *sorted((s * 0.40, s * (h - 0.10))), zfl + 0.42, zfl + 1.05, r=0.04)
                             v.A("t_white", 0.01).box(xx + sg * 0.20 - 0.05, xx + sg * 0.20 + 0.05, *sorted((s * 0.46, s * (h - 0.16))), zfl + 0.84, zfl + 1.05)     # 頭当てカバー
                             v.A("steel").box(xx - 0.03, xx + 0.03, *sorted((s * 0.40, s * 0.43)), zfl + 0.42, zfl + 0.56)   # 通路側の肘掛け
                         v.A("t_wood").box(xc - 0.20, xc + 0.20, *sorted((s * (h - 0.09), s * (h - 0.34))), zfl + 0.70, zfl + 0.73)
@@ -1391,14 +1411,15 @@ def _interior(v, S, tot, bays, seed):
                     for s in (-1, 1):
                         for yy in (0.44, 1.02) if st == "recline" else (0.40, 0.98):
                             cy = s * yy
-                            v.A(seat, 0.025).box(x - 0.22, x + 0.22, cy - 0.26, cy + 0.26, zfl + 0.02, zfl + 0.40)
+                            _rbox(v, seat, x - 0.22, x + 0.22, cy - 0.26, cy + 0.26, zfl + 0.22, zfl + 0.40, r=0.05)
+                            v.A("under").box(x - 0.20, x + 0.20, cy - 0.24, cy + 0.24, zfl + 0.02, zfl + 0.22)
                             sbk = v.A(seat, 0.03)
                             if st == "recline":
                                 sbk.sbox((x - 0.20, cy, zfl + 0.40), (x - 0.34, cy, zfl + 1.10), 0.52, 0.10)       # 傾いた背もたれ
                                 v.A("t_white", 0.01).box(x - 0.40, x - 0.32, cy - 0.15, cy + 0.15, zfl + 0.86, zfl + 1.10)   # ヘッドレストカバー
                                 v.A("t_grey").box(x + 0.0, x + 0.2, cy - 0.23, cy - 0.21, zfl + 0.45, zfl + 0.70) if False else None
                             else:
-                                sbk.box(x - 0.30, x - 0.22, cy - 0.26, cy + 0.26, zfl + 0.40, zfl + 0.98)
+                                _rbox(v, seat, x - 0.31, x - 0.21, cy - 0.26, cy + 0.26, zfl + 0.40, zfl + 0.98, r=0.045)
                                 v.A("t_white", 0.01).box(x - 0.31, x - 0.215, cy - 0.17, cy + 0.17, zfl + 0.80, zfl + 0.98)     # 頭当て
                                 v.A("t_steel").box(x - 0.18, x + 0.20, *sorted((cy - s * 0.27, cy - s * 0.29)), zfl + 0.40, zfl + 0.56)   # 肘掛け
                             if rnd.random() < 0.28:
