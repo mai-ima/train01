@@ -399,10 +399,10 @@ def steps_down(v, x, side, y_body, z_floor, n=2, w=0.5, key="iron"):
     """Boarding steps hanging below a door."""
     a = v.A(key, 0.004)
     for i in range(n):
-        z = z_floor - 0.30 - i * 0.30
-        a.box(x - w / 2, x + w / 2, side * (y_body + 0.02), side * (y_body + 0.12 + 0.03 * i), z, z + 0.035)      # 踏段の張り出しは約0.12〜0.15m(車両限界内。旧: 0.30〜0.42mで限界を超えていた=vehcheck が検出)
+        z = max(z_floor - 0.30 - i * 0.30, 0.10)       # 踏段はレール頭より下へ出さない
+        a.box(x - w / 2, x + w / 2, side * (y_body + 0.02), side * (y_body + 0.10 + 0.01 * i), z, z + 0.035)      # 踏段の張り出しは約0.12〜0.15m(車両限界内。旧: 0.30〜0.42mで限界を超えていた=vehcheck が検出)
     for s in (-1, 1):
-        a.box(x + s * w / 2 - 0.02, x + s * w / 2 + 0.02, side * (y_body + 0.02), side * (y_body + 0.05), z_floor - 0.30 - (n - 1) * 0.3, z_floor)
+        a.box(x + s * w / 2 - 0.02, x + s * w / 2 + 0.02, side * (y_body + 0.02), side * (y_body + 0.05), max(z_floor - 0.30 - (n - 1) * 0.3, 0.10), z_floor)
 
 
 def roof_vents(v, xs, z_roof, n_side=0, key="roof"):
