@@ -39,6 +39,24 @@ def vpaint(name, color, rough=0.5, rust=0.25, grime=0.8, seams=True, metal=0.0, 
     return m.m
 
 
+def moquette(name, color, scale=70.0, contrast=0.55):
+    """座席のモケット(織物): 細かい格子+繊維ノイズ+擦れ。色は color を基準に明暗2色。"""
+    m = lib.Mat(name)
+    x, y, z = m.sep(m.obj)
+    ck = m.node('ShaderNodeTexChecker')
+    m.setall(ck, {'Vector': m.combine(m.math('ADD', x, y), z, 0.0), 'Scale': scale})
+    fib = m.noise(scale=380.0, detail=3, rough=0.7)
+    wear = m.ramp(m.noise(scale=5.0, detail=4), [(0.45, (1.0, 1.0, 1.0)), (0.80, (0.72, 0.70, 0.66))])
+    dark = tuple(c * (1.0 - contrast * 0.5) for c in color)
+    light = tuple(min(1.0, c * (1.0 + contrast * 0.35)) for c in color)
+    col = m.mix(ck.outputs['Fac'], dark, light)
+    col = m.mix(fib, col, tuple(c * 0.8 for c in color))
+    col = m.mix(m.math('MULTIPLY', wear, 0.0), col, col) if False else col
+    h = m.math('ADD', m.math('MULTIPLY', ck.outputs['Fac'], 0.4), m.math('MULTIPLY', fib, 0.6))
+    m.principled(**{'Base Color': col, 'Roughness': 0.96, 'Metallic': 0.0, 'Specular IOR Level': 0.12, 'Normal': m.bump(h, 0.4, 0.004)})
+    return m.m
+
+
 def mat_veh_window(name, tint=(0.80, 0.90, 0.88)):
     """Clear glass: transparent with Fresnel reflection and a little dust, so the saloon shows through."""
     m = lib.Mat(name)
@@ -74,7 +92,7 @@ def vmat(key):
             "cl2": lib.mat_plain("veh_cl2", (0.30, 0.25, 0.18), rough=0.9),
             "cl3": lib.mat_plain("veh_cl3", (0.38, 0.12, 0.10), rough=0.9),
             "cl4": lib.mat_plain("veh_cl4", (0.22, 0.26, 0.20), rough=0.9),
-            "floorw": M["floor"], "lamp_in": lib.mat_emissive("veh_lamp_in", (1.0, 0.88, 0.66), 14.0),
+            "floorw": M["floor"], "lamp_in": lib.mat_emissive("veh_lamp_in", (1.0, 0.88, 0.66), 5.0),
             "coach": P("coach_brown", (0.115, 0.060, 0.040), rough=0.50, rust=0.30),
             "wagon": P("wagon_brown", (0.14, 0.062, 0.040), rough=0.62, rust=0.65),
             "wagon2": P("wagon_brown2", (0.10, 0.048, 0.032), rough=0.65, rust=0.7),

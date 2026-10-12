@@ -35,12 +35,12 @@ def mats():
         "t_warn": P("t_warn", (0.72, 0.56, 0.05), rough=0.45, rust=0.15),
         "t_sky": P("t_sky", (0.11, 0.33, 0.56), rough=0.38, rust=0.14),
         "t_grey": P("t_grey", (0.20, 0.21, 0.22), rough=0.5, rust=0.25),
-        "t_moq_g": lib.mat_plain("t_moq_g", (0.10, 0.22, 0.12), rough=0.9, spec=0.1),
-        "t_moq_b": lib.mat_plain("t_moq_b", (0.12, 0.16, 0.34), rough=0.9, spec=0.1),
-        "t_moq_r": lib.mat_plain("t_moq_r", (0.36, 0.07, 0.07), rough=0.9, spec=0.1),
-        "t_moq_o": lib.mat_plain("t_moq_o", (0.52, 0.27, 0.07), rough=0.9, spec=0.1),
+        "t_moq_g": TK.moquette("t_moq_g", (0.10, 0.24, 0.13)),
+        "t_moq_b": TK.moquette("t_moq_b", (0.12, 0.17, 0.36), scale=55.0),
+        "t_moq_r": TK.moquette("t_moq_r", (0.40, 0.07, 0.07), scale=90.0, contrast=0.8),
+        "t_moq_o": TK.moquette("t_moq_o", (0.55, 0.28, 0.07), scale=48.0),
         "t_moq_k": lib.mat_plain("t_moq_k", (0.05, 0.05, 0.06), rough=0.9, spec=0.1),
-        "t_moq_y": lib.mat_plain("t_moq_y", (0.70, 0.55, 0.14), rough=0.9, spec=0.1),
+        "t_moq_y": TK.moquette("t_moq_y", (0.70, 0.55, 0.14), scale=64.0),
         "t_bronze": P("t_bronze", (0.10, 0.055, 0.032), rough=0.22, rust=0.0, grime=0.10, metal=0.25),
         "t_champ": P("t_champ", (0.66, 0.54, 0.31), rough=0.22, rust=0.0, grime=0.08, metal=0.20, seams=False),
         "t_carp": lib.mat_plain("t_carp", (0.20, 0.07, 0.07), rough=0.95, spec=0.05),
@@ -1126,6 +1126,13 @@ def _rider(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
     tw = 0.15 * rnd.uniform(0.92, 1.12)
     hs = rnd.choice(["hair", "hair", "hair", "t_grey"])
     sw = 0.205 * k
+
+    def face(hz):
+        for sd in (-1, 1):
+            v.A("hair", 0.0, True).sphere(P(0.083, sd * 0.034, hz + 0.02), (0.011, 0.012, 0.007), seg=6, rings=4)     # 目
+            v.A("hair", 0.0, True).box(*sorted((P(0.09, sd * 0.034 - 0.02, hz + 0.045)[0], P(0.09, sd * 0.034 + 0.02, hz + 0.045)[0] + 0.004)),
+                                       *sorted((P(0.09, sd * 0.034 - 0.02, hz + 0.045)[1], P(0.09, sd * 0.034 + 0.02, hz + 0.045)[1] + 0.004)), zfl + hz + 0.043, zfl + hz + 0.047)   # 眉
+        v.A("t_sred", 0.0, True).sphere(P(0.088, 0, hz - 0.045), (0.016, 0.022, 0.006), seg=6, rings=4)             # 口
     if seated:
         z_h = 0.47
         v.A(jk, 0.0, True).cyl(P(-0.07, 0, z_h), P(-0.02, 0, z_h + 0.50 * k), tw * 1.05, tw, seg=8)               # 胴
@@ -1134,6 +1141,7 @@ def _rider(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
         v.A("skin", 0.0, True).sphere(P(0.015, 0, z_h + 0.70 * k), (0.092, 0.078, 0.108), seg=10, rings=7)       # 頭
         v.A(hs, 0.0, True).sphere(P(-0.02, 0, z_h + 0.74 * k), (0.096, 0.083, 0.098), seg=10, rings=6)           # 髪
         v.A("skin", 0.0, True).sphere(P(0.10, 0, z_h + 0.68 * k), (0.016, 0.014, 0.022), seg=5, rings=4)         # 鼻
+        face(z_h + 0.70 * k)
         for sd in (-1, 1):
             v.A(tr, 0.0, True).cyl(P(-0.02, sd * 0.09, z_h), P(0.40, sd * 0.09, z_h + 0.01), 0.075, 0.062, seg=8)     # 大腿
             v.A(tr, 0.0, True).cyl(P(0.41, sd * 0.09, z_h), P(0.44, sd * 0.09, 0.08), 0.058, 0.045, seg=8)           # 脛
@@ -1148,6 +1156,7 @@ def _rider(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
         v.A("skin", 0.0, True).sphere(P(0.015, 0, 1.58 * k), (0.092, 0.078, 0.108), seg=10, rings=7)
         v.A(hs, 0.0, True).sphere(P(-0.02, 0, 1.62 * k), (0.096, 0.083, 0.098), seg=10, rings=6)
         v.A("skin", 0.0, True).sphere(P(0.10, 0, 1.56 * k), (0.016, 0.014, 0.022), seg=5, rings=4)
+        face(1.58 * k)
         for sd in (-1, 1):
             v.A(tr, 0.0, True).cyl(P(0, sd * 0.09, 0.90), P(0.0, sd * 0.095, 0.07), 0.08, 0.052, seg=8)
             v.A("hair", 0.0, True).sphere(P(0.05, sd * 0.095, 0.035), (0.09, 0.05, 0.04), seg=6, rings=4)
@@ -1218,7 +1227,7 @@ def _interior(v, S, tot, bays, seed):
         for i in range(int(2 * ax / 1.6)):
             x = -ax + 0.8 + i * 1.6
             for s_ in (-1, 1):
-                v.A("lamp_in").sphere((x, s_ * 0.55, zw1 - 0.10), (0.085, 0.085, 0.085), seg=10, rings=6)
+                v.A("lamp_in").sphere((x, s_ * 0.55, zw1 - 0.10), (0.075, 0.075, 0.07), seg=18, rings=10)
                 v.A("steel").cyl((x, s_ * 0.55, zw1 - 0.02), (x, s_ * 0.55, zw1 - 0.06), 0.012, 0.012, seg=5)
     if st in ("bunk", "compart", "dining", "genset"):
         _sleep_inside(v, S, tot, bays, segs, zones, rnd)
@@ -1332,7 +1341,7 @@ def _interior(v, S, tot, bays, seed):
                 if any(a < x < b for a, b in zones):
                     continue
                 v.A("black").cyl((x, s * 0.52, zw1 - 0.12), (x, s * 0.52, zw1 - 0.34), 0.004, 0.004, seg=4)
-                v.A("t_white" if st != "subway" else "t_sred").torus((x, s * 0.52, zw1 - 0.40), "x", 0.045, 0.007, segR=10, segr=4)
+                v.A("t_white" if st != "subway" else "t_sred").torus((x, s * 0.52, zw1 - 0.40), "x", 0.045, 0.007, segR=22, segr=5)
         for a, b in zones:                                              # ドア脇の縦手すり
             for s in (-1, 1):
                 for xx in (a + 0.1, b - 0.1):
