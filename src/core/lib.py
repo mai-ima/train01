@@ -674,7 +674,7 @@ def mat_paddy(name, green=(0.22, 0.38, 0.08), yellow=(0.46, 0.50, 0.14), vary=Tr
     m = Mat(name)
     x, y, z = m.sep(m.obj)
     row = m.math('FRACT', m.math('DIVIDE', y, 0.30))
-    rowm = m.ramp(row, [(0.0, (0.2, 0.2, 0.2)), (0.35, (1, 1, 1)), (0.65, (1, 1, 1)), (1.0, (0.2, 0.2, 0.2))])
+    rowm = m.ramp(row, [(0.0, (0.5, 0.5, 0.5)), (0.35, (1, 1, 1)), (0.65, (1, 1, 1)), (1.0, (0.5, 0.5, 0.5))])      # E5所見: 0.2 だと遠景で粗い縞(モアレ状)になる → コントラストを弱める
     clump = m.voro(m.mapping(scale=(3.3, 3.3, 3.3)), scale=1.0, rand=0.6)
     clump_c = m.ramp(clump, [(0.0, (1.15, 1.15, 1.15)), (0.55, (0.8, 0.8, 0.8))])
     n = m.noise(scale=0.07, detail=3)
@@ -686,7 +686,7 @@ def mat_paddy(name, green=(0.22, 0.38, 0.08), yellow=(0.46, 0.50, 0.14), vary=Tr
     col = m.mix(1.0, col, rowm, 'MULTIPLY')
     col = m.mix(1.0, col, clump_c, 'MULTIPLY')
     soil = (0.10, 0.075, 0.05)
-    col = m.mix(m.math('SUBTRACT', 1.0, m.math('MULTIPLY', rowm, 1.0)), col, soil)
+    col = m.mix(m.math('MULTIPLY', m.math('SUBTRACT', 1.0, rowm), 0.6), col, soil)
     nrm = m.bump(m.math('ADD', rowm, m.math('SUBTRACT', 1.0, clump)), 0.6, 0.05)
     m.principled(**{'Base Color': col, 'Roughness': 0.65, 'Specular IOR Level': 0.35, 'Normal': nrm})
     return m.m

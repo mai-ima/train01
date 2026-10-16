@@ -639,13 +639,13 @@ def town_along(pts, sid, st, rng, style, dens, xskip, sides=("L", "R"), off=2.6,
 ELEC_STN = {"M02", "M03", "M04", "M05", "SH04", "SH05", "SH06", "SH07", "SH08"}
 D = lambda **k: k
 DESIGN = {
- "M02": D(yaw=8, curve=("S", 12), plan="I", w=15, d=8, nfl=2, roof="flat", wall="pl_grey", plat="island", ntr=3, canopy="steel", cross="fb_steel", terrain=["pond"], road="straight", town="urban", dens=0.85, lm=[("water", -40, 26)], bx=-4),
+ "M02": D(yaw=8, curve=("S", 12), plan="I", w=15, d=8, nfl=2, roof="flat", wall="pl_grey", plat="island", ntr=3, canopy="steel", cross="fb_steel", terrain=["pond"], road="straight", town="urban", dens=0.85, lm=[("monument", -40, 26)], bx=-4),
  "M03": D(yaw=-6, curve=("arc", 900), plan="OVER", w=18, d=9, nfl=2, roof="flat", wall="concrete", plat="dual", ntr=4, canopy="none", cross="over", terrain=[], road="plaza", town="urban", dens=0.9, lm=[("clock", 10, 30)], bx=-8),
- "M04": D(yaw=-12, curve=("arc", 900), plan="AA", w=11, d=7.5, nfl=1, roof="hip", wall="pl_cream", plat="dual", ntr=3, canopy="wood", cross="fb_wood", terrain=["paddies"], road="curve", town="suburb", dens=0.55, lm=[("water", 30, 30)], bx=-6),
+ "M04": D(yaw=-12, curve=("arc", 900), plan="AA", w=11, d=7.5, nfl=1, roof="hip", wall="pl_cream", plat="dual", ntr=3, canopy="wood", cross="fb_wood", terrain=["paddies"], road="curve", town="suburb", dens=0.55, lm=[("deck", 30, 30)], bx=-6),
  "M05": D(yaw=20, curve=("arc", -700), plan="L", w=12, d=7, nfl=2, roof="hip", wall="brick", plat="dual", ntr=4, canopy="curve", cross="fb_steel", terrain=["pond", "orchard"], road="bend", town="suburb", dens=0.5, lm=[("sigtower", 16, 10)], bx=-8),
  "M07": D(yaw=-25, curve=("arc", 700), plan="A", w=8, d=6, nfl=1, roof="gable", wall="wall", plat="island", ntr=3, canopy="none", cross="fb_wood", terrain=["orchard"], road="bend", town="rural", dens=0.3, lm=[('farm_silo', 36, 30), ('deck', -34, 18)], bx=-5),
- "M08": D(yaw=35, curve=("S", 14), plan="T", w=16, d=8, nfl=2, roof="gable", wall="pl_ochre", plat="island", ntr=4, canopy="saw", cross="fb_wood", terrain=["hill_n"], road="straight", town="rural", dens=0.5, lm=[("water", 22, -18), ("chimney", -34, 34)], bx=-9),
- "M09": D(yaw=-40, curve=("arc", 500), plan="L", w=8, d=5, nfl=1, roof="hip", wall="wood", plat="side", ntr=2, canopy="shed", cross="level", terrain=["forest"], road="diag", town="forest", dens=0.14, lm=[("deck", 24, 13), ("water", -24, 16)], bx=-4),
+ "M08": D(yaw=35, curve=("S", 14), plan="T", w=16, d=8, nfl=2, roof="gable", wall="pl_ochre", plat="island", ntr=4, canopy="saw", cross="fb_wood", terrain=["hill_n"], road="straight", town="rural", dens=0.5, lm=[("sigtower", 22, -18), ("chimney", -34, 34)], bx=-9),
+ "M09": D(yaw=-40, curve=("arc", 500), plan="L", w=8, d=5, nfl=1, roof="hip", wall="wood", plat="side", ntr=2, canopy="shed", cross="level", terrain=["forest"], road="diag", town="forest", dens=0.14, lm=[("deck", 24, 13), ("monument", -24, 16)], bx=-4),
  "M10": D(yaw=60, curve=("S", 10), plan="U", w=15, d=8, nfl=2, roof="hip", wall="wall", plat="island", ntr=4, canopy="curve", cross="underpass", terrain=["hill_s", "pond"], road="curve", town="onsen", dens=0.6, lm=[("onsen", 28, 44), ("footbath", -24, 22)], bx=-9),
  "M11": D(yaw=50, curve=("arc", 450), plan="A", w=9, d=6, nfl=1, roof="hip", wall="stone", plat="side", ntr=3, canopy="shed", cross="level", terrain=["hill_n"], road="diag", town="alpine", dens=0.22, lm=[("water", 22, -14), ("snowhut", -30, 14)], bx=-6),
  "M12": D(yaw=-70, curve=("arc", -500), plan="I", w=10, d=6, nfl=1, roof="shed", wall="concrete", plat="island", ntr=3, canopy="snow", cross="fb_steel", terrain=["snow", "hill_n", "hill_s"], road="bend", town="alpine", dens=0.15, lm=[("deck", 26, 14), ("snowhut", -26, 8)], bx=-5),
@@ -779,6 +779,14 @@ def build_design(sid):
             _ye = -4.4 + min(_of) - 3.2
             _pb = (-4.6 - (1.7 + 4.4) / 2) - 4.4         # B面ホーム(線1の南 1.7〜4.4)の中央。建物枠は世界y+4.4 なので -4.4(K8: 旧式は線1の車体内=-5.35 に橋脚が立っていた)
             volume(gb, dict(x0=xc - 4.0, x1=xc + 4.0, y0=_ye - 0.4, y1=-0.4, nfl=1, roof="flat", wall="pl_grey", ground=False, zf=7.4, skip=(), door="S"), rng, st)   # 橋上通路: 長辺(E/W)にも窓を開ける(旧: skip=E,W で無窓の壁だった)
+            # B8: 橋上通路の外観ディテール(桁下の梁・駅名板)
+            _ym = (_ye - 0.4 + (-0.4)) / 2
+            gb.a("concrete", bevel=0.02).box(xc - 4.18, xc + 4.18, _ye - 0.58, -0.22, 6.85, 7.4)             # 床の大梁(せり出し)
+            for _sx, _fc in ((xc + 4.0, 'E'), (xc - 4.0, 'W')):
+                try:
+                    face_plane(f"k2_ovnm_{sid}_{_fc}", tx[1], _fc, _sx, _ym, 8.05, 6.0, off=0.04)           # 長辺側の駅名板
+                except Exception as _e:
+                    print("overbridge board failed", sid, _e)
             for yy in (-1.4, _pb, _ye + 0.6):                          # 橋脚: A面ホーム上(-1.4)・B面ホーム中央(_pb)・線路の外側
                 for xx in (xc - 3.6, xc + 3.6):
                     gb.a("concrete", bevel=0.02).box(xx - 0.3, xx + 0.3, yy - 0.3, yy + 0.3, 0.0, 7.3)
@@ -941,6 +949,36 @@ def _stock(sid):
         print("stock failed", sid, e)
 
 
+TINT_ON = [True]      # --world(複数ゾーンを1シーンに置く)では材質が共有で累積するので main が False にする
+
+
+def station_tint(sid):
+    """駅IDから決まる地面・草の色味の微調整(色相/彩度/明度)。全駅が同じ緑になる問題(E5俯瞰シートで確認)への対策。雪の駅は対象外。"""
+    h = zlib.crc32(("tint" + sid).encode())
+    f = lambda k: ((h >> k) & 255) / 255.0
+    return (-0.035 + 0.07 * f(0), 0.78 + 0.40 * f(8), 0.86 + 0.26 * f(16))
+
+
+def _apply_tint(sid):
+    if sid in ("M12", "M13", "L01") or not TINT_ON[0]:
+        return
+    try:
+        import veg as _veg
+        dh, ds, dv = station_tint(sid)
+        _veg.ZONE_TINT = (1.0 + dh * 2.0, 1.0, 1.0 - dh * 1.5, dv)              # 草の房の色へ(R,G,B乗数と明度)
+        for nm in ("grass_ground",):
+            m = bpy.data.materials.get(nm)
+            if not m or not m.node_tree:
+                continue
+            for n in m.node_tree.nodes:
+                if n.type == 'HUE_SAT':
+                    n.inputs['Hue'].default_value = min(1.0, max(0.0, n.inputs['Hue'].default_value + dh))
+                    n.inputs['Saturation'].default_value *= ds
+                    n.inputs['Value'].default_value *= dv
+    except Exception as e:
+        print("tint failed", sid, e)
+
+
 def build_zone(sid, origin=(0, 0, 0), yaw=None):
     import kit3
     CUR_SID[0] = sid
@@ -948,11 +986,13 @@ def build_zone(sid, origin=(0, 0, 0), yaw=None):
         with Zone(sid, origin, 0.0 if yaw is None else yaw):
             kit3.BUILD[sid]()
             _stock(sid)
+            _apply_tint(sid)
         return
     if sid in DESIGN:
         with Zone(sid, origin, math.radians(DESIGN[sid]["yaw"]) if yaw is None else yaw):
             build_design(sid)
             _stock(sid)
+            _apply_tint(sid)
     else:
         with Zone(sid, origin, 0.0):
             kit.build_generic(sid)

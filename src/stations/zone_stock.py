@@ -70,6 +70,15 @@ def _free_x(sid):
     lay = kit.ST[sid]["layout"]
     if sid == "T04": return 52.0 - 8, True
     if sid == "R02": return 70.0 - 8, True
+    try:      # Z-A10/E5所見: M19 は線路が x≈-24 で終わるのに編成を x=0 中心(線路の先)に置き、車両が線路外の舗装上に浮いていた → 線路端(xend)の手前へ寄せる
+        xe = [t["xend"] for t in kit4.local_tracks(sid) if t.get("xend") is not None and not t.get("endonly")]
+    except Exception as _e:
+        print(f"zone_stock _free_x failed: {_e}")
+        xe = []
+    if xe and min(xe) < 48.0:
+        cx = min(xe) - 50.0
+        print(f"[stock] {sid}: 線路端 xend={min(xe):.1f} → 編成中心を x={cx:.1f} へ")
+        return cx, True
     if lay.startswith("terminal_stub"): return 33.0 - 6, True
     return 0.0, False
 

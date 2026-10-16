@@ -625,6 +625,10 @@ def zone_grass(cam, x0=-110, x1=110, y0=-70, y1=95, step=0.5, light=None):
         Q = np.vstack([Q, Qn]); ne = np.concatenate([ne, ne[near_m]]); nzq = np.concatenate([nzq, nzq[near_m]])
     h = 0.14 + 0.30 * rng.uniform(0, 1, len(Q)) * (0.6 + 0.8 * np.abs(nzq)) + np.where(ne, 0.12, 0.0)
     cols = [dict(cb=(0.07, 0.12, 0.025), ct=(0.27, 0.31, 0.08)), dict(cb=(0.09, 0.13, 0.03), ct=(0.38, 0.36, 0.12))]
+    _zt = globals().get('ZONE_TINT')
+    if _zt:                                              # 駅ごとの草色味(kit2._apply_tint)。ベースは建物配置の後でも色は房の頂点色に乗る
+        _tm = np.array([_zt[0], _zt[1], _zt[2]]) * _zt[3]
+        cols = [dict(cb=tuple(np.array(c['cb']) * _tm), ct=tuple(np.array(c['ct']) * _tm)) for c in cols]
     for gi, kd in enumerate(cols):
         m = (np.arange(len(Q)) % 2) == gi
         if m.sum():

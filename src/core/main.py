@@ -177,11 +177,12 @@ def _cam_clear(v):
             hit = tree.ray_cast(p, dv, L * 0.85)
             if hit[0] is not None:
                 sc = min(sc, hit[3] / (L * 0.55))
-        for _el in (-0.12, -0.3):                       # Q11: 手前6m以内の物体(列車の屋根・壁)が画面の下を占める構図は減点(M02 @A で屋根が画面の半分を占めた)
-            _dv2 = _V((_m.cos(a0), _m.sin(a0), _el)).normalized()
-            _h2 = tree.ray_cast(p, _dv2, 6.0)
-            if _h2[0] is not None:
-                sc = min(sc, 0.55 + 0.4 * (_h2[3] / 6.0))
+        for _el in (0.0, -0.12, -0.3):                  # Q11: 手前6m以内の物体(列車の屋根・壁・針葉樹)が画面を占める構図は減点(M02 @A で屋根、S03/S04 @E/@L で針葉樹が画面を占めた)
+            for _da in (0.0, -0.2, 0.2, -0.4, 0.4):     # E5所見: 中央1本だけでは画面端の木を拾えない → 水平方向も5本
+                _dv2 = _V((_m.cos(a0 + _da), _m.sin(a0 + _da), _el)).normalized()
+                _h2 = tree.ray_cast(p, _dv2, 6.0)
+                if _h2[0] is not None:
+                    sc = min(sc, 0.55 + 0.4 * (_h2[3] / 6.0))
         return min(sc, 1.0)
     base_sc = score(base)
     if base_sc >= 1.0:
@@ -287,6 +288,7 @@ if args.world:
             e.location, e.rotation_euler = (ox, oy, 0), (0, 0, yw)
             lib.link(e, "Zones")
         elif sel == "all" or sid in sel.split(","):
+            kit.TINT_ON[0] = False
             kit.build_zone(sid, origin=(float(ox), float(oy), 0.0), yaw=yw)
     import kit7 as _k7w
     print('CUTS', _k7w.apply_cuts())
@@ -554,6 +556,14 @@ for look in ("Medium High Contrast", "AgX - Medium High Contrast", "High Contras
         continue
 scene.view_settings.exposure = args.exposure
 print(f"[{time.time() - t0:5.1f}s] scene ready; objects={len(bpy.data.objects)}")
+if os.environ.get("STOCKDUMP"):      # Z-A10: 停車車両(stk_*)の外接箱と、同じ x 範囲にあるレール(trk/rail)の y 範囲を出力して、線路外置きを検出する
+    import re as _re2
+    for _o in bpy.data.objects:
+        if _o.type == 'MESH' and _re2.match(r"stk_", _o.name) or (_o.type == 'EMPTY' and _o.name.startswith("stk_")):
+            _p = _o.matrix_world.translation
+            print(f"[stk] {_o.name} x={_p.x:.1f} y={_p.y:.1f} z={_p.z:.2f}")
+    _rl = [(_o.name, _o) for _o in bpy.data.objects if _o.type == 'MESH' and _re2.search(r"rail|trk", _o.name, _re2.I)]
+    print(f"[stk] rail objects={len(_rl)}")
 if os.environ.get("MODELCHECK"):      # K8: モデル同士の干渉検査(出力 json)
     import modelcheck
     modelcheck.run(os.environ["MODELCHECK"])
@@ -643,6 +653,32 @@ if args.pano:
         bpy.ops.render.render(write_still=True)
         print("PANO done", nd["id"], f"{time.time() - t0:.0f}s", flush=True)
     sys.exit(0)
+def _fallback_cam(k):
+    """E6/M19所見: kit3/kit6 の特殊駅は kit2.DESIGN に無く、@F/@P/@T/@R/@L が全て同一の既定カメラになっていた。
+    シーン内の「ホーム」メッシュ(名前に plat を含む)の外接箱から、駅ごとに異なる位置のカメラを作る。見つからなければ None。"""
+    import re as _re
+    xs, ys, zs = [], [], []
+    for o in bpy.context.scene.objects:
+        if o.type == 'MESH' and _re.search(r"plat", o.name, _re.I) and not o.hide_render:
+            for c in o.bound_box:
+                w = o.matrix_world @ Vector(c)
+                xs.append(w.x); ys.append(w.y); zs.append(w.z)
+    if len(xs) < 8:
+        return None
+    x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
+    cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+    zp = max(1.1, max(zs) if max(zs) < 14.0 else 1.1)      # 高架駅(K03 等)はホーム面の高さに合わせる
+    if k == "F":
+        return [cx, y1 + 38.0, 3.0, cx, cy, zp + 2.4, 28]
+    if k == "P":
+        return [x0 - 18.0, cy, zp + 1.65, x1, cy, zp + 1.8, 28]
+    if k == "T":
+        return [cx + 55.0, y1 + 24.0, 2.2, cx - 40.0, y1 + 26.0, 3.0, 32]
+    if k == "R":
+        return [x1 + 18.0, y0 - 3.0, zp, x0 - 10.0, cy, zp + 0.5, 32]
+    return [x0 - 30.0, cy - 14.0, 2.4, cx, cy + 12.0, zp + 5.0, 24]      # L
+
+
 if not args.no_render and os.environ.get('MULTICAM'):
     _both = os.environ.get('PEOPLE_BOTH') == '1'      # 1回の構築で 人物表示/非表示 の両方を撮る(出力: <out>_<n>.png=表示, <out>_np_<n>.png=非表示)
     _pp = [o for o in bpy.data.objects if o.get("rig_kind") == "pax" or (o.parent is not None and o.parent.get("rig_kind") == "pax")]
@@ -669,7 +705,7 @@ if not args.no_render and os.environ.get('MULTICAM'):
                     else:
                         _v = [_bx + _w + 18.0, 3.0, 1.1, _bx - 10.0, -4.0, 1.6, 32]
                 else:
-                    _v = [*CAMS["B"][0], *CAMS["B"][1], CAMS["B"][2]]
+                    _v = _fallback_cam(_c.strip()[1:]) or [*CAMS["B"][0], *CAMS["B"][1], CAMS["B"][2]]
             elif _c.strip()[1:] == "L":                       # @L: 駅の象徴物(landmark)を主題にしたカメラ(駅ごとに構図が変わる)
                 import kit2 as _k2
                 _lm = _k2.DESIGN.get(getattr(args, "zone", ""), {}).get("lm") or []
@@ -677,7 +713,7 @@ if not args.no_render and os.environ.get('MULTICAM'):
                     _lx, _ly = float(_lm[0][1]), float(_lm[0][2])
                     _v = [_lx - 28.0, _ly - 40.0, 3.0, _lx, _ly, 9.0, 24]
                 else:
-                    _v = [*CAMS["B"][0], *CAMS["B"][1], CAMS["B"][2]]
+                    _v = _fallback_cam("L") or [*CAMS["B"][0], *CAMS["B"][1], CAMS["B"][2]]
             else:
                 _cc = CAMS[_c.strip()[1:]]
                 _v = [*_cc[0], *_cc[1], _cc[2]]
