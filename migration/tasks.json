@@ -921,39 +921,111 @@
   "subject": "【S-MG1】Claude Codeへの完全移行パッケージ作成(最優先・ユーザー明記)"
  },
  {
-  "id": 207,
+  "id": 301,
   "subject": "【E8】特殊駅(M19/K02/K03/R02/TR02)の @F/@P/@L 同一カメラ不具合の修正と再撮(fallbackカメラ)",
   "status": "in_progress",
   "description": "E5所見: kit2.DESIGN に無い駅は @L/@F/@P/@T/@R が全て既定カメラに落ち3枚が同一画像。main.py に _fallback_cam を追加済み。再撮は e5r_all.sh → out/e5r/。完了条件: 6視点が全て別構図で目視確認。"
  },
  {
-  "id": 208,
+  "id": 302,
   "subject": "【M6】穂波野(M06)を以前の高品質版(本体データ)へ完全移行し、監査して駅舎をアップグレード",
   "status": "pending",
   "description": "--zone M06 の汎用版は使わず本体データ(--parts core,station,depot,props,train,veg,hq,life)を正とする。移行後に strict-auditor(最新画像)で監査し駅舎をアップグレード。"
  },
  {
-  "id": 209,
+  "id": 303,
   "subject": "【B6e】駅舎は全階層(地下がある場合は地下を含む)に入れる",
   "status": "pending",
   "description": "全駅の駅舎で上階・地下階を含む全階層に入れ、室内があること。doorcheck+断面/内部視点で確認。"
  },
  {
-  "id": 210,
+  "id": 304,
   "subject": "【CO11】見逃した(忘れた)指示の確認",
   "status": "pending",
   "description": "会話ログのユーザー発言を全抽出し、台帳未反映の指示を追加。docs/INSTRUCTIONS_CHECK.md に追記。"
  },
  {
-  "id": 211,
+  "id": 305,
   "subject": "【D10】穂波野(M06)を6線に増設(現4線→6線)。車庫・引き揚げ線(D4〜D9)と統合",
   "status": "pending",
   "description": "ユーザー指示2026-10-16 22:15。現行 T1〜T4(common.TRACK_YS=0,-4.6,-11,-16.5)を6線へ。ホーム(島式/相対)・跨線/踏切・架線・信号・駅舎導線・停車車両・kit4.local_tracks と路線図(net/details.py 線数)・stn_demand/station_plan を整合。車庫関係は D4〜D9(2026-10-11 22:43 指示)を参照: 引き揚げ線+超大型車庫(総合車両基地)、旧車庫は新車庫のごく小さな一部として移設、社員管理棟群・技術開発棟群、人の出し入れ(V3)。"
  },
  {
-  "id": 212,
+  "id": 306,
   "subject": "【CO12】タスクを二度と消さない運用(未完了は削除・縮約禁止、TaskListと台帳の件数照合)",
   "status": "completed",
   "description": "ユーザー最重要指示2026-10-16 22:40。完了済み92件をTaskListへ再追加済み。ルールは CLAUDE.md と docs/TASK_RULES.md に記載。"
+ },
+ {
+  "id": 207,
+  "subject": "【S-M1】モデリング調査(最優先): Blender公式・高速高品質モデリング・AIモデリング → 全文を読み AI関連と改善点を報告",
+  "status": "in_progress",
+  "description": "migration/research_modeling.md に調査済み。残: ユーザーへAI関連と『どれをどう直すか』を報告し反映"
+ },
+ {
+  "id": 208,
+  "subject": "【CO5】会話ログ全確認(見逃し指示の回収)",
+  "status": "completed",
+  "description": "2026-10-16 に CO11 で再実施"
+ },
+ {
+  "id": 209,
+  "subject": "【CO6】全 .md の再読と台帳整理",
+  "status": "in_progress",
+  "description": "順番最適化と細分化の再実施"
+ },
+ {
+  "id": 212,
+  "subject": "【X14】監査基準を超超超厳格へ強化",
+  "status": "in_progress",
+  "description": "audit_rubric.md 反映済み・運用継続"
+ },
+ {
+  "id": 213,
+  "subject": "【V4】撮影を人物 非表示/表示 の両方で撮る",
+  "status": "in_progress",
+  "description": "PEOPLE_BOTH=1。E5は人物ありのみ=未達"
+ },
+ {
+  "id": 214,
+  "subject": "【W3】実行速度の向上(品質維持)",
+  "status": "in_progress",
+  "description": "BVH化・同時3本×1スレッド等"
+ },
+ {
+  "id": 215,
+  "subject": "【U1】docs/REQUESTS_TO_USER.md を作成・随時更新",
+  "status": "in_progress",
+  "description": "要求は1回まとめて伝える"
+ },
+ {
+  "id": 220,
+  "subject": "【Q8】絶対パスの一元化(ROOT)",
+  "status": "pending",
+  "description": "docs/ROOT_CAUSES.md"
+ },
+ {
+  "id": 221,
+  "subject": "【Q10】車両の数値検査 vehcheck.py",
+  "status": "pending",
+  "description": "docs/ROOT_CAUSES.md"
+ },
+ {
+  "id": 222,
+  "subject": "【S-G8】GitHub上のファイル・ドキュメント整理",
+  "status": "completed",
+  "description": ""
+ },
+ {
+  "id": 223,
+  "subject": "【S-T1】新しいタスク一覧ファイル docs/TASK_LIST.md",
+  "status": "completed",
+  "description": "net/mktasklist.py"
+ },
+ {
+  "id": 224,
+  "subject": "【S-Q5】圧縮手順整備の優先順位メモ",
+  "status": "completed",
+  "description": ""
  }
 ]
