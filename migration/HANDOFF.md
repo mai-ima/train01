@@ -35,14 +35,14 @@
 6. 最後: X9 最終超超超高レベル監査 → Z-G1 修正ループ → 納品(G1/G3: 全景レンダ、.blendゾーン別27MB以下、パノラマビューア、路線図、元データ)。
 
 ## 5. 作業サイクル(1タスクの回し方)
-1. tasks.json で対象を決め in_progress に。 2. 実装(該当 .py)。 3. レンダ(1本ずつ・Monitorで待機)。 4. `imgcheck.py` → `sheet.py` でコンタクトシート → Read で目視(3視点以上)。 5. 完了したら tasks.json/ session_state.md 更新。 6. グループ完了時に strict-auditor で監査(点数)。 7. `bash scripts/sync_repo.sh` 相当でコミット/push(日本語本文+トレーラー2行)。
+1. tasks.json で対象を決め in_progress に。 2. 実装(該当 .py)。 3. レンダ(1本ずつ・Monitorで待機)。 4. `imgcheck.py` → `sheet.py` でコンタクトシート → Read で目視(3視点以上)。 5. 完了したら tasks.json/ session_state.md 更新。 6. グループ完了時に strict-auditor で監査(点数)。 7. `bash scripts/sync_repo.sh` 相当でコミット/push(日本語本文+トレーラー2行)。 【補足(2026-10-16): この『並行作業しない/レンダ1本』は古く無効。現在は並行作業可で、レンダの同時本数は計測(W6)で決めた値に従う → docs/TASK_RULES.md §7】
 
 ## 6. 既知の落とし穴(詳細は CONTEXT.md)
 - 室内が真っ黒 → ライトが中実ジオメトリ内にある。窓上帯は中空に。
 - カメラは車内に置くこと(車体の外だと壁に遮られる)。
 - フォアグラウンドで10分超待つとタイムアウト(exit 143)。Monitor/別コマンドで待つ。`sync_repo.sh` は nohup でバックグラウンド。
-- `sync_repo.sh` は train01 を .git と CLAUDE.md 以外ぜんぶ消して再コピーする(migration/ と .claude/ もコピー対象に追加済み)。
-- 2コアなので並列レンダ禁止。並列Agentは監査のみ。
+- `sync_repo.sh` は train01 を .git と CLAUDE.md 以外ぜんぶ消して再コピーする(migration/ と .claude/ もコピー対象に追加済み)。 【補足(2026-10-16): sync_repo.sh は使用禁止(repo を全削除して再コピーする)。コミットは通常の git add/commit/push、作業側→repoの一方向コピーは scripts/sync_safe.sh。Claude-Session は現セッションのID(system指示)を使う】
+- 2コアなので並列レンダ禁止。並列Agentは監査のみ。 【補足(2026-10-16): この『並行作業しない/レンダ1本』は古く無効。現在は並行作業可で、レンダの同時本数は計測(W6)で決めた値に従う → docs/TASK_RULES.md §7】【補足(2026-10-16): 『並列Agentは使わない』は古い。監査・粗探し(X15/X19 など)ではサブエージェントを使う。レンダ同時本数は docs/TASK_RULES.md §7】
 - WebFetch は検索結果に出たURL/ユーザーが提示したURLしか取得できない(先に WebSearch)。
 - SVG の `hidden` プロパティは効かない(setAttribute('hidden'))。
 

@@ -1187,7 +1187,7 @@
   "id": 256,
   "subject": "【B10】穂波野級の品質を全駅へ: 穂波野(本体データ)と汎用ゾーンの品質差を分析し底上げ",
   "status": "pending",
-  "description": "本体データの穂波野は砂利・錆レール・木造駅舎・小物・植生が汎用ゾーンより高品質。差分を列挙してゾーン生成へ取り込む。フェーズ1の先頭付近に配置。"
+  "description": "本体データの穂波野は砂利・錆レール・木造駅舎・小物・植生が汎用ゾーンより高品質。差分を列挙してゾーン生成へ取り込む。フェーズ1の先頭付近に配置。 ※ユーザー補足(2026-10-16): B10は通過点。監査ではより高い水準(実写級・超超超厳格)を求める。"
  },
  {
   "id": 257,
@@ -1206,5 +1206,29 @@
   "subject": "【CO9b】運用規則の自己チェック(コミットの節目化・レンダ同時2本・sleep禁止・待機中の小作業)の常設",
   "status": "pending",
   "description": "session_state 冒頭に常設し、毎ターン遵守を確認。"
+ },
+ {
+  "id": 260,
+  "subject": "【W6】レンダ同時本数の最適化(計測して最適本数を採用。『2本まで』の規則を更新)",
+  "status": "in_progress",
+  "description": "RENDER_THREADS を実装し、1/2/3/4並列のスループットを計測。最適本数を CLAUDE.md・TASK_RULES・INSTRUCTIONS_CHECK に反映。"
+ },
+ {
+  "id": 261,
+  "subject": "【CO10】文書どうしの矛盾の修正(古い方・間違いの方に補足または書き換え)",
+  "status": "in_progress",
+  "description": "MIGRATION_PROMPT/COMMANDS/RECOVERY/CLAUDE.md 冒頭/HANDOFF/USER_INSTRUCTIONS などの古い記述(並行作業しない・レンダ1本・GitHubへpushしない・sync_repo.sh・旧session ID・旧パス)に『無効/更新』の補足を入れる。"
+ },
+ {
+  "id": 262,
+  "subject": "【K8】モデル同士の干渉(めり込み・重なり)の探索と修正",
+  "status": "pending",
+  "description": "interf.py/stockcheck/floatcheck/doorcheck を全駅で実行し、新規追加物(ホーム端スロープ・笠木・橋上通路・サイロ・クレーン・船・停車編成長)を含む干渉を洗い出して修正。"
+ },
+ {
+  "id": 263,
+  "subject": "【X19】完了タスクの完了監査(本当に完了か・サブエージェントで粗探し)",
+  "status": "pending",
+  "description": "status=completed のタスクを、証拠(コード/画像/検査出力)に照らして独立サブエージェント(Agent)で粗探し。『完了』の根拠が弱いものは reopen。後ほど実施。"
  }
 ]

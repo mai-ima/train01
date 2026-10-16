@@ -153,7 +153,7 @@ python3 main.py --world markers --parts none --no-render      # 軌道グラフ 
 | `ia.sh` | 全駅の検査バッチ(干渉・ドア・浮き・停車車両) |
 | `pano.sh` | パノラマ書き出し |
 | `final.sh` | 最終レンダ(1920px・複数視点)と `.blend` |
-| `sync_repo.sh` | 作業ディレクトリ → このリポジトリ形式へ整理して同期 |
+| `sync_repo.sh` | 作業ディレクトリ → このリポジトリ形式へ整理して同期 | 【補足(2026-10-16): sync_repo.sh は使用禁止(repo を全削除して再コピーする)。コミットは通常の git add/commit/push、作業側→repoの一方向コピーは scripts/sync_safe.sh。Claude-Session は現セッションのID(system指示)を使う】
 | その他 (`za.sh` `zb.sh` `zc.sh` `zs*.sh` `ws*.sh` `we.sh` `wf.sh` ほか) | 試行・バッチ用の小さなスクリプト |
 
 ## コマンドリファレンス(`main.py`)

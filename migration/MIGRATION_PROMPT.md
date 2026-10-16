@@ -1,5 +1,8 @@
 # Claude Code 移行プロンプト(S-MG1)
 
+> **【補足(2026-10-16)】** 本書は移行時点(2026-10-12)の内容を含み、一部は古い(並行作業しない/レンダ1本/sync_repo.sh/旧Session ID/旧パス)。**最新の運用は docs/TASK_RULES.md・docs/INSTRUCTIONS_CHECK.md・migration/HANDOFF.md §11〜12・net/session_state.md(冒頭の自己チェック)** を優先する。古い記述には行末に【補足】を付けてある(元の記述は削除していない)。
+
+
 使い方: リポジトリ(github.com/mai-ima/train01)を clone した Claude Code で、下の「A. 貼り付け用(標準)」をそのまま最初のメッセージに貼る。
 短縮版は B、無人連続運転は C(`/goal`)。根拠は `research_handoff.md`。ユーザー向けの文章は**すべて日本語**。
 
@@ -27,7 +30,7 @@
 - ユーザーに見える文章・タスク名・コミット文は日本語。コミットは日本語本文+末尾に Co-Authored-By と Claude-Session 行。
 - 既存の情報・ファイルを消さない(追記/移動のみ)。「GitHubに入れない」類の旧指示は無効(CLAUDE.md の最新優先)。
 - 勝手に中断・停止しない。ターンは必ず次の作業(ツール呼び出し)で終える。待機中も可能な作業を続ける。`bash scripts/continue_check.sh` を終了前に実行。
-- 一度に1タスク(または1群)。レンダは1度に1本(2コア)。待機は Monitor か上限付き `timeout … until` ループ(sleep連打禁止)。
+- 一度に1タスク(または1群)。レンダは1度に1本(2コア)。待機は Monitor か上限付き `timeout … until` ループ(sleep連打禁止)。 【補足(2026-10-16): この『並行作業しない/レンダ1本』は古く無効。現在は並行作業可で、レンダの同時本数は計測(W6)で決めた値に従う → docs/TASK_RULES.md §7】
 - 合格は「実写と見分けがつかない超高品質」+「他駅/他形式と明確に差別化」。監査は点数化(総合95以上かつ全軸90以上、未確認=0)。監査は新文脈のサブエージェント(strict-auditor)に、前回点数を伏せて依頼。自分で自分に合格を出さない。
 - 視覚確認は異なる3視点以上(MULTICAM)。1枚で合格にしない。
 - 正直に報告(未検証・未達は明記)。現状、車両の内装/外観の監査はすべて不合格(最高52点)。
@@ -37,7 +40,7 @@
 
 # 3. 最初の1手
 - `tasks.json` の in_progress を確認し、なければ pending の先頭群(TASKS.md の「実行順」)。現在の実質位置は HANDOFF.md「現在地と次の一手」(車両の外観差別化 F3c → 内装 F3d2 → 再監査 X13)。
-- 1タスクごと: 実装 → レンダ → imgcheck.py → コンタクトシート → 多視点で目視 → 完了なら tasks.json 更新+session_state.md 追記 → コミット/push(`bash scripts/sync_repo.sh` 等、COMMANDS.md)。
+- 1タスクごと: 実装 → レンダ → imgcheck.py → コンタクトシート → 多視点で目視 → 完了なら tasks.json 更新+session_state.md 追記 → コミット/push(`bash scripts/sync_repo.sh` 等、COMMANDS.md)。 【補足(2026-10-16): sync_repo.sh は使用禁止(repo を全削除して再コピーする)。コミットは通常の git add/commit/push、作業側→repoの一方向コピーは scripts/sync_safe.sh。Claude-Session は現セッションのID(system指示)を使う】
 
 # 4. 完了条件
 `tasks.json` の全タスクが completed、最終監査(X9 最終超超超高レベル監査)が基準を満たすまで続ける。途中で「おおむね良い」は不合格。

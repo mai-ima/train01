@@ -7,7 +7,7 @@
 2. `bash migration/setup_workspace.sh`(作業形式 /home/claude/station へ展開+パス置換+依存確認)
 3. `MIGRATION_PROMPT.md` の **A** を最初のメッセージに貼る(無人連続運転は **C** の `/goal`)
 4. Claude が `CLAUDE.md → USER_INSTRUCTIONS.md → HANDOFF.md → CONTEXT.md → tasks.json → net/session_state.md` を読み、現在地を日本語で報告 → 作業再開
-5. 以後、節目ごとに tasks.json / session_state.md を更新し、`scripts/sync_repo.sh` 等でコミット+push
+5. 以後、節目ごとに tasks.json / session_state.md を更新し、`scripts/sync_repo.sh` 等でコミット+push 【補足(2026-10-16): sync_repo.sh は使用禁止(repo を全削除して再コピーする)。コミットは通常の git add/commit/push、作業側→repoの一方向コピーは scripts/sync_safe.sh。Claude-Session は現セッションのID(system指示)を使う】
 
 ## ファイル一覧
 | ファイル | 内容 |

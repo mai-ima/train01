@@ -3,7 +3,7 @@
 cd "$(dirname "$(readlink -f "$0")")"
 until [ -f out/e3b/done.txt ]; do sleep 30; done
 mkdir -p out/e3b2
-( PEOPLE_BOTH=1 MULTICAM="@H;@C;@B;@D;@G;@Z1;@ZT" python3 main.py --parts core,station,depot,props,train,veg,hq,life --cam A --w 960 --samples 24 --draft --out e3b2/M06 > out/e3b2/M06.log 2>&1 ) &
+# (M06 の本体データ撮影は完了済み: out/e3b2/M06_*.png)
 ( for s in $(grep -v '^M06$' out/e3b_redo.txt); do
     PEOPLE_BOTH=1 MULTICAM="@A;@E;@ZA;@L" python3 main.py --zone $s --parts none --cam A --w 960 --samples 24 --draft --out e3b2/$s > out/e3b2/$s.log 2>&1
     python3 healthscan.py out/e3b2/$s.log >> out/e3b2/HEALTH.txt 2>&1 || echo "NG $s" >> out/e3b2/HEALTH_NG.txt

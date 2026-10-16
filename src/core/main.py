@@ -504,6 +504,9 @@ r.image_settings.file_format = 'PNG'
 r.image_settings.color_depth = '8'
 cy = scene.cycles
 cy.device = 'CPU'
+if os.environ.get("RENDER_THREADS"):       # W6: 並列実行時に1プロセスあたりのスレッド数を固定(未指定=全コア)
+    scene.render.threads_mode = 'FIXED'
+    scene.render.threads = int(os.environ["RENDER_THREADS"])
 cy.samples = args.samples
 cy.use_adaptive_sampling = True
 cy.adaptive_threshold = 0.03
@@ -546,6 +549,9 @@ for look in ("Medium High Contrast", "AgX - Medium High Contrast", "High Contras
         continue
 scene.view_settings.exposure = args.exposure
 print(f"[{time.time() - t0:5.1f}s] scene ready; objects={len(bpy.data.objects)}")
+if os.environ.get("MODELCHECK"):      # K8: モデル同士の干渉検査(出力 json)
+    import modelcheck
+    modelcheck.run(os.environ["MODELCHECK"])
 if os.environ.get("DBG_NEAR"):      # デバッグ: "x,y,z,r" の球内に入るオブジェクト名とマテリアルを列挙(視界を塞ぐ黒い面などの特定用)
     _p = [float(t) for t in os.environ["DBG_NEAR"].split(",")]
     bpy.context.view_layer.update()
