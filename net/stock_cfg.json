@@ -1,0 +1,4 @@
+{
+  "_README": "駅ごとの停車車両の設定(V2)。キーが駅IDのときだけ有効。無い駅は zone_stock._place_auto の自動配置。enabled:false で停車車両なし。consists の kind は emu|kiha|tram|mono|freight、opt は形式指定(例 {\"kind\":\"kiha_std\"})、n=両数、track=線番号(0始まり)、x=編成中心のx(m)、flip=向き反転。--stock off / --stock <駅ID> で CLI からも切替可。",
+  "_example": {"enabled": true, "consists": [{"track": 0, "kind": "kiha", "opt": {"kind": "kiha_std"}, "n": 2, "x": 0.0, "flip": false}]}
+}

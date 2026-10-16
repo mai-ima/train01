@@ -674,11 +674,35 @@ def r02():
     _town(sid, rng, "port", 34.0, 0.55, rows=1, sides=("L",), skip=((-45, 55),))
 
 
+def _people(sid):
+    """H1: 特殊駅(kit6)のホーム上に待ち客・駅員を置く(kit2 系と同じ life.person)。人物は People 系コレクション扱いで --people で消せる。"""
+    try:
+        import life as _life, random, zlib
+        import kit as _kit
+        rp = random.Random(zlib.crc32(sid.encode()) % 9999)
+        kinds = ["man", "man2", "woman", "student", "worker", "farmer"]
+        for (x0, x1, y0, y1, nm) in list(_kit.PLAT_REC):
+            if not nm.startswith("k6_") or x1 - x0 < 12 or y1 - y0 < 1.5:
+                continue
+            yc = (y0 + y1) / 2
+            n = 2 + int((x1 - x0) / 28)
+            for i in range(n):
+                f = _life.Fig(f"k2ppl_{sid}_{nm[3:]}_{i}")
+                _life.person(f, rp.uniform(x0 + 4, x1 - 4), yc + rp.uniform(-0.3, 0.3), rp.uniform(0, 6.28), rp.choice(kinds), z=Z_PLAT,
+                             scale=rp.choice([1.0, 1.0, 0.92, 0.82]), pose=rp.choice(["stand", "stand", "walk"]))
+                f.build()
+    except Exception as e:
+        print("people failed", sid, e)
+
+
 def _wrap(f, sid):
     def w():
         kit2.mats2()
         _boards(sid)
+        import kit as _kit
+        _kit.PLAT_REC.clear()
         f()
+        _people(sid)
     return w
 
 

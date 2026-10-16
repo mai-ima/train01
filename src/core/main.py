@@ -177,6 +177,11 @@ def _cam_clear(v):
             hit = tree.ray_cast(p, dv, L * 0.85)
             if hit[0] is not None:
                 sc = min(sc, hit[3] / (L * 0.55))
+        for _el in (-0.12, -0.3):                       # Q11: 手前6m以内の物体(列車の屋根・壁)が画面の下を占める構図は減点(M02 @A で屋根が画面の半分を占めた)
+            _dv2 = _V((_m.cos(a0), _m.sin(a0), _el)).normalized()
+            _h2 = tree.ray_cast(p, _dv2, 6.0)
+            if _h2[0] is not None:
+                sc = min(sc, 0.55 + 0.4 * (_h2[3] / 6.0))
         return min(sc, 1.0)
     base_sc = score(base)
     if base_sc >= 1.0:

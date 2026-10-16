@@ -778,11 +778,11 @@ def build_design(sid):
             _of = track_offsets(d["plat"], d["ntr"])
             _ye = -4.4 + min(_of) - 3.2
             _pb = (-4.6 - (1.7 + 4.4) / 2) - 4.4         # B面ホーム(線1の南 1.7〜4.4)の中央。建物枠は世界y+4.4 なので -4.4(K8: 旧式は線1の車体内=-5.35 に橋脚が立っていた)
-            volume(gb, dict(x0=xc - 4.0, x1=xc + 4.0, y0=_ye - 0.4, y1=-0.4, nfl=1, roof="flat", wall="pl_grey", ground=False, zf=5.7, skip=(), door="S"), rng, st)   # 橋上通路: 長辺(E/W)にも窓を開ける(旧: skip=E,W で無窓の壁だった)
+            volume(gb, dict(x0=xc - 4.0, x1=xc + 4.0, y0=_ye - 0.4, y1=-0.4, nfl=1, roof="flat", wall="pl_grey", ground=False, zf=7.4, skip=(), door="S"), rng, st)   # 橋上通路: 長辺(E/W)にも窓を開ける(旧: skip=E,W で無窓の壁だった)
             for yy in (-1.4, _pb, _ye + 0.6):                          # 橋脚: A面ホーム上(-1.4)・B面ホーム中央(_pb)・線路の外側
                 for xx in (xc - 3.6, xc + 3.6):
-                    gb.a("concrete", bevel=0.02).box(xx - 0.3, xx + 0.3, yy - 0.3, yy + 0.3, 0.0, 5.6)
-            stairs(gb, xc - 2.5, -2.5, -0.4, 5.6, key="concrete")
+                    gb.a("concrete", bevel=0.02).box(xx - 0.3, xx + 0.3, yy - 0.3, yy + 0.3, 0.0, 7.3)
+            stairs(gb, xc - 2.5, -2.5, -0.4, 7.3, key="concrete")
             gb.build()
             ymid = -9.0
         else:

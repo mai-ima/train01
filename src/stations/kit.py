@@ -88,7 +88,11 @@ def tracks(x0, x1, ys, wooden=True):
         trackkit.build_track(f"kit_trk{i}", P, wooden=wooden, ballast=True, fittings=True, cam=None)
 
 
+PLAT_REC = []      # H1: kit6 等のホーム(x0,x1,y0,y1,name)の記録。人物配置に使う
+
+
 def platform(x0, x1, y0, y1, name="kit_plat"):
+    PLAT_REC.append((x0, x1, y0, y1, name))
     g = G(name, "Station")
     g.a("concrete", bevel=0.01).box(x0, x1, y0, y1, -0.2, Z_PLAT - 0.04)
     g.a("plat_top", bevel=0.0).box(x0 + 0.04, x1 - 0.04, y0 + 0.5, y1 - 0.04, Z_PLAT - 0.04, Z_PLAT)

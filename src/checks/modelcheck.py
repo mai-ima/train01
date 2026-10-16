@@ -41,7 +41,7 @@ def run(out_json, min_tris=4, max_report=40):
             if _group(a[0]) == _group(b[0]):
                 continue
             ov = np.minimum(a[3], b[3]) - np.maximum(a[2], b[2])
-            if (ov > 0.03).all():
+            if (ov > 0.0).all():                                   # 薄い部品(架線0.03m等)も候補にする(旧>0.03は架線×壁を取りこぼした)
                 cand.append((i, j, float(ov.min())))
     trees = {}
     def tree(k):

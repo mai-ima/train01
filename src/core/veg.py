@@ -630,6 +630,15 @@ def zone_grass(cam, x0=-110, x1=110, y0=-70, y1=95, step=0.5, light=None):
         if m.sum():
             Vv, Tt, Cc = tufts(Q[m][:, :2], Q[m][:, 2], h[m], k=5, spread=0.16, seed=21 + gi, **kd)
             emit(f"zgrass{gi}", Vv, Tt, Cc, M["blade"])
+    # Q13: 近景の野花(白詰草・タンポポ調の黄/白の穂先)。均一な緑一色で平板に見える問題への対策
+    if os.environ.get('WILDFLOWERS', '1') == '1':
+        dq = np.hypot(Q[:, 0] - cx, Q[:, 1] - cy)
+        fm = (dq < 24.0) & (rng.uniform(0, 1, len(Q)) < 0.16) & (~ne)
+        for fi, (fb, ft) in enumerate([((0.10, 0.18, 0.04), (0.95, 0.88, 0.25)), ((0.10, 0.18, 0.04), (0.93, 0.93, 0.88)), ((0.10, 0.17, 0.05), (0.80, 0.55, 0.75))]):
+            sel_f = fm & ((np.arange(len(Q)) % 3) == fi)
+            if sel_f.any():
+                Vv, Tt, Cc = tufts(Q[sel_f][:, :2], Q[sel_f][:, 2], rng.uniform(0.16, 0.26, int(sel_f.sum())), k=3, spread=0.07, wmean=0.016, cb=fb, ct=ft, lean=0.15, seed=51 + fi)
+                emit(f"zflower{fi}", Vv, Tt, Cc, M["blade"])
     # 縁取りのススキ・背の高い草
     E_ = Q[ne & (nzq > 0.0)]
     if len(E_):
