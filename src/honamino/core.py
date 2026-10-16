@@ -84,10 +84,14 @@ def build_tracks(cam):
     P2 = smooth_x([(-140, T1), (-112, T1), (-80, T2), (88, T2), (122, T1), (140, T1)], -140, 140)
     P3 = smooth_x([(-72, T2), (-42, T3), (60, T3), (88, T2)], -72, 88)
     P4 = smooth_x([(-38, T3), (-6, T4), (54, T4)], -38, 54)
-    YARD_PATHS.update({"T1": P1, "T2": P2, "T3": P3, "T4": P4})
+    P5 = smooth_x([(-2, T4), (24, T5), (68, T5)], -2, 68)         # D10: T4 から分岐する第5線
+    P6 = smooth_x([(24, T5), (46, T6), (78, T6)], 24, 78)         # 第5線から分岐する第6線
+    YARD_PATHS.update({"T1": P1, "T2": P2, "T3": P3, "T4": P4, "T5": P5, "T6": P6})
     for nm, P in YARD_PATHS.items():
         trackkit.build_track(nm, P, cam=cam, pebble_radius=44.0)
     trackkit.buffer_stop(54.5, T4, 0)
+    trackkit.buffer_stop(68.5, T5, 0)
+    trackkit.buffer_stop(78.5, T6, 0)
     return YARD_PATHS
 
 

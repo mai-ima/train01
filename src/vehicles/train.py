@@ -468,6 +468,12 @@ def build_train():
         v = make_wam(f"wamT4_{i}", seed=20 + i) if f == "wam" else make_tora(f"toraT4_{i}", f.split("_")[1], seed=20 + i)
         v.place(x, T4, 0.0)
     make_yo("yoT4").place(47.5, T4, math.pi)
+    # D10: 第5線(貨車の留置)と第6線(客車の留置)
+    for i, (x, f) in enumerate(((31.0, "wam"), (40.9, "tora_coal"), (50.8, "wam"), (60.7, "tora_rice"))):
+        v = make_wam(f"wamT5_{i}", seed=40 + i) if f == "wam" else make_tora(f"toraT5_{i}", f.split("_")[1], seed=40 + i)
+        v.place(x, T5, 0.0)
+    for w_ in range(2):
+        make_coach(f"coachT6_{w_}", variant=w_, seed=60 + w_).place(54.0 + w_ * 20.6, T6, math.pi)
 
 
 def build_vehicles():

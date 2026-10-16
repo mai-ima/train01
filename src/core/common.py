@@ -34,7 +34,8 @@ ROAD_Y = 14.5           # forecourt dirt road centre line
 TRAIN_X0, TRAIN_X1 = 2.0, 22.0
 # ---- yard: four running / siding tracks (track centre lines, y)
 T1, T2, T3, T4 = 0.0, -4.6, -11.0, -16.5
-TRACK_YS = [T1, T2, T3, T4]
+T5, T6 = -22.0, -27.5       # D10: 穂波野を6線へ(T4 の南に留置/入換の側線を2本増設。T4 から分岐して東へ伸びる)
+TRACK_YS = [T1, T2, T3, T4, T5, T6]
 ISLAND = (-12.0, 32.0, T3 + 1.7, T2 - 1.7)   # x0, x1, y0 (south edge), y1 (north edge) of the island platform
 YARD_SOUTH = -24.0
 Z_FLOOR = Z_PLAT + 0.30  # interior floor (raised wooden floor)

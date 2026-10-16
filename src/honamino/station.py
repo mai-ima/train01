@@ -439,7 +439,7 @@ def build_station():
     # ---- M6: 駅舎室内の照明(待合・出札/駅長室・改札通路)と吊りランプ。監査: 窓内が黒潰れ・室内が暗い
     import rooms as _rooms
     for (lx, ly, w_) in ((-10.4, 5.4, 60), (-7.2, 7.0, 90), (-3.6, 6.4, 90), (-7.4, 5.2, 60)):
-        _rooms.lamp_point(lx, ly, zf + 2.35, w_)
+        _rooms.lamp_point(lx, ly, zf + 2.35, w_ * 3)
         iron.cyl((lx, ly, zf + 2.35), (lx, ly, Z_BEAM - 0.12), 0.012, seg=8)            # 吊り棒
         iron.cyl((lx, ly, zf + 2.30), (lx, ly, zf + 2.46), 0.0, 0.16, seg=14)             # 笠(電球の傘)
     for a in (walls, frame, dark, glass, plinth, floor, iron, tile_cap, redp, conc):
