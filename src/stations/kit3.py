@@ -345,6 +345,7 @@ def m06():
     kit.ground(L=600, W=600)
     cam = (0.0, -8.0, 3.0)
     core.HQ_ON = True
+    core.NEWDEPOT_ON = True
     _b4 = set(bpy.data.objects.keys())
     core.build_paddies()
     for _n in set(bpy.data.objects.keys()) - _b4:      # 本体データの水田は -0.3〜-0.185(旧地面の窪み)に作ってある → 平らな地面(z=0)の上に出す
@@ -362,6 +363,8 @@ def m06():
     _props.build_props()
     train.build_train()
     train.build_vehicles()
+    import newdepot
+    newdepot.build()
     print("m06 built (本体データ)")
 
 

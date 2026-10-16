@@ -37,6 +37,8 @@ PLOTS_X = [(-110, -84), (-84, -61), (-61, -40), (-40, -19), (-19, 5), (5, 34), (
 PLOTS_YS = [(-127.3, -145), (-145, -165), (-165, -190)]
 PLOTS_YN = [(25.8, 41), (41, 58), (58, 78), (78, 104)]
 HARVESTED = []   # (x0,x1,y0,y1) of plots with stubble (hasa racks go here)
+NEWDEPOT_ON = False            # D4/D5: 新・総合車両基地の敷地(x>=35 の南側)では水田を作らない
+NEWDEPOT_X0 = 35.0
 
 
 def build_paddies():
@@ -47,6 +49,8 @@ def build_paddies():
             for (ya, yb) in rows:
                 y0, y1 = min(ya, yb), max(ya, yb)
                 harvested = rng.random() < 0.38
+                if NEWDEPOT_ON and rows is PLOTS_YS and x1 > NEWDEPOT_X0:
+                    continue
                 if HQ_ON and x0 >= HQ_ZONE[0] - 0.5 and x1 <= HQ_ZONE[1] + 5 and y0 < HQ_ZONE[3] - 0.5:
                     continue
                 mat = M["stubble"] if harvested else M["paddy"]
@@ -57,16 +61,22 @@ def build_paddies():
                     HARVESTED.append((x0 + 0.28, x1 - 0.28, y0 + 0.28, y1 - 0.28))
     for rows in (PLOTS_YS, PLOTS_YN):
         ylo, yhi = min(min(r) for r in rows), max(max(r) for r in rows)
+        _south = NEWDEPOT_ON and rows is PLOTS_YS
         for (x0, x1) in PLOTS_X:
+            if _south and x1 > NEWDEPOT_X0:
+                continue
             ylo2 = HQ_ZONE[3] if (HQ_ON and x0 >= HQ_ZONE[0] - 0.5 and ylo < HQ_ZONE[3]) else ylo
             lev.box(x0 - 0.27, x0 + 0.27, ylo2, yhi, -0.30, 0.04)
         ylo2 = HQ_ZONE[3] if (HQ_ON and ylo < HQ_ZONE[3]) else ylo
-        lev.box(PLOTS_X[-1][1] - 0.27, PLOTS_X[-1][1] + 0.27, ylo2, yhi, -0.30, 0.04)
+        if not _south:
+            lev.box(PLOTS_X[-1][1] - 0.27, PLOTS_X[-1][1] + 0.27, ylo2, yhi, -0.30, 0.04)
         for (ya, yb) in rows:
             for yy in (ya, yb):
                 xe = PLOTS_X[-1][1]
                 if HQ_ON and yy < HQ_ZONE[3] - 0.5 and yy > HQ_ZONE[2] - 3:
                     xe = HQ_ZONE[0]
+                if _south:
+                    xe = NEWDEPOT_X0
                 lev.box(PLOTS_X[0][0], xe, yy - 0.27, yy + 0.27, -0.30, 0.04)
     lev.build()
 
@@ -91,7 +101,8 @@ def build_tracks(cam):
         trackkit.build_track(nm, P, cam=cam, pebble_radius=44.0)
     trackkit.buffer_stop(54.5, T4, 0)
     trackkit.buffer_stop(68.5, T5, 0)
-    trackkit.buffer_stop(78.5, T6, 0)
+    if not NEWDEPOT_ON:
+        trackkit.buffer_stop(78.5, T6, 0)
     return YARD_PATHS
 
 
