@@ -290,7 +290,11 @@ def _place_auto(sid):
         jobs.append((2, pax[0]))
     if frt:
         for j in range(max(1, min(2, ntr - len(jobs)))):
-            jobs.append((len(jobs), frt[0]))
+            _used = {k_ for k_, _ in jobs}
+            _free = [k_ for k_ in range(ntr) if k_ not in _used]      # K8: 旅客の複製(track2)と貨物が同じ線に重なっていた → 空き線に置く
+            if not _free:
+                break
+            jobs.append((_free[0], frt[0]))
     for k, (kn, opt) in jobs:
         if k >= ntr:
             continue

@@ -304,6 +304,33 @@ def hill(cx, cy, rx, ry, h, name, seed=0):
     return Z, f
 
 
+BLDS, TREES = {}, {}        # K8: 駅ID→[(x,y,yaw,w,d)] / [(x,y,r)]  (建物と樹木、互いの重なりを避けるため)
+
+
+def _bld_hit(sid, x, y, r):
+    """点(x,y)に半径rの樹冠を置くと既存建物(OBB)に食い込むか。"""
+    for (bx_, by_, yaw_, w_, d_) in BLDS.get(sid, []):
+        c, s_ = math.cos(-yaw_), math.sin(-yaw_)
+        lx = c * (x - bx_) - s_ * (y - by_)
+        ly = s_ * (x - bx_) + c * (y - by_)
+        m = r * 0.7
+        if -m <= lx <= w_ + m and -m <= ly <= d_ + m:
+            return True
+    return False
+
+
+def _tree_hit_bld(sid, o, yaw, w, d):
+    """これから置く建物(原点o,向きyaw,幅w,奥行d)が既存樹木の樹冠に食い込むか。"""
+    c, s_ = math.cos(-yaw), math.sin(-yaw)
+    for (tx, ty, r) in TREES.get(sid, []):
+        lx = c * (tx - o[0]) - s_ * (ty - o[1])
+        ly = s_ * (tx - o[0]) + c * (ty - o[1])
+        m = r * 0.7
+        if -m <= lx <= w + m and -m <= ly <= d + m:
+            return True
+    return False
+
+
 def scatter_trees(rng, cx, cy, rx, ry, n, kinds=("sugi", "zelkova"), hmax=0.0, zfun=None):
     for i in range(n):
         a, r = rng.uniform(0, 6.283), math.sqrt(rng.random())
@@ -311,13 +338,18 @@ def scatter_trees(rng, cx, cy, rx, ry, n, kinds=("sugi", "zelkova"), hmax=0.0, z
         k = rng.choice(kinds)
         if CUR_SID[0] and near_track(x, y, 7.0):
             continue
+        _r = {"sugi": 2.4, "persimmon": 2.8}.get(k, 5.6)
+        _sid = CUR_SID[0]
+        if _bld_hit(_sid, x, y, _r) or any((x - tx) ** 2 + (y - ty) ** 2 < ((_r + tr) * 0.7) ** 2 for tx, ty, tr in TREES.get(_sid, [])):
+            continue                                                  # K8: 建物・既存樹木に重なる位置には植えない
+        TREES.setdefault(_sid, []).append((x, y, _r))
         before = set(bpy.data.objects.keys()) if zfun else None
         if k == "sugi":
             veg.sugi(x, y, h=rng.uniform(10, 17), r=rng.uniform(1.5, 2.2), seed=rng.randint(0, 9999))
         elif k == "persimmon":
             veg.persimmon(x, y, seed=rng.randint(0, 9999))
         else:
-            veg.CARD_SCALE = 0.22
+            veg.CARD_SCALE = float(os.environ.get('TREE_CARDS', '0.5'))   # Q14: 0.22だと葉が疎で塊状に見える → 0.5(.blend軽量化は VEG_LIGHT で行う)
             veg.zelkova(x, y, h=rng.uniform(8, 12), rad=rng.uniform(3.8, 5.4), seed=rng.randint(0, 9999))
             veg.CARD_SCALE = 1.0
         if zfun:
@@ -419,11 +451,12 @@ def prefab_house(w, d, rng, name):
 
 
 def put_building(kind, x, y, yaw, w, d, rng, st, k, sid, dens):
+    BLDS.setdefault(sid, []).append((x, y, yaw, w, d))
     sign_names = [n for n in ("sign_shokudo", "sign_shoten", "sign_ryokan", "sign_riyo", "sign_kusuri", "sign_sakaya") if KT.img(sid, n)]
     sign = KT.img(sid, rng.choice(sign_names)) if sign_names else None
     with SubZone((x, y, 0), yaw):
         if kind == "farm":
-            houses.farmhouse2(0, 0, w=w * rng.uniform(0.85, 1.25), d=d * rng.uniform(0.85, 1.3), name=f"k2f{k}", variant=rng.randint(0, 1), seed=k,
+            houses.farmhouse2(1.75, 1.75, w=(w - 3.5) / 1.25 * rng.uniform(0.85, 1.25), d=(d - 3.5) / 1.3 * rng.uniform(0.85, 1.3), name=f"k2f{k}", variant=rng.randint(0, 1), seed=k,
                               roofmat=rng.choice(ROOFS.get(sid, ["kawara", "tin", "tin_blue", "tin_green"])))
         elif kind == "shop":
             houses.shop2(0, 0, w=max(w, 7.5), d=max(d, 6.0), name=f"k2s{k}")
@@ -565,11 +598,17 @@ def town_along(pts, sid, st, rng, style, dens, xskip, sides=("L", "R"), off=2.6,
                     w, d = rng.choice([7.0, 8.0, 9.0]), rng.uniform(7.5, 9.5)
                 else:
                     w, d = rng.uniform(8, 11), 7.0
-                i = int(np.clip((x - pts[0, 0]) / (pts[1, 0] - pts[0, 0]), 1, len(pts) - 2))
+                if kind == "farm":
+                    w, d = w * 1.25 + 3.5, d * 1.3 + 3.5      # K8: 実測(PROBE_GROUP)で母屋は計画より x+3.2/y+3.5m 大きい(庇・縁側・納屋)。さらに 母屋は put_building で w×0.85〜1.25・d×0.85〜1.3 に変わる → 配置の占有幅は上限で見積もる
+                i = int(np.clip((x + w / 2 - pts[0, 0]) / (pts[1, 0] - pts[0, 0]), 1, len(pts) - 2))   # K8: x は左端。建物中心 = x+w/2 で並べる(従来は中心=x で次との間隔が足りず隣棟が重なった)
                 if any(a - w < x < b for a, b in xskip) or rng.random() > min(1.0, 0.35 + dens):
                     x += w + rng.uniform(2, 8) if dens < 0.5 else w + rng.uniform(0.5, 2)
                     continue
-                p, tt, nn = pts[i], t[i], n[i]
+                u = float(np.clip((x + w / 2 - pts[0, 0]) / (pts[1, 0] - pts[0, 0]), 1, len(pts) - 2))   # K8: 添字を切り捨てず線形補間(点間隔が粗いと最大1間隔ずれて隣棟が重なった)
+                i0 = int(u); fr = u - i0
+                p = pts[i0] * (1 - fr) + pts[i0 + 1] * fr
+                tt = t[i0] * (1 - fr) + t[i0 + 1] * fr; tt = tt / (np.linalg.norm(tt) + 1e-9)
+                nn = np.array([-tt[1], tt[0]])
                 ang = math.atan2(tt[1], tt[0])
                 dd = off + 1.0 + row * (d + 6.5) + rng.uniform(0, 2.5 if dens < 0.6 else 0.8)
                 if side == "L":
@@ -586,6 +625,11 @@ def town_along(pts, sid, st, rng, style, dens, xskip, sides=("L", "R"), off=2.6,
                 if hits_track(sid, float(o[0]), float(o[1]), yaw, w, d):
                     x += w + 1.0
                     continue
+                if _tree_hit_bld(sid, (float(o[0]), float(o[1])), yaw, w, d):
+                    x += w + 1.0
+                    continue
+                if os.environ.get('KDEBUG'):
+                    print('TOWN', side, kcount, kind, 'x=%.1f w=%.1f d=%.1f o=(%.1f,%.1f) yaw=%.0f' % (x, w, d, o[0], o[1], math.degrees(yaw)))
                 put_building(kind, float(o[0]), float(o[1]), yaw, w, d, rng, st, kcount, sid, dens)
                 kcount += 1
                 x += w + (rng.uniform(1.0, 5.0) if dens < 0.6 else rng.uniform(0.3, 1.6))
@@ -699,7 +743,7 @@ def build_design(sid):
             Pk = offs(P, off)[LH - rb: LH + rf + 1]
             Q, _ = trackkit.resample(np.asarray(Pk, float), 1.0)
             try:
-                kit5.catenary(Q, 12.0, len(Q) - 14.0, name=f"k2_cat{k}", side=(1 if k == 0 else (-1 if k == len(offsets) - 1 else 0.0001)), ac=ac)
+                kit5.catenary(Q, 12.0, len(Q) - 14.0, name=f"k2_cat{k}", side=(1 if k == 0 else (-1 if k == len(offsets) - 1 else -0.72)), ac=ac)
             except Exception as e_:
                 print("station catenary fail", sid, k, e_)
     # ---- platforms
@@ -733,9 +777,9 @@ def build_design(sid):
             gb = G("k2_over", "Station")
             _of = track_offsets(d["plat"], d["ntr"])
             _ye = -4.4 + min(_of) - 3.2
-            _pb = -4.4 - (4.6 + 1.7 + 4.4) / 2          # B面ホームの中央(橋脚はホーム上と線路の外側だけ)
+            _pb = (-4.6 - (1.7 + 4.4) / 2) - 4.4         # B面ホーム(線1の南 1.7〜4.4)の中央。建物枠は世界y+4.4 なので -4.4(K8: 旧式は線1の車体内=-5.35 に橋脚が立っていた)
             volume(gb, dict(x0=xc - 4.0, x1=xc + 4.0, y0=_ye - 0.4, y1=-0.4, nfl=1, roof="flat", wall="pl_grey", ground=False, zf=5.7, skip=(), door="S"), rng, st)   # 橋上通路: 長辺(E/W)にも窓を開ける(旧: skip=E,W で無窓の壁だった)
-            for yy in (-1.4, _pb, _ye + 0.6):
+            for yy in (-1.4, _pb, _ye + 0.6):                          # 橋脚: A面ホーム上(-1.4)・B面ホーム中央(_pb)・線路の外側
                 for xx in (xc - 3.6, xc + 3.6):
                     gb.a("concrete", bevel=0.02).box(xx - 0.3, xx + 0.3, yy - 0.3, yy + 0.3, 0.0, 5.6)
             stairs(gb, xc - 2.5, -2.5, -0.4, 5.6, key="concrete")
@@ -841,7 +885,11 @@ def build_design(sid):
                 for gy_ in (-36, -45, -54, ryb + 30, ryb + 39):
                     if near_track(float(gx_), float(gy_), 7.0):
                         continue
-                    veg.persimmon(float(gx_ + rng.uniform(-1, 1)), float(gy_ + rng.uniform(-1, 1)), seed=rng.randint(0, 9999))
+                    _px, _py = float(gx_ + rng.uniform(-1, 1)), float(gy_ + rng.uniform(-1, 1))
+                    if _bld_hit(sid, _px, _py, 2.8):
+                        continue                                      # K8: 母屋・店に食い込む柿は植えない
+                    TREES.setdefault(sid, []).append((_px, _py, 2.8))  # 以降に置く建物が柿を避けるよう登録
+                    veg.persimmon(_px, _py, seed=rng.randint(0, 9999))
         elif tkind == "forest":
             scatter_trees(rng, 0, -48, 150, 24, 60, kinds=("sugi",))
             scatter_trees(rng, 0, ryb + 40, 150, 28, 60, kinds=("sugi", "zelkova"))
@@ -870,6 +918,15 @@ def build_design(sid):
         try:
             if k_ != "bridge":
                 x, y = nudge(x, y, 10.0)
+                for _rad in (0, 5, 9, 13, 18, 24):                      # K8: 象徴物が既存の建物・樹木に重ならない最寄りの空きへずらす
+                    _hit = True
+                    for _a in range(8):
+                        _cx, _cy = x + _rad * math.cos(_a * math.pi / 4), y + _rad * math.sin(_a * math.pi / 4)
+                        if not _bld_hit(sid, _cx, _cy, 9.0 / 0.7) and not any((_cx - tx) ** 2 + (_cy - ty) ** 2 < (9.0 + tr) ** 2 * 0.5 for tx, ty, tr in TREES.get(sid, [])) and not near_track(_cx, _cy, 7.0):
+                            x, y, _hit = _cx, _cy, False
+                            break
+                    if not _hit:
+                        break
             sig.KINDS[k_](x, y, name=f"lm_{sid}_{k_}_{int(x)}") if k_ != "bridge" else sig.KINDS[k_](x, y, name=f"lm_{sid}_br")
         except Exception as e:
             print("lm fail", k_, e)

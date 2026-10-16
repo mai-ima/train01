@@ -619,7 +619,7 @@ def zone_grass(cam, x0=-110, x1=110, y0=-70, y1=95, step=0.5, light=None):
     nzq = nz[sel]
     # 近景の密度補強(B10): カメラから15m以内は1点ごとに追加の草むらを微小ずらしで置く(疎で平板に見える問題の対策)
     near_m = np.hypot(Q[:, 0] - cx, Q[:, 1] - cy) < 15.0
-    if near_m.any() and os.environ.get('NEAR_GRASS', '0') == '1':
+    if near_m.any() and os.environ.get('NEAR_GRASS', '1') == '1':
         Qn = Q[near_m].copy()
         Qn[:, :2] += rng.uniform(-0.25, 0.25, (len(Qn), 2))
         Q = np.vstack([Q, Qn]); ne = np.concatenate([ne, ne[near_m]]); nzq = np.concatenate([nzq, nzq[near_m]])

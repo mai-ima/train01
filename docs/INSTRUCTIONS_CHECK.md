@@ -49,3 +49,5 @@
 
 ## D. 矛盾の修正の実施(2026-10-16・【CO10】ユーザー指示「古い方に補足を入れるか書き換える」)
 古い(間違いの)記述の行末に『【補足(2026-10-16): …】』を付け、旧ファイル冒頭に注意書きを追加した(元の記述は削除していない)。対象: CLAUDE.md(会話ログパス・pushしない・紋章を含めない・並行作業しない・並列Agent・sync_repo)/migration/{USER_INSTRUCTIONS,USER_INSTRUCTIONS_LOG,COMMANDS,HANDOFF,KEY_FILES,MIGRATION_PROMPT,README}.md/docs/RECOVERY.md/.claude/hooks/reinject.md/README.md。レンダ同時本数の現行値は docs/TASK_RULES.md §7(W6 の計測結果)。
+
+- 【補足(2026-10-16 W6確定)】レンダ同時本数: バッチは4本×RENDER_THREADS=1(同一駅で+47

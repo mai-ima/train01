@@ -552,6 +552,12 @@ print(f"[{time.time() - t0:5.1f}s] scene ready; objects={len(bpy.data.objects)}"
 if os.environ.get("MODELCHECK"):      # K8: モデル同士の干渉検査(出力 json)
     import modelcheck
     modelcheck.run(os.environ["MODELCHECK"])
+    if os.environ.get("PROBE"): modelcheck.probe(os.environ["PROBE"])
+    if os.environ.get("PROBE_GROUP"): modelcheck.probe_group(os.environ["PROBE_GROUP"])
+    if os.environ.get("PROBE_PAIR"):
+        _b = os.environ["PROBE_PAIR"].split(","); modelcheck.probe_pair(_b[0], _b[1])
+    if os.environ.get("PROBE_BOX"):
+        _a = os.environ["PROBE_BOX"].split(","); modelcheck.probe_box(_a[0], float(_a[1]), float(_a[2]), float(_a[3]))
 if os.environ.get("DBG_NEAR"):      # デバッグ: "x,y,z,r" の球内に入るオブジェクト名とマテリアルを列挙(視界を塞ぐ黒い面などの特定用)
     _p = [float(t) for t in os.environ["DBG_NEAR"].split(",")]
     bpy.context.view_layer.update()

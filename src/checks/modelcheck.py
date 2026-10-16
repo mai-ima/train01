@@ -10,6 +10,8 @@ SKIP = re.compile(r"ground|hills|knoll|grass|blade|zgrass|zsusuki|susuki|sky|sea
 
 def _group(name):
     t = re.split(r"[_.]", name)
+    if re.search(r"\d", t[0]) and not t[0].startswith("stk"):   # k2s15_wall / k2sf3_roof など『接頭辞+番号』は同一建物の部品(先頭トークンで束ねる)
+        return t[0]
     return "_".join(t[:2]) if len(t) > 1 else t[0]
 
 def run(out_json, min_tris=4, max_report=40):
@@ -46,7 +48,17 @@ def run(out_json, min_tris=4, max_report=40):
         if k not in trees:
             o = objs[k][1]
             dg = bpy.context.evaluated_depsgraph_get()
-            trees[k] = BVHTree.FromObject(o, dg)
+            # ワールド座標の三角形で木を作る(FromObject はオブジェクト空間のため、SubZone の親を持つ部品同士で誤検出した)
+            oe = o.evaluated_get(dg)
+            me = oe.to_mesh()
+            me.calc_loop_triangles()
+            n = len(me.vertices)
+            co = np.empty(n * 3, np.float32); me.vertices.foreach_get('co', co)
+            M = np.array(oe.matrix_world, dtype=np.float64)
+            wv = co.reshape(-1, 3).astype(np.float64) @ M[:3, :3].T + M[:3, 3]
+            tri = np.empty(len(me.loop_triangles) * 3, np.int32); me.loop_triangles.foreach_get('vertices', tri)
+            trees[k] = BVHTree.FromPolygons([tuple(v) for v in wv], [tuple(t) for t in tri.reshape(-1, 3)])
+            oe.to_mesh_clear()
         return trees[k]
     res = []
     for i, j, mo in cand:
@@ -63,3 +75,56 @@ def run(out_json, min_tris=4, max_report=40):
     for r in res[:max_report]:
         print("  干渉", r["a"], "×", r["b"], f"三角形{r['tris']} 重なり最小{r['min_overlap_m']}m 位置{r['at']}")
     return res
+
+
+def probe(spec):
+    """PROBE='オブジェクト名,x,y,z,r' : その球内にあるメッシュ頂点(ワールド座標)を表示する(干渉の原因部品の特定用)。"""
+    name, x, y, z, r = spec.split(",")
+    x, y, z, r = float(x), float(y), float(z), float(r)
+    o = bpy.data.objects[name]
+    M = np.array(o.matrix_world, dtype=np.float64)
+    n = len(o.data.vertices)
+    co = np.empty(n * 3, np.float32); o.data.vertices.foreach_get('co', co)
+    w = co.reshape(-1, 3).astype(np.float64) @ M[:3, :3].T + M[:3, 3]
+    m = np.linalg.norm(w - np.array([x, y, z]), axis=1) < r
+    print("PROBE", name, "頂点", int(m.sum()), "bbox", w[m].min(0).round(2).tolist() if m.any() else None, w[m].max(0).round(2).tolist() if m.any() else None)
+
+
+def probe_box(name, y0, y1, z1):
+    """PROBE_BOX='名前,y0,y1,zmax' : y0<=y<=y1 かつ z<=zmax の頂点のbbox(橋脚など線路上にある部品の特定用)。"""
+    o = bpy.data.objects[name]
+    M = np.array(o.matrix_world, dtype=np.float64)
+    n = len(o.data.vertices)
+    co = np.empty(n * 3, np.float32); o.data.vertices.foreach_get('co', co)
+    w = co.reshape(-1, 3).astype(np.float64) @ M[:3, :3].T + M[:3, 3]
+    m = (w[:, 1] >= y0) & (w[:, 1] <= y1) & (w[:, 2] <= z1)
+    print("PROBE_BOX", name, int(m.sum()), "頂点", w[m].min(0).round(2).tolist() if m.any() else None, w[m].max(0).round(2).tolist() if m.any() else None)
+
+
+def probe_pair(na, nb, k=3):
+    """PROBE_PAIR='A,B' : 2つのオブジェクトの交差三角形(ワールド座標)を k 組表示。"""
+    def wt(o):
+        dg = bpy.context.evaluated_depsgraph_get(); oe = o.evaluated_get(dg); me = oe.to_mesh(); me.calc_loop_triangles()
+        n = len(me.vertices); co = np.empty(n * 3, np.float32); me.vertices.foreach_get('co', co)
+        M = np.array(oe.matrix_world, dtype=np.float64); wv = co.reshape(-1, 3).astype(np.float64) @ M[:3, :3].T + M[:3, 3]
+        tri = np.empty(len(me.loop_triangles) * 3, np.int32); me.loop_triangles.foreach_get('vertices', tri); tri = tri.reshape(-1, 3)
+        return wv, tri
+    va, ta = wt(bpy.data.objects[na]); vb, tb = wt(bpy.data.objects[nb])
+    A = BVHTree.FromPolygons([tuple(v) for v in va], [tuple(t) for t in ta]); B = BVHTree.FromPolygons([tuple(v) for v in vb], [tuple(t) for t in tb])
+    pr = A.overlap(B)
+    print("PROBE_PAIR", na, nb, len(pr))
+    for i, j in pr[:k]:
+        print("  A", va[ta[i]].round(2).tolist(), " B", vb[tb[j]].round(2).tolist())
+
+
+def probe_group(prefixes):
+    """PROBE_GROUP='k2f16,k2f17' : 接頭辞ごとにワールドbbox(建物1棟分の実寸)を表示。"""
+    for pf in prefixes.split(","):
+        mn = np.full(3, 1e9); mx = np.full(3, -1e9)
+        for o in bpy.data.objects:
+            if o.type == 'MESH' and (o.name.startswith(pf + "_") or o.name == pf):
+                M = np.array(o.matrix_world, dtype=np.float64)
+                co = np.empty(len(o.data.vertices) * 3, np.float32); o.data.vertices.foreach_get('co', co)
+                w = co.reshape(-1, 3).astype(np.float64) @ M[:3, :3].T + M[:3, 3]
+                mn = np.minimum(mn, w.min(0)); mx = np.maximum(mx, w.max(0))
+        print("PROBE_GROUP", pf, mn.round(1).tolist(), mx.round(1).tolist(), "size", (mx - mn).round(1).tolist())
