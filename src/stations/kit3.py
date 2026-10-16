@@ -338,7 +338,34 @@ def m01():
     print("m01 built, tracks", len(ys), "yc", yc)
 
 
-BUILD = {"M01": m01}
+def m06():
+    """穂波野(M06): 以前作成した高品質の本体データ(core/station/hq/depot/props/train)をゾーンに組み込む(M6: 汎用版 build_generic からの完全移行)。
+    座標はゾーン原点=本体データの原点(線路 T1=y0 … T4=y-16.5、駅舎・本社・扇形庫)。地面・植生・生活感はゾーン/ワールド側が担当する。"""
+    import kit, core, station, hq, depot, depot_stock, props as _props, train
+    kit.ground(L=600, W=600)
+    cam = (0.0, -8.0, 3.0)
+    core.HQ_ON = True
+    _b4 = set(bpy.data.objects.keys())
+    core.build_paddies()
+    for _n in set(bpy.data.objects.keys()) - _b4:      # 本体データの水田は -0.3〜-0.185(旧地面の窪み)に作ってある → 平らな地面(z=0)の上に出す
+        bpy.data.objects[_n].location.z += 0.2
+    core.build_tracks(cam)
+    core.build_platform()
+    core.build_island()
+    core.build_yard_crossing()
+    core.build_roads()
+    core.build_crossing_deck()
+    station.build_station()
+    hq.build_hq()
+    depot.build_depot(cam)
+    depot_stock.build_depot_stock()
+    _props.build_props()
+    train.build_train()
+    train.build_vehicles()
+    print("m06 built (本体データ)")
+
+
+BUILD = {"M01": m01, "M06": m06}
 
 
 # ------------------------------------------------------------------ M19 大湊 (大規模港湾ターミナル)

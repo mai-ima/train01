@@ -210,9 +210,8 @@ def _cam_clear(v):
 cam_loc, cam_tgt, cam_lens, sun_az, sun_el = CAMS[args.cam]
 
 # ------------------------------------------------------------------ build geometry
-if args.zone in ("M06", "M01"):      # E7: 穂波野・国都中央は専用の本体データがある。--zone の汎用ゾーン版で撮ると別物(新しい駅舎)になる
-    print(f"WARNING: --zone {args.zone} は汎用ゾーン版です。以前作成した本体データで撮るには --zone を付けず "
-          f"--parts core,station,depot,props,train,veg,hq,life (M06) を使ってください(scripts/e3b_post.sh 参照)。")
+if args.zone == "M01":      # E7: 国都中央は kit3.m01(専用ビルダー)。穂波野(M06)は M6 で本体データ(kit3.m06)へ移行済み
+    print("NOTE: --zone M01 は専用ビルダー(kit3.m01)で組みます。")
 if args.zone:
     import kit4  # CURVE_OVERRIDE 等を先に確定(ワールド合成と同じ形状で組む)
     import kit2 as kit
@@ -653,6 +652,10 @@ if args.pano:
         bpy.ops.render.render(write_still=True)
         print("PANO done", nd["id"], f"{time.time() - t0:.0f}s", flush=True)
     sys.exit(0)
+# E8: 駅別の個別カメラ(fallback で不成立だった視点)。TR02 の F は天蓋下が真っ黒になるため、通りの反対側から商店街の正面を撮る
+CAM_OVERRIDE = {("TR02", "F"): [0.0, -45.0, 3.0, 0.0, -7.0, 3.0, 28]}
+
+
 def _fallback_cam(k):
     """E6/M19所見: kit3/kit6 の特殊駅は kit2.DESIGN に無く、@F/@P/@T/@R/@L が全て同一の既定カメラになっていた。
     シーン内の「ホーム」メッシュ(名前に plat を含む)の外接箱から、駅ごとに異なる位置のカメラを作る。見つからなければ None。"""
@@ -667,6 +670,7 @@ def _fallback_cam(k):
         return None
     x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
     cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+    print(f"[cam] fallback ホーム外接箱 x={x0:.1f}..{x1:.1f} y={y0:.1f}..{y1:.1f} z={min(zs):.1f}..{max(zs):.1f}")
     zp = max(1.1, max(zs) if max(zs) < 14.0 else 1.1)      # 高架駅(K03 等)はホーム面の高さに合わせる
     if k == "F":
         return [cx, y1 + 38.0, 3.0, cx, cy, zp + 2.4, 28]
@@ -705,7 +709,7 @@ if not args.no_render and os.environ.get('MULTICAM'):
                     else:
                         _v = [_bx + _w + 18.0, 3.0, 1.1, _bx - 10.0, -4.0, 1.6, 32]
                 else:
-                    _v = _fallback_cam(_c.strip()[1:]) or [*CAMS["B"][0], *CAMS["B"][1], CAMS["B"][2]]
+                    _v = CAM_OVERRIDE.get((getattr(args, "zone", ""), _c.strip()[1:])) or _fallback_cam(_c.strip()[1:]) or [*CAMS["B"][0], *CAMS["B"][1], CAMS["B"][2]]
             elif _c.strip()[1:] == "L":                       # @L: 駅の象徴物(landmark)を主題にしたカメラ(駅ごとに構図が変わる)
                 import kit2 as _k2
                 _lm = _k2.DESIGN.get(getattr(args, "zone", ""), {}).get("lm") or []

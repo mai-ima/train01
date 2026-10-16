@@ -925,5 +925,23 @@
   "subject": "【E8】特殊駅(M19/K02/K03/R02/TR02)の @F/@P/@L 同一カメラ不具合の修正と再撮(fallbackカメラ)",
   "status": "in_progress",
   "description": "E5所見: kit2.DESIGN に無い駅は @L/@F/@P/@T/@R が全て既定カメラに落ち3枚が同一画像。main.py に _fallback_cam を追加済み。再撮は e5r_all.sh → out/e5r/。完了条件: 6視点が全て別構図で目視確認。"
+ },
+ {
+  "id": 208,
+  "subject": "【M6】穂波野(M06)を以前の高品質版(本体データ)へ完全移行し、監査して駅舎をアップグレード",
+  "status": "pending",
+  "description": "--zone M06 の汎用版は使わず本体データ(--parts core,station,depot,props,train,veg,hq,life)を正とする。移行後に strict-auditor(最新画像)で監査し駅舎をアップグレード。"
+ },
+ {
+  "id": 209,
+  "subject": "【B6e】駅舎は全階層(地下がある場合は地下を含む)に入れる",
+  "status": "pending",
+  "description": "全駅の駅舎で上階・地下階を含む全階層に入れ、室内があること。doorcheck+断面/内部視点で確認。"
+ },
+ {
+  "id": 210,
+  "subject": "【CO11】見逃した(忘れた)指示の確認",
+  "status": "pending",
+  "description": "会話ログのユーザー発言を全抽出し、台帳未反映の指示を追加。docs/INSTRUCTIONS_CHECK.md に追記。"
  }
 ]

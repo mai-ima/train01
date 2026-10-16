@@ -698,6 +698,101 @@ def furniture_c(P, bx, r0, r1, yb, st, tx, frame):
             g.build()
 
 
+# ----------------------------------------------------------------- B3: 駅舎の外観フィーチャ(平面形・屋根だけでなく車寄せ・老虎窓・煙突・廊下・時計破風などを駅ごとに組み合わせる)
+FEAT = {
+ "M15": ["verandah"], "M18": ["chimney", "stonebase"], "L01": ["awning"], "Y02": ["porch", "stonebase"], "Y03": ["dormer"],
+ "Y04": ["verandah", "chimney"], "M09": ["porch", "chimney"], "M11": ["stonebase", "dormer"], "S02": ["verandah", "signroof"],
+ "S03": ["awning", "chimney"], "S04": ["clockgable"], "M17": ["porch", "awning"], "M07": ["chimney", "awning"],
+ "M12": ["awning", "stonebase"], "M13": ["porch", "dormer"],
+ "M08": ["dormer", "chimney", "cornice"], "M14": ["pilasters", "cornice", "signroof"], "M10": ["porch", "chimney"],
+ "M05": ["clockgable", "cornice"], "SH05": ["pilasters", "awning"], "SH08": ["pilasters", "signroof"], "SH04": ["cornice", "pilasters"],
+ "M02": ["cornice", "awning"], "M04": ["porch", "verandah"], "M16": ["clockgable", "verandah"], "SH03": ["awning", "signroof"],
+ "SH07": ["pilasters"], "SH06": ["signroof", "awning"], "F01": ["signroof"],
+}
+
+
+def add_feats(g, v, feats, zh, tx, sid):
+    """主棟 v(建物枠: x=線路方向, y=駅前方向 / 前面=y1)に外観フィーチャを足す。乱数は独立(配置の乱数列を乱さない)。"""
+    if not feats:
+        return
+    r = random.Random(sum(map(ord, sid)) * 7 + 3)
+    x0, x1, y0, y1 = v["x0"], v["x1"], v["y0"], v["y1"]
+    xc, w, d = (x0 + x1) / 2, x1 - x0, y1 - y0
+    zf = Z_PLAT + 0.30
+    nfl = v["nfl"]
+    roof = v.get("roof", "gable")
+    rise = v.get("rise", 1.9)
+    ymid = (y0 + y1) / 2
+
+    def rz(y):      # 切妻/寄棟の屋根面の高さ(ridge=x 想定)
+        return zh + rise * max(0.0, 1.0 - abs(y - ymid) / max(d / 2, 0.1))
+    for f in feats:
+        if f == "porch":                              # 車寄せ: 2本柱+切妻の庇
+            pw = min(4.2, w * 0.4)
+            for xx in (xc - pw / 2 + 0.15, xc + pw / 2 - 0.15):
+                g.a("wood_dark", bevel=0.01).box(xx - 0.14, xx + 0.14, y1 + 2.6, y1 + 2.9, zf, zf + 3.0)
+            g.a("wood_dark").box(xc - pw / 2, xc + pw / 2, y1 + 2.5, y1 + 3.0, zf + 3.0, zf + 3.2)
+            gr, gw = g.a("roof"), g.a("wall")
+            gable_y(gr, gw, xc - pw / 2 - 0.3, xc + pw / 2 + 0.3, y1 - 0.1, y1 + 3.1, zf + 3.2, 1.0, ov=0.2, gov=0.15)
+            g.a("stone").box(xc - pw / 2, xc + pw / 2, y1, y1 + 3.0, zf - 0.25, zf - 0.02)
+        elif f == "verandah":                         # 前面の列柱廊(波板の片流れ)
+            n = max(3, int(w // 2.4))
+            for i in range(n + 1):
+                xx = x0 + i * w / n
+                g.a("wood_dark", bevel=0.008).box(xx - 0.07, xx + 0.07, y1 + 1.7, y1 + 1.84, zf, zf + 2.7)
+            g.a("wood_dark").box(x0, x1, y1 + 1.6, y1 + 1.9, zf + 2.7, zf + 2.85)
+            g.a("tin").extrude_x([(y1 - 0.05, zf + 3.0), (y1 + 2.1, zf + 2.78), (y1 + 2.1, zf + 2.7), (y1 - 0.05, zf + 2.92)], x0 - 0.2, x1 + 0.2)
+        elif f == "awning":                           # 開口部上の波板庇
+            n = max(2, int(w // 3.2))
+            for i in range(n):
+                xa = x0 + (i + 0.12) * w / n
+                xb = x0 + (i + 0.88) * w / n
+                g.a("tin").extrude_x([(y1 - 0.02, zf + 2.55), (y1 + 1.0, zf + 2.35), (y1 + 1.0, zf + 2.29), (y1 - 0.02, zf + 2.49)], xa, xb)
+        elif f == "pilasters":                        # RC の壁柱(縦のフィン)
+            n = max(3, int(w // 2.8))
+            for i in range(n + 1):
+                xx = x0 + i * w / n
+                g.a("concrete", bevel=0.01).box(xx - 0.18, xx + 0.18, y1, y1 + 0.3, zf - 0.1, zh + 0.1)
+        elif f == "cornice":                          # 軒蛇腹・帯
+            g.a("concrete", bevel=0.015).box(x0 - 0.3, x1 + 0.3, y0 - 0.3, y1 + 0.3, zh - 0.28, zh + 0.04)
+            if nfl > 1:
+                zz = zf + 3.0
+                g.a("concrete").box(x0 - 0.1, x1 + 0.1, y1, y1 + 0.2, zz - 0.14, zz + 0.1)
+        elif f == "stonebase":                        # 腰石積み(前面・両側面)
+            g.a("stone", bevel=0.01).box(x0 - 0.06, x1 + 0.06, y1 - 0.02, y1 + 0.1, zf - 0.1, zf + 1.0)
+            g.a("stone", bevel=0.01).box(x0 - 0.1, x0 + 0.02, y0, y1, zf - 0.1, zf + 1.0)
+            g.a("stone", bevel=0.01).box(x1 - 0.02, x1 + 0.1, y0, y1, zf - 0.1, zf + 1.0)
+        elif f == "chimney" and roof != "flat":      # 煉瓦煙突
+            cx_ = x0 + w * r.uniform(0.2, 0.35)
+            g.a("brick", bevel=0.01).box(cx_ - 0.4, cx_ + 0.4, ymid - 0.4, ymid + 0.4, zh - 0.5, zh + rise + 1.7)
+            g.a("concrete").box(cx_ - 0.5, cx_ + 0.5, ymid - 0.5, ymid + 0.5, zh + rise + 1.7, zh + rise + 1.85)
+        elif f == "dormer" and roof in ("gable", "hip"):    # 屋根窓(切妻の老虎窓)×2
+            for k_, fx in enumerate((0.28, 0.72)):
+                dx = x0 + w * fx
+                yb = y1 - 0.6
+                zb = rz(yb)
+                g.a("wall").box(dx - 0.75, dx + 0.75, yb - 1.1, yb, zh - 0.1, zb + 1.35)
+                g.a("glass").box(dx - 0.45, dx + 0.45, yb + 0.005, yb + 0.03, zb + 0.25, zb + 1.15)
+                gr, gw = g.a("roof"), g.a("wall")
+                gable_y(gr, gw, dx - 0.75, dx + 0.75, yb - 1.3, yb + 0.1, zb + 1.35, 0.7, ov=0.1, gov=0.1)
+        elif f == "clockgable":                       # 中央の時計破風
+            zt = zh + (0.0 if roof == "flat" else 0.2)
+            g.a("wall", bevel=0.01).box(xc - 1.7, xc + 1.7, y1 - 0.3, y1 + 0.2, zt - 0.1, zt + 2.6)
+            g.a("roof").extrude_y([(xc - 2.0, zt + 2.55), (xc, zt + 3.8), (xc + 2.0, zt + 2.55)], y1 - 0.4, y1 + 0.3)
+            g.a("white").cyl((xc, y1 + 0.21, zt + 1.5), (xc, y1 + 0.27, zt + 1.5), 0.62, seg=20)
+            g.a("iron_black").box(xc - 0.03, xc + 0.03, y1 + 0.27, y1 + 0.3, zt + 1.5, zt + 1.95)
+            g.a("iron_black").box(xc, xc + 0.35, y1 + 0.27, y1 + 0.3, zt + 1.47, zt + 1.53)
+        elif f == "signroof":                         # 屋上の駅名看板(支柱つき)
+            sw = min(5.0, w * 0.6)
+            for xx in (xc - sw / 2 + 0.3, xc + sw / 2 - 0.3):
+                g.a("iron_black").box(xx - 0.05, xx + 0.05, ymid - 0.05, ymid + 0.05, zh, zh + 1.7)
+            g.a("white").box(xc - sw / 2, xc + sw / 2, ymid - 0.08, ymid + 0.08, zh + 1.0, zh + 2.2)
+            try:
+                face_plane(f"k2_roofsign_{sid}", tx[1], 'N', xc, ymid + 0.1, zh + 1.05, sw - 0.2, h=1.1, off=0.0)
+            except Exception as _e:
+                print("roofsign failed", sid, _e)
+
+
 def build_design(sid):
     mats2()
     st = ST[sid]
@@ -795,8 +890,16 @@ def build_design(sid):
             ymid = -9.0
         else:
             vols = plan_volumes(plan, w, dep, d["nfl"], d["roof"], d["wall"], rng)
+            _zh0 = 0.0
             for k_, v in enumerate(vols):
-                volume(g, v, rng, st, interior=(k_ == 0))
+                _z = volume(g, v, rng, st, interior=(k_ == 0))
+                if k_ == 0:
+                    _zh0 = _z
+            if os.environ.get("FEATS", "1") != "0":
+                try:
+                    add_feats(g, vols[0], FEAT.get(sid, []), _zh0, tx, sid)
+                except Exception as _e:
+                    print("add_feats failed", sid, _e)
         g.build()
         # facade sign + clock-ish details
         zhm = Z_PLAT + 0.3 + 2.9 + (d["nfl"] - 1) * 3.0

@@ -51,3 +51,8 @@
 古い(間違いの)記述の行末に『【補足(2026-10-16): …】』を付け、旧ファイル冒頭に注意書きを追加した(元の記述は削除していない)。対象: CLAUDE.md(会話ログパス・pushしない・紋章を含めない・並行作業しない・並列Agent・sync_repo)/migration/{USER_INSTRUCTIONS,USER_INSTRUCTIONS_LOG,COMMANDS,HANDOFF,KEY_FILES,MIGRATION_PROMPT,README}.md/docs/RECOVERY.md/.claude/hooks/reinject.md/README.md。レンダ同時本数の現行値は docs/TASK_RULES.md §7(W6 の計測結果)。
 
 - 【補足(2026-10-16 W6確定)】レンダ同時本数: バッチは4本×RENDER_THREADS=1(同一駅で+47
+## 追記 2026-10-16 CO11: 会話ログ(0aa5e861)のユーザー発言の再突き合わせ
+- 抽出: 実ユーザー発言 29 件(フック通知・画像・割り込み通知・要約を除外)。全件を CLAUDE.md / session_state / tasks.json と照合。
+- 未反映だった指示: 「タスクを全て Todo に追加(以前のセッションでのタスクを含む)」(2026-10-12 17:10)。→ CLAUDE.md 末尾に追記し、TaskList に開いたタスクが漏れなく載っているか net/ledger_check.py で確認(重複なし・誤完了候補1件=旧#19 の視覚確認項目は X21 で再確認)。
+- その他の発言(中断しない・待ち時間活用・M06は以前のデータ・各駅カメラ増設・駅間線路・部品監査・レンダ本数・干渉・完了監査・ツール最適化・視覚確認・誤完了の再オープン)は全て反映済み。
+- 2026-10-16 23:21 の新指示(穂波野の完全移行=M6、全階層に入れる=B6e、画像監査は全て最新画像、日本語)は CLAUDE.md・session_state・tasks.json・TaskList に反映済み。
