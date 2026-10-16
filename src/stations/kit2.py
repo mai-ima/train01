@@ -156,6 +156,37 @@ def make_ops(v, rng, zf, door_side='S'):
     return ops
 
 
+def _upper_floors(g, v, rng, st, zf, hole):
+    """B6e: 2階建て以上の駅舎に直線階段と上階の室内(床・天井・机・棚・照明)を作る。階段は 1 階床→最上階床まで連続して登れる。"""
+    x0, x1, y0, y1, nfl = v["x0"], v["x1"], v["y0"], v["y1"], v["nfl"]
+    ha, hb, ya_, yb_ = hole
+    rise_n = 17
+    rise = 3.0 / rise_n
+    run = (hb - ha - 0.3) / rise_n
+    for f in range(1, nfl):
+        z0 = zf + (f - 1) * 3.0
+        for k in range(rise_n):
+            xa_ = ha + 0.1 + k * run
+            g.a("wood", bevel=0.005).box(xa_, xa_ + run, ya_ + 0.05, yb_ - 0.05, z0 - 0.05, z0 + (k + 1) * rise)
+        g.a("wood_dark", bevel=0.01).sbox((ha + 0.1, yb_ + 0.02, z0 + 1.0), (hb - 0.2, yb_ + 0.02, z0 + 3.95), 0.06, 0.06)     # 手すり(階段に沿った斜めの笠木)
+        for k in range(0, rise_n + 1, 3):                                                                               # 親柱
+            xk = ha + 0.1 + k * run
+            g.a("wood_dark").box(xk - 0.03, xk + 0.03, yb_ - 0.0, yb_ + 0.05, z0 + k * rise, z0 + k * rise + 1.0)
+        zz = zf + f * 3.0
+        # 上階の床板・天井(階段穴を除く)
+        for (xa2, xb2, ya2, yb2) in ((x0 + 0.14, x1 - 0.14, yb_, y1 - 0.14), (hb, x1 - 0.14, y0 + 0.14, yb_), (x0 + 0.14, ha, y0 + 0.14, yb_)):
+            rooms.floor_boards(g, xa2, xb2, ya2, yb2, zz + 0.0)
+        zc = zz + 2.85
+        if f == nfl - 1:
+            rooms.ceiling(g, x0 + 0.14, x1 - 0.14, y0 + 0.14, y1 - 0.14, zc)
+        mid = (x0 + hb + x1) / 2.0
+        rooms.desk(g, mid, y1 - 1.0, zz, face='N', papers=True)
+        rooms.desk(g, mid + 1.8, y1 - 1.0, zz, face='N', papers=True)
+        rooms.shelf(g, hb + 0.6, min(x1 - 0.6, hb + 3.6), y1 - 0.45, zz, face='S', goods="jars", seed=5 + f)
+        rooms.lamp_point((hb + x1) / 2.0, (y0 + y1) / 2.0 + 0.5, zz + 2.4, 140)
+        rooms.lamp_point(x0 + 2.5, (y0 + y1) / 2.0 + 1.0, zz + 2.4, 90)
+
+
 def volume(g, v, rng, st, interior=False):
     zf = Z_PLAT + 0.30 if v.get("ground", True) else v.get("zf", Z_PLAT + 0.3)
     nfl = v["nfl"]
@@ -167,9 +198,19 @@ def volume(g, v, rng, st, interior=False):
     rooms.shell(g, x0, x1, y0, y1, zf - 0.02, zh, t=0.14, ops=ops, wall=wall)
     for cx, cy in ((x0, y0), (x1, y0), (x0, y1), (x1, y1)):
         g.a("wood_dark", bevel=0.004).box(cx - 0.09, cx + 0.09, cy - 0.09, cy + 0.09, zf - 0.02, zh + 0.1)
+    _hole = None
+    if interior and nfl > 1 and (x1 - x0) >= 10.0 and (y1 - y0) >= 5.0 and v.get("ground", True):
+        _hole = (x0 + 0.5, x0 + 5.3, y0 + 0.25, y0 + 1.45)        # B6e: 上階への直線階段の吹き抜け(南壁沿い)
     for f in range(1, nfl):                       # storey slab + belt
         zz = zf + f * 3.0
-        g.a("floor").box(x0 + 0.1, x1 - 0.1, y0 + 0.1, y1 - 0.1, zz - 0.2, zz)
+        if _hole is None:
+            g.a("floor").box(x0 + 0.1, x1 - 0.1, y0 + 0.1, y1 - 0.1, zz - 0.2, zz)
+        else:
+            ha, hb, ya_, yb_ = _hole
+            g.a("floor").box(x0 + 0.1, x1 - 0.1, yb_, y1 - 0.1, zz - 0.2, zz)
+            g.a("floor").box(hb, x1 - 0.1, y0 + 0.1, yb_, zz - 0.2, zz)
+            g.a("floor").box(x0 + 0.1, ha, y0 + 0.1, yb_, zz - 0.2, zz)
+            g.a("floor").box(ha, hb, y0 + 0.1, ya_, zz - 0.2, zz)
         g.a("wood_dark").box(x0 - 0.05, x1 + 0.05, y0 - 0.05, y1 + 0.05, zz - 0.12, zz + 0.1)
     roof = v.get("roof", "gable")
     ridge = v.get("ridge", "x")
@@ -193,7 +234,10 @@ def volume(g, v, rng, st, interior=False):
         g.a("concrete").box(x0 - 0.25, x1 + 0.25, y1 + 0.12, y1 + 0.25, zh + 0.25, zh + 0.8)
     if interior:
         rooms.floor_boards(g, x0 + 0.14, x1 - 0.14, y0 + 0.14, y1 - 0.14, zf)
-        rooms.ceiling(g, x0 + 0.14, x1 - 0.14, y0 + 0.14, y1 - 0.14, zf + 2.85)
+        if nfl == 1:
+            rooms.ceiling(g, x0 + 0.14, x1 - 0.14, y0 + 0.14, y1 - 0.14, zf + 2.85)
+        elif _hole is not None:
+            _upper_floors(g, v, rng, st, zf, _hole)
         xo = x0 + (x1 - x0) * 0.62
         rooms.partition(g, 'y', xo, y0 + 0.14, y1 - 0.14, zf, zf + 2.85, doors=[((y0 + y1) / 2 - 0.5, (y0 + y1) / 2 + 0.5)], kind="wood_dark")
         nb = max(2, int((xo - x0 - 1.5) // 2.4))
@@ -715,6 +759,7 @@ def add_feats(g, v, feats, zh, tx, sid):
     """主棟 v(建物枠: x=線路方向, y=駅前方向 / 前面=y1)に外観フィーチャを足す。乱数は独立(配置の乱数列を乱さない)。"""
     if not feats:
         return
+    print(f"[feat] {sid}: {feats}")
     r = random.Random(sum(map(ord, sid)) * 7 + 3)
     x0, x1, y0, y1 = v["x0"], v["x1"], v["y0"], v["y1"]
     xc, w, d = (x0 + x1) / 2, x1 - x0, y1 - y0
@@ -779,14 +824,14 @@ def add_feats(g, v, feats, zh, tx, sid):
             zt = zh + (0.0 if roof == "flat" else 0.2)
             g.a("wall", bevel=0.01).box(xc - 1.7, xc + 1.7, y1 - 0.3, y1 + 0.2, zt - 0.1, zt + 2.6)
             g.a("roof").extrude_y([(xc - 2.0, zt + 2.55), (xc, zt + 3.8), (xc + 2.0, zt + 2.55)], y1 - 0.4, y1 + 0.3)
-            g.a("white").cyl((xc, y1 + 0.21, zt + 1.5), (xc, y1 + 0.27, zt + 1.5), 0.62, seg=20)
+            g.a("white_paint").cyl((xc, y1 + 0.21, zt + 1.5), (xc, y1 + 0.27, zt + 1.5), 0.62, seg=20)
             g.a("iron_black").box(xc - 0.03, xc + 0.03, y1 + 0.27, y1 + 0.3, zt + 1.5, zt + 1.95)
             g.a("iron_black").box(xc, xc + 0.35, y1 + 0.27, y1 + 0.3, zt + 1.47, zt + 1.53)
         elif f == "signroof":                         # 屋上の駅名看板(支柱つき)
             sw = min(5.0, w * 0.6)
             for xx in (xc - sw / 2 + 0.3, xc + sw / 2 - 0.3):
                 g.a("iron_black").box(xx - 0.05, xx + 0.05, ymid - 0.05, ymid + 0.05, zh, zh + 1.7)
-            g.a("white").box(xc - sw / 2, xc + sw / 2, ymid - 0.08, ymid + 0.08, zh + 1.0, zh + 2.2)
+            g.a("white_paint").box(xc - sw / 2, xc + sw / 2, ymid - 0.08, ymid + 0.08, zh + 1.0, zh + 2.2)
             try:
                 face_plane(f"k2_roofsign_{sid}", tx[1], 'N', xc, ymid + 0.1, zh + 1.05, sw - 0.2, h=1.1, off=0.0)
             except Exception as _e:
@@ -891,6 +936,7 @@ def build_design(sid):
         else:
             vols = plan_volumes(plan, w, dep, d["nfl"], d["roof"], d["wall"], rng)
             _zh0 = 0.0
+            vols[0].setdefault("door2", "N")           # B6e/E5所見: 駅前(N側)に出入口が無い駅舎があった → 主棟の駅前側にも出入口を設ける
             for k_, v in enumerate(vols):
                 _z = volume(g, v, rng, st, interior=(k_ == 0))
                 if k_ == 0:

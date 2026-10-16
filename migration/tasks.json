@@ -943,5 +943,17 @@
   "subject": "【CO11】見逃した(忘れた)指示の確認",
   "status": "pending",
   "description": "会話ログのユーザー発言を全抽出し、台帳未反映の指示を追加。docs/INSTRUCTIONS_CHECK.md に追記。"
+ },
+ {
+  "id": 211,
+  "subject": "【D10】穂波野(M06)を6線に増設(現4線→6線)。車庫・引き揚げ線(D4〜D9)と統合",
+  "status": "pending",
+  "description": "ユーザー指示2026-10-16 22:15。現行 T1〜T4(common.TRACK_YS=0,-4.6,-11,-16.5)を6線へ。ホーム(島式/相対)・跨線/踏切・架線・信号・駅舎導線・停車車両・kit4.local_tracks と路線図(net/details.py 線数)・stn_demand/station_plan を整合。車庫関係は D4〜D9(2026-10-11 22:43 指示)を参照: 引き揚げ線+超大型車庫(総合車両基地)、旧車庫は新車庫のごく小さな一部として移設、社員管理棟群・技術開発棟群、人の出し入れ(V3)。"
+ },
+ {
+  "id": 212,
+  "subject": "【CO12】タスクを二度と消さない運用(未完了は削除・縮約禁止、TaskListと台帳の件数照合)",
+  "status": "completed",
+  "description": "ユーザー最重要指示2026-10-16 22:40。完了済み92件をTaskListへ再追加済み。ルールは CLAUDE.md と docs/TASK_RULES.md に記載。"
  }
 ]
