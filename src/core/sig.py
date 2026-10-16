@@ -113,7 +113,7 @@ def pier(x0, y0, length=40.0, name="sig_pier"):
 def truss_bridge(x, y, span=24.0, name="sig_bridge"):
     """Steel through-truss on the main line (track y); river bed below."""
     g = G(name, "Props")
-    for yy in (y - 1.7, y + 1.7):
+    for yy in (y - 2.7, y + 2.7):      # K8/K10: 旧±1.7は車体幅(2.9m)に対し余裕0.15mで停車車両に食い込んだ → 建築限界(半幅2.1m以上)を確保
         g.a("iron_black").box(x - span / 2, x + span / 2, yy - 0.1, yy + 0.1, 0.0, 0.5)
         g.a("iron_black").box(x - span / 2, x + span / 2, yy - 0.1, yy + 0.1, 5.2, 5.5)
         n = int(span / 4)
@@ -123,7 +123,7 @@ def truss_bridge(x, y, span=24.0, name="sig_bridge"):
             if k < n:
                 g.a("iron_black").sbox((xx, yy, 0.4 if k % 2 == 0 else 5.3), (xx + span / n, yy, 5.3 if k % 2 == 0 else 0.4), 0.12, 0.12, up=(0, 1, 0))
     for xx in (x - span / 2 - 1.2, x + span / 2 + 1.2):
-        g.a("stone").box(xx - 1.2, xx + 1.2, y - 3.0, y + 3.0, -4.0, 0.5)
+        g.a("stone").box(xx - 1.2, xx + 1.2, y - 3.8, y + 3.8, -4.0, 0.5)
     g.build()
     w = lib.Acc("sig_river", lib.mat_plain("river", (0.07, 0.14, 0.15), rough=0.05, spec=0.9), "Ground")
     w.box(x - span / 2 - 0.2, x + span / 2 + 0.2, -60, 60, -3.2, -3.0)

@@ -1,6 +1,7 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))   # Q8: 絶対パスを使わない
 """駅ごとの列車需要(1時間あたり・片方向)から、必要な線数・ホーム形式を算出し、現状と比較する(B4)。"""
 import re, sys, json
-sys.path.insert(0, "/home/claude/station/net")
+sys.path.insert(0, _R + "/net")
 from services import SVC, FREIGHT_ONLY, NONREV
 
 
@@ -54,7 +55,7 @@ def need(d, sid=None, kind=None):   # kind: "city"=地下鉄/路面/モノレー
 
 def plan():
     D = demand()
-    net = json.load(open("/home/claude/station/net/network.json"))
+    net = json.load(open(_R + "/net/network.json"))
     out = {}
     for s in net["stations"]:
         i = s["id"]
@@ -62,11 +63,11 @@ def plan():
         d = D[i]; p, f = need(d, i, "city" if set(s["lines"]) & {"KM", "TR", "BM"} else None)
         out[i] = dict(now=s["tracks"], need=p + f, pax=p, frt=f, stop=round(d["stop"], 1), pas=round(d["pas"], 1), term=round(d["term"], 1),
                       note=("増設要" if p + f > s["tracks"] else ("余裕あり" if p + f < s["tracks"] else "適正")))
-    json.dump(out, open("/home/claude/station/net/station_plan.json", "w"), ensure_ascii=False, indent=1)
+    json.dump(out, open(_R + "/net/station_plan.json", "w"), ensure_ascii=False, indent=1)
     return out
 
 
 if __name__ == "__main__":
-    net = {x["id"]: x for x in json.load(open("/home/claude/station/net/network.json"))["stations"]}
+    net = {x["id"]: x for x in json.load(open(_R + "/net/network.json"))["stations"]}
     for i, p in plan().items():
         print(i, net[i]["name"], p)

@@ -205,6 +205,9 @@ def _place_m19_special(kinds):
 SLEEPER_ST = {"M01": 0, "M06": 1, "M19": 0}      # 寝台特急「ほなみ」(NT1): 始発M01・機関車付替M06・終着M19
 
 
+SLEEPER_X = {"M19": (-400.0, 74.0)}      # 寝台編成が置ける x の範囲(倉庫 m19_wh は x≈75〜)
+
+
 def _place_sleeper(sid, ntr, used, cx, stub):
     """寝台特急「ほなみ」: DD(公開諸元ベース)+電源車+B+食堂+A+B(最後尾)。空いている最後の線に置く。"""
     import diesel2, vehtypes
@@ -230,6 +233,8 @@ def _place_sleeper(sid, ntr, used, cx, stub):
         tp = _tpoint(sid, k, x0 + loco_l + 0.6 + pitch * (i + 0.5))
         if tp is None:
             continue
+        if sid in SLEEPER_X and not (SLEEPER_X[sid][0] <= tp[0] <= SLEEPER_X[sid][1]):
+            continue                                                  # K10: 線の先に倉庫等があり編成が入らない駅は、入る範囲の客車だけ置く
         vehtypes.make(t, f"stk_{sid}_nt1_{i}", seed=seed + i, ends=ends).place(tp[0], tp[1], tp[2], z=zr + 0.274)
         n += 1
     return n

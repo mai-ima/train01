@@ -1,6 +1,7 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))   # Q8: 絶対パスを使わない
 """【C6】向きの自動検査: 軌道グラフの接続ノードで、接続する2辺の接線のなす角(直通なら0°)を測り、閾値超を列挙する。"""
 import json, math, sys
-g = json.load(open("/home/claude/station/net/track_graph.json"))
+g = json.load(open(_R + "/net/track_graph.json"))
 E = {e["id"]: e for e in g["edges"]}
 
 
@@ -27,4 +28,4 @@ for nd in g["nodes"]:
 print("検査", n, "組 / 12°超", len(bad))
 for b in bad:
     print(b)
-json.dump(dict(checked=n, bad=bad), open("/home/claude/station/net/orient_graph.json", "w"), ensure_ascii=False)
+json.dump(dict(checked=n, bad=bad), open(_R + "/net/orient_graph.json", "w"), ensure_ascii=False)

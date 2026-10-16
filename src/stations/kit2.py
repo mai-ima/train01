@@ -602,7 +602,7 @@ def town_along(pts, sid, st, rng, style, dens, xskip, sides=("L", "R"), off=2.6,
                     w, d = w * 1.25 + 3.5, d * 1.3 + 3.5      # K8: 実測(PROBE_GROUP)で母屋は計画より x+3.2/y+3.5m 大きい(庇・縁側・納屋)。さらに 母屋は put_building で w×0.85〜1.25・d×0.85〜1.3 に変わる → 配置の占有幅は上限で見積もる
                 i = int(np.clip((x + w / 2 - pts[0, 0]) / (pts[1, 0] - pts[0, 0]), 1, len(pts) - 2))   # K8: x は左端。建物中心 = x+w/2 で並べる(従来は中心=x で次との間隔が足りず隣棟が重なった)
                 if any(a - w < x < b for a, b in xskip) or rng.random() > min(1.0, 0.35 + dens):
-                    x += w + rng.uniform(2, 8) if dens < 0.5 else w + rng.uniform(0.5, 2)
+                    x += w + rng.uniform(2, 8) if dens < 0.5 else w + rng.uniform(1.3, 2.4)
                     continue
                 u = float(np.clip((x + w / 2 - pts[0, 0]) / (pts[1, 0] - pts[0, 0]), 1, len(pts) - 2))   # K8: 添字を切り捨てず線形補間(点間隔が粗いと最大1間隔ずれて隣棟が重なった)
                 i0 = int(u); fr = u - i0
@@ -632,7 +632,7 @@ def town_along(pts, sid, st, rng, style, dens, xskip, sides=("L", "R"), off=2.6,
                     print('TOWN', side, kcount, kind, 'x=%.1f w=%.1f d=%.1f o=(%.1f,%.1f) yaw=%.0f' % (x, w, d, o[0], o[1], math.degrees(yaw)))
                 put_building(kind, float(o[0]), float(o[1]), yaw, w, d, rng, st, kcount, sid, dens)
                 kcount += 1
-                x += w + (rng.uniform(1.0, 5.0) if dens < 0.6 else rng.uniform(0.3, 1.6))
+                x += w + (rng.uniform(1.0, 5.0) if dens < 0.6 else rng.uniform(1.3, 2.4))
 
 
 # ----------------------------------------------------------------- per-station designs

@@ -1,6 +1,7 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))   # Q8: 絶対パスを使わない
 """駅の実配線(ホーム・線路のy位置[m]、駅舎側が+y)を形状コードから書き出す → net/plan_geo.json(路線図の配線略図が使う)。"""
 import sys, json, re
-sys.path.insert(0, "/home/claude/station")
+sys.path.insert(0, _R)
 import kit2, kit3
 from kit2 import DESIGN, track_offsets
 out = {}
@@ -28,5 +29,5 @@ m1 = kit3.m01_layout()[0]
 put("M01", m1, [[a + 1.7, b - 1.7] for a, b in zip(m1[0::2], m1[1::2])], L=110, stub=1)
 m19 = kit3.m19_layout()["ys"]
 put("M19", m19, [[b + 1.7, a - 1.7] for a, b in zip(m19[0::2], m19[1::2])][:4], L=100, stub=1)
-json.dump(out, open("/home/claude/station/net/plan_geo.json", "w"), ensure_ascii=False)
+json.dump(out, open(_R + "/net/plan_geo.json", "w"), ensure_ascii=False)
 print(len(out), sorted(out))

@@ -180,7 +180,7 @@ def make_mono(name="mono", seed=31, num_img="kiha_number.png"):
         with v.part("bogie", (x, 0.0, 0.0), axis="z"):
             v.A("iron", 0.01).box(x - 1.4, x + 1.4, -0.55, 0.55, 0.0, 0.5)
             for s in (-1, 1):
-                v.A("iron", 0.01).box(x - 1.3, x + 1.3, s * 0.52 - 0.12, s * 0.52 + 0.12, -1.5, 0.5)      # 桁の側面を抱く枠
+                v.A("iron", 0.01).box(x - 1.3, x + 1.3, s * 0.66 - 0.12, s * 0.66 + 0.12, -1.5, 0.5)      # 桁の側面を抱く枠(K10: 桁半幅0.5mに対し内面0.40mで桁に食い込んでいた → 内面0.54m)
             for dx in (-0.8, 0.8):
                 with v.part("ws", (x + dx, 0.0, 0.0), axis="y", r=0.55):
                     v.A("rubber").cyl((x + dx, -0.4, 0.0), (x + dx, 0.4, 0.0), 0.55, 0.55, seg=20) if False else None

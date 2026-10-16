@@ -1,6 +1,7 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))   # Q8: 絶対パスを使わない
 """状態表(checks.json / status.json)を実態に合わせて更新(2026-10-11)。路線図v2.4の『最新内容』用。"""
 import json, glob, os, re
-os.chdir('/home/claude/station/net')
+os.chdir(_R + '/net')
 ck = json.load(open('checks.json')); st = json.load(open('status.json'))
 imgs = {}
 for f in glob.glob('../tex/kit/*.png'):

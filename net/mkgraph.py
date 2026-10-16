@@ -1,6 +1,7 @@
+import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))   # Q8: 絶対パスを使わない
 """実線路図データ(geo.json)と工程チェック(checks.json)を作る。bpy は使うがレンダはしない。"""
 import sys, json, math, os, glob
-sys.path.insert(0, "/home/claude/station")
+sys.path.insert(0, _R)
 import numpy as np
 import trackkit, props, kit5
 import kit4
@@ -37,17 +38,17 @@ for sid in kit4.SB:
     rb, rf = kit4.kit2.REACH.get(sid, (160, 160))
     sts[sid] = dict(x=round(float(o[0]), 1), y=round(float(o[1]), 1), yaw=round(math.degrees(kit4.yaw_of(sid)), 1), reach=[rb, rf],
                     bend=round(math.degrees(kit4.bend(sid)), 1), tracks=len(kit4.local_tracks(sid)), curve_R=round(abs(kit4.kit2.CURVE_OVERRIDE.get(sid, 0))))
-json.dump(dict(links=links, stations=sts), open("/home/claude/station/net/geo.json", "w"), ensure_ascii=False)
+json.dump(dict(links=links, stations=sts), open(_R + "/net/geo.json", "w"), ensure_ascii=False)
 # ---- 工程チェック
 import kit2, kit3
-st = json.load(open("/home/claude/station/net/status.json"))["status"]
+st = json.load(open(_R + "/net/status.json"))["status"]
 chk = {}
 for sid, s in kit4.SB.items():
     shape = "専用設計" if sid in kit3.BUILD else ("型別設計" if sid in kit2.DESIGN else ("原型(穂波野)" if sid == "M06" else "汎用"))
-    imgs = len(glob.glob(f"/home/claude/station/tex/kit/{sid}_*.png")) if sid != "M06" else 0
-    rd = os.path.exists(f"/home/claude/station/out/z_{sid}.png") or sid == "M06"
+    imgs = len(glob.glob(f"{_R}/tex/kit/{sid}_*.png")) if sid != "M06" else 0
+    rd = os.path.exists(f"{_R}/out/z_{sid}.png") or sid == "M06"
     chk[sid] = dict(shape=shape, images=imgs, render=bool(rd), track=True,
                     interior=("あり" if shape in ("専用設計", "型別設計", "原型(穂波野)", "汎用") else "-"),
                     trains=("あり" if sid == "M06" else "未"), audit=st.get(sid, {}).get("audit", "未監査"))
-json.dump(chk, open("/home/claude/station/net/checks.json", "w"), ensure_ascii=False)
+json.dump(chk, open(_R + "/net/checks.json", "w"), ensure_ascii=False)
 print(len(links), "links;", sum(len(l["items"]) for l in links), "struct items;", len(chk), "stations")
