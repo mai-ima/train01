@@ -1078,7 +1078,13 @@
  {
   "id": 314,
   "subject": "【S-D11】車庫が埋まっている/列車の動線(入出庫線の単線1本接続)が非現実的な問題の修正",
-  "description": "入出庫線を複線化し本線の両線へ渡り線で接続、丘との重なりの整地、nd_road の黒帯の素材不具合。docs/D4_DEPOT_LAYOUT.md に設計を追記してから実装。",
+  "description": "入出庫線を複線化し本線の両線へ渡り線で接続、丘との重なりの整地、nd_road の黒帯の素材不具合。docs/D4_DEPOT_LAYOUT.md に設計を追記してから実装。 【進捗2026-10-17】入出庫線を複線化(N_leadB+渡り線N_leadX)済み。nd_road/分岐部の黒欠けは根本原因=同一平面の重なり(docs/ROOT_CAUSES.md)で修正済み。残: 丘と庫の重なり確認・旧車庫接続の目視・路線図の施設文言更新。",
+  "status": "in_progress"
+ },
+ {
+  "id": 315,
+  "subject": "【Q19】同一平面で重なる面(コプラナー)の自動検出を Q3/healthscan に追加(黒帯の根本原因 nd_road の再発防止)",
+  "description": "main.py の DBG_COPLANAR は外接箱ベースで誤検出が多い。面単位の判定に精密化して healthscan に組み込む。",
   "status": "pending"
  }
 ]
