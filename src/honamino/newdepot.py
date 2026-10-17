@@ -84,9 +84,10 @@ def build_tracks():
         L = ladder_pt(k)
         cx, cy = L[0] + TURN_R * math.sin(ALPHA), L[1] + TURN_R * math.cos(ALPHA)
         arc = seg_arc((cx, cy), TURN_R, -90 - math.degrees(ALPHA), -90)
-        P = join(arc, seg_line(arc[-1], (X_END, arc[-1][1])))
+        xe = SHED["x1"] - 3.0 if k <= 5 else X_END           # 庫に入る6線は庫内の東端で行き止まり(貫通させない)
+        P = join(arc, seg_line(arc[-1], (xe, arc[-1][1])))
         build_track(f"N_stab{k}", P)
-        trackkit.buffer_stop(X_END + 1.0, arc[-1][1], 0)
+        trackkit.buffer_stop(xe + 1.0, arc[-1][1], 0)
         turnout(P, f"N_to{k}", sig=(k == 0))
 
 
@@ -248,82 +249,26 @@ def build_blocks():
     kit2.mats2()
     rng = random.Random(77)
     # (名前, 前面中心x, 前面y, 幅, 奥行, 階数, 壁, 備品) — 前面(local y=0)が北(はしご線側)を向くよう yaw=π
-    specs = [("nd_adm1", 245.0, -100.0, 24.0, 14.0, 3, "pl_grey", office_fit), ("nd_adm2", 285.0, -100.0, 20.0, 12.0, 3, "plasterw", office_fit),
-             ("nd_adm3", 322.0, -100.0, 22.0, 13.0, 2, "pl_cream", office_fit),
-             ("nd_rd1", 150.0, -108.0, 30.0, 18.0, 4, "pl_grey", lab_fit("ticket")), ("nd_rd2", 195.0, -108.0, 28.0, 16.0, 3, "pl_blue", lab_fit("gate")),
-             ("nd_rd3", 150.0, -140.0, 36.0, 20.0, 2, "concrete", lab_fit("display"))]
-    for nm, xc, yf, w, d, nfl, wall, fit in specs:
+    # D7b: 3棟を別設計に(屋根形状・階数・平面・外構を変える。以前は同一の箱を色と寸法だけ変えていた)
+    specs = [("nd_adm1", 245.0, -100.0, 24.0, 14.0, 3, "pl_grey", office_fit, "gable", "wing"), ("nd_adm2", 285.0, -100.0, 20.0, 12.0, 3, "plasterw", office_fit, "hip", "porch"),
+             ("nd_adm3", 322.0, -100.0, 22.0, 13.0, 2, "pl_cream", office_fit, "saw", "tank"),
+             ("nd_rd1", 150.0, -108.0, 30.0, 18.0, 4, "pl_grey", lab_fit("ticket"), "flat", "porch"), ("nd_rd2", 195.0, -108.0, 28.0, 16.0, 3, "pl_blue", lab_fit("gate"), "hip", "wing"),
+             ("nd_rd3", 150.0, -140.0, 36.0, 20.0, 2, "concrete", lab_fit("display"), "saw", "tank")]
+    for nm, xc, yf, w, d, nfl, wall, fit, roof, extra in specs:
         with SubZone((xc + w / 2, yf, -1.3), math.pi):
             g = kit2.G(nm, "Buildings")
-            v = dict(x0=0.0, x1=w, y0=0.0, y1=d, nfl=nfl, roof="flat", wall=wall, door="S", custom_fit=fit)
+            v = dict(x0=0.0, x1=w, y0=0.0, y1=d, nfl=nfl, roof=roof, wall=wall, door="S", custom_fit=fit)
             kit2.volume(g, v, rng, {"id": "M06"}, interior=True)
+            zf = Z_PLAT + 0.30
+            zh = zf + 2.9 + (nfl - 1) * 3.0
+            if extra == "porch":                                  # 正面の車寄せ(庇+2本の柱)
+                g.a("concrete", bevel=0.01).box(w / 2 - 3.4, w / 2 + 3.4, -3.2, 0.1, zf + 2.7, zf + 2.95)
+                for px in (w / 2 - 3.1, w / 2 + 3.1):
+                    g.a("iron_black", bevel=0.01).box(px - 0.12, px + 0.12, -3.0, -2.76, zf, zf + 2.7)
+            elif extra == "wing":                                  # 平屋の別棟(食堂・倉庫など)を側面に増築
+                wv = dict(x0=w, x1=w + 9.0, y0=1.0, y1=min(d, 9.0), nfl=1, roof="shed", wall="plasterw", door="S")
+                kit2.volume(g, wv, rng, {"id": "M06"}, interior=False)
+            elif extra == "tank":                                  # 屋上の高架水槽と階段室の塔屋
+                g.a("iron_black", bevel=0.02).cyl((w * 0.75, d * 0.5, zh + 0.2), (w * 0.75, d * 0.5, zh + 2.6), 1.2, 1.2, seg=14)
+                g.a("pl_grey", bevel=0.02).box(w * 0.2, w * 0.2 + 3.2, d * 0.35, d * 0.35 + 3.0, zh, zh + 2.9)
             g.build()
-
-
-def build_site():
-    """敷地づくり: 管理棟前の舗装広場・構内道路・柵・植栽・街灯。箱だけが芝生に建つ状態を解消する。"""
-    plaza = Acc("nd_plaza", M["concrete"], "Roads")
-    plaza.boxc(283.0, -103.0, 0.035, 110.0, 24.0, 0.07)            # 管理棟前の広場
-    plaza.boxc(172.0, -118.0, 0.035, 90.0, 52.0, 0.07)             # 技術開発棟前
-    plaza.build()
-    road = Acc("nd_road", M["road"], "Roads")
-    road.boxc(228.0, -88.0, 0.045, 190.0, 7.0, 0.09)                # 構内道路(はしご線の南側)
-    road.boxc(110.0, -150.0, 0.045, 8.0, 140.0, 0.09)               # 本社側へ南下する道
-    road.build()
-    fence = Acc("nd_fence", M["iron_black"], "Props")
-    for x in np.arange(100.0, 480.0, 5.0):                          # 南側境界のフェンス(柱+上下2段の横桟)。旧車庫は敷地の内側に含める
-        fence.boxc(x, -255.0, 0.9, 0.08, 0.08, 1.8)
-    fence.boxc(290.0, -255.0, 1.6, 380.0, 0.03, 0.04)
-    fence.boxc(290.0, -255.0, 0.7, 380.0, 0.03, 0.04)
-    fence.build()
-    lamps = Acc("nd_poles", M["iron_black"], "Props")
-    glow = Acc("nd_pole_lamps", M["lamp_glow"], "Props")
-    for x in np.arange(120.0, 330.0, 30.0):                         # 街灯は構内道路沿い(はしご線・引込線の上に立たない範囲)
-        lamps.boxc(x, -91.5, 4.0, 0.14, 0.14, 8.0)
-        lamps.boxc(x, -92.2, 8.0, 0.14, 1.5, 0.1)
-        glow.boxc(x, -92.8, 7.9, 0.5, 0.25, 0.08)
-    lamps.build()
-    glow.build()
-    import veg
-    rng = random.Random(5)
-    for k in range(26):                                             # 敷地の周りの並木
-        x = 105.0 + k * 14.5 + rng.uniform(-2, 2)
-        veg.zelkova(x, (-160.0 if x < 350.0 else -250.0) + rng.uniform(-2.5, 2.0), h=rng.uniform(8, 12), rad=rng.uniform(3.6, 5.0), seed=k)
-
-
-def build_stock():
-    """留置車両: 庫内(第0〜5線)と庫外(第6〜11線)に客車編成。外形のみ(室内は車両側の室内つきモデル)。"""
-    import train as T
-    n = 0
-    plan = {0: 3, 1: 3, 2: 2, 3: 3, 4: 3, 5: 2, 6: 4, 7: 5, 8: 3, 9: 4, 10: 2, 11: 3}
-    for k, cnt in plan.items():
-        x0 = max(stab_x0(k) + 14.0, SHED["x0"] + 12.0) if k <= 5 else stab_x0(k) + 14.0
-        for j in range(cnt):
-            T.make_coach(f"nd_coach_{k}_{j}", variant=(k + j) % 4, seed=300 + n).place(x0 + 10.0 + j * 20.6, stab_y(k), math.pi if (k + j) % 2 else 0.0)
-            n += 1
-
-
-def register_grass_exclusion():
-    """新基地の敷地(留置線・庫・管理棟群・広場・構内道路・引込線)には近景の草を生やさない。屋内の床にまで草が出ていた(室内確認で発見)。"""
-    import veg
-    for r in ((96.0, 495.0, -102.0, -26.0), (125.0, 345.0, -168.0, -86.0), (340.0, 445.0, -160.0, -80.0)):
-        if r not in veg.EXTRA_EXCL:
-            veg.EXTRA_EXCL.append(r)
-
-
-def build():
-    import os
-    register_grass_exclusion()
-    skip = os.environ.get("ND_SKIP", "").split(",")          # 調査用: 部分ごとに構築を省く(通常は空)
-    build_tracks()
-    build_ground()
-    if "shed" not in skip:
-        build_shed()
-        build_shed_fit()
-    if "blocks" not in skip:
-        build_blocks()
-    if "site" not in skip:
-        build_site()
-    if "stock" not in skip:
-        build_stock()
-    print("newdepot built")

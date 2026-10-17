@@ -448,6 +448,46 @@ def bamboo_grove(x0, x1, y0, y1, n=120, seed=1):
     emit("bamboo_leaves", np.array(CV), np.array(CT), np.array(CC), M["leaf"], "Trees")
 
 
+def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
+    """T5: 近景の里山に樹林を載せる。1本=粗い樹冠(blob 2段)+色むら、丘ごとに1メッシュへ統合して軽量化する。
+    間隔は約8m、広葉(明るい緑)と針葉(暗い緑)を混ぜ、稜線側ほど小さく疎にして自然な林縁にする。"""
+    rng = random.Random(500 + k)
+    nr_ = np.random.default_rng(900 + k)
+    Vs, Ts, Cs, off = [], [], [], 0
+    step = 5.0
+    for gx in np.arange(-rx * 0.97, rx * 0.97, step):
+        for gy in np.arange(-ry * 0.97, ry * 0.97, step):
+            x = cx + gx + rng.uniform(-3.0, 3.0)
+            y = cy + gy + rng.uniform(-3.0, 3.0)
+            u, v = (x - cx) / rx, (y - cy) / ry
+            rho = math.hypot(u, v)
+            if rho > 0.97 or rng.random() < 0.03 + 0.35 * rho ** 4:        # 林縁は疎に
+                continue
+            z = Zf(u, v) - 0.25
+            if z < 0.2:
+                continue
+            conif = rng.random() < 0.35
+            rad = rng.uniform(4.2, 6.6) * (1.0 - 0.2 * rho)
+            hc = rad * (1.5 if conif else 0.9)
+            c = (x, y, z + hc)
+            Vb, seg, rings = blob(c, rad * (0.62 if conif else 0.9), rng, seg=8, rings=5, k=0.25)
+            Vb[:, 2] = c[2] + (Vb[:, 2] - c[2]) * (1.9 if conif else 1.0)
+            n = len(Vb)
+            for r in range(rings):
+                for s_ in range(seg):
+                    a0, a1 = r * seg + s_, r * seg + (s_ + 1) % seg
+                    b0, b1 = (r + 1) * seg + s_, (r + 1) * seg + (s_ + 1) % seg
+                    Ts += [(off + a0, off + b0, off + a1), (off + a1, off + b0, off + b1)]
+            base = np.array([0.020, 0.045, 0.022]) if conif else np.array([0.050, 0.095, 0.030])
+            shade = np.clip((Vb[:, 2] - z) / (hc * 2.0), 0, 1)[:, None]
+            Cc = base[None, :] * (0.7 + 0.7 * shade) * rng.uniform(0.75, 1.3) * nr_.uniform(0.85, 1.15, (n, 1))
+            Cs.append(np.concatenate([Cc, np.ones((n, 1))], 1))
+            Vs.append(Vb)
+            off += n
+    if Vs:
+        emit(f"knoll_{k}_forest", np.concatenate(Vs), np.array(Ts), np.concatenate(Cs), M["leaf"], "Trees")
+
+
 def build_trees():
     zelkova(-27.5, 17.9, 11, 5.0, seed=1)
     zelkova(36.0, 22.5, 12, 5.6, seed=2)
@@ -515,7 +555,9 @@ def build_landscape(cam):
         vs = np.linspace(-1, 1, ny)
         U, Vg = np.meshgrid(us, vs)
         rho = np.sqrt(U * U + Vg * Vg)
-        Z = np.array([[hh * max(0.0, 1 - rho[j, i] ** 2) ** 1.3 * (0.8 + 0.4 * mn.noise(Vector((cx * 0.01 + U[j, i] * 2, cy * 0.01 + Vg[j, i] * 2, 1.0)))) for i in range(nx)] for j in range(ny)])
+        def Zf(u, v, _cx=cx, _cy=cy, _hh=hh):
+            return _hh * max(0.0, 1 - (u * u + v * v)) ** 1.3 * (0.8 + 0.4 * mn.noise(Vector((_cx * 0.01 + u * 2, _cy * 0.01 + v * 2, 1.0)))) + 0.25
+        Z = np.array([[Zf(U[j, i], Vg[j, i]) - 0.25 for i in range(nx)] for j in range(ny)])
         X = cx + U * rx
         Y = cy + Vg * ry
         Vk = np.stack([X, Y, Z - 0.25], -1).reshape(-1, 3)
@@ -523,6 +565,8 @@ def build_landscape(cam):
         aa, bb, cc, dd = ii[:-1, :-1], ii[:-1, 1:], ii[1:, 1:], ii[1:, :-1]
         Tk = np.concatenate([np.stack([aa, bb, cc], -1).reshape(-1, 3), np.stack([aa, cc, dd], -1).reshape(-1, 3)])
         np_mesh(f"knoll_{k}", Vk, Tk, near, "Terrain", smooth=True)
+        if os.environ.get("KNOLL_FOREST", "1") == "1":
+            knoll_forest(k, cx, cy, rx, ry, hh, Zf)
 
 
 def build_veg(cam_loc):
