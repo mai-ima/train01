@@ -324,7 +324,7 @@ def build_blocks():
     rng = random.Random(77)
     # (名前, 前面中心x, 前面y, 幅, 奥行, 階数, 壁, 備品) — 前面(local y=0)が北(はしご線側)を向くよう yaw=π
     # D7b: 3棟を別設計に(屋根形状・階数・平面・外構を変える。以前は同一の箱を色と寸法だけ変えていた)
-    specs = [("nd_adm1", 245.0, -100.0, 24.0, 14.0, 3, "pl_grey", office_fit, "gable", "wing"), ("nd_adm2", 285.0, -100.0, 20.0, 12.0, 3, "plasterw", office_fit, "hip", "porch"),
+    specs = [("nd_adm1", 245.0, -100.0, 24.0, 14.0, 3, "pl_grey", office_fit, "gable", "ell"), ("nd_adm2", 285.0, -100.0, 20.0, 12.0, 3, "plasterw", office_fit, "hip", "tee"),
              ("nd_adm3", 322.0, -100.0, 22.0, 13.0, 2, "pl_cream", office_fit, "saw", "tank"),
              ("nd_rd1", 150.0, -108.0, 30.0, 18.0, 4, "pl_grey", lab_fit("ticket"), "flat", "porch"), ("nd_rd2", 195.0, -108.0, 28.0, 16.0, 3, "pl_blue", lab_fit("gate"), "hip", "wing"),
              ("nd_rd3", 150.0, -140.0, 36.0, 20.0, 2, "concrete", lab_fit("display"), "saw", "tank")]
@@ -342,10 +342,39 @@ def build_blocks():
             elif extra == "wing":                                  # 平屋の別棟(食堂・倉庫など)を側面に増築
                 wv = dict(x0=w, x1=w + 9.0, y0=1.0, y1=min(d, 9.0), nfl=1, roof="shed", wall="plasterw", door="S")
                 kit2.volume(g, wv, rng, {"id": "M06"}, interior=False)
+            elif extra == "ell":                                   # L字の別翼(奥へ張り出す2階建て)。平面形そのものを変える
+                ev = dict(x0=w - 9.0, x1=w, y0=d, y1=d + 11.0, nfl=max(1, nfl - 1), roof="gable", wall=wall, door="S", ridge="y")
+                kit2.volume(g, ev, rng, {"id": "M06"}, interior=False)
+            elif extra == "tee":                                   # T字: 奥に細長い棟(階段室+廊下棟)
+                tv = dict(x0=w / 2 - 3.5, x1=w / 2 + 3.5, y0=d, y1=d + 9.0, nfl=nfl, roof="hip", wall="pl_cream", door="S")
+                kit2.volume(g, tv, rng, {"id": "M06"}, interior=False)
             elif extra == "tank":                                  # 屋上の高架水槽と階段室の塔屋
                 g.a("iron_black", bevel=0.02).cyl((w * 0.75, d * 0.5, zh + 0.2), (w * 0.75, d * 0.5, zh + 2.6), 1.2, 1.2, seg=14)
                 g.a("pl_grey", bevel=0.02).box(w * 0.2, w * 0.2 + 3.2, d * 0.35, d * 0.35 + 3.0, zh, zh + 2.9)
+            _block_details(g, nm, w, d, nfl, zf, zh, rng)
             g.build()
+
+
+def _block_details(g, nm, w, d, nfl, zf, zh, rng):
+    """D7c: 棟ごとに異なる外装ディテール。基礎帯・縦樋・煙突・玄関ステップ/庇・看板・屋上機器を、棟名から決めた乱数で組み合わせる。"""
+    r = random.Random(sum(ord(c) * (i + 3) for i, c in enumerate(nm)) + 11)   # 棟名から決まる固定の乱数(hash() は実行ごとに変わるので使わない)
+    g.a("concrete", bevel=0.01).box(-0.08, w + 0.08, -0.08, d + 0.08, zf - 0.05, zf + r.choice([0.45, 0.6, 0.9]))      # 基礎帯(棟ごとに高さを変える)
+    for px in ((0.12, w - 0.12) if r.random() < 0.6 else (0.12, w / 2, w - 0.12)):                                       # 雨樋の縦樋
+        g.a("iron_black").cyl((px, -0.1, zf), (px, -0.1, zh), 0.05, 0.05, seg=8)
+    for _ in range(r.choice([1, 1, 2, 3])):                                                                          # 煙突(煉瓦)・笠木つき
+        cx_, cy_ = r.uniform(w * 0.15, w * 0.85), r.uniform(d * 0.25, d * 0.8)
+        hh = r.uniform(1.8, 3.6)
+        g.a("brick", bevel=0.01).box(cx_ - 0.4, cx_ + 0.4, cy_ - 0.4, cy_ + 0.4, zh - 0.3, zh + hh)
+        g.a("concrete", bevel=0.01).box(cx_ - 0.5, cx_ + 0.5, cy_ - 0.5, cy_ + 0.5, zh + hh, zh + hh + 0.12)
+    if r.random() < 0.7:                                                                                             # 玄関ステップと小さな庇
+        sw = r.uniform(1.6, 2.8)
+        g.a("concrete", bevel=0.01).box(w / 2 - sw, w / 2 + sw, -1.4, 0.0, zf - 0.45, zf)
+        g.a("iron_black", bevel=0.01).box(w / 2 - sw, w / 2 + sw, -1.2, 0.0, zf + 2.55, zf + 2.62)
+    g.a("iron_black", bevel=0.01).box(w / 2 - 2.2, w / 2 + 2.2, -0.14, -0.04, zh - 1.2, zh - 0.5)                     # 棟名板
+    for _ in range(r.randint(2, 5)):                                                                                 # 屋上の換気筒・機器
+        vx, vy = r.uniform(1.0, w - 1.0), r.uniform(1.0, d - 1.0)
+        g.a("iron_black", bevel=0.02).cyl((vx, vy, zh), (vx, vy, zh + r.uniform(0.5, 1.1)), 0.18, 0.12, seg=8)
+
 
 def build_site():
     """敷地づくり: 管理棟前の舗装広場・構内道路・柵・植栽・街灯。箱だけが芝生に建つ状態を解消する。"""

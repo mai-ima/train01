@@ -1,4 +1,8 @@
 import os as _os; _R = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
+import sys as _sys
+if _os.environ.get("PYTHONHASHSEED") != "0":      # Q24: 文字列 hash() が乱数の種に使われているため、実行ごとに結果が変わらないよう固定して再実行する
+    _os.environ["PYTHONHASHSEED"] = "0"
+    _os.execv(_sys.executable, [_sys.executable] + _sys.argv)
 """Build + render the Honamino station (national-railway era). Usage:
 python3 main.py --cam A --w 960 --samples 24 --parts core,station --out test
 """

@@ -1172,5 +1172,10 @@
   "id": 330,
   "subject": "【H1b】駅の人物を増員(1視点あたり十数名・服装/姿勢の差・影の接地)とON/OFF差の明確化(X7b指摘)",
   "status": "pending"
+ },
+ {
+  "id": 331,
+  "subject": "【Q24】乱数の再現性: hash() を種にした箇所に PYTHONHASHSEED=0 を設定(レンダ起動スクリプト)し、比較を安定化",
+  "status": "completed"
  }
 ]
