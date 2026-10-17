@@ -353,6 +353,8 @@ def m06():
     core.build_tracks(cam)
     core.build_platform()
     core.build_island()
+    import d9
+    d9.build_platforms()
     core.build_yard_crossing()
     core.build_roads()
     core.build_crossing_deck()
