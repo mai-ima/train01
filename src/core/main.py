@@ -564,6 +564,25 @@ for look in ("Medium High Contrast", "AgX - Medium High Contrast", "High Contras
     except Exception:
         continue
 scene.view_settings.exposure = args.exposure
+if os.environ.get("DBG_BOX"):
+    _dg = bpy.context.evaluated_depsgraph_get()
+    _seen = {}
+    for _x in range(330, 420, 4):
+        for _y in range(-115, -60, 4):
+            _ok, _loc, _nm, _ix, _ob, _mx = bpy.context.scene.ray_cast(_dg, Vector((_x, _y, 60.0)), Vector((0, 0, -1)))
+            if _ok and _loc.z > 2.0 and _ob is not None:
+                _seen.setdefault(_ob.name, (_x, _y, round(_loc.z, 1)))
+    for _k, _v in _seen.items():
+        print("[DBG_RAY]", _k, _v)
+if os.environ.get("DBG_BOX2"):
+    for _o in bpy.data.objects:
+        if _o.type != 'MESH' or _o.name.startswith(("N_",)):
+            continue
+        _bb = [(_o.matrix_world @ Vector(_p)) for _p in _o.bound_box]
+        _cx = sum(p.x for p in _bb) / 8
+        _cy = sum(p.y for p in _bb) / 8
+        if 250 < _cx < 480 and -140 < _cy < -30 and max(_o.dimensions) > 3:
+            print("[DBG_BOX]", _o.name, round(_cx), round(_cy), _o.parent.name if _o.parent else None, [round(d, 1) for d in _o.dimensions])
 print(f"[{time.time() - t0:5.1f}s] scene ready; objects={len(bpy.data.objects)}")
 if os.environ.get("STOCKDUMP"):      # Z-A10: 停車車両(stk_*)の外接箱と、同じ x 範囲にあるレール(trk/rail)の y 範囲を出力して、線路外置きを検出する
     import re as _re2

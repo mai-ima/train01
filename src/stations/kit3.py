@@ -367,12 +367,30 @@ def m06():
         if _n.startswith("D_lead"):
             bpy.data.objects.remove(bpy.data.objects[_n], do_unlink=True)
             _dn.discard(_n)
+    if os.environ.get("DBG_D6"):
+        for _n in sorted(_dn):
+            _o = bpy.data.objects[_n]
+            _c = _o.matrix_world.translation
+            _bb = [(_o.matrix_world @ Vector(_p)) for _p in _o.bound_box]
+            _cx = sum(p.x for p in _bb) / 8 + newdepot.OLD_DX
+            _cy = sum(p.y for p in _bb) / 8 + newdepot.OLD_DY
+            if abs(_cx - 372) < 40 and abs(_cy + 90) < 40:
+                print("[DBG_D6]", _n, round(_cx), round(_cy), _o.parent.name if _o.parent else None)
     print("[D6] 旧車庫を移設:", newdepot.move_new_objects(_dn, newdepot.OLD_DX, newdepot.OLD_DY), "個")
     _props.build_props()
     train.build_train()
     train.build_vehicles()
     newdepot.build()
     newdepot.build_old_depot_lead()
+    if os.environ.get("DBG_D6"):
+        for _o in bpy.data.objects:
+            if _o.type != 'MESH':
+                continue
+            _bb = [(_o.matrix_world @ Vector(_p)) for _p in _o.bound_box]
+            _cx = sum(p.x for p in _bb) / 8
+            _cy = sum(p.y for p in _bb) / 8
+            if 300 < _cx < 460 and -140 < _cy < -40:
+                print("[DBG_D6b]", _o.name, round(_cx), round(_cy), _o.parent.name if _o.parent else None, [round(d) for d in _o.dimensions])
     print("m06 built (本体データ)")
 
 
