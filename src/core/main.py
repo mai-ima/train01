@@ -771,6 +771,16 @@ if os.environ.get("DBG_DUP"):      # デバッグ: 名前が「X」と「X.001�
         if _p.type == "MESH" and len(_p.data.vertices) == len(_o.data.vertices) and all(abs(x - y) < 0.01 for x, y in zip(_p.dimensions, _o.dimensions)) and (_p.matrix_world.translation - _o.matrix_world.translation).length < 0.01:
             _k = _m3.group(1)[:20]; _dup[_k] = _dup.get(_k, 0) + 1
     print("[dup] 二重オブジェクト:", sum(_dup.values()), sorted(_dup.items(), key=lambda t: -t[1])[:40])
+import re as _r5
+_dupn = 0
+for _o in bpy.data.objects:
+    _m4 = _r5.match(r"(.+)\.(\d{3})$", _o.name)
+    if _m4 and _o.type == "MESH" and _m4.group(1) in bpy.data.objects:
+        _p4 = bpy.data.objects[_m4.group(1)]
+        if _p4.type == "MESH" and len(_p4.data.vertices) == len(_o.data.vertices) and (_p4.matrix_world.translation - _o.matrix_world.translation).length < 0.01:
+            _dupn += 1
+if _dupn > 200:
+    print("[dup] failed: 二重生成の疑い(同位置・同頂点数の X/X.001 が %d 組)。--zone では --parts が無視される設計か確認" % _dupn)
 if os.environ.get("HIDE_GROUND"):      # 断面確認用: 地面・丘・遠景を非表示にして埋没を見る
     import re as _rg
     for _o in bpy.data.objects:
