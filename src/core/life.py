@@ -9,7 +9,7 @@ _PM = {}
 
 def pc(key, color, rough=0.85):
     if key not in _PM:
-        _PM[key] = lib.mat_plain("lf_" + key, color, rough=rough)
+        _PM[key] = (lib.mat_cloth if key.startswith(("top_", "bot_", "hat_")) else lib.mat_plain)("lf_" + key, color, rough=rough)
     return _PM[key]
 
 
@@ -49,26 +49,29 @@ def person(f, x, y, yaw, kind="man", z=0.0, scale=1.0, pose="stand", skirt=False
     shoe = f.a("shoe", (0.03, 0.025, 0.02))
     wl = 0.12 if pose == "walk" else 0.0
     sc = scale
+    sd = tuple(P(0, 1, 0)[i] - P(0, 0, 0)[i] for i in range(3))          # 人物のyaw込みの左右方向(楕円断面の向き)
     for s_ in (-1, 1):
         k = s_ * wl
-        # legs: tapered, with knee joints, shoes with toe cap
-        bot.cyl(P(k, s_ * 0.085, 0.92), P(k * 0.4, s_ * 0.085, 0.48), 0.082 * sc, 0.062 * sc, seg=10)
-        bot.sphere(P(k * 0.4, s_ * 0.085, 0.47), (0.062 * sc,) * 3, seg=8, rings=5)
-        bot.cyl(P(k * 0.4, s_ * 0.085, 0.47), P(-k * 0.2, s_ * 0.085, 0.09), 0.058 * sc, 0.042 * sc, seg=10)
+        # 脚: 楕円断面の太もも→膝→ふくらはぎ→足首(ふくらはぎに膨らみ)、靴はつま先に丸み
+        bot.tube(P(k, s_ * 0.085, 0.93), P(k * 0.4, s_ * 0.085, 0.49), [(0, 0.092 * sc, 0.098 * sc), (0.45, 0.075 * sc, 0.080 * sc), (1, 0.058 * sc, 0.062 * sc)], seg=12, side=sd)
+        bot.sphere(P(k * 0.4, s_ * 0.085, 0.47), (0.060 * sc,) * 3, seg=8, rings=5)
+        bot.tube(P(k * 0.4, s_ * 0.085, 0.47), P(-k * 0.2, s_ * 0.085, 0.10), [(0, 0.058 * sc, 0.062 * sc), (0.3, 0.056 * sc, 0.066 * sc), (1, 0.040 * sc, 0.042 * sc)], seg=12, side=sd)
+        bot.cyl(P(-k * 0.2, s_ * 0.085, 0.14), P(-k * 0.2, s_ * 0.085, 0.10), 0.048 * sc, 0.046 * sc, seg=10)   # 裾のたるみ
         shoe.sbox(P(-k * 0.2 - 0.03, s_ * 0.085, 0.05), P(-k * 0.2 + 0.12, s_ * 0.085, 0.05), 0.095 * sc, 0.075 * sc)
         shoe.sphere(P(-k * 0.2 + 0.13, s_ * 0.085, 0.045), (0.05 * sc, 0.048 * sc, 0.038 * sc), seg=8, rings=5)
     if skirt:
         bot.cyl(P(0, 0, 0.50), P(0, 0, 0.98), 0.24 * sc, 0.17 * sc, seg=12)
-    # pelvis + chest + shoulders as rounded forms
-    bot.sphere(P(0, 0, 0.95), (0.115 * sc, 0.165 * sc, 0.13 * sc), seg=12, rings=8)
-    top.sphere(P(0.005, 0, 1.22), (0.115 * sc, 0.185 * sc, 0.27 * sc), seg=14, rings=10)
-    top.cyl(P(0.0, 0, 0.98), P(0.005, 0, 1.2), 0.16 * sc, 0.19 * sc, seg=12)
+    # 骨盤〜胸〜肩: 1本の楕円ロフト(腰がくびれ、胸が張る。以前の球+円筒の段差を解消)
+    bot.tube(P(0, 0, 0.88), P(0, 0, 1.00), [(0, 0.150 * sc, 0.108 * sc), (1, 0.152 * sc, 0.106 * sc)], seg=14, side=sd)
+    top.tube(P(0.005, 0, 0.98), P(0.01, 0, 1.43), [(0, 0.152 * sc, 0.108 * sc), (0.30, 0.146 * sc, 0.100 * sc), (0.70, 0.182 * sc, 0.118 * sc), (0.92, 0.200 * sc, 0.108 * sc), (1, 0.075 * sc, 0.062 * sc)], seg=14, side=sd)
+    f.a("belt", (0.03, 0.025, 0.02)).tube(P(0.0, 0, 0.965), P(0.0, 0, 0.995), [(0, 0.158 * sc, 0.113 * sc), (1, 0.158 * sc, 0.113 * sc)], seg=14, side=sd)
     for s_ in (-1, 1):
         k = -s_ * wl * 1.2
-        top.sphere(P(0, s_ * 0.205, 1.38), (0.065 * sc,) * 3, seg=8, rings=6)
-        top.cyl(P(0, s_ * 0.205, 1.38), P(k * 0.5, s_ * 0.225, 1.14), 0.052 * sc, 0.043 * sc, seg=8)
+        top.sphere(P(0, s_ * 0.205, 1.37), (0.062 * sc,) * 3, seg=8, rings=6)
+        top.tube(P(0, s_ * 0.205, 1.37), P(k * 0.5, s_ * 0.225, 1.14), [(0, 0.054 * sc, 0.056 * sc), (0.5, 0.050 * sc, 0.050 * sc), (1, 0.043 * sc, 0.043 * sc)], seg=10, side=sd)
         top.sphere(P(k * 0.5, s_ * 0.225, 1.13), (0.043 * sc,) * 3, seg=6, rings=4)
-        top.cyl(P(k * 0.5, s_ * 0.225, 1.13), P(k, s_ * 0.235, 0.94), 0.042 * sc, 0.034 * sc, seg=8)
+        top.tube(P(k * 0.5, s_ * 0.225, 1.13), P(k, s_ * 0.235, 0.94), [(0, 0.043 * sc, 0.043 * sc), (0.4, 0.040 * sc, 0.040 * sc), (1, 0.034 * sc, 0.034 * sc)], seg=10, side=sd)
+        top.cyl(P(k, s_ * 0.235, 0.955), P(k, s_ * 0.235, 0.935), 0.038 * sc, 0.036 * sc, seg=8)    # 袖口
         skin.sphere(P(k, s_ * 0.235, 0.90), (0.040 * sc, 0.024 * sc, 0.055 * sc), seg=8, rings=5)
         skin.sbox(P(k + 0.012, s_ * 0.235, 0.88), P(k + 0.018, s_ * 0.235, 0.80), 0.030 * sc, 0.020 * sc)
         skin.sphere(P(k + 0.03, s_ * 0.215, 0.89), (0.012 * sc, 0.010 * sc, 0.026 * sc), seg=5, rings=4)
