@@ -261,29 +261,32 @@ def volume(g, v, rng, st, interior=False):
             rooms.ceiling(g, x0 + 0.14, x1 - 0.14, y0 + 0.14, y1 - 0.14, zf + 2.85)
         elif _hole is not None:
             _upper_floors(g, v, rng, st, zf, _hole)
-        xo = x0 + (x1 - x0) * 0.62
-        rooms.partition(g, 'y', xo, y0 + 0.14, y1 - 0.14, zf, zf + 2.85, doors=[((y0 + y1) / 2 - 0.5, (y0 + y1) / 2 + 0.5)], kind="wood_dark")
-        nb = max(2, int((xo - x0 - 1.5) // 2.4))
-        for k in range(nb):
-            props.bench(g, x0 + 1.6 + k * 2.4, y1 - 0.6, 1.8, face='N', z=zf - 0.3)
-        rooms.pot_stove(g, x0 + (xo - x0) * 0.4, (y0 + y1) / 2, zf)
-        rooms.desk(g, xo + 1.2, y0 + 1.0, zf, face='S')
-        rooms.desk(g, xo + 2.4, y1 - 1.2, zf, face='N', papers=True)
-        rooms.shelf(g, xo + 0.5, min(x1 - 0.5, xo + 3.0), y1 - 0.45, zf, face='S', goods="jars", seed=3)
-        for k_, nm_ in enumerate(("poster0", "poster1", "notice", "poster2")):
-            ip = f"kit/{st['id']}_{nm_}.png"
-            if os.path.exists(f"{_R}/tex/{ip}"):
-                face_plane(f"k2in_{st['id']}_{k_}", ip, 'S', x0 + 1.5 + k_ * 1.4, y1 - 0.16, zf + 1.1, 0.75, h=1.0, off=0.0)
-        try:
-            import kit8
-            _opn = [o for o in ops.get(v.get("door", "S"), []) if o[4] in ("open", "door")]
-            _c = (_opn[0][0] + _opn[0][1]) / 2 if _opn else (x0 + xo) / 2
-            if (xo - x0) >= 6.0 and (y1 - y0) >= 5.0 and v.get("door", "S") == "S":
-                kit8.concourse(g, x0 + 0.14, x1 - 0.14, y0 + 0.14, y1 - 0.14, zf, xo, _c, st, rng)
-        except Exception as _e:
-            print("concourse failed", st.get("id"), _e)
-        rooms.lamp_point(x0 + (xo - x0) * 0.5, (y0 + y1) / 2, zf + 2.5, 90)
-        rooms.lamp_point(xo + 2.0, (y0 + y1) / 2, zf + 2.5, 90)
+        if v.get("custom_fit"):                                   # D7/D8: 駅舎用の備品(ストーブ・ベンチ等)でなく、用途別の備品を呼び出し側が置く
+            v["custom_fit"](g, v, rng, zf)
+        else:
+            xo = x0 + (x1 - x0) * 0.62
+            rooms.partition(g, 'y', xo, y0 + 0.14, y1 - 0.14, zf, zf + 2.85, doors=[((y0 + y1) / 2 - 0.5, (y0 + y1) / 2 + 0.5)], kind="wood_dark")
+            nb = max(2, int((xo - x0 - 1.5) // 2.4))
+            for k in range(nb):
+                props.bench(g, x0 + 1.6 + k * 2.4, y1 - 0.6, 1.8, face='N', z=zf - 0.3)
+            rooms.pot_stove(g, x0 + (xo - x0) * 0.4, (y0 + y1) / 2, zf)
+            rooms.desk(g, xo + 1.2, y0 + 1.0, zf, face='S')
+            rooms.desk(g, xo + 2.4, y1 - 1.2, zf, face='N', papers=True)
+            rooms.shelf(g, xo + 0.5, min(x1 - 0.5, xo + 3.0), y1 - 0.45, zf, face='S', goods="jars", seed=3)
+            for k_, nm_ in enumerate(("poster0", "poster1", "notice", "poster2")):
+                ip = f"kit/{st['id']}_{nm_}.png"
+                if os.path.exists(f"{_R}/tex/{ip}"):
+                    face_plane(f"k2in_{st['id']}_{k_}", ip, 'S', x0 + 1.5 + k_ * 1.4, y1 - 0.16, zf + 1.1, 0.75, h=1.0, off=0.0)
+            try:
+                import kit8
+                _opn = [o for o in ops.get(v.get("door", "S"), []) if o[4] in ("open", "door")]
+                _c = (_opn[0][0] + _opn[0][1]) / 2 if _opn else (x0 + xo) / 2
+                if (xo - x0) >= 6.0 and (y1 - y0) >= 5.0 and v.get("door", "S") == "S":
+                    kit8.concourse(g, x0 + 0.14, x1 - 0.14, y0 + 0.14, y1 - 0.14, zf, xo, _c, st, rng)
+            except Exception as _e:
+                print("concourse failed", st.get("id"), _e)
+            rooms.lamp_point(x0 + (xo - x0) * 0.5, (y0 + y1) / 2, zf + 2.5, 90)
+            rooms.lamp_point(xo + 2.0, (y0 + y1) / 2, zf + 2.5, 90)
     return zh
 
 

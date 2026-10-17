@@ -323,11 +323,11 @@ def build_hall():
     x0, x1, y0, y1 = 21.0, 35.0, -99.0, -74.5
     zw, zr, t, ov = 7.0, 10.2, 0.28, 0.6
     xm = (x0 + x1) / 2
-    wall_open(v, "wall", 'y', y0, y1, x0, x0 + t, 0.0, zw, [(-96.0 + 5.2 * i, -96.0 + 5.2 * i + 1.6, 3.3, 4.7) for i in range(4)], 0.0)
-    wall_open(v, "wall", 'y', y0, y1, x1 - t, x1, 0.0, zw, [(-96.0 + 5.2 * i, -96.0 + 5.2 * i + 1.6, 3.3, 4.7) for i in range(4)], 0.0)
+    wall_open(v, "wall", 'x', y0, y1, x0, x0 + t, 0.0, zw, [(-96.0 + 5.2 * i, -96.0 + 5.2 * i + 1.6, 3.3, 4.7) for i in range(4)], 0.0)
+    wall_open(v, "wall", 'x', y0, y1, x1 - t, x1, 0.0, zw, [(-96.0 + 5.2 * i, -96.0 + 5.2 * i + 1.6, 3.3, 4.7) for i in range(4)], 0.0)
     # north wall (big openings), south wall (solid)
-    wall_open(v, "wall", 'x', x0, x1, y1 - t, y1, 0.0, zw, [(24.2, 28.0, 0.0, 6.0), (28.2, 32.5, 0.0, 6.0)], 0.0)
-    wall_open(v, "wall", 'x', x0, x1, y0, y0 + t, 0.0, zw, [], 0.0)
+    wall_open(v, "wall", 'y', x0, x1, y1 - t, y1, 0.0, zw, [(24.2, 28.0, 0.0, 6.0), (28.2, 32.5, 0.0, 6.0)], 0.0)
+    wall_open(v, "wall", 'y', x0, x1, y0, y0 + t, 0.0, zw, [], 0.0)
     for (ye, sg) in ((y1, 1), (y0, -1)):
         g = v.A("wall")
         i = len(g.V)
