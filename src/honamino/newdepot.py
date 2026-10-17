@@ -195,6 +195,7 @@ def build_shed_fit():
             walk.boxc((x0 + x1) / 2, y + 2.25, 0.35, x1 - x0, 0.95, 0.7)
         for x in np.arange(x0 + 4.0, x1, 12.0):
             lamp.boxc(x, y, h - 1.3, 0.9, 0.3, 0.12)
+            rod.boxc(x, y, h - 1.2, 1.1, 0.42, 0.05)        # 反射笠(器具の筐体)
             rod.boxc(x, y, h - 0.65, 0.04, 0.04, 1.3)
     for a in (pit, walk, lamp, rod):
         a.build()
