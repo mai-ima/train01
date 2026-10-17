@@ -988,6 +988,12 @@ def _roof(v, S):
     zfl, zs, zw1, zt, zr = S["z"]
     px = S["pant_x"]
     rn = S["roof"]
+    h, xr = W / 2, L / 2 - S["cab"]
+    for sg in (-1, 1):                                                                                  # 雨樋(屋根の肩の細い縁)
+        v.A("roof", 0.004).box(-xr, xr, sg * (h - 0.03) - 0.025, sg * (h - 0.03) + 0.025, zt - 0.01, zt + 0.05)
+    v.A("t_grey", 0.004).box(-xr + 0.3, xr - 0.3, -0.26, 0.26, zr + 0.002, zr + 0.022)                  # 歩み板(中央の通路)
+    for xk in range(int(-xr + 0.6), int(xr - 0.5), 1):
+        v.A("black").box(xk - 0.02, xk + 0.02, -0.27, 0.27, zr + 0.021, zr + 0.026)                    # 歩み板の桟
     for it in rn:
         if it == "pant":
             _pant_diamond(v, px, zr)
