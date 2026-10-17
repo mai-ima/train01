@@ -123,7 +123,37 @@ def build_ground():
     a = Acc("nd_yard_cinder", M["dirt"], "Roads")
     x0, x1 = 96.0, X_END + 10.0
     cy = (YA + YB) / 2 - 3.0
-    a.boxc((x0 + x1) / 2, cy, 0.03, x1 - x0, abs(YA - YB) + 40.0, 0.06)
+    # 縁を不整形に(定規で引いたような矩形をやめ、草地へ溶ける輪郭にする。ノイズは位置から決めて再現可能に)
+    hx, hy = (x1 - x0) / 2, (abs(YA - YB) + 40.0) / 2
+    cx = (x0 + x1) / 2
+    ring = []
+    step = 3.5
+    for u in np.arange(-hx, hx, step):
+        ring.append((u, -hy))
+    for v in np.arange(-hy, hy, step):
+        ring.append((hx, v))
+    for u in np.arange(hx, -hx, -step):
+        ring.append((u, hy))
+    for v in np.arange(hy, -hy, -step):
+        ring.append((-hx, v))
+    rr = np.random.RandomState(7)
+    wob = np.convolve(rr.uniform(-1, 1, len(ring) + 8), np.ones(5) / 5.0, mode="same")[4:4 + len(ring)]
+    pts = []
+    for (u, v), w in zip(ring, wob):
+        r = math.hypot(u, v) or 1.0
+        pts.append((cx + u - 6.0 * w * u / r, cy + v - 6.0 * w * v / r))
+    n = len(pts)
+    i0 = len(a.V)
+    for (px, py) in pts:
+        a.V.append((px, py, 0.06))
+    for (px, py) in pts:
+        a.V.append((px, py, -0.04))
+    a.V.append((cx, cy, 0.06))
+    c = i0 + 2 * n
+    for k in range(n):
+        k2 = (k + 1) % n
+        a.F.append((i0 + k, i0 + k2, c))                          # 上面(中心からの扇)
+        a.F.append((i0 + k, i0 + n + k, i0 + n + k2, i0 + k2))    # 縁の立ち下がり
     a.build()
 
 
