@@ -59,6 +59,7 @@ def lamp_point(x, y, z, watt=40.0, color=(1.0, 0.82, 0.58), size=0.25, name="roo
     li.shadow_soft_size = size
     ob = bpy.data.objects.new(name, li)
     ob.location = (x, y, z)
+    ob.visible_camera = False        # 根本対策: 点光源は半径ぶんの白い円盤としてカメラに映る(窓越しに白丸が見えた)。光は出すが映らないようにする
     link(ob, "Lighting")
 
 

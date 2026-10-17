@@ -237,16 +237,25 @@ def footbridge(g, x, ya, yb, covered=False, z=5.2, kind="steel", lo_turn=True, p
     d = g.a(key, bevel=0.01)
     lo, hi = min(ya, yb), max(ya, yb)
     d.box(x - 1.0, x + 1.0, lo - 0.9, hi, z - 0.2, z)                   # デッキ(lo端はホーム中心を越えて 0.9m)
+    if covered:                                                          # D9e: 床は木の板張り、桁・橋脚は錆びた塗装鋼、側面は下半分トタン+上半分ガラス窓の廊下にする(黒一色の箱をやめる)
+        g.a("wood", bevel=0.004).box(x - 0.96, x + 0.96, lo - 0.88, hi - 0.02, z, z + 0.035)
+        for sx in (x - 1.2, x + 1.2):
+            g.a("tin").box(sx - 0.03, sx + 0.03, lo - 0.9, hi + 0.3, z, z + 1.15)
+            g.a("glass").box(sx - 0.015, sx + 0.015, lo - 0.9, hi + 0.3, z + 1.15, z + 2.2)
+            for yy in np.arange(lo - 0.9, hi + 0.31, 1.5):               # 窓の縦框
+                g.a("wood_dark").box(sx - 0.04, sx + 0.04, yy - 0.03, yy + 0.03, z + 1.15, z + 2.2)
+            g.a("wood_dark").box(sx - 0.05, sx + 0.05, lo - 0.9, hi + 0.3, z + 1.1, z + 1.2)    # 窓台の水平材
     for xx in (x - 1.0, x + 1.0):
         d.box(xx - 0.04, xx + 0.04, lo - 0.9, hi, z, z + 1.1)           # 欄干
     # 桁の下: 縦桁(側桁) と 橋脚(両端のホーム上のみ。長スパンのみ中間に1本)
+    gk = g.a("iron_rust", bevel=0.01) if covered else d
     for xx in (x - 0.95, x + 0.95):
-        d.box(xx - 0.06, xx + 0.06, lo - 0.9, hi, z - 0.65, z - 0.2)
+        gk.box(xx - 0.06, xx + 0.06, lo - 0.9, hi, z - 0.65, z - 0.2)
     piers = piers if piers else [lo, hi] + ([(lo + hi) / 2] if (hi - lo) > 16.0 else [])
     for yy in piers:
         for xx in (x - 0.95, x + 0.95):
-            d.box(xx - 0.12, xx + 0.12, yy - 0.12, yy + 0.12, 0.0, z - 0.65)
-        d.box(x - 1.1, x + 1.1, yy - 0.1, yy + 0.1, z - 0.8, z - 0.55)  # 橋脚の梁
+            gk.box(xx - 0.12, xx + 0.12, yy - 0.12, yy + 0.12, 0.0, z - 0.65)
+        gk.box(x - 1.1, x + 1.1, yy - 0.1, yy + 0.1, z - 0.8, z - 0.55)  # 橋脚の梁
     if covered:
         g.a("tin").box(x - 1.3, x + 1.3, lo - 1.2, hi + 0.3, z + 2.2, z + 2.3)
         for yy in np.arange(lo - 0.9, hi + 0.1, 4.0):

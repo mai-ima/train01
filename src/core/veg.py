@@ -485,7 +485,7 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
             Vs.append(Vb)
             off += n
     if Vs:
-        emit(f"knoll_{k}_forest", np.concatenate(Vs), np.array(Ts), np.concatenate(Cs), M["leaf"], "Trees")
+        np_mesh(f"knoll_{k}_forest", np.concatenate(Vs), np.array(Ts), M["leaf"], "Trees", colors=np.concatenate(Cs), smooth=True)   # 面取り感を消すためスムーズシェード
 
 
 def build_trees():
