@@ -776,8 +776,9 @@ if os.environ.get("HIDE_GROUND"):      # 断面確認用: 地面・丘・遠景�
     for _o in bpy.data.objects:
         if _o.type == "MESH" and _rg.match(r"(ground|kit_ground|far_ground|hills|levees|knoll|k2_hill|nd_yard_cinder)", _o.name):
             _o.hide_render = True; _o.hide_viewport = True
-if os.environ.get("DBG_COPLANAR"):   # Q19: 薄い板(厚さ<0.3m)どうしの上面が同一平面(差<0.005m)で xy が重なる組を列挙(黒帯の原因になる)
+if os.environ.get("DBG_COPLANAR"):   # Q19: 同一平面で重なる上向き面(差<0.004m)を面単位で検出(黒帯・黒欠けの原因)。薄い板(厚さ<0.3m)どうしだけを対象にする
     import mathutils
+    from mathutils.bvhtree import BVHTree
     _sl = []
     for _o in bpy.data.objects:
         if _o.type != "MESH" or _o.hide_render or not _o.data.vertices:
@@ -785,14 +786,29 @@ if os.environ.get("DBG_COPLANAR"):   # Q19: 薄い板(厚さ<0.3m)どうしの�
         _bb = [_o.matrix_world @ mathutils.Vector(c) for c in _o.bound_box]
         _z0, _z1 = min(v.z for v in _bb), max(v.z for v in _bb)
         if _z1 - _z0 < 0.3:
-            _sl.append((_o.name, min(v.x for v in _bb), max(v.x for v in _bb), min(v.y for v in _bb), max(v.y for v in _bb), _z1))
+            _sl.append((_o, min(v.x for v in _bb), max(v.x for v in _bb), min(v.y for v in _bb), max(v.y for v in _bb), _z1))
+    _bvh = {}
+    def _tree(o):
+        if o.name not in _bvh:
+            _bvh[o.name] = BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get())
+        return _bvh[o.name]
     _n = 0
     for _i in range(len(_sl)):
         for _j in range(_i + 1, len(_sl)):
             a, b = _sl[_i], _sl[_j]
-            if abs(a[5] - b[5]) < 0.005 and min(a[2], b[2]) - max(a[1], b[1]) > 0.5 and min(a[4], b[4]) - max(a[3], b[3]) > 0.5:
+            if abs(a[5] - b[5]) > 0.004 or min(a[2], b[2]) - max(a[1], b[1]) < 0.3 or min(a[4], b[4]) - max(a[3], b[3]) < 0.3:
+                continue
+            _bt, _hit = _tree(b[0]), 0
+            _ms = a[0].data
+            _faces = [p for p in _ms.polygons if (a[0].matrix_world.to_3x3() @ p.normal).z > 0.9]
+            for p in _faces[:: max(1, len(_faces) // 40)]:
+                c = a[0].matrix_world @ p.center
+                loc, nrm, idx, dist = _bt.find_nearest(c, 0.004)
+                if loc is not None and nrm.z > 0.9 and abs(loc.z - c.z) < 0.004 and abs(loc.x - c.x) < 0.02 and abs(loc.y - c.y) < 0.02:
+                    _hit += 1
+            if _hit:
                 _n += 1
-                if _n <= 60: print("[coplanar]", a[0], b[0], "z=%.3f" % a[5])
+                if _n <= 60: print("[coplanar]", a[0].name, b[0].name, "z=%.3f" % a[5], "faces", _hit)
     print("[coplanar] total", _n)
 if os.environ.get("DBG_RECT"):      # デバッグ: "x0,x1,y0,y1" の平面範囲に重なる(地上0.5m超の)オブジェクトを列挙(新設構造の干渉確認用)
     bpy.context.view_layer.update()
