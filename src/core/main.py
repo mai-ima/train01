@@ -657,6 +657,18 @@ if os.environ.get("DBG_BOX2"):
         _cy = sum(p.y for p in _bb) / 8
         if 250 < _cx < 480 and -140 < _cy < -30 and max(_o.dimensions) > 3:
             print("[DBG_BOX]", _o.name, round(_cx), round(_cy), _o.parent.name if _o.parent else None, [round(d, 1) for d in _o.dimensions])
+if os.environ.get("DBG_MAT"):      # デバッグ: マテリアル欠け(スロット無し/空/ピンク)の集計
+    _nm = {}
+    for _o in bpy.data.objects:
+        if _o.type != "MESH" or _o.hide_render:
+            continue
+        _ms = [s.material for s in _o.material_slots]
+        if not _ms or any(m is None for m in _ms):
+            _k = _o.name.split(".")[0].rstrip("0123456789_")[:24]
+            _nm[_k] = _nm.get(_k, 0) + 1
+    _bad = [(i.name, i.filepath) for i in bpy.data.images if i.source == 'FILE' and (i.size[0] == 0 or not os.path.exists(bpy.path.abspath(i.filepath)))]
+    print("[DBG_MAT] 画像欠け:", len(_bad), _bad[:30], "全画像", len(bpy.data.images))
+    print("[DBG_MAT] マテリアル欠け:", sum(_nm.values()), sorted(_nm.items(), key=lambda t: -t[1])[:40])
 print(f"[{time.time() - t0:5.1f}s] scene ready; objects={len(bpy.data.objects)}")
 if os.environ.get("STOCKDUMP"):      # Z-A10: 停車車両(stk_*)の外接箱と、同じ x 範囲にあるレール(trk/rail)の y 範囲を出力して、線路外置きを検出する
     import re as _re2
@@ -675,6 +687,45 @@ if os.environ.get("MODELCHECK"):      # K8: モデル同士の干渉検査(出�
         _b = os.environ["PROBE_PAIR"].split(","); modelcheck.probe_pair(_b[0], _b[1])
     if os.environ.get("PROBE_BOX"):
         _a = os.environ["PROBE_BOX"].split(","); modelcheck.probe_box(_a[0], float(_a[1]), float(_a[2]), float(_a[3]))
+if os.environ.get("DBG_RAYS"):      # デバッグ: "ox,oy,oz,tx,ty,tz;..." の線分の最初の命中オブジェクト・面法線・マテリアルを表示
+    bpy.context.view_layer.update()
+    _dg = bpy.context.evaluated_depsgraph_get()
+    for _r in os.environ["DBG_RAYS"].split(";"):
+        _v = [float(t) for t in _r.split(",")]
+        _o0 = Vector(_v[:3]); _dd = (Vector(_v[3:6]) - _o0).normalized()
+        _hit, _loc, _nrm, _idx, _ob, _mx = bpy.context.scene.ray_cast(_dg, _o0, _dd)
+        print("[ray]", _r, "->", (_ob.name, [m.name if m else None for m in _ob.data.materials][:2], [round(c, 1) for c in _loc], [round(c, 2) for c in _nrm]) if _hit else None)
+if os.environ.get("DBG_TREE"):      # デバッグ: 指定マテリアル名(カンマ区切り)のノード構成と入力値を表示
+    for _mn in os.environ["DBG_TREE"].split(","):
+        _m = bpy.data.materials.get(_mn)
+        if not _m or not _m.use_nodes:
+            print("[tree]", _mn, "なし"); continue
+        for _n in _m.node_tree.nodes:
+            _ins = []
+            for _i in _n.inputs:
+                if hasattr(_i, "default_value") and not _i.links and _i.name in ("Base Color", "Color", "Roughness", "Metallic", "Alpha", "Fac", "Factor", "Strength", "Emission Strength"):
+                    _v = _i.default_value
+                    _ins.append((_i.name, [round(c, 2) for c in _v] if hasattr(_v, "__len__") else round(_v, 2)))
+            print("[tree]", _mn, _n.name, _n.type, _ins, [(l.from_node.name, l.to_socket.name) for i in _n.inputs for l in i.links][:6])
+if os.environ.get("DBG_DUP"):      # デバッグ: 名前が「X」と「X.001」で形・範囲が同じ(=二重生成)のオブジェクトを集計
+    bpy.context.view_layer.update()
+    import re as _r3
+    _dup = {}
+    for _o in bpy.data.objects:
+        _m3 = _r3.match(r"(.+)\.(\d{3})$", _o.name)
+        if _o.type != "MESH" or not _m3 or _m3.group(1) not in bpy.data.objects:
+            continue
+        _p = bpy.data.objects[_m3.group(1)]
+        if _p.type == "MESH" and len(_p.data.vertices) == len(_o.data.vertices) and all(abs(x - y) < 0.01 for x, y in zip(_p.dimensions, _o.dimensions)) and (_p.matrix_world.translation - _o.matrix_world.translation).length < 0.01:
+            _k = _m3.group(1)[:20]; _dup[_k] = _dup.get(_k, 0) + 1
+    print("[dup] 二重オブジェクト:", sum(_dup.values()), sorted(_dup.items(), key=lambda t: -t[1])[:40])
+def _mcol(m):
+    try:
+        n = m.node_tree.nodes.get("Principled BSDF") or next(x for x in m.node_tree.nodes if x.type == "BSDF_PRINCIPLED")
+        i = n.inputs["Base Color"]
+        return ("link:" + i.links[0].from_node.name) if i.links else [round(v, 2) for v in i.default_value[:3]]
+    except Exception:
+        return "?"
 if os.environ.get("DBG_NEAR"):      # デバッグ: "x,y,z,r" の球内に入るオブジェクト名とマテリアルを列挙(視界を塞ぐ黒い面などの特定用)
     _p = [float(t) for t in os.environ["DBG_NEAR"].split(",")]
     bpy.context.view_layer.update()
@@ -684,7 +735,7 @@ if os.environ.get("DBG_NEAR"):      # デバッグ: "x,y,z,r" の球内に入る
         _c = [(_o.matrix_world @ Vector(b)) for b in _o.bound_box]
         _mn = [min(v[i] for v in _c) for i in range(3)]; _mx = [max(v[i] for v in _c) for i in range(3)]
         if all(_mn[i] - _p[3] <= _p[i] <= _mx[i] + _p[3] for i in range(3)):
-            print("[near]", _o.name, [m.name for m in _o.data.materials][:2], [round(v, 1) for v in _mn], [round(v, 1) for v in _mx])
+            print("[near]", _o.name, [(m.name, _mcol(m)) for m in _o.data.materials][:2], [round(v, 1) for v in _mn], [round(v, 1) for v in _mx])
 
 if args.tex_max:
     for im in bpy.data.images:
