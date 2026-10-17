@@ -490,8 +490,13 @@ def mat_ballast(name):
     stone = m.ramp(sc.outputs['Red'], [(0.0, (0.20, 0.19, 0.18)), (0.5, (0.36, 0.35, 0.33)), (1.0, (0.55, 0.53, 0.50))])
     dirt = m.ramp(m.noise(scale=1.2, detail=4), [(0.35, (1, 1, 1)), (0.7, (0.55, 0.50, 0.42))])
     col = m.mix(1.0, stone, dirt, 'MULTIPLY')
+    fine = m.ramp(m.voro(scale=75, rand=1.0, feature='F1'), [(0.0, (1.25, 1.22, 1.18)), (0.6, (0.82, 0.80, 0.78)), (1.0, (0.6, 0.58, 0.56))])   # 細粒の砂利(2スケール化)
+    col = m.mix(1.0, col, fine, 'MULTIPLY')
+    patch = m.ramp(m.noise(scale=0.35, detail=3), [(0.3, (0.72, 0.70, 0.68)), (0.65, (1.12, 1.10, 1.06))])                                     # 大きな濃淡(油・踏み固め)
+    col = m.mix(1.0, col, patch, 'MULTIPLY')
     dist = m.voro(scale=26, feature='SMOOTH_F1', rand=1.0)
-    nrm = m.bump(m.math('SUBTRACT', 1.0, dist), 1.2, 0.05)
+    h2 = m.math('ADD', m.math('SUBTRACT', 1.0, dist), m.math('MULTIPLY', m.voro(scale=75, feature='SMOOTH_F1'), 0.35))
+    nrm = m.bump(h2, 1.2, 0.05)
     m.principled(**{'Base Color': col, 'Roughness': 0.92, 'Specular IOR Level': 0.3, 'Normal': nrm})
     return m.m
 

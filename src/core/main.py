@@ -506,6 +506,10 @@ if os.environ.get('SECTION'):      # SECTION="y,-10,-1" : 平面 y=-10 の「-1�
         bmesh.ops.bisect_plane(_bm, geom=_geom, plane_co=tuple(_val * n for n in _no), plane_no=_no, clear_outer=(_sg > 0), clear_inner=(_sg < 0))
         _bm.transform(_mw.inverted()); _bm.to_mesh(_o.data); _bm.free()
     print('SECTION left polys', sum(len(o.data.polygons) for o in bpy.data.objects if o.type == 'MESH'))
+for _hp in [x for x in os.environ.get('HIDE_OBJ', '').split(',') if x]:   # D5c: 名前の前方一致でオブジェクトを隠す(屋根を外した庫内撮影)
+    for _o in bpy.data.objects:
+        if _o.name.startswith(_hp):
+            _o.hide_render = True
 for _hc in [x for x in os.environ.get('HIDE_COLS', '').split(',') if x]:
     for _o in (bpy.data.collections[_hc].all_objects if _hc in bpy.data.collections else []):
         _o.hide_render = True
