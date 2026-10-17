@@ -1629,7 +1629,7 @@ def _sleep_inside(v, S, tot, bays, segs, zones, rnd):
                 if rnd.random() < 0.3:
                     v.A("t_blank", 0.004).box(x - 0.17, x + 0.02, h - 0.26, h - 0.12, tz, tz + 0.012)
                 if rnd.random() < 0.35:                                                                  # 窓際の補助席に座る乗客(窓側を向く)
-                    _rider(v, x, h - 0.30, zfl, 1.5708, True, rnd=rnd)
+                    _rider(v, x, h - 0.30, zfl, rnd.choice((0.0, 3.1416)), True, rnd=rnd)
     elif st == "compart":
         for (a, b) in segs:
             m = max(1, int((b - a) / 2.05))
