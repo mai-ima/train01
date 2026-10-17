@@ -713,7 +713,7 @@ def _front0(v, S, e, nose):
         v.A("t_grey").box(*sorted((X(xe + 0.02), X(xe + 0.03))), -0.34, 0.34, zfl + 0.20, zfl + 0.24)
         gl.box(*sorted((X(xe + 0.02), X(xe + 0.034))), -0.30, 0.30, zws + 0.40, zwt - 0.10)
         for sgn in (-1, 1):
-            screen(xe + 0.015, sgn * 0.88, 0.62, zws + 0.12, zwt - 0.10, S.get("rake", 0.0))
+            screen(xe + 0.015, sgn * 0.93, 0.74, zws + 0.06, zwt - 0.05, S.get("rake", 0.0))
             pil.box(*sorted((X(xe - 0.08), X(xe + 0.04))), sgn * 0.52 - 0.05, sgn * 0.52 + 0.05, zws, zwt)
             v.A("t_steel").cyl((X(xe + 0.0), sgn * 1.12, zfl + 0.52), (X(xe + 0.09), sgn * 1.12, zfl + 0.52), 0.15, 0.15, seg=16)
             v.A("lampglass").cyl((X(xe + 0.09), sgn * 1.12, zfl + 0.52), (X(xe + 0.10), sgn * 1.12, zfl + 0.52), 0.115, 0.115, seg=16)

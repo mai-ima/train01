@@ -311,3 +311,7 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 - vehtypes: 傾斜(slope)前面と screen() 経由(flat/gate 等)と vee 前面の風防に黒ゴム枠(sbox、縁幅3cm)を追加。庇(slope)も追加。
 - 検証: M03で jnr_ltd/jnr_exp を前面撮影(fr_0/fr2_0/fr3_0)したが3枚とも見た目が同一=撮影した2形式(bonnet系)は今回の修正経路を通らず、効果は【未確認】。次の x13e バッチで jnr_dc(slope)・kiha 系(gate/flat)の前面を撮って確認する。bonnet/round 前面は別途ゴム枠が必要。
 - 運用メモ: run_wip.sh は stock_cfg を /tmp に退避→復元する方式に変更(以前の git show 復元が並行実行で 0 バイト化した)。
+
+## x13e 撮影開始(2026-10-17)
+- 変更点(x13d比): 台車の主電動機等、砂利の低背・暗色化、前面風防ゴム枠(slope/screen/vee)、気動車gate前面の側窓拡大(0.62→0.74)、屋根の煤の長手方向の筋。fr4 テストで kiha_std 前面と jnr_dc 前面の見た目改善を確認(ゴム枠は小さく効果は限定的)。
+- 8視点×3組×人物ON/OFF=48枚を out/x13e に撮影中(run_x13e.sh、約1時間)。完了後に JPEG 化→独立監査。
