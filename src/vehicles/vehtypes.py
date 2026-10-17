@@ -647,6 +647,10 @@ def _front0(v, S, e, nose):
         a0 = (X(xs), yc - wd / 2, zb); a1 = (X(xs), yc + wd / 2, zb)
         b1 = (X(xs - rk), yc + wd / 2, zt_); b0 = (X(xs - rk), yc - wd / 2, zt_)
         _pane4(v.A(tkey), a0, a1, b1, b0, t=0.02 * e, n=(1, 0, 0))
+        if tkey == "glass":                                     # ゴム枠(窓の縁。厚みと見切りを出す)
+            gk = v.A("black")
+            for pa, pb, wd in ((a0, a1, 0.030), (b0, b1, 0.030), (a0, b0, 0.034), (a1, b1, 0.034)):
+                gk.sbox((pa[0] + 0.012 * e, pa[1], pa[2]), (pb[0] + 0.012 * e, pb[1], pb[2]), wd, 0.034)
 
     if fr == "slope":
         # 傾斜前面: 先端へ低く傾斜する鼻+前に倒した風防。窓構成は style: twin(2枚窓+中柱) / pano(1枚の大窓) / hatch(小窓2枚+中央貫通扉)
@@ -680,6 +684,12 @@ def _front0(v, S, e, nose):
                 _pane4(gl, (X(xa_), sg * 0.04, za_ + 0.02), (X(xa_), sg * hw, za_ + 0.02), (X(xb_), sg * hw, zb_), (X(xb_), sg * 0.04, zb_), t=0.02 * e, n=(1, 0, 0))
             pil.box(*sorted((X(xb_ - 0.03), X(xa_ + 0.05))), -0.06, 0.06, za_, zb_)
         v.A(mask, 0.006).box(*sorted((X(xa_ - 0.03), X(xa_ + 0.05))), -hw, hw, za_ - 0.30, za_ + 0.01)        # 風防下のカウル(段差)
+        gk = v.A("black")                                         # 風防のゴム枠(上縁・下縁・外縁)と庇
+        for sg in (-1, 1):
+            gk.sbox((X(xa_ + 0.03), sg * (hw + 0.005), za_ + 0.02), (X(xb_ - 0.01), sg * (hw + 0.005), zb_), 0.030, 0.034)
+        gk.sbox((X(xa_ + 0.03), -hw, za_ + 0.02), (X(xa_ + 0.03), hw, za_ + 0.02), 0.026, 0.030)
+        gk.sbox((X(xb_ - 0.01), -hw, zb_), (X(xb_ - 0.01), hw, zb_), 0.026, 0.030)
+        v.A(mask, 0.004).box(*sorted((X(xb_ - 0.05), X(xb_ + 0.07))), -hw - 0.02, hw + 0.02, zb_ + 0.01, zb_ + 0.05)   # 窓上の庇(日除け)
         v.A("black").box(*sorted((X(xa_ - 0.30 * 0.0), X(xa_ - 0.20))), -hw + 0.05, hw - 0.05, za_ - 0.02, za_ - 0.0) if False else None
         for sg in (-1, 1):                                       # 傾斜した側柱(窓の縁)
             v.A(up, 0.004).sbox((X(xa_ + 0.02), sg * (h - 0.07), za_ - 0.03), (X(xb_ - 0.02), sg * (h - 0.07), zb_ + 0.03), 0.06, 0.065)
@@ -790,6 +800,8 @@ def _front0(v, S, e, nose):
             a0 = (X(xe + ap), s * 0.06, zws + 0.04); a1 = (X(xe + 0.02), s * yy, zws + 0.04)
             b1 = (X(xe + 0.02 - rake), s * yy, zwt - 0.06); b0 = (X(xe + ap - rake), s * 0.06, zwt - 0.06)
             _pane4(gl, a0, a1, b1, b0, t=0.02 * e, n=(1, 0, 0))
+            for pa, pb, wd in ((a0, a1, 0.030), (b0, b1, 0.030), (a0, b0, 0.034), (a1, b1, 0.034)):      # ゴム枠
+                v.A("black").sbox((pa[0] + 0.012 * e, pa[1], pa[2]), (pb[0] + 0.012 * e, pb[1], pb[2]), wd, 0.034)
         # 中央ピラー+外側ピラー
         v.A(up, 0.004).box(*sorted((X(xe + ap - 0.04 - rake * 0.5), X(xe + ap + 0.04))), -0.07, 0.07, zws, zwt)
         for s in (-1, 1):
