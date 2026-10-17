@@ -584,6 +584,70 @@ if os.environ.get("DBG_BOX"):
         for _px, _py in ((372, -100), (380, -97), (365, -97)):
             if _x0 <= _px <= _x1 and _y0 <= _py <= _y1 and (_x1 - _x0) < 120:
                 print("[DBG_HIT]", _px, _py, _o.name, [round(v) for v in (_x0, _x1, _y0, _y1)], _o.parent.name if _o.parent else None)
+if os.environ.get("DBG_BOX"):
+    for _o in bpy.data.objects:
+        _c = _o.matrix_world.translation
+        if 330 < _c.x < 390 and -115 < _c.y < -85 and _o.type != 'MESH':
+            print("[DBG_NONMESH]", _o.name, _o.type, [round(v) for v in _c], getattr(_o, "instance_type", None))
+        if _o.type == 'MESH' and 340 < _c.x < 380 and -112 < _c.y < -88:
+            print("[DBG_ORIGIN]", _o.name, [round(v, 1) for v in _c], [round(v) for v in _o.dimensions], _o.parent.name if _o.parent else None)
+if os.environ.get("DBG_BOX3"):
+    for _o in bpy.data.objects:
+        if _o.type != 'MESH':
+            continue
+        _bb = [(_o.matrix_world @ Vector(_p)) for _p in _o.bound_box]
+        _x0, _x1 = min(p.x for p in _bb), max(p.x for p in _bb)
+        _y0, _y1 = min(p.y for p in _bb), max(p.y for p in _bb)
+        _z1 = max(p.z for p in _bb)
+        if _x0 < 375 and _x1 > 340 and _y0 < -88 and _y1 > -112 and _z1 > 1.0 and (_x1 - _x0) < 80 and not _o.name.startswith(("N_", "nd_")):
+            print("[DBG3]", _o.name, [round(v) for v in (_x0, _x1, _y0, _y1, _z1)], _o.parent.name if _o.parent else None)
+if os.environ.get("DBG_BOX4"):
+    _dg = bpy.context.evaluated_depsgraph_get()
+    _seen = {}
+    for _x in range(330, 395, 3):
+        for _y in range(-118, -82, 3):
+            _ok, _loc, _nm, _ix, _ob, _mx = bpy.context.scene.ray_cast(_dg, Vector((_x, _y, 80.0)), Vector((0, 0, -1)))
+            if _ok and _ob is not None:
+                _seen.setdefault(_ob.name, []).append((_x, _y, round(_loc.z, 1)))
+    for _k, _v in _seen.items():
+        print("[DBG4]", _k, len(_v), _v[0])
+if os.environ.get("DBG_GRID"):
+    import lib as _lb
+    _ga = _lb.Acc("dbg_grid", M["post_red"], "Props")
+    for _gx in range(320, 401, 10):
+        for _gy in range(-130, -69, 10):
+            _ga.boxc(_gx, _gy, 6.0 + (_gx - 320) / 10.0 * 1.5, 0.5, 0.5, 12.0 + (_gx - 320) / 10.0 * 3.0)
+    _ga.build()
+if os.environ.get("DBG_ALL"):
+    for _o in bpy.data.objects:
+        try:
+            _bb = [(_o.matrix_world @ Vector(_p)) for _p in _o.bound_box]
+        except Exception:
+            continue
+        _x0, _x1 = min(p.x for p in _bb), max(p.x for p in _bb)
+        _y0, _y1 = min(p.y for p in _bb), max(p.y for p in _bb)
+        if _x0 < 380 and _x1 > 352 and _y0 < -91 and _y1 > -101 and (_x1 - _x0) < 200:
+            print("[DBGALL]", _o.name, _o.type, [round(v) for v in (_x0, _x1, _y0, _y1)], "hv", _o.hide_viewport, "hr", _o.hide_render, "hide", _o.hide_get() if _o.name in bpy.context.view_layer.objects else None)
+if os.environ.get("DBG_HALL"):
+    import bmesh as _bm
+    _o = bpy.data.objects.get("hall_wall")
+    print("[DBGHALL] loc", tuple(round(v, 1) for v in _o.location), "parent", _o.parent.name if _o.parent else None, "verts", len(_o.data.vertices))
+    _b = _bm.new(); _b.from_mesh(_o.data)
+    _seen = set()
+    for _v in _b.verts:
+        if _v.index in _seen:
+            continue
+        _stack, _isl = [_v], []
+        while _stack:
+            _u = _stack.pop()
+            if _u.index in _seen:
+                continue
+            _seen.add(_u.index); _isl.append(_u)
+            for _e in _u.link_edges:
+                _stack.append(_e.other_vert(_u))
+        _w = [(_o.matrix_world @ _u.co) for _u in _isl]
+        print("[DBGHALL] 島", len(_isl), [round(min(p.x for p in _w)), round(max(p.x for p in _w)), round(min(p.y for p in _w)), round(max(p.y for p in _w)), round(max(p.z for p in _w), 1)])
+    _b.free()
 if os.environ.get("DBG_BOX2"):
     for _o in bpy.data.objects:
         if _o.type != 'MESH' or _o.name.startswith(("N_",)):

@@ -367,6 +367,18 @@ def m06():
         if _n.startswith("D_lead"):
             bpy.data.objects.remove(bpy.data.objects[_n], do_unlink=True)
             _dn.discard(_n)
+    if os.environ.get("DBG_D6H"):
+        for _n in ("hall", "hall.001", "hall_wall", "hall_roof", "shed", "shed.001"):
+            _o = bpy.data.objects.get(_n)
+            print("[DBG_D6H]", _n, "存在" if _o else "なし", "diff内" if _n in _dn else "diff外", tuple(round(v, 1) for v in _o.location) if _o else None, _o.parent.name if (_o and _o.parent) else None, _o.type if _o else None)
+        for _n in sorted(n for n in bpy.data.objects.keys() if n.startswith("hall") and not n.startswith("hall_in")):
+            _o = bpy.data.objects[_n]
+            if _o.type == 'MESH':
+                _w = [(_o.matrix_world @ Vector(_p)) for _p in _o.bound_box]
+                print("[DBG_D6H]", _n, [round(min(p.x for p in _w)), round(max(p.x for p in _w)), round(min(p.y for p in _w)), round(max(p.y for p in _w)), round(max(p.z for p in _w), 1)])
+            else:
+                print("[DBG_D6H]", _n, _o.type, tuple(round(v, 2) for v in _o.location), tuple(round(v, 2) for v in _o.rotation_euler), tuple(round(v, 2) for v in _o.scale))
+        print("[DBG_D6H] hall系", sorted(n for n in bpy.data.objects.keys() if n.startswith("hall"))[:20])
     if os.environ.get("DBG_D6"):
         for _n in sorted(_dn):
             _o = bpy.data.objects[_n]
