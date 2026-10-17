@@ -78,7 +78,7 @@ TYPES = {
         title="通勤形(平妻・4扉)", L=20.0, W=2.80, z=(1.10, 1.80, 2.62, 3.00, 3.655), cab=1.55, zb0=0.92,
         lo="t_sky", up="t_sky", door="t_grey", mask="t_warn", stripe=[],
         pattern="w1 D w3 D w3 D w3 D w1", door_w=1.30, win="single", pillar=0.13,
-        front="flat", screens=2, lamps="belt", roofshape="round",
+        front="slope", slope="pano", nose=0.22, rake=0.16, screens=2, lamps="belt", roofshape="round",
         roof=["pant", "garland", "tvent"], pant_x=-5.5, bogie=("dt", 2.1, 0.43), under="boxes",
         seat="t_moq_g", interior="long", standing=True, stripe_rain=True),
     "jnr_sub": dict(
