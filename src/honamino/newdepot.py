@@ -1,6 +1,7 @@
 """D4/D5: 穂波野 新・総合車両基地(引き揚げ線 + 留置線群 + 大型庫 + 管理棟/技術開発棟の外形)。
 座標は穂波野ゾーン原点。引き揚げ線は第6線(78,T6)の東端から東へ出て南へ曲がり、幹線 x=123 を南下、留置線12本が東へ分岐する。"""
 from common import *
+import random
 import trackkit
 from trackkit import seg_line, seg_arc, join, build_track
 from lib import Acc
@@ -147,20 +148,53 @@ def build_shed_fit():
 
 
 def build_blocks():
-    """管理棟群(3階建)と技術開発棟群(外形。室内は D7/D8)。はしご線の南側に置く。"""
-    adm = Acc("nd_admin", M["concrete"], "Station", bevel=0.02)
-    for x, y in [(230.0, -115.0), (256.0, -115.0), (282.0, -115.0)]:
-        adm.boxc(x, y, 5.5, 22, 16, 11)
-    adm.build()
-    rd = Acc("nd_rd", M["wall"], "Station", bevel=0.02)
-    for x, y, w, d, h in [(140.0, -120.0, 34, 22, 14), (140.0, -150.0, 34, 22, 14), (190.0, -150.0, 30, 30, 10)]:
-        rd.boxc(x, y, h / 2, w, d, h)
-    rd.build()
-    gl = Acc("nd_blocks_glass", M["dark_glass"], "Station")
-    for x, y in [(230.0, -115.0), (256.0, -115.0), (282.0, -115.0)]:
-        for z in (2.6, 5.9, 9.0):
-            gl.boxc(x, y + 8.02, z, 18, 0.06, 1.4)
-    gl.build()
+    """管理棟群(3階建)と技術開発棟群。室内つき(1階の窓口/事務室+階段+上階の執務室。B6e の kit2.volume を流用)。はしご線の南側に置く。"""
+    import kit2
+    from kit2 import SubZone
+    kit2.mats2()
+    rng = random.Random(77)
+    # (名前, 前面中心x, 前面y, 幅, 奥行, 階数, 壁, 向きyaw) — 前面(local y=0)が北(はしご線側)を向くよう yaw=π
+    specs = [("nd_adm1", 245.0, -100.0, 24.0, 14.0, 3, "pl_grey"), ("nd_adm2", 285.0, -100.0, 20.0, 12.0, 3, "plasterw"),
+             ("nd_adm3", 322.0, -100.0, 22.0, 13.0, 2, "pl_cream"),
+             ("nd_rd1", 150.0, -108.0, 30.0, 18.0, 4, "pl_grey"), ("nd_rd2", 195.0, -108.0, 28.0, 16.0, 3, "pl_blue"),
+             ("nd_rd3", 150.0, -140.0, 36.0, 20.0, 2, "concrete")]
+    for nm, xc, yf, w, d, nfl, wall in specs:
+        with SubZone((xc + w / 2, yf, -1.3), math.pi):
+            g = kit2.G(nm, "Buildings")
+            v = dict(x0=0.0, x1=w, y0=0.0, y1=d, nfl=nfl, roof="flat", wall=wall, door="S")
+            kit2.volume(g, v, rng, {"id": "M06"}, interior=True)
+            g.build()
+
+
+def build_site():
+    """敷地づくり: 管理棟前の舗装広場・構内道路・柵・植栽・街灯。箱だけが芝生に建つ状態を解消する。"""
+    plaza = Acc("nd_plaza", M["concrete"], "Roads")
+    plaza.boxc(283.0, -103.0, 0.035, 110.0, 24.0, 0.07)            # 管理棟前の広場
+    plaza.boxc(172.0, -118.0, 0.035, 90.0, 52.0, 0.07)             # 技術開発棟前
+    plaza.build()
+    road = Acc("nd_road", M["road"], "Roads")
+    road.boxc(228.0, -88.0, 0.03, 190.0, 7.0, 0.06)                # 構内道路(はしご線の南側)
+    road.boxc(110.0, -150.0, 0.03, 8.0, 140.0, 0.06)               # 本社側へ南下する道
+    road.build()
+    fence = Acc("nd_fence", M["iron_black"], "Props")
+    for x in np.arange(100.0, 480.0, 5.0):                          # 南側境界のフェンス(柱+上下2段の横桟)
+        fence.boxc(x, -168.0, 0.9, 0.08, 0.08, 1.8)
+    fence.boxc(290.0, -168.0, 1.6, 380.0, 0.03, 0.04)
+    fence.boxc(290.0, -168.0, 0.7, 380.0, 0.03, 0.04)
+    fence.build()
+    lamps = Acc("nd_poles", M["iron_black"], "Props")
+    glow = Acc("nd_pole_lamps", M["lamp_glow"], "Props")
+    for x in np.arange(120.0, 460.0, 30.0):
+        lamps.boxc(x, -91.5, 4.0, 0.14, 0.14, 8.0)
+        lamps.boxc(x, -92.2, 8.0, 0.14, 1.5, 0.1)
+        glow.boxc(x, -92.8, 7.9, 0.5, 0.25, 0.08)
+    lamps.build()
+    glow.build()
+    import veg
+    rng = random.Random(5)
+    for k in range(26):                                             # 敷地の周りの並木
+        x = 105.0 + k * 14.5 + rng.uniform(-2, 2)
+        veg.zelkova(x, -160.0 + rng.uniform(-2.5, 2.0), h=rng.uniform(8, 12), rad=rng.uniform(3.6, 5.0), seed=k)
 
 
 def build_stock():
@@ -181,5 +215,6 @@ def build():
     build_shed()
     build_shed_fit()
     build_blocks()
+    build_site()
     build_stock()
     print("newdepot built")
