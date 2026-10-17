@@ -1881,6 +1881,29 @@ def _tail(v, S, e, tot):
 
 
 # --------------------------------------------------------------------------- main entry
+def _wipers(v, S, e):
+    """前面窓のワイパー(2本・アームとブレード)。ガラス面の手前に薄く付ける。"""
+    L = S["L"]
+    zfl, zs, zw1, zt, zr = S["z"]
+    fr, xe = S["front"], L / 2
+    nose = S.get("nose", 0.12)
+    if fr in ("flat", "subfront"):
+        xp, zb = xe + 0.035, zs + 0.04
+    elif fr == "gate":
+        xp, zb = xe + 0.04, zs + 0.04
+    elif fr == "vee":
+        xp, zb = xe + (0.55 if zr > 3.55 else 0.45) * 0.88 + 0.04, zs + 0.04
+    elif fr in ("round", "slope"):
+        xp, zb = xe + nose * 0.97 + 0.03, zs + 0.04
+    else:
+        return
+    for s_ in (-1, 1):
+        y0 = s_ * 0.30
+        v.A("black").sbox((e * xp, y0, zb), (e * xp, y0 + s_ * 0.42, zb + 0.30), 0.008, 0.008)   # アーム
+        v.A("black").sbox((e * xp, y0 + s_ * 0.05, zb + 0.02), (e * xp, y0 + s_ * 0.46, zb + 0.33), 0.012, 0.012)   # ブレード
+        v.A("steel").cyl((e * (xp - 0.01), y0, zb), (e * (xp + 0.02), y0, zb), 0.02, 0.02, seg=8)
+
+
 def _front_extras(v, S, e, nose):
     """前面下部の付帯物: 連結器(ナックル)・エアホース・ジャンパ栓受け・乗務員用ステップ・渡り板。"""
     L = S["L"]
@@ -1918,6 +1941,7 @@ def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True)
         if kd == "cab":
             _cab(v, S, e, tot, nose)
             _front_extras(v, S, e, nose)
+            _wipers(v, S, e)
         elif kd == "tail":
             _tail(v, S, e, tot)
         else:

@@ -102,7 +102,7 @@ def vmat(key):
         P = vpaint
         _VM.update({
             "red": vpaint("v_red", (0.50, 0.065, 0.028), rough=0.36, rust=0.2), "cream": vpaint("v_cream", (0.76, 0.64, 0.42), rough=0.38, rust=0.15),
-            "roof": vpaint("v_roof", (0.16, 0.17, 0.18), rough=0.6, rust=0.3, seams=False), "under": vpaint("v_under", (0.075, 0.07, 0.066), rough=0.7, rust=0.45, grime=0.8, seams=False, metal=0.2),
+            "roof": vpaint("v_roof", (0.16, 0.17, 0.18), rough=0.6, rust=0.3, seams=False), "under": vpaint("v_under", (0.16, 0.145, 0.125), rough=0.7, rust=0.45, grime=0.8, seams=False, metal=0.2),
             "wplank": lib.mat_pbr("wagon_plank", "Planks023A", scale=1.3, hsv=(0.5, 0.95, 0.62), tint=(0.42, 0.16, 0.09), tint_amt=0.75, bump=0.8, dirt=0.5, macro=0.3, spec=0.15),
             "glass": mat_veh_window("veh_window"),
             "moq": lib.mat_plain("veh_moq", (0.07, 0.15, 0.09), rough=0.9, spec=0.1),
@@ -117,7 +117,7 @@ def vmat(key):
             "coach": P("coach_brown", (0.115, 0.060, 0.040), rough=0.50, rust=0.30),
             "wagon": P("wagon_brown", (0.14, 0.062, 0.040), rough=0.62, rust=0.65),
             "wagon2": P("wagon_brown2", (0.10, 0.048, 0.032), rough=0.65, rust=0.7),
-            "black": P("veh_black", (0.022, 0.022, 0.024), rough=0.55, rust=0.10, grime=0.5),
+            "black": P("veh_black", (0.06, 0.058, 0.056), rough=0.55, rust=0.10, grime=0.5),
             "blue": P("loco_blue", (0.022, 0.058, 0.115), rough=0.45, rust=0.25),
             "white": P("loco_white", (0.72, 0.70, 0.62), rough=0.5, rust=0.25),
             "grey": P("loco_grey", (0.22, 0.23, 0.235), rough=0.55, rust=0.35),
@@ -132,7 +132,7 @@ def vmat(key):
             "curtain": lib.mat_plain("veh_curtain", (0.42, 0.47, 0.30), rough=0.9),
             "lampglass": lib.mat_plain("veh_lamp", (0.85, 0.85, 0.75), rough=0.08, spec=0.9),
             "steel": lib.mat_plain("veh_steel", (0.30, 0.30, 0.30), rough=0.4, metal=0.8),
-            "rustsc": M["iron_rust"], "wood": M["wood"], "wood_dark": M["wood_dark"], "iron": M["iron_black"],
+            "rustsc": M["iron_rust"], "wood": M["wood"], "wood_dark": M["wood_dark"], "iron": lib.mat_plain("veh_iron", (0.15, 0.13, 0.115), rough=0.55, metal=0.5),
             "sack": M["sack"], "tin": M["tin"], "concrete": M["concrete"], "rubber": M["rubber"],
             "lamp_glow": M["lamp_glow"], "rail": M["rail"], "dark": lib.mat_plain("veh_dark", (0.01, 0.01, 0.012), rough=0.8),
             "primer": lib.mat_paint("veh_primer", (0.36, 0.17, 0.10), rough=0.8, rust=0.6, rust_scale=2.0),
