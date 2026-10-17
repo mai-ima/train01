@@ -148,7 +148,7 @@ TYPES.update({
         seat="t_moq_g", interior="box", standing=False),
     "kiha_exp": dict(
         title="国鉄急行形気動車(2扉デッキ・大窓)", L=20.3, W=2.90, z=(1.18, 1.86, 2.62, 3.04, 3.58), cab=2.0, zb0=0.92, diesel=True,
-        fs="holder", ss="sabo", ds="deck", ps="beads", wc=(0.10, 0.02), liner="t_panel", lamp="tube",
+        fs="holder", ss="sabo", ds="slide1", ps="beads", wc=(0.10, 0.02), liner="t_panel", lamp="tube",
         lo="t_cream", up="t_cream", door="t_green", mask="t_green", stripe=[("t_green", 1.62, 1.80), ("t_navy", 2.64, 2.78)],
         pattern="D s w7 D w2", door_w=0.95, win="wide", pillar=0.08,
         front="round", screens=2, lamps="belt", roofshape="round", nose=0.75,
