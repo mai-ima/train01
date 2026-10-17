@@ -43,7 +43,6 @@ def build_tracks():
     lead = join(seg_line((70.0, T6), (78.0, T6)), seg_arc(_c, LEAD_R, 90, 90 - math.degrees(ALPHA)),
                 seg_line(LADDER0, ladder_pt(N_STAB - 1) + HDIR * 14.0))
     build_track("N_lead", lead)
-    trackkit.buffer_stop(*(ladder_pt(N_STAB - 1) + HDIR * 15.0), -math.degrees(ALPHA))
     for k in range(N_STAB):
         L = ladder_pt(k)
         cx, cy = L[0] + TURN_R * math.sin(ALPHA), L[1] + TURN_R * math.cos(ALPHA)
@@ -52,6 +51,34 @@ def build_tracks():
         build_track(f"N_stab{k}", P)
         trackkit.buffer_stop(X_END + 1.0, arc[-1][1], 0)
         turnout(P, f"N_to{k}", sig=(k == 0))
+
+
+# --- 旧車庫(扇形庫・転車台)は新基地の「ごく小さな一部」として、はしご線の終端から続く支線の先へ移設する(D6)
+OLD_TX, OLD_TY, OLD_PR = -14.0, -80.0, 11.5
+OLD_DY = -120.0
+_E = ladder_pt(N_STAB - 1) + HDIR * 14.0
+_R2 = 60.0
+_th = -ALPHA
+_C2 = _E + _R2 * np.array([math.cos(_th - math.pi / 2), math.sin(_th - math.pi / 2)])
+OLD_DX = float(_C2[0] + _R2 - OLD_TX)
+
+
+def build_old_depot_lead():
+    end_y = OLD_TY + OLD_PR + OLD_DY
+    P = join(seg_arc(_C2, _R2, math.degrees(_th) + 90.0, 0.0), seg_line((_C2[0] + _R2, _C2[1]), (_C2[0] + _R2, end_y)))
+    build_track("N_oldlead", P)
+
+
+def move_new_objects(names, dx, dy):
+    """旧車庫の構築で増えたオブジェクトを平行移動する(親のないものだけ。子は親に従う)。"""
+    n = 0
+    for nm in names:
+        ob = bpy.data.objects.get(nm)
+        if ob is not None and ob.parent is None:
+            ob.location.x += dx
+            ob.location.y += dy
+            n += 1
+    return n
 
 
 def build_ground():

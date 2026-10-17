@@ -358,13 +358,21 @@ def m06():
     core.build_crossing_deck()
     station.build_station()
     hq.build_hq()
+    import newdepot
+    _bd = set(bpy.data.objects.keys())
     depot.build_depot(cam)
     depot_stock.build_depot_stock()
+    _dn = set(bpy.data.objects.keys()) - _bd
+    for _n in list(_dn):                                   # 旧車庫の引込線(第4線から)は撤去し、新基地の支線に接続し直す(D6)
+        if _n.startswith("D_lead"):
+            bpy.data.objects.remove(bpy.data.objects[_n], do_unlink=True)
+            _dn.discard(_n)
+    print("[D6] 旧車庫を移設:", newdepot.move_new_objects(_dn, newdepot.OLD_DX, newdepot.OLD_DY), "個")
     _props.build_props()
     train.build_train()
     train.build_vehicles()
-    import newdepot
     newdepot.build()
+    newdepot.build_old_depot_lead()
     print("m06 built (本体データ)")
 
 
