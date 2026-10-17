@@ -1139,18 +1139,18 @@
   "id": 324,
   "subject": "【H3】穂波野の人物配置(ホーム・跨線橋・駅前・管理棟前)と --people on/off の差が出ることの検証",
   "description": "X7b: 人物表示でも赤い点1つ程度で差がほぼ無い。配置データの不足または表示フラグを調査。",
-  "status": "pending"
+  "status": "completed"
  },
  {
   "id": 325,
   "subject": "【Q21】バラスト・路盤の質感(粒状・枕木・犬釘・レール錆の因果・盛り土の縁)と黒帯単色の解消",
   "description": "X7b: b_3 の線路が黒帯に細線で平板。",
-  "status": "pending"
+  "status": "in_progress"
  },
  {
   "id": 326,
   "subject": "【D5c】新車庫の庫内確認(屋根を隠した真上・断面・入口開口・庫内照明を器具形状に)と庫前面の壁/柱の分節",
   "description": "X7b: 庫内線路が確認不能・庫内の白球灯・前面が箱。",
-  "status": "pending"
+  "status": "completed"
  }
 ]
