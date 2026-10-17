@@ -149,8 +149,33 @@ def build_shed():
         gl.boxc(cx, y, h * 0.87, w, 0.1, h * 0.26)
     gl.build()
     roof = Acc("nd_shed_roof", M["tin"], "Station")
-    roof.boxc(cx, cy, h + 0.9, w + 1.0, d + 1.6, 0.22)
+    nb = int(w // 10)                                              # D5b: 10m ごとの屋根スパンに分節(段差・母屋・軒先)
+    rng_r = random.Random(31)
+    for i in range(nb):
+        x = s["x0"] - 0.5 + (w + 1.0) * (i + 0.5) / nb
+        roof.boxc(x, cy, h + 0.9 + rng_r.uniform(-0.04, 0.04), (w + 1.0) / nb - 0.06, d + 1.6, 0.22)
     roof.build()
+    rib = Acc("nd_shed_purlin", M["iron_black"], "Station", bevel=0.01)
+    for i in range(nb + 1):                                        # 各スパン境に棟と直交する大梁(軒下から見える)
+        x = s["x0"] - 0.5 + (w + 1.0) * i / nb
+        rib.boxc(x, cy, h + 0.72, 0.22, d + 1.7, 0.3)
+    for j in range(1, 5):                                          # 長手方向の母屋
+        rib.boxc(cx, s["y0"] + d * j / 5, h + 0.78, w + 1.0, 0.16, 0.18)
+    rib.build()
+    mon = Acc("nd_shed_monitor", M["tin"], "Station")              # 棟の上に採光・排煙用のモニター屋根
+    mon.boxc(cx, cy, h + 2.05, w * 0.82, d * 0.30, 0.18)
+    mon.build()
+    mg = Acc("nd_shed_monitor_glass", M["glass"], "Station")
+    for y in (cy - d * 0.15 + 0.05, cy + d * 0.15 - 0.05):
+        mg.boxc(cx, y, h + 1.5, w * 0.82, 0.08, 0.95)
+    mg.build()
+    stk = Acc("nd_shed_stacks", M["iron_black"], "Station", bevel=0.02)
+    for i in range(1, nb, 3):                                      # 蒸機・ディーゼル用の排気塔
+        x = s["x0"] - 0.5 + (w + 1.0) * i / nb
+        for dy in (-d * 0.25, d * 0.25):
+            stk.boxc(x, cy + dy, h + 1.9, 0.9, 0.9, 1.9)
+            stk.boxc(x, cy + dy, h + 2.95, 1.5, 1.5, 0.15)
+    stk.build()
 
 
 def build_shed_fit():
@@ -272,3 +297,71 @@ def build_blocks():
                 g.a("iron_black", bevel=0.02).cyl((w * 0.75, d * 0.5, zh + 0.2), (w * 0.75, d * 0.5, zh + 2.6), 1.2, 1.2, seg=14)
                 g.a("pl_grey", bevel=0.02).box(w * 0.2, w * 0.2 + 3.2, d * 0.35, d * 0.35 + 3.0, zh, zh + 2.9)
             g.build()
+
+def build_site():
+    """敷地づくり: 管理棟前の舗装広場・構内道路・柵・植栽・街灯。箱だけが芝生に建つ状態を解消する。"""
+    plaza = Acc("nd_plaza", M["concrete"], "Roads")
+    plaza.boxc(283.0, -103.0, 0.035, 110.0, 24.0, 0.07)            # 管理棟前の広場
+    plaza.boxc(172.0, -118.0, 0.035, 90.0, 52.0, 0.07)             # 技術開発棟前
+    plaza.build()
+    road = Acc("nd_road", M["road"], "Roads")
+    road.boxc(228.0, -88.0, 0.045, 190.0, 7.0, 0.09)                # 構内道路(はしご線の南側)
+    road.boxc(110.0, -150.0, 0.045, 8.0, 140.0, 0.09)               # 本社側へ南下する道
+    road.build()
+    fence = Acc("nd_fence", M["iron_black"], "Props")
+    for x in np.arange(100.0, 480.0, 5.0):                          # 南側境界のフェンス(柱+上下2段の横桟)。旧車庫は敷地の内側に含める
+        fence.boxc(x, -255.0, 0.9, 0.08, 0.08, 1.8)
+    fence.boxc(290.0, -255.0, 1.6, 380.0, 0.03, 0.04)
+    fence.boxc(290.0, -255.0, 0.7, 380.0, 0.03, 0.04)
+    fence.build()
+    lamps = Acc("nd_poles", M["iron_black"], "Props")
+    glow = Acc("nd_pole_lamps", M["lamp_glow"], "Props")
+    for x in np.arange(120.0, 330.0, 30.0):                         # 街灯は構内道路沿い(はしご線・引込線の上に立たない範囲)
+        lamps.boxc(x, -91.5, 4.0, 0.14, 0.14, 8.0)
+        lamps.boxc(x, -92.2, 8.0, 0.14, 1.5, 0.1)
+        glow.boxc(x, -92.8, 7.9, 0.5, 0.25, 0.08)
+    lamps.build()
+    glow.build()
+    import veg
+    rng = random.Random(5)
+    for k in range(26):                                             # 敷地の周りの並木
+        x = 105.0 + k * 14.5 + rng.uniform(-2, 2)
+        veg.zelkova(x, (-160.0 if x < 350.0 else -250.0) + rng.uniform(-2.5, 2.0), h=rng.uniform(8, 12), rad=rng.uniform(3.6, 5.0), seed=k)
+
+
+def build_stock():
+    """留置車両: 庫内(第0〜5線)と庫外(第6〜11線)に客車編成。外形のみ(室内は車両側の室内つきモデル)。"""
+    import train as T
+    n = 0
+    plan = {0: 3, 1: 3, 2: 2, 3: 3, 4: 3, 5: 2, 6: 4, 7: 5, 8: 3, 9: 4, 10: 2, 11: 3}
+    for k, cnt in plan.items():
+        x0 = max(stab_x0(k) + 14.0, SHED["x0"] + 12.0) if k <= 5 else stab_x0(k) + 14.0
+        for j in range(cnt):
+            T.make_coach(f"nd_coach_{k}_{j}", variant=(k + j) % 4, seed=300 + n).place(x0 + 10.0 + j * 20.6, stab_y(k), math.pi if (k + j) % 2 else 0.0)
+            n += 1
+
+
+def register_grass_exclusion():
+    """新基地の敷地(留置線・庫・管理棟群・広場・構内道路・引込線)には近景の草を生やさない。屋内の床にまで草が出ていた(室内確認で発見)。"""
+    import veg
+    for r in ((96.0, 495.0, -102.0, -26.0), (125.0, 345.0, -168.0, -86.0), (340.0, 445.0, -160.0, -80.0)):
+        if r not in veg.EXTRA_EXCL:
+            veg.EXTRA_EXCL.append(r)
+
+
+def build():
+    import os
+    register_grass_exclusion()
+    skip = os.environ.get("ND_SKIP", "").split(",")          # 調査用: 部分ごとに構築を省く(通常は空)
+    build_tracks()
+    build_ground()
+    if "shed" not in skip:
+        build_shed()
+        build_shed_fit()
+    if "blocks" not in skip:
+        build_blocks()
+    if "site" not in skip:
+        build_site()
+    if "stock" not in skip:
+        build_stock()
+    print("newdepot built")
