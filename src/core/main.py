@@ -574,6 +574,16 @@ if os.environ.get("DBG_BOX"):
                 _seen.setdefault(_ob.name, (_x, _y, round(_loc.z, 1)))
     for _k, _v in _seen.items():
         print("[DBG_RAY]", _k, _v)
+if os.environ.get("DBG_BOX"):
+    for _o in bpy.data.objects:
+        if _o.type != 'MESH':
+            continue
+        _bb = [(_o.matrix_world @ Vector(_p)) for _p in _o.bound_box]
+        _x0, _x1 = min(p.x for p in _bb), max(p.x for p in _bb)
+        _y0, _y1 = min(p.y for p in _bb), max(p.y for p in _bb)
+        for _px, _py in ((372, -100), (380, -97), (365, -97)):
+            if _x0 <= _px <= _x1 and _y0 <= _py <= _y1 and (_x1 - _x0) < 120:
+                print("[DBG_HIT]", _px, _py, _o.name, [round(v) for v in (_x0, _x1, _y0, _y1)], _o.parent.name if _o.parent else None)
 if os.environ.get("DBG_BOX2"):
     for _o in bpy.data.objects:
         if _o.type != 'MESH' or _o.name.startswith(("N_",)):
