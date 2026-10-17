@@ -47,11 +47,11 @@ def mats():
         "t_mahog": lib.mat_pbr("t_mahog", "Planks023A", scale=0.7, hsv=(0.5, 0.95, 0.5), tint=(0.50, 0.20, 0.09), tint_amt=0.8, bump=0.5, spec=0.5, macro=0.25),
         "t_leat": lib.mat_plain("t_leat", (0.30, 0.16, 0.08), rough=0.55, spec=0.25),
         "t_cream2": lib.mat_plain("t_cream2", (0.80, 0.74, 0.60), rough=0.8, spec=0.05),
-        "t_curt": lib.mat_plain("t_curt", (0.07, 0.13, 0.28), rough=0.92, spec=0.05),
-        "t_blank": lib.mat_plain("t_blank", (0.55, 0.60, 0.70), rough=0.9, spec=0.05),
-        "t_white": lib.mat_plain("t_white", (0.82, 0.82, 0.78), rough=0.85, spec=0.05),
+        "t_curt": lib.mat_cloth("t_curt", (0.07, 0.13, 0.28)),
+        "t_blank": lib.mat_cloth("t_blank", (0.55, 0.60, 0.70)),
+        "t_white": lib.mat_cloth("t_white", (0.82, 0.82, 0.78), rough=0.85),
         "t_panel": lib.mat_plain("t_panel", (0.52, 0.45, 0.30), rough=0.7, spec=0.1),
-        "t_wood": lib.mat_plain("t_wood", (0.30, 0.17, 0.08), rough=0.55, spec=0.2),
+        "t_wood": lib.mat_pbr("t_wood", "Planks023A", scale=0.8, hsv=(0.5, 0.9, 1.0), tint=(0.52, 0.28, 0.12), tint_amt=0.8, bump=0.4, spec=0.3, macro=0.3, dirt=0.3),
         "t_cab": lib.mat_plain("t_cab", (0.18, 0.28, 0.20), rough=0.7, spec=0.1),
         "t_pole": lib.mat_plain("t_pole", (0.72, 0.30, 0.04), rough=0.4, metal=0.5),
         "t_lino": lib.mat_pbr("t_lino", "Planks023A", scale=0.9, hsv=(0.5, 0.8, 0.45), tint=(0.30, 0.20, 0.12), tint_amt=0.8, bump=0.4, spec=0.35, macro=0.3, dirt=0.4),
@@ -1600,6 +1600,8 @@ def _sleep_inside(v, S, tot, bays, segs, zones, rnd):
                     for rz in range(5):
                         v.A("steel").cyl((xl - 0.14, yb + 0.03, zfl + 0.62 + rz * 0.20), (xl + 0.14, yb + 0.03, zfl + 0.62 + rz * 0.20), 0.011, 0.011, seg=6)
                 v.A("t_champ").sphere((xc, ya + 0.10, zfl + 1.05), (0.05, 0.05, 0.035), seg=10, rings=6)        # 読書灯
+                if rnd.random() < 0.25:                                                                     # 下段の縁に腰かける乗客(通路側を向く)
+                    _rider(v, xc, yb - 0.22, zfl + 0.14, 1.5708, True, rnd=rnd)
                 if rnd.random() < 0.6:                                                                      # 通路側のカーテン(半分閉)
                     k = rnd.choice((0.0, 0.5))
                     v.A("t_curt", 0.01).box(xc - 0.33 + k * 0.5, xc + 0.33, yb, yb + 0.02, zfl + 0.30, zfl + 1.80)
@@ -1610,6 +1612,8 @@ def _sleep_inside(v, S, tot, bays, segs, zones, rnd):
                 x = a + 0.78 + xx * 1.56
                 v.A("t_moq_b", 0.02).box(x - 0.2, x + 0.2, h - 0.38, h - 0.10, zfl + 0.40, zfl + 0.46)
                 v.A("t_wood").box(x - 0.2, x + 0.2, h - 0.28, h - 0.09, zfl + 0.70, zfl + 0.73)
+                if rnd.random() < 0.35:                                                                  # 窓際の補助席に座る乗客(窓側を向く)
+                    _rider(v, x, h - 0.30, zfl, 1.5708, True, rnd=rnd)
     elif st == "compart":
         for (a, b) in segs:
             m = max(1, int((b - a) / 2.05))
