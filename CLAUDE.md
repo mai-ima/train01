@@ -160,3 +160,4 @@
 - (2026-10-17・Claude Code) ユーザー【最重要・再強調】: 報告(途中経過報告を含む)は必ず絶対に日本語で行う。英語での報告・説明は絶対にしない(ツール呼び出しの説明文・タスク名・コミット文・作業中の独り言的な文も日本語)。常時有効。
 - (2026-10-17・Claude Code) ユーザー指示: ①サブエージェントの使用モデルを Opus 5.5 に変更(.claude/agents/strict-auditor.md の model: claude-opus-5-5。Agent 呼び出しでも model を opus 指定)。②事前に撮った写真以外にも、気になる点は自分(監査員含む)で追加撮影できるようにする(監査員に Bash を許可・MULTICAM手順を明記)。③マテリアルが消えている可能性 → 新規オブジェクト(d9/newdepot等)の真っ黒・欠けを確認し修正。中断せず続ける。
 - (2026-10-17・Claude Code) ユーザー指示: サブエージェントは Opus 5.5 と Sonnet 5.5 の使い分け型に再変更(先の『Opus 5.5 に固定』を上書き)。選考基準は Claude が決める → docs/TASK_RULES.md §8(判定・総合監査=strict-auditor/Opus、部品・構図・定型確認=strict-auditor-lite/Sonnet、迷ったらOpus)。追加撮影の許可は両者に適用。
+- (2026-10-17・Claude Code) ユーザー指示(上の使い分けを更新): 利用制限が厳しいので Opus 5.5 は現状『最終超超超監査(X9)のみ』(strict-auditor-final)。それ以外のサブエージェントはすべて Sonnet 5.5(strict-auditor 既定・model: claude-sonnet-5-5)。基準は docs/TASK_RULES.md §8。
