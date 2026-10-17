@@ -687,6 +687,12 @@ if os.environ.get("DBG_MAT"):      # デバッグ: マテリアル欠け(スロ�
     _bad = [(i.name, i.filepath) for i in bpy.data.images if i.source == 'FILE' and (i.size[0] == 0 or not os.path.exists(bpy.path.abspath(i.filepath)))]
     print("[DBG_MAT] 画像欠け:", len(_bad), _bad[:30], "全画像", len(bpy.data.images))
     print("[DBG_MAT] マテリアル欠け:", sum(_nm.values()), sorted(_nm.items(), key=lambda t: -t[1])[:40])
+if os.environ.get("DBG_BBOX"):      # デバッグ: 名前が前方一致する mesh の外接箱を出力(カメラ位置の決定用)。例 DBG_BBOX="stn_,hall,m06"
+    _pf = [x for x in os.environ["DBG_BBOX"].split(",") if x]
+    for _o in bpy.data.objects:
+        if _o.type == "MESH" and any(_o.name.startswith(p) for p in _pf):
+            _bb = [(_o.matrix_world @ Vector(_p)) for _p in _o.bound_box]
+            print("[BBOX]", _o.name, [round(min(p[i] for p in _bb), 1) for i in range(3)], [round(max(p[i] for p in _bb), 1) for i in range(3)])
 print(f"[{time.time() - t0:5.1f}s] scene ready; objects={len(bpy.data.objects)}")
 if os.environ.get("STOCKDUMP"):      # Z-A10: 停車車両(stk_*)の外接箱と、同じ x 範囲にあるレール(trk/rail)の y 範囲を出力して、線路外置きを検出する
     import re as _re2

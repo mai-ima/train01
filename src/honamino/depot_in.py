@@ -162,7 +162,7 @@ def hall_in():
     A(g, "iron_black").box(x1 - 2.4, x1 - 0.6, y1 - 1.82, y1 - 1.8, 1.2, 1.6)
     for xx in (x0 + 3.5, x0 + 7.0, x0 + 10.5):
         for yy in (-79.0, -87.0, -95.0):
-            lamp_point(xx, yy, 6.4, 45)
+            lamp_point(xx, yy, 6.4, 400)
             A(g, "tin").cyl((xx, yy, 6.7), (xx, yy, 6.15), 0.06, 0.45, seg=14)
             A(g, "lamp_glow").sphere((xx, yy, 6.15), (0.18, 0.18, 0.08), seg=8, rings=4)
     face_plane("hall_board", "timetable_old.png", 'N', 28.0, y0 + t + 0.01, 3.2, 0.9) if False else None
