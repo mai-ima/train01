@@ -389,6 +389,9 @@ def build_station():
     floor.box(SX0 + WT, SX1 - WT, Y_WALL + WT, Y_BACK - WT, zf - 0.08, zf)
     # ceiling boards
     dark.box(SX0 + WT, SX1 - WT, Y_WALL + WT, Y_BACK - WT, Z_BEAM - 0.12, Z_BEAM - 0.06)
+    for xb in range(int(SX0) + 1, int(SX1), 2):                                    # M6: 天井の梁(幅方向に2m間隔)と母屋方向の大引き
+        dark.box(xb - 0.09, xb + 0.09, Y_WALL + WT, Y_BACK - WT, Z_BEAM - 0.30, Z_BEAM - 0.12)
+    dark.box(SX0 + WT, SX1 - WT, (Y_WALL + Y_BACK) / 2 - 0.1, (Y_WALL + Y_BACK) / 2 + 0.1, Z_BEAM - 0.36, Z_BEAM - 0.12)
     # waiting benches (back wall)
     for (a, b) in ((-11.7, -9.1), (-4.95, -2.3)):
         frame.box(a, b, Y_BACK - WT - 0.46, Y_BACK - WT, zf + 0.42, zf + 0.46)
@@ -413,9 +416,12 @@ def build_station():
     frame.sbox((gate[0] + 0.2, Y_WALL + WT + 0.7, zf + 0.9), (gate[0] + 0.85, Y_WALL + WT + 0.35, zf + 0.9), 0.04, 0.06, up=(0, 0, 1))
     # pot-belly stove (darumasutoobu) + flue through the roof
     sx, sy = -4.3, 7.0
-    iron.cyl((sx, sy, zf + 0.12), (sx, sy, zf + 0.78), 0.27, 0.27, seg=18)
-    iron.cyl((sx, sy, zf + 0.78), (sx, sy, zf + 0.92), 0.22, 0.09, seg=18)
-    iron.sphere((sx, sy, zf + 0.45), (0.30, 0.30, 0.30), seg=18, rings=10)
+    stove = S("stove_iron", M["iron_black"], bevel=0.004, smooth=True)             # M6: 面が見える低ポリを解消(滑らかなシェーディング+分割増)
+    stove.cyl((sx, sy, zf + 0.12), (sx, sy, zf + 0.78), 0.27, 0.27, seg=36)
+    stove.cyl((sx, sy, zf + 0.78), (sx, sy, zf + 0.92), 0.22, 0.09, seg=36)
+    stove.sphere((sx, sy, zf + 0.45), (0.30, 0.30, 0.30), seg=36, rings=20)
+    stove.cyl((sx, sy, zf + 0.30), (sx, sy, zf + 0.34), 0.305, 0.305, seg=36)             # 胴の帯(補強バンド)
+    stove.cyl((sx, sy, zf + 0.58), (sx, sy, zf + 0.62), 0.295, 0.295, seg=36)
     for dx, dy in ((0.2, 0.2), (-0.2, 0.2), (0.2, -0.2), (-0.2, -0.2)):
         iron.box(sx + dx - 0.025, sx + dx + 0.025, sy + dy - 0.025, sy + dy + 0.025, zf, zf + 0.14)
     iron.box(sx - 0.45, sx + 0.45, sy - 0.45, sy + 0.45, zf, zf + 0.012)
@@ -442,7 +448,7 @@ def build_station():
         _rooms.lamp_point(lx, ly, zf + 2.35, w_ * 3)
         iron.cyl((lx, ly, zf + 2.35), (lx, ly, Z_BEAM - 0.12), 0.012, seg=8)            # 吊り棒
         iron.cyl((lx, ly, zf + 2.30), (lx, ly, zf + 2.46), 0.0, 0.16, seg=14)             # 笠(電球の傘)
-    for a in (walls, frame, dark, glass, plinth, floor, iron, tile_cap, redp, conc):
+    for a in (walls, frame, dark, glass, plinth, floor, iron, stove, tile_cap, redp, conc):
         a.build()
 
     # roof surfaces -> one object
