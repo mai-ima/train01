@@ -87,7 +87,7 @@ def mat_veh_window(name, tint=(0.80, 0.90, 0.88)):
     m.setall(gl, {'Color': (0.9, 0.95, 1.0), 'Roughness': 0.04})
     fr = m.node('ShaderNodeFresnel')
     m.set(fr.inputs['IOR'], 1.5)
-    dust = m.ramp(m.noise(scale=6, detail=4), [(0.35, (0.0, 0.0, 0.0)), (0.8, (0.025, 0.025, 0.025))])
+    dust = m.ramp(m.noise(scale=6, detail=4), [(0.30, (0.03, 0.03, 0.03)), (0.75, (0.10, 0.10, 0.10))])      # 埃のむらと弱い基底反射(窓が真っ黒/単色の板に見えない)
     fac = m.math('ADD', fr.outputs['Fac'], dust)
     mx = m.node('ShaderNodeMixShader')
     m.set(mx.inputs[0], fac)
@@ -102,7 +102,7 @@ def vmat(key):
         P = vpaint
         _VM.update({
             "red": vpaint("v_red", (0.50, 0.065, 0.028), rough=0.36, rust=0.2), "cream": vpaint("v_cream", (0.76, 0.64, 0.42), rough=0.38, rust=0.15),
-            "roof": vpaint("v_roof", (0.16, 0.17, 0.18), rough=0.6, rust=0.3, seams=False), "under": vpaint("v_under", (0.03, 0.03, 0.032), rough=0.65, rust=0.4, grime=1.0, seams=False, metal=0.2),
+            "roof": vpaint("v_roof", (0.16, 0.17, 0.18), rough=0.6, rust=0.3, seams=False), "under": vpaint("v_under", (0.075, 0.07, 0.066), rough=0.7, rust=0.45, grime=0.8, seams=False, metal=0.2),
             "wplank": lib.mat_pbr("wagon_plank", "Planks023A", scale=1.3, hsv=(0.5, 0.95, 0.62), tint=(0.42, 0.16, 0.09), tint_amt=0.75, bump=0.8, dirt=0.5, macro=0.3, spec=0.15),
             "glass": mat_veh_window("veh_window"),
             "moq": lib.mat_plain("veh_moq", (0.07, 0.15, 0.09), rough=0.9, spec=0.1),
