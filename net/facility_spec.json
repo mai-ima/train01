@@ -248,6 +248,31 @@
   "hours": "24時間(検修は昼夜)",
   "power": "非電化(ディーゼル/蒸機)"
  },
+ "FD4N": {
+  "id": "FD4N",
+  "capacity": "72両",
+  "staff": 260,
+  "buildings": [
+   "扇形庫",
+   "転車台",
+   "検修庫",
+   "組立工場",
+   "給水塔",
+   "石炭台",
+   "事務所棟",
+   "乗務員区所"
+  ],
+  "ladder": {
+   "tracks": 12,
+   "kind": "works_depot",
+   "turntable": true,
+   "shed": true
+  },
+  "built3d": true,
+  "three_d": "制作済(穂波野原型・位置固定)",
+  "hours": "24時間(検修は昼夜)",
+  "power": "非電化(ディーゼル/蒸機)"
+ },
  "FD5": {
   "id": "FD5",
   "capacity": "15両",

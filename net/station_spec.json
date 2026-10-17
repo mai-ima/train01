@@ -326,22 +326,25 @@
  },
  "M06": {
   "platform": {
-   "count": 2,
+   "count": 5,
    "form": "島式/相対式",
    "length_m": 200,
    "cars": 10,
    "height_mm": 1100,
    "widths_m": [
     2.7,
-    2.7
+    3.0,
+    2.1,
+    2.1,
+    4.3
    ],
    "roof": "あり(鉄骨・波板)",
    "surface": "アスファルト舗装"
   },
   "ticket": {
    "staff": "有人(出札・改札・手荷物)",
-   "windows": 8,
-   "gates": 5,
+   "windows": 10,
+   "gates": 6,
    "machines": 4,
    "note": "改札は鋏による手検札"
   },
@@ -371,11 +374,12 @@
    "interior": "原型(駅舎・待合・事務室・改札を制作済)",
    "images": 19,
    "stock": "あり",
-   "audit": "再監査待ち",
+   "audit": "再監査待ち(拡張分は未監査)",
    "state": "render"
   },
   "facilities": [
-   "FD4"
+   "FD4",
+   "FD4N"
   ],
   "structure": "地上"
  },

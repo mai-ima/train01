@@ -1068,5 +1068,17 @@
   "subject": "【Q17】日陰面の黒潰れ対策(貨車・客車・ホーム面の反射率引上げ、日陰補助光/地面バウンス、AgX look の見直し)と複数視点での再確認",
   "description": "D9a撮影で貨車側面・ホーム面・上屋が黒く潰れる。診断: マテリアル欠落ではなく日陰の光不足+暗い塗色+AgX高コントラスト。空既定0.14→0.32に引上げ済み、低い通路視点はまだ暗い。次: 反射率見直し・look比較・日陰補助光を複数視点で比較採用。",
   "status": "pending"
+ },
+ {
+  "id": 313,
+  "subject": "【S-R10】路線図を v2.5 として新規作成(更新履歴タブ・穂波野6線・新総合車両基地を反映)",
+  "description": "公開: https://claude.ai/artifact/Fgk7XqgEjepyDgvL4ifXcd (2026-10-17)。net/patch_v25.py → net/mkmap25.py で再生成。",
+  "status": "completed"
+ },
+ {
+  "id": 314,
+  "subject": "【S-D11】車庫が埋まっている/列車の動線(入出庫線の単線1本接続)が非現実的な問題の修正",
+  "description": "入出庫線を複線化し本線の両線へ渡り線で接続、丘との重なりの整地、nd_road の黒帯の素材不具合。docs/D4_DEPOT_LAYOUT.md に設計を追記してから実装。",
+  "status": "pending"
  }
 ]
