@@ -66,7 +66,16 @@ def track_offsets(plat, ntr):
     return [-4.6 * k for k in range(ntr)]
 
 
-def centerline(kind="straight", R=0.0, amp=0.0, flat=True):
+R_MIN_STN = 220.0     # C16: 駅構内線の最小曲線半径(実在の本線駅はR>=200m程度が目安)。急すぎる曲がりは振幅/半径を自動で緩める
+
+
+def _min_r(xs, ys):
+    d1 = np.gradient(ys, xs)
+    d2 = np.gradient(d1, xs)
+    return 1.0 / max(float((np.abs(d2) / (1 + d1 ** 2) ** 1.5).max()), 1e-9)
+
+
+def _centerline_raw(kind, R, amp, flat):
     xs = np.arange(-LH, LH + 0.01, 1.0)
     if kind == "arc" and R:
         ys = np.sign(R) * (abs(R) - np.sqrt(abs(R) ** 2 - xs ** 2))
@@ -74,10 +83,24 @@ def centerline(kind="straight", R=0.0, amp=0.0, flat=True):
         ys = amp * np.sin(xs / LH * math.pi * 1.0)
     else:
         ys = np.zeros_like(xs)
-    # 駅の両端は直線に戻して(位置・向きとも)、駅間線路と滑らかにつなぐ
+    # 駅の両端は直線に戻して(位置・向きとも)、駅間線路と滑らかにつなぐ(緩和は長めにとって曲率の集中を避ける)
     if flat:
-        t = np.clip((np.abs(xs) - 45.0) / 60.0, 0, 1)
+        t = np.clip((np.abs(xs) - 40.0) / 110.0, 0, 1)
         ys = ys * (1 - t * t * (3 - 2 * t))
+    return xs, ys
+
+
+def centerline(kind="straight", R=0.0, amp=0.0, flat=True):
+    xs, ys = _centerline_raw(kind, R, amp, flat)
+    if kind in ("S", "arc") and flat:
+        for _ in range(14):
+            if _min_r(xs, ys) >= R_MIN_STN:
+                break
+            if kind == "S":
+                amp *= 0.85
+            else:
+                R *= 1.2
+            xs, ys = _centerline_raw(kind, R, amp, flat)
     return np.stack([xs, ys], -1)
 
 

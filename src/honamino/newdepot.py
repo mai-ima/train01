@@ -88,6 +88,37 @@ def build_shed():
     roof.build()
 
 
+def build_shed_fit():
+    """庫内の設備: 検修ピット縁・作業用側歩廊・天井の吊り照明・天井クレーン走行桁。"""
+    s = SHED
+    h = s["h"]
+    x0, x1 = s["x0"] + 6.0, s["x1"] - 4.0
+    pit = Acc("nd_shed_pit", M["concrete"], "Station")
+    walk = Acc("nd_shed_walk", M["plat_top"], "Station")
+    lamp = Acc("nd_shed_lamps", M["lamp_glow"], "Station")
+    rod = Acc("nd_shed_rods", M["iron_black"], "Station")
+    for k in range(6):
+        y = stab_y(k)
+        for sg in (-0.95, 0.95):                      # ピットの縁石(レールの内側)
+            pit.boxc((x0 + x1) / 2, y + sg, 0.06, x1 - x0 - 8.0, 0.18, 0.16)
+        if k % 2 == 0:                                  # 2線おきに高い作業歩廊(線の北側)
+            walk.boxc((x0 + x1) / 2, y + 2.25, 0.35, x1 - x0, 0.95, 0.7)
+        for x in np.arange(x0 + 4.0, x1, 12.0):
+            lamp.boxc(x, y, h - 1.3, 0.9, 0.3, 0.12)
+            rod.boxc(x, y, h - 0.65, 0.04, 0.04, 1.3)
+    for a in (pit, walk, lamp, rod):
+        a.build()
+    import rooms as _rooms                                  # 発光面だけでは室内が真っ暗になるので実光源(蛍光灯色)も置く
+    for k in (1, 3, 5):
+        y = (stab_y(k - 1) + stab_y(k)) / 2
+        for x in np.arange(x0 + 4.0, x1, 12.0):
+            _rooms.lamp_point(x, y, h - 1.6, 260.0, color=(0.92, 0.97, 1.0), size=0.5, name="nd_shed_light")
+    gd = Acc("nd_shed_crane", M["iron_rust"], "Station")
+    for y in (SHED["y0"] + 0.9, SHED["y1"] - 0.9):
+        gd.boxc((x0 + x1) / 2, y, h - 1.8, x1 - x0, 0.3, 0.45)
+    gd.build()
+
+
 def build_blocks():
     """管理棟群(3階建)と技術開発棟群(外形。室内は D7/D8)。はしご線の南側に置く。"""
     adm = Acc("nd_admin", M["concrete"], "Station", bevel=0.02)
@@ -121,6 +152,7 @@ def build():
     build_tracks()
     build_ground()
     build_shed()
+    build_shed_fit()
     build_blocks()
     build_stock()
     print("newdepot built")
