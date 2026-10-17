@@ -604,7 +604,7 @@ def mat_paint(name, color, rough=0.45, rust=0.35, metal=0.0, rust_scale=3.0):
     n2 = m.noise(scale=25, detail=3)
     rmask = m.ramp(n, [(0.5, (0, 0, 0)), (0.72, (1, 1, 1))])
     rmask = m.math('MULTIPLY', rmask, m.ramp(n2, [(0.3, (0.3, 0.3, 0.3)), (0.7, (1, 1, 1))]))
-    rust_col = m.ramp(n2, [(0.0, (0.28, 0.11, 0.05)), (1.0, (0.45, 0.20, 0.08))])
+    rust_col = m.ramp(n2, [(0.0, (0.20, 0.09, 0.045)), (1.0, (0.34, 0.16, 0.07))])
     col = m.mix(m.math('MULTIPLY', rmask, rust), color, rust_col)
     chalk = m.ramp(m.noise(scale=1.2, detail=4), [(0.4, (1, 1, 1)), (0.8, (1.18, 1.18, 1.18))])
     col = m.mix(1.0, col, chalk, 'MULTIPLY')

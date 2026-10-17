@@ -84,8 +84,8 @@ def make_materials():
     # ---- procedural / simple
     M["rail"] = lib.mat_rail("rail", z_lo=0.250, z_hi=0.268)
     M["sleeper"] = lib.mat_wood("sleeper", color=(0.075, 0.05, 0.035), along='Y', weather=0.7, rough=0.8)
-    M["iron_black"] = lib.mat_paint("iron_black", (0.025, 0.025, 0.028), rough=0.5, rust=0.4, metal=0.4)
-    M["iron_rust"] = lib.mat_paint("iron_rust", (0.12, 0.08, 0.06), rough=0.7, rust=0.9, metal=0.3)
+    M["iron_black"] = lib.mat_paint("iron_black", (0.025, 0.025, 0.028), rough=0.62, rust=0.25, metal=0.15, rust_scale=1.8)   # 鉄骨: 空の青い映り込みと橙斑を抑える
+    M["iron_rust"] = lib.mat_paint("iron_rust", (0.09, 0.07, 0.06), rough=0.78, rust=0.55, metal=0.08, rust_scale=1.6)   # 橙の斑と金属反射を抑え、暗い褐色の錆に
     M["white_paint"] = lib.mat_paint("white_paint", (0.72, 0.70, 0.64), rough=0.6, rust=0.25)
     M["post_red"] = lib.mat_paint("post_red", (0.50, 0.035, 0.025), rough=0.35, rust=0.35)
     M["porcelain"] = lib.mat_plain("porcelain", (0.85, 0.85, 0.82), rough=0.15, spec=0.7)
