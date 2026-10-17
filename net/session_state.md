@@ -296,3 +296,4 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 - (2026-10-17) 順序変更(ユーザー指示): 最優先は S-R10(路線図v2.5)を先に実施。S-D11は後で: 現状所見=新庫が丘(hills/knoll)と重なる/ND_road黒帯/入出庫線が単線1本→複線+渡り線化が必要(net/D4_DEPOT_LAYOUT.md に追記予定)。
 - (2026-10-17) S-R10 完了: 路線図 v2.5 を公開 https://claude.ai/artifact/Fgk7XqgEjepyDgvL4ifXcd(net/patch_v25.py→net/mkmap25.py)。
 - (2026-10-17) 路線図v2.5の干渉・バグ検査修正を実施(net/check_map.py)。
+- 2026-10-17 ユーザー指示: 問題はその場しのぎでなく根本から改善(黒帯 nd_road の根本原因を調査中)
