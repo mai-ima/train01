@@ -449,43 +449,59 @@ def bamboo_grove(x0, x1, y0, y1, n=120, seed=1):
 
 
 def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
-    """T5: 近景の里山に樹林を載せる。1本=粗い樹冠(blob 2段)+色むら、丘ごとに1メッシュへ統合して軽量化する。
-    間隔は約8m、広葉(明るい緑)と針葉(暗い緑)を混ぜ、稜線側ほど小さく疎にして自然な林縁にする。"""
+    """T6: 近景の里山の樹林。実在の里山林に近づけるため、(1)樹冠をノイズで群落化して林冠の切れ間・疎密を作る、
+    (2)樹冠の大きさを対数正規で散らし、1本を2〜3個の葉塊(主塊+側塊)で作って輪郭を崩す、(3)広葉(明るい/黄緑/褐色がかり)と
+    針葉(暗緑)を群落ごとに偏らせる、(4)下層の暗い低木を谷側へ。丘ごとに1メッシュへ統合して軽量化する。"""
     rng = random.Random(500 + k)
     nr_ = np.random.default_rng(900 + k)
     Vs, Ts, Cs, off = [], [], [], 0
-    step = 5.0
-    for gx in np.arange(-rx * 0.97, rx * 0.97, step):
-        for gy in np.arange(-ry * 0.97, ry * 0.97, step):
-            x = cx + gx + rng.uniform(-3.0, 3.0)
-            y = cy + gy + rng.uniform(-3.0, 3.0)
+    step = 3.3
+    for gx in np.arange(-rx * 0.98, rx * 0.98, step):
+        for gy in np.arange(-ry * 0.98, ry * 0.98, step):
+            x = cx + gx + rng.uniform(-2.2, 2.2)
+            y = cy + gy + rng.uniform(-2.2, 2.2)
             u, v = (x - cx) / rx, (y - cy) / ry
             rho = math.hypot(u, v)
-            if rho > 0.97 or rng.random() < 0.03 + 0.35 * rho ** 4:        # 林縁は疎に
+            if rho > 0.98:
+                continue
+            clump = mn.noise(Vector((x * 0.035, y * 0.035, 3.0 + k)))            # 群落(−1〜1)
+            gap = mn.noise(Vector((x * 0.09, y * 0.09, 11.0 + k)))                # 林冠の切れ間
+            if gap > 0.42 or rng.random() < 0.02 + 0.30 * rho ** 4:
                 continue
             z = Zf(u, v) - 0.25
             if z < 0.2:
                 continue
-            conif = rng.random() < 0.35
-            rad = rng.uniform(4.2, 6.6) * (1.0 - 0.2 * rho)
-            hc = rad * (1.5 if conif else 0.9)
-            c = (x, y, z + hc)
-            Vb, seg, rings = blob(c, rad * (0.62 if conif else 0.9), rng, seg=8, rings=5, k=0.25)
-            Vb[:, 2] = c[2] + (Vb[:, 2] - c[2]) * (1.9 if conif else 1.0)
-            n = len(Vb)
-            for r in range(rings):
-                for s_ in range(seg):
-                    a0, a1 = r * seg + s_, r * seg + (s_ + 1) % seg
-                    b0, b1 = (r + 1) * seg + s_, (r + 1) * seg + (s_ + 1) % seg
-                    Ts += [(off + a0, off + b0, off + a1), (off + a1, off + b0, off + b1)]
-            base = np.array([0.020, 0.045, 0.022]) if conif else np.array([0.050, 0.095, 0.030])
-            shade = np.clip((Vb[:, 2] - z) / (hc * 2.0), 0, 1)[:, None]
-            Cc = base[None, :] * (0.7 + 0.7 * shade) * rng.uniform(0.75, 1.3) * nr_.uniform(0.85, 1.15, (n, 1))
-            Cs.append(np.concatenate([Cc, np.ones((n, 1))], 1))
-            Vs.append(Vb)
-            off += n
+            conif = clump < -0.12 and rng.random() < 0.8
+            warm = clump > 0.25                                                    # 黄緑〜褐色がかった落葉広葉樹の群落
+            rad = min(6.2, max(2.0, rng.lognormvariate(1.15, 0.30))) * (1.0 - 0.18 * rho)
+            nl = 1 if conif else rng.choice((2, 2, 3))
+            for li in range(nl):
+                ox, oy = (0.0, 0.0) if li == 0 else (rng.uniform(-0.55, 0.55) * rad, rng.uniform(-0.55, 0.55) * rad)
+                rl = rad * (0.62 if conif else (0.85 if li == 0 else rng.uniform(0.5, 0.7)))
+                hc = rl * (1.55 if conif else 1.0) + (0 if li == 0 else rng.uniform(-0.3, 0.6) * rad)
+                c = (x + ox, y + oy, z + hc)
+                Vb, seg, rings = blob(c, rl, rng, seg=10, rings=7, k=0.55)
+                if conif:
+                    Vb[:, 2] = c[2] + (Vb[:, 2] - c[2]) * 1.9
+                n = len(Vb)
+                for r in range(rings):
+                    for s_ in range(seg):
+                        a0, a1 = r * seg + s_, r * seg + (s_ + 1) % seg
+                        b0, b1 = (r + 1) * seg + s_, (r + 1) * seg + (s_ + 1) % seg
+                        Ts += [(off + a0, off + b0, off + a1), (off + a1, off + b0, off + b1)]
+                if conif:
+                    base = np.array([0.016, 0.036, 0.020])
+                elif warm:
+                    base = np.array([0.075, 0.100, 0.030]) * rng.uniform(0.85, 1.25)
+                else:
+                    base = np.array([0.040, 0.085, 0.028]) * rng.uniform(0.8, 1.2)
+                shade = np.clip((Vb[:, 2] - z) / (hc * 2.0 + 1e-3), 0, 1)[:, None]
+                Cc = base[None, :] * (0.55 + 0.9 * shade) * nr_.uniform(0.6, 1.4, (n, 1))
+                Cs.append(np.concatenate([Cc, np.ones((n, 1))], 1))
+                Vs.append(Vb)
+                off += n
     if Vs:
-        np_mesh(f"knoll_{k}_forest", np.concatenate(Vs), np.array(Ts), M["leaf"], "Trees", colors=np.concatenate(Cs), smooth=True)   # 面取り感を消すためスムーズシェード
+        np_mesh(f"knoll_{k}_forest", np.concatenate(Vs), np.array(Ts), M["leaf"], "Trees", colors=np.concatenate(Cs), smooth=True)
 
 
 def build_trees():

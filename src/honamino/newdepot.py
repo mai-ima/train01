@@ -341,6 +341,16 @@ def build_stock():
             n += 1
 
 
+
+def build_people():
+    """H3: 新総合車両基地の作業員・事務員(広場・庫前・構内道路・管理棟前)。"""
+    from life import Fig, person
+    f = Fig("nd_people")
+    for i, (x, y, yaw) in enumerate(((262.0, -103.0, 1.2), (270.0, -105.0, 4.4), (290.0, -104.0, 0.3), (176.0, -112.0, 2.0), (182.0, -118.0, 5.1),
+                                     (330.0, -100.0, 3.0), (310.0, -60.0, 1.6), (355.0, -62.0, 4.6), (360.0, -56.0, 0.2))):
+        person(f, x, y, yaw, "worker" if i % 3 else "man", z=0.07)
+    f.build()
+
 def register_grass_exclusion():
     """新基地の敷地(留置線・庫・管理棟群・広場・構内道路・引込線)には近景の草を生やさない。屋内の床にまで草が出ていた(室内確認で発見)。"""
     import veg
@@ -364,4 +374,5 @@ def build():
         build_site()
     if "stock" not in skip:
         build_stock()
+    build_people()
     print("newdepot built")

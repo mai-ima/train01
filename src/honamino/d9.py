@@ -245,6 +245,29 @@ def _freight():
     print("[D9d] 貨物ホームと上屋・クレーンを追加:", FREIGHT)
 
 
+
+def _people():
+    """H3: 新設の島式ホーム・跨線橋・貨物ホーム・西棟まわり・新車庫に人物を配置する(People コレクション=--people で一括表示/非表示)。"""
+    from life import Fig, person
+    f = Fig("d9_people")
+    z = Z_PLAT
+    ym2 = (ISLAND2[2] + ISLAND2[3]) / 2
+    ym3 = (ISLAND3[2] + ISLAND3[3]) / 2
+    ym1 = (ISLAND[2] + ISLAND[3]) / 2
+    person(f, 6.0, ym2 + 0.3, 0.2, "man", z=z)
+    person(f, 8.0, ym2 - 0.3, 3.2, "woman", z=z)
+    person(f, 25.0, ym2, 1.5, "student", z=z, scale=0.82)
+    person(f, 33.0, ym2 + 0.4, 3.0, "farmer", z=z, pose="walk")
+    person(f, 52.0, ym3, 0.0, "man2", z=z)
+    person(f, 56.0, ym3 + 0.3, 3.1, "woman", z=z)
+    person(f, 22.0, ym1 + 0.3, 2.0, "man", z=z)                      # 第1島の跨線橋階段そば
+    person(f, 20.0, (Y_WALL + ym2) / 2, 1.57, "man2", z=5.2 + 0.03)   # 跨線橋の上(通路中央)
+    person(f, 20.0, (Y_WALL + ym2) / 2 + 3.0, 4.7, "student", z=5.2 + 0.03, scale=0.85)
+    person(f, 20.0, Y_WALL + 4.0, 0.0, "man", z=5.2 - 0.9)           # 駅前側の階段の途中(おおよその高さ)
+    for i, x in enumerate((14.0, 22.0, 30.0, 38.0)):                  # 貨物ホーム: 荷役の作業員
+        person(f, x, (FREIGHT[2] + FREIGHT[3]) / 2, 0.6 * i, "worker", z=Z_PLAT - 0.2, pose="walk" if i % 2 else "stand")
+    f.build()
+
 def build_platforms():
     _island("d9_isl2", ISLAND2)
     _island("d9_isl3", ISLAND3)
@@ -252,6 +275,7 @@ def build_platforms():
     _crossing(0.5, ISLAND2[3], T3 + 1.7, [T3])
     _crossing(47.0, ISLAND2[2], ISLAND3[3], [T4, T5])
     _footbridge(20.0)
+    _people()
     _west_extension()
     _wing()
     _freight()

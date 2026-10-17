@@ -53,7 +53,7 @@ def build_depot_tracks(cam):
 
 
 def build_depot_ground():
-    core.apron("depot_yard", -14.0, -76.0, 50.0, 47.0, M["road"], noise_amp=0.05, z0=0.012)
+    core.apron("depot_yard", -14.0, -76.0, 50.0, 47.0, M["road"], n=4.0, noise_amp=0.12, z0=0.012)   # D6: 角ばった切り抜きに見えないよう丸みと縁の不規則さを増す
     # darker cinder bed round the turntable and in front of the stalls
     a = D("cinder_bed", M["ballast"])
     for k in range(60):
