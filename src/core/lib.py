@@ -441,10 +441,10 @@ class Mat:
 def mat_cloth(name, color, rough=0.92):
     """衣服: 織り目の細かな凹凸と色むら(単色プラスチックに見えないようにする。H1)。"""
     m = Mat(name)
-    weave = m.noise(scale=420, detail=1, rough=0.5)
+    weave = m.noise(scale=900, detail=1, rough=0.5)
     tone = m.ramp(m.noise(scale=6, detail=3), [(0.3, (0.82, 0.82, 0.82)), (0.7, (1.12, 1.12, 1.12))])
     col = m.mix(1.0, color, tone, 'MULTIPLY')
-    nrm = m.bump(weave, 0.5, 0.004)
+    nrm = m.bump(weave, 0.35, 0.0015)
     m.principled(**{'Base Color': col, 'Roughness': rough, 'Specular IOR Level': 0.2, 'Normal': nrm})
     return m.m
 

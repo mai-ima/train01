@@ -1612,6 +1612,16 @@ def _sleep_inside(v, S, tot, bays, segs, zones, rnd):
                 x = a + 0.78 + xx * 1.56
                 v.A("t_moq_b", 0.02).box(x - 0.2, x + 0.2, h - 0.38, h - 0.10, zfl + 0.40, zfl + 0.46)
                 v.A("t_wood").box(x - 0.2, x + 0.2, h - 0.28, h - 0.09, zfl + 0.70, zfl + 0.73)
+                tz = zfl + 0.73                                                                          # 窓際テーブルの小物(湯飲み・瓶・新聞)
+                if rnd.random() < 0.55:
+                    v.A("t_white").cyl((x - 0.08, h - 0.20, tz), (x - 0.08, h - 0.20, tz + 0.09), 0.032, 0.028, seg=10)
+                if rnd.random() < 0.35:
+                    v.A("t_cab").cyl((x + 0.10, h - 0.17, tz), (x + 0.10, h - 0.17, tz + 0.14), 0.031, 0.031, seg=12)        # 茶瓶(胴・肩・首)
+                    v.A("t_cab").cyl((x + 0.10, h - 0.17, tz + 0.14), (x + 0.10, h - 0.17, tz + 0.18), 0.031, 0.012, seg=12)
+                    v.A("t_cab").cyl((x + 0.10, h - 0.17, tz + 0.18), (x + 0.10, h - 0.17, tz + 0.23), 0.012, 0.011, seg=8)
+                    v.A("t_white").cyl((x + 0.10, h - 0.17, tz + 0.23), (x + 0.10, h - 0.17, tz + 0.245), 0.014, 0.014, seg=8)
+                if rnd.random() < 0.3:
+                    v.A("t_blank", 0.004).box(x - 0.17, x + 0.02, h - 0.26, h - 0.12, tz, tz + 0.012)
                 if rnd.random() < 0.35:                                                                  # 窓際の補助席に座る乗客(窓側を向く)
                     _rider(v, x, h - 0.30, zfl, 1.5708, True, rnd=rnd)
     elif st == "compart":
