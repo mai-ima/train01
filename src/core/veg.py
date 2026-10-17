@@ -59,6 +59,8 @@ def emit(name, V, T, C, mat, col="Vegetation"):
 
 
 # ------------------------------------------------------------------ exclusion zones
+EXTRA_EXCL = []      # [(x0, x1, y0, y1)] 草を生やさない追加の矩形(newdepot が登録)
+
 def inside_rect(P, x0, x1, y0, y1):
     return (P[:, 0] > x0) & (P[:, 0] < x1) & (P[:, 1] > y0) & (P[:, 1] < y1)
 
@@ -83,6 +85,13 @@ def free_mask(P):
             bad |= inside_rect(P, a, b, c, d)
     except Exception:
         pass
+    try:
+        import newdepot as _nd
+        _nd.register_grass_exclusion()                                # 構築順に依存せず登録する(冪等)
+    except ImportError:
+        pass
+    for (a, b, c, d) in EXTRA_EXCL:                                   # 新総合車両基地など、他モジュールが登録した除外矩形(D4/D5)
+        bad |= inside_rect(P, a, b, c, d)
     bad |= (y < -125) | (y > 24.8)
     return ~bad
 

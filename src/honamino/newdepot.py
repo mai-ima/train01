@@ -267,8 +267,17 @@ def build_stock():
             n += 1
 
 
+def register_grass_exclusion():
+    """新基地の敷地(留置線・庫・管理棟群・広場・構内道路・引込線)には近景の草を生やさない。屋内の床にまで草が出ていた(室内確認で発見)。"""
+    import veg
+    for r in ((96.0, 495.0, -102.0, -26.0), (125.0, 345.0, -168.0, -86.0), (340.0, 445.0, -160.0, -80.0)):
+        if r not in veg.EXTRA_EXCL:
+            veg.EXTRA_EXCL.append(r)
+
+
 def build():
     import os
+    register_grass_exclusion()
     skip = os.environ.get("ND_SKIP", "").split(",")          # 調査用: 部分ごとに構築を省く(通常は空)
     build_tracks()
     build_ground()
