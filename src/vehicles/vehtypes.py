@@ -1956,6 +1956,8 @@ def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True)
         for s in (-1, 1):
             steps_down(v, dx, s, h, zfl - 0.1, n=2)
     _under(v, S)
+    for fx in (-L * 0.30, 0.0, L * 0.30):                                    # 床下の補助光(地面反射の代わり。台車・機器を読めるように)
+        v.lights.append((fx, 0.0, 0.55, 5.0, 1.6, 90.0, (1.0, 0.92, 0.80)))
     _roof(v, S)
     lg = {"jnr_dc": ("logo_new.png", 0.50), "jnr_sub": ("logo_new.png", 0.62), "jnr_exp": ("logo_new.png", 0.70),
           "jnr_ltd": ("logo_new.png", 0.52), "jnr_ac": ("logo_new.png", 0.56), "ke": ("logo_ke.png", 0.60), "km": ("logo_km.png", 0.46), "kiha_std": ("logo_new.png", 0.55), "kiha_exp": ("logo_new.png", 0.66),
