@@ -195,10 +195,11 @@ def scatter_pebbles(name, P, s, cam, radius, density=75.0):
     x, y, z, ang = x[keep], y[keep], z[keep], ang[keep]
     n = len(x)
     size = rng.uniform(0.020, 0.044, n)
-    tmpl = np.array([[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 0.8], [0, 0, -0.5]], dtype=np.float32)
+    tmpl = np.array([[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 0.55], [0, 0, -0.3]], dtype=np.float32)
     faces = np.array([[0, 2, 4], [2, 1, 4], [1, 3, 4], [3, 0, 4], [2, 0, 5], [1, 2, 5], [3, 1, 5], [0, 3, 5]])
-    jit = 1.0 + rng.uniform(-0.3, 0.3, (n, 6, 3)).astype(np.float32)
+    jit = 1.0 + rng.uniform(-0.4, 0.4, (n, 6, 3)).astype(np.float32)
     squash = rng.uniform(0.6, 1.2, (n, 1, 3)).astype(np.float32)
+    squash[:, 0, 2] *= rng.uniform(0.45, 0.8, n).astype(np.float32)          # 砕石は扁平(尖った三角錐に見せない)
     local = tmpl[None] * jit * squash * size[:, None, None]
     a2 = rng.uniform(0, 2 * np.pi, n)
     c, sn = np.cos(a2), np.sin(a2)
