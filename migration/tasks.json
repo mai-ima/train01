@@ -1086,5 +1086,11 @@
   "subject": "【Q19】同一平面で重なる面(コプラナー)の自動検出を Q3/healthscan に追加(黒帯の根本原因 nd_road の再発防止)",
   "description": "main.py の DBG_COPLANAR は外接箱ベースで誤検出が多い。面単位の判定に精密化して healthscan に組み込む。 【完了2026-10-17】面単位の検出器を main.py に実装(DBG_COPLANAR)。バラスト0組。docs/ROOT_CAUSES.md に記録。",
   "status": "completed"
+ },
+ {
+  "id": 316,
+  "subject": "【T5】近景の里山(knoll)がのっぺりした丘になっている: 樹林(葉カード・幹)・尾根の起伏・斜面の岩/草を載せる",
+  "description": "hill3_0 で霞・縁・暗さは根本修正済みだが樹木がない。veg.py の knoll に樹林散布・尾根ノイズ・露岩を追加し複数視点で確認(Q4/Q14/Q15と連動)。",
+  "status": "pending"
  }
 ]

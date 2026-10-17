@@ -727,7 +727,7 @@ def mat_hill(name, cam_pos, haze=(0.62, 0.72, 0.82), near=(0.07, 0.15, 0.07), fa
     dist = cd.outputs['View Distance']
     fog = m.maprange(dist, 250.0, far_dist, 0.0, 0.88)
     mott = m.ramp(m.noise(scale=0.08, detail=6, rough=0.7), [(0.3, (0.7, 0.8, 0.7)), (0.7, (1.4, 1.35, 1.1))])
-    forest = m.ramp(m.noise(scale=0.35, detail=5), [(0.3, (0.05, 0.11, 0.05)), (0.7, (0.12, 0.22, 0.08))])
+    forest = m.ramp(m.noise(scale=0.35, detail=5), [(0.3, (0.025, 0.06, 0.028)), (0.7, (0.06, 0.12, 0.04))])   # 実在の森の反射率(0.03〜0.08)に合わせて暗く
     col = m.mix(1.0, forest, mott, 'MULTIPLY')
     col = m.mix(fog, col, haze)
     m.principled(**{'Base Color': col, 'Roughness': 1.0, 'Specular IOR Level': 0.0})
