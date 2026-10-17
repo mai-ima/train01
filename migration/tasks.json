@@ -1027,5 +1027,11 @@
   "subject": "【S-Q5】圧縮手順整備の優先順位メモ",
   "status": "completed",
   "description": ""
+ },
+ {
+  "id": 307,
+  "subject": "【C16】線路配置のリアル化(車両基地の配線・駅構内の分岐/渡り/平行間隔・曲線半径の検査と修正)",
+  "status": "in_progress",
+  "description": "ユーザー指示2026-10-17。net/radius_check.py(辺ごとの最小半径と設計速度)で半径不足38辺を検出済み(本線SH/HM の90〜95km/h区間でR<405〜451m、ST_M08 等の駅構内でR30前後)。①D4/D5 newdepot.py は R200引き揚げ線→12°はしご線→R150転向曲線→4.5m間隔の平行留置線で再設計済み ②半径不足辺を、駅間は緩和曲線/半径拡大、駅構内は分岐器の番数に応じた角度に直す ③駅ごとの配線(渡り線・安全側線・引上線)を details.py の線数に合わせて実在配線に倣い設計 ④interf.py/orient_graph.py/radius_check.py を通す ⑤3視点以上で目視。【再開めど】radius_check.py の出力から修正対象を選ぶ。"
  }
 ]

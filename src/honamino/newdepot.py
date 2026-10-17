@@ -5,41 +5,61 @@ import trackkit
 from trackkit import seg_line, seg_arc, join, build_track
 from lib import Acc
 
-LEAD_R = 45.0
-SPINE_X = LEAD_R + 78.0
+# --- 配線(実際の車両基地に倣う): 引き揚げ線は第6線端から緩い曲線(R=200)で出て、斜めのはしご線(約12°)に入り、
+#     はしご線から各留置線が分岐(分岐器の転向曲線 R=150、約1:5相当)して間隔4.5mの平行線になる。台形の敷地(手前の線ほど長い)。
+ALPHA = math.radians(12.0)
+LEAD_R = 200.0
+TURN_R = 150.0
 N_STAB = 12
-Y0 = -140.0
-DY = 6.0
-BR = 14.0
-X_END = 285.0
-SHED = dict(x0=190.0, x1=290.0, y0=-171.0, y1=-134.0, h=9.5)
+DY = 4.5
+X_END = 480.0
+S0 = 12.0                       # はしご始点から最初の分岐器までの距離(m)
+DS = DY / math.sin(ALPHA)       # はしご線上の分岐器の間隔
+_c = (78.0, T6 - LEAD_R)
+LADDER0 = np.array([_c[0] + LEAD_R * math.sin(ALPHA), _c[1] + LEAD_R * math.cos(ALPHA)])
+HDIR = np.array([math.cos(ALPHA), -math.sin(ALPHA)])      # はしご線の進行方向(東南東)
+
+
+def ladder_pt(k):
+    return LADDER0 + HDIR * (S0 + DS * k)
 
 
 def stab_y(k):
-    return Y0 - DY * k
+    L = ladder_pt(k)
+    return L[1] - TURN_R * (1 - math.cos(ALPHA))
+
+
+def stab_x0(k):
+    """留置線の平行部分の始端x(転向曲線の終点)。"""
+    return ladder_pt(k)[0] + TURN_R * math.sin(ALPHA)
+
+
+YA, YB = stab_y(0), stab_y(N_STAB - 1)
+SHED = dict(x0=300.0, x1=420.0, y0=stab_y(5) - 2.8, y1=YA + 2.8, h=9.5)
 
 
 def build_tracks():
-    cy = T6 - LEAD_R
-    y_last = stab_y(N_STAB - 1) + BR
-    lead = join(seg_line((70.0, T6), (78.0, T6)), seg_arc((78.0, cy), LEAD_R, 90, 0),
-                seg_line((SPINE_X, cy), (SPINE_X, y_last)))
+    from kit5 import turnout
+    lead = join(seg_line((70.0, T6), (78.0, T6)), seg_arc(_c, LEAD_R, 90, 90 - math.degrees(ALPHA)),
+                seg_line(LADDER0, ladder_pt(N_STAB - 1) + HDIR * 14.0))
     build_track("N_lead", lead)
+    trackkit.buffer_stop(*(ladder_pt(N_STAB - 1) + HDIR * 15.0), -math.degrees(ALPHA))
     for k in range(N_STAB):
-        y = stab_y(k)
-        P = join(seg_arc((SPINE_X + BR, y + BR), BR, 180, 270), seg_line((SPINE_X + BR, y), (X_END, y)))
+        L = ladder_pt(k)
+        cx, cy = L[0] + TURN_R * math.sin(ALPHA), L[1] + TURN_R * math.cos(ALPHA)
+        arc = seg_arc((cx, cy), TURN_R, -90 - math.degrees(ALPHA), -90)
+        P = join(arc, seg_line(arc[-1], (X_END, arc[-1][1])))
         build_track(f"N_stab{k}", P)
-        trackkit.buffer_stop(X_END + 1.0, y, 0)
+        trackkit.buffer_stop(X_END + 1.0, arc[-1][1], 0)
+        turnout(P, f"N_to{k}", sig=(k == 0))
 
 
 def build_ground():
     a = Acc("nd_yard_cinder", M["dirt"], "Roads")
-    cx, cy = (SPINE_X + X_END) / 2 + 4, (stab_y(0) + stab_y(N_STAB - 1)) / 2
-    a.boxc(cx, cy, 0.0, X_END - SPINE_X + 24, DY * N_STAB + 30, 0.04)
+    x0, x1 = 96.0, X_END + 10.0
+    cy = (YA + YB) / 2 - 3.0
+    a.boxc((x0 + x1) / 2, cy, 0.03, x1 - x0, abs(YA - YB) + 40.0, 0.06)
     a.build()
-    b = Acc("nd_lead_cinder", M["dirt"], "Roads")
-    b.boxc(SPINE_X, (T6 - LEAD_R + stab_y(N_STAB - 1)) / 2, 0.0, 14, abs(T6 - LEAD_R - stab_y(N_STAB - 1)), 0.04)
-    b.build()
 
 
 def build_shed():
@@ -47,7 +67,7 @@ def build_shed():
     w, d, h = s["x1"] - s["x0"], s["y1"] - s["y0"], s["h"]
     cx, cy = (s["x0"] + s["x1"]) / 2, (s["y0"] + s["y1"]) / 2
     col = Acc("nd_shed_frame", M["iron_black"], "Station", bevel=0.01)
-    n = int(w // 10) + 1
+    n = int(w // 10)
     for i in range(n + 1):
         x = s["x0"] + w * i / n
         for y in (s["y0"], s["y1"]):
@@ -69,20 +89,32 @@ def build_shed():
 
 
 def build_blocks():
-    """管理棟群(3階建)と技術開発棟群(外形。室内は D7/D8)。"""
+    """管理棟群(3階建)と技術開発棟群(外形。室内は D7/D8)。はしご線の南側に置く。"""
     adm = Acc("nd_admin", M["concrete"], "Station", bevel=0.02)
-    for x, y in [(160.0, -110.0), (160.0, -140.0), (160.0, -170.0)]:
+    for x, y in [(230.0, -115.0), (256.0, -115.0), (282.0, -115.0)]:
         adm.boxc(x, y, 5.5, 22, 16, 11)
     adm.build()
     rd = Acc("nd_rd", M["wall"], "Station", bevel=0.02)
-    for x, y, w, d, h in [(96.0, -215.0, 34, 22, 14), (96.0, -245.0, 34, 22, 14), (136.0, -240.0, 30, 30, 10)]:
+    for x, y, w, d, h in [(140.0, -120.0, 34, 22, 14), (140.0, -150.0, 34, 22, 14), (190.0, -150.0, 30, 30, 10)]:
         rd.boxc(x, y, h / 2, w, d, h)
     rd.build()
     gl = Acc("nd_blocks_glass", M["dark_glass"], "Station")
-    for x, y in [(160.0, -110.0), (160.0, -140.0), (160.0, -170.0)]:
+    for x, y in [(230.0, -115.0), (256.0, -115.0), (282.0, -115.0)]:
         for z in (2.6, 5.9, 9.0):
             gl.boxc(x, y + 8.02, z, 18, 0.06, 1.4)
     gl.build()
+
+
+def build_stock():
+    """留置車両: 庫内(第0〜5線)と庫外(第6〜11線)に客車編成。外形のみ(室内は車両側の室内つきモデル)。"""
+    import train as T
+    n = 0
+    plan = {0: 3, 1: 3, 2: 2, 3: 3, 4: 3, 5: 2, 6: 4, 7: 5, 8: 3, 9: 4, 10: 2, 11: 3}
+    for k, cnt in plan.items():
+        x0 = max(stab_x0(k) + 14.0, SHED["x0"] + 12.0) if k <= 5 else stab_x0(k) + 14.0
+        for j in range(cnt):
+            T.make_coach(f"nd_coach_{k}_{j}", variant=(k + j) % 4, seed=300 + n).place(x0 + 10.0 + j * 20.6, stab_y(k), math.pi if (k + j) % 2 else 0.0)
+            n += 1
 
 
 def build():
@@ -90,4 +122,5 @@ def build():
     build_ground()
     build_shed()
     build_blocks()
+    build_stock()
     print("newdepot built")
