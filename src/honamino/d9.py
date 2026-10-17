@@ -51,10 +51,37 @@ def _crossing(x, y_from, y_to, tracks):
     pl.build()
 
 
+class _G:
+    """kit.footbridge が使う g.a(キー, bevel=) の最小アダプタ: キーごとに Acc を1つ作り、最後にまとめて build する。"""
+    def __init__(self, name):
+        self.name, self.accs = name, {}
+
+    def a(self, key, bevel=0.0):
+        if key not in self.accs:
+            self.accs[key] = Acc(f"{self.name}_{key}", M[key], "Structures", bevel=bevel)
+        return self.accs[key]
+
+    def build(self):
+        for v in self.accs.values():
+            v.build()
+
+
+def _footbridge(x=20.0):
+    """D9b: 屋根つき跨線橋。駅前(北)から本屋側ホーム・第1島・第2島(T4北側)へ。第2島は橋の-x側の階段で、第1島は-x側の階段で降りる。"""
+    from kit import footbridge
+    g = _G("d9_fb")
+    ym1 = (ISLAND[2] + ISLAND[3]) / 2               # 第1島(T2/T3)の中心
+    ym2 = (ISLAND2[2] + ISLAND2[3]) / 2             # 第2島(T3/T4)の中心
+    footbridge(g, x, Y_WALL, ym2, covered=True, kind="steel", z=5.2, lo_turn=True, mid=[ym1])
+    g.build()
+
+
 def build_platforms():
     _island("d9_isl2", ISLAND2)
     _island("d9_isl3", ISLAND3)
     # 第1島(T2/T3)→第2島: T3 を横切る。第2島→第3島: T4・T5 を横切る
     _crossing(0.5, ISLAND2[3], T3 + 1.7, [T3])
     _crossing(47.0, ISLAND2[2], ISLAND3[3], [T4, T5])
+    _footbridge(20.0)
+    print("[D9b] 跨線橋を追加: x=20")
     print("[D9a] 島式ホーム2面を追加:", ISLAND2, ISLAND3)

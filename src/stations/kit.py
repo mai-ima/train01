@@ -258,12 +258,18 @@ def footbridge(g, x, ya, yb, covered=False, z=5.2, kind="steel", lo_turn=True, p
     for k in range(n):
         y0 = hi + k * 0.3
         d.box(x - 0.9, x + 0.9, y0, y0 + 0.3, z - (k + 1) * rise - 0.0, z - k * rise - 0.12)
+        d.box(x - 0.9, x + 0.9, y0, y0 + 0.03, z - (k + 1) * rise, z - k * rise - 0.12)       # 蹴込み板
+    for xx in (x - 0.93, x + 0.93):                                                          # 側桁(段の下を斜めに受ける)
+        d.sbox((xx, hi, z - 0.35), (xx, hi + n * 0.3, 0.0), 0.05, 0.28)
     for xx in (x - 1.0, x + 1.0):
         d.sbox((xx, hi, z + 1.0), (xx, hi + n * 0.3, 1.0), 0.05, 0.05)
     for ym in (mid or []):                                             # 中間の島式ホームへの階段(-x 方向)
         for k_ in range(n):
             x0_ = x - 1.0 - (k_ + 1) * 0.3
             d.box(x0_, x0_ + 0.3, ym - 0.9, ym + 0.9, z - (k_ + 1) * rise, z - k_ * rise - 0.12)
+            d.box(x0_ + 0.27, x0_ + 0.3, ym - 0.9, ym + 0.9, z - (k_ + 1) * rise, z - k_ * rise - 0.12)
+        for yy in (ym - 0.93, ym + 0.93):
+            d.sbox((x - 1.0, yy, z - 0.35), (x - 1.0 - n * 0.3, yy, 0.0), 0.28, 0.05)
         for yy in (ym - 0.9, ym + 0.9):
             d.sbox((x - 1.0, yy, z + 1.0), (x - 1.0 - n * 0.3, yy, 1.0), 0.05, 0.05)
     # lo側: ホーム上を +x へ降りる(lo_turn)か、従来どおり -y へ降りる
@@ -271,6 +277,9 @@ def footbridge(g, x, ya, yb, covered=False, z=5.2, kind="steel", lo_turn=True, p
         for k in range(n):
             x0_ = x + 1.0 + k * 0.3
             d.box(x0_, x0_ + 0.3, lo - 0.9, lo + 0.9, z - (k + 1) * rise, z - k * rise - 0.12)
+            d.box(x0_, x0_ + 0.03, lo - 0.9, lo + 0.9, z - (k + 1) * rise, z - k * rise - 0.12)
+        for yy in (lo - 0.93, lo + 0.93):
+            d.sbox((x + 1.0, yy, z - 0.35), (x + 1.0 + n * 0.3, yy, 0.0), 0.28, 0.05)
         for yy in (lo - 0.9, lo + 0.9):
             d.sbox((x + 1.0, yy, z + 1.0), (x + 1.0 + n * 0.3, yy, 1.0), 0.05, 0.05)
     else:
