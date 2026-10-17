@@ -220,6 +220,13 @@ def _pane(v, x0, y0, z0, x1, y1, z1, key="glass", t=0.018):
     pass
 
 
+def _gasket(v, e, a0, a1, b1, b0, wd=0.034):
+    """風防の黒ゴム枠(4辺)。a0,a1=下辺 b0,b1=上辺。"""
+    gk = v.A("black")
+    for pa, pb in ((a0, a1), (b0, b1), (a0, b0), (a1, b1)):
+        gk.sbox((pa[0] + 0.012 * e, pa[1], pa[2]), (pb[0] + 0.012 * e, pb[1], pb[2]), wd, 0.036)
+
+
 def _pane4(acc, p00, p10, p11, p01, t=0.016, n=(1, 0, 0)):
     """4点の薄い板(法線 n 方向へ厚み t)。"""
     i = len(acc.V)
@@ -842,6 +849,7 @@ def _front0(v, S, e, nose):
             a0 = (X(xe + 0.02), yc - wd / 2, 2.10); a1 = (X(xe + 0.02), yc + wd / 2, 2.10)
             b1 = (X(xe - 0.10), yc + wd / 2, zwt + 0.04); b0 = (X(xe - 0.10), yc - wd / 2, zwt + 0.04)
             _pane4(gl, a0, a1, b1, b0, t=0.02 * e, n=(1, 0, 0))
+            _gasket(v, e, a0, a1, b1, b0)
         for yp in (-0.5, 0.5):
             v.A(up, 0.004).box(*sorted((X(xe - 0.10), X(xe + 0.04))), yp - 0.04, yp + 0.04, 2.08, zwt + 0.05)
         v.A("t_ltdred", 0.01).box(*sorted((X(xe - 0.05), X(xe + 0.05))), -h, h, 1.85, 2.08)       # 窓下の赤帯
@@ -876,6 +884,7 @@ def _front0(v, S, e, nose):
         yc0 = 0.46
         gl2 = gl
         _pane4(gl2, (X(xc), -yc0, zws + 0.04), (X(xc), yc0, zws + 0.04), (X(xc - 0.10), yc0, zwt - 0.08), (X(xc - 0.10), -yc0, zwt - 0.08), t=0.02 * e, n=(1, 0, 0))
+        _gasket(v, e, (X(xc), -yc0, zws + 0.04), (X(xc), yc0, zws + 0.04), (X(xc - 0.10), yc0, zwt - 0.08), (X(xc - 0.10), -yc0, zwt - 0.08))
         for s in (-1, 1):
             xs_, ys_ = xe + nl * 0.15, h - 0.10
             _pane4(gl2, (X(xc), s * yc0, zws + 0.04), (X(xs_), s * ys_, zws + 0.04), (X(xs_ - 0.10), s * ys_, zwt - 0.08), (X(xc - 0.10), s * yc0, zwt - 0.08),
