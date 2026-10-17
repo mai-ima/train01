@@ -507,7 +507,7 @@ def build_landscape(cam):
     Tt = np.concatenate([np.stack([a, d, b], -1).reshape(-1, 3), np.stack([b, d, c], -1).reshape(-1, 3)])
     np_mesh("hills", Vv.reshape(-1, 3), Tt, hill, "Terrain", smooth=True)
     # near satoyama knolls (forest) at 300-520 m, north / west
-    near = lib.mat_hill("hill_near", cam, far_dist=900.0)
+    near = lib.mat_hill("hill_near", cam, far_dist=2200.0)
     for k, (cx, cy, rx, ry, hh) in enumerate(((-250, 330, 180, 120, 55), (-60, 420, 220, 110, 70), (230, 380, 160, 100, 45),
                                                 (-420, 120, 110, 200, 60), (430, 200, 120, 140, 50), (-380, -260, 170, 120, 52))):
         nx, ny = 64, 64
