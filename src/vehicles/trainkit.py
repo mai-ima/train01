@@ -87,7 +87,7 @@ def mat_veh_window(name, tint=(0.80, 0.90, 0.88)):
     m.setall(gl, {'Color': (0.9, 0.95, 1.0), 'Roughness': 0.04})
     fr = m.node('ShaderNodeFresnel')
     m.set(fr.inputs['IOR'], 1.5)
-    dust = m.ramp(m.noise(scale=6, detail=4), [(0.30, (0.03, 0.03, 0.03)), (0.75, (0.10, 0.10, 0.10))])      # 埃のむらと弱い基底反射(窓が真っ黒/単色の板に見えない)
+    dust = m.ramp(m.noise(scale=6, detail=4), [(0.30, (0.05, 0.05, 0.05)), (0.75, (0.16, 0.16, 0.16))])      # 埃のむらと弱い基底反射(窓が真っ黒/単色の板に見えない)
     fac = m.math('ADD', fr.outputs['Fac'], dust)
     mx = m.node('ShaderNodeMixShader')
     m.set(mx.inputs[0], fac)
