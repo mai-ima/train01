@@ -195,7 +195,7 @@ def scatter_pebbles(name, P, s, cam, radius, density=75.0):
     x, y, z, ang = x[keep], y[keep], z[keep], ang[keep]
     n = len(x)
     size = rng.uniform(0.020, 0.044, n)
-    tmpl = np.array([[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 0.55], [0, 0, -0.3]], dtype=np.float32)
+    tmpl = np.array([[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 0.38], [0, 0, -0.3]], dtype=np.float32)
     faces = np.array([[0, 2, 4], [2, 1, 4], [1, 3, 4], [3, 0, 4], [2, 0, 5], [1, 2, 5], [3, 1, 5], [0, 3, 5]])
     jit = 1.0 + rng.uniform(-0.4, 0.4, (n, 6, 3)).astype(np.float32)
     squash = rng.uniform(0.6, 1.2, (n, 1, 3)).astype(np.float32)
@@ -208,7 +208,7 @@ def scatter_pebbles(name, P, s, cam, radius, density=75.0):
     local = np.einsum('nij,nvj->nvi', R, local)
     V = (local + np.stack([x, y, z + size * 0.12], -1)[:, None, :]).reshape(-1, 3)
     T = (faces[None] + (np.arange(n) * 6)[:, None, None]).reshape(-1, 3)
-    g = rng.uniform(0.07, 0.24, n)
+    g = rng.uniform(0.045, 0.15, n)
     warm = rng.uniform(0.0, 0.035, n)
     cols = np.stack([g + warm, g + warm * 0.6, g, np.ones(n)], -1)
     cols = np.repeat(cols[:, None, :], 6, axis=1).reshape(-1, 4)
