@@ -352,6 +352,15 @@ def _bogie2(v, x, wb=2.1, r=0.43, sideframe_h=0.28, key="iron"):
             a.box(x + dx - 0.15, x + dx + 0.15, y - 0.07, y + 0.07, r - 0.11, r + 0.12)
             sp = v.A("steel")
             sp.cyl((x + dx, y, r + 0.12), (x + dx, y, r + 0.30), 0.075, 0.075, seg=8)
+    for s_ in (-1, 1):                                                     # 側梁の上弦・下弦と軸箱(形鋼組みの台車枠)
+        y = s_ * 0.80
+        a.box(x - wb / 2 - 0.30, x + wb / 2 + 0.30, y - 0.06, y + 0.06, r + 0.30, r + 0.38)
+        a.box(x - wb / 2 - 0.30, x + wb / 2 + 0.30, y - 0.06, y + 0.06, r - 0.02, r + 0.05)
+        for dx in (-wb / 2, wb / 2):
+            v.A("steel").cyl((x + dx, y + s_ * 0.05, r), (x + dx, y + s_ * 0.17, r), 0.115, 0.115, seg=20)     # 軸箱蓋
+            v.A("steel").cyl((x + dx, y + s_ * 0.17, r), (x + dx, y + s_ * 0.19, r), 0.06, 0.06, seg=16)
+            for k in range(6):                                                                         # 大きな軸ばね
+                v.A("steel").torus((x + dx, y, r + 0.12 + k * 0.034), 'z', 0.095, 0.014, segR=16, segr=5)
     a.box(x - 0.18, x + 0.18, -0.85, 0.85, r + 0.12, r + 0.28)           # bolster
     a.cyl((x, 0, r + 0.28), (x, 0, r + 0.38), 0.14, 0.14, seg=10)         # centre pivot
     st, bk, bl = v.A("steel"), v.A("black"), v.A("iron", 0.006)
