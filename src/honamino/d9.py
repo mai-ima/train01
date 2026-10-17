@@ -266,6 +266,23 @@ def _people():
     person(f, 20.0, Y_WALL + 4.0, 0.0, "man", z=5.2 - 0.9)           # 駅前側の階段の途中(おおよその高さ)
     for i, x in enumerate((14.0, 22.0, 30.0, 38.0)):                  # 貨物ホーム: 荷役の作業員
         person(f, x, (FREIGHT[2] + FREIGHT[3]) / 2, 0.6 * i, "worker", z=Z_PLAT - 0.2, pose="walk" if i % 2 else "stand")
+    # H1b: 群像を追加(島ごとに待客の列・談笑の2人組・単独の人を散らし、1視点あたりの人数を増やす)。固定シードで再現可能
+    import random as _rnd
+    rr = _rnd.Random(2024)
+    kinds = ["man", "man2", "woman", "student", "farmer"]
+    for ym, x0, x1, n in ((ym1, -2.0, 46.0, 9), (ym2, -2.0, 46.0, 10), (ym3, 48.0, 64.0, 6)):
+        placed = []
+        for _ in range(n * 3):
+            if len(placed) >= n:
+                break
+            x = rr.uniform(x0, x1)
+            if abs(x - 20.0) < 2.5 or any(abs(x - p) < 1.6 for p in placed):      # 跨線橋の階段前と近すぎる所は避ける
+                continue
+            placed.append(x)
+            k = rr.choice(kinds)
+            person(f, x, ym + rr.uniform(-0.7, 0.7), rr.uniform(0, 6.28), k, z=z, scale=0.82 if k == "student" else rr.uniform(0.94, 1.04), pose=rr.choice(["stand", "stand", "walk"]), skirt=(k == "woman" and rr.random() < 0.5))
+            if rr.random() < 0.35:                                                    # 2人組(向かい合って立つ)
+                person(f, x + 0.7, ym + rr.uniform(-0.5, 0.5), 3.14, rr.choice(kinds), z=z)
     f.build()
 
 def build_platforms():
