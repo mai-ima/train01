@@ -147,6 +147,26 @@ def vmat(key):
     return _VM[key]
 
 
+class _LampWrap:
+    """灯具レンズ(円筒)の周囲に金属のケース(つば)を自動で足す。平らな円板に見えるのを防ぐ。"""
+
+    def __init__(self, veh, acc):
+        self._v, self._a = veh, acc
+
+    def cyl(self, p0, p1, r0, r1=None, seg=12, caps=True):
+        from mathutils import Vector
+        a, b = Vector(p0), Vector(p1)
+        ax = b - a
+        if ax.length > 1e-6 and r0 < 0.2:
+            u = ax.normalized()
+            h = self._v.A("steel")
+            h.cyl(tuple(a - u * 0.035), tuple(a + u * 0.004), r0 * 1.32, r0 * 1.22, seg=max(seg, 12))
+        return self._a.cyl(p0, p1, r0, r1, seg=seg, caps=caps)
+
+    def __getattr__(self, n):
+        return getattr(self._a, n)
+
+
 class Veh:
     """車両ビルダー。リグ規約(運転準備): 台車・輪軸・連結器は part() で別オブジェクト化され、
     部品の原点が回転中心になる(台車=鉛直軸z、輪軸=車軸y、連結器=z)。place() が空オブジェクト階層
@@ -197,6 +217,8 @@ class Veh:
         if k not in self.accs:
             nm = f"{self.name}_{self.cur.replace('.', '_')}_{key}" if self.cur else f"{self.name}_{key}"
             self.accs[k] = Acc(nm, vmat(key), "Trains", bevel=bevel, smooth=smooth)
+        if key == "lampglass":
+            return _LampWrap(self, self.accs[k])
         return self.accs[k]
 
     def plane(self, img, corners, kw=None):
