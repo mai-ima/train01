@@ -866,6 +866,8 @@ def _front0(v, S, e, nose):
             for k in range(6):
                 xx = xe + 0.25 + k * 0.17
                 v.A("black").box(*sorted((X(xx), X(xx + 0.06))), *sorted((s * (h - 0.05) * 0.98, s * (h - 0.05) * 1.0 + s * 0.012)), 1.45, 1.80) if False else None
+        # 窓上の前面壁(以前は窓上が空洞で室内の天井が見え、あずまやのように見えた)
+        v.A(up, 0.006).box(*sorted((X(xe - 0.10), X(xe + 0.03))), -h + 0.02, h - 0.02, zwt + 0.04, zt)
         # 屋根前部の庇
         v.A(up, 0.006).box(*sorted((X(xe - 0.1), X(xe + 0.18))), -h + 0.2, h - 0.2, zwt + 0.04, zwt + 0.10)
         return
