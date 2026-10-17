@@ -187,6 +187,64 @@ def _west_extension():
     _island("d9_west", WEST_EXT, ramps=(-1,))
 
 
+FREIGHT = (10.0, 46.0, T6 - 6.0, T6 - 1.7)      # x0, x1, y0(南縁), y1(T6側の縁): 貨物ホーム(T6の南側)
+
+
+def _freight():
+    """D9d: 貨物ホーム(高さは旅客ホームと同じ)・開放式の貨物上屋(木柱+トタン)・荷役クレーン・米俵/木箱/荷車・南側のトラック荷受け道。"""
+    import rooms
+    from props import G
+    from station import add_tin_roof
+    x0, x1, y0, y1 = FREIGHT
+    zt = Z_PLAT
+    body = Acc("d9f_body", M["stone"], "Platform", bevel=0.01)
+    body.box(x0, x1, y0, y1, -0.25, zt - 0.05)
+    body.build()
+    top = Acc("d9f_surface", M["concrete"], "Platform")
+    top.box(x0 + 0.04, x1 - 0.04, y0 + 0.04, y1 - 0.62, zt - 0.07, zt - 0.035)
+    top.build()
+    cope = Acc("d9f_coping", M["concrete"], "Platform", bevel=0.012)
+    cope.box(x0, x1, y1 - 0.62, y1 + 0.02, zt - 0.12, zt)
+    cope.build()
+    for sgn, xe in ((1, x1), (-1, x0)):                     # 端のスロープ(荷車・フォーク用)
+        r = Acc("d9f_ramp", M["plat_top"], "Platform", closed=True)
+        r.extrude_y([(xe, -0.25), (xe, zt - 0.035), (xe + sgn * 4.0, 0.0), (xe + sgn * 4.0, -0.25)], y0, y1)
+        r.build()
+    # 荷受け道(南側・未舗装)とトラック用の段差
+    rd = Acc("d9f_road", M["dirt"], "Roads")
+    rd.box(x0 - 6.0, x1 + 6.0, y0 - 5.0, y0 - 0.1, -0.02, 0.04)
+    rd.build()
+    # 上屋: 木柱+梁+トタン片流れ(ホーム中央寄り)
+    g = G("d9f_shed", col="Station")
+    sx0, sx1 = x0 + 4.0, x1 - 6.0
+    ya, yb = y0 + 0.6, y1 - 1.2
+    for xx in np.arange(sx0, sx1 + 0.1, 4.5):
+        for yy in (ya, yb):
+            g.a("wood_dark", bevel=0.01).box(xx - 0.1, xx + 0.1, yy - 0.1, yy + 0.1, zt, zt + 3.6)
+        g.a("wood_dark", bevel=0.01).box(xx - 0.08, xx + 0.08, ya, yb, zt + 3.45, zt + 3.62)    # 梁
+    g.a("wood_dark", bevel=0.01).box(sx0 - 0.1, sx1 + 0.1, ya - 0.05, ya + 0.05, zt + 3.5, zt + 3.62)
+    g.a("wood_dark", bevel=0.01).box(sx0 - 0.1, sx1 + 0.1, yb - 0.05, yb + 0.05, zt + 3.7, zt + 3.82)
+    g.build()
+    add_tin_roof((sx0 - 0.5, sx1 + 0.5), (ya - 0.8, yb + 0.6), zt + 3.62, zt + 4.05, name="d9f_roof")
+    # 荷: 米俵の山・木箱・荷車・はかり
+    gc = G("d9f_cargo", col="Props")
+    rooms.sack_pile(gc, sx0 + 3.0, (ya + yb) / 2, zt, nx=3, ny=2, nz=3, yaw=0.1, seed=11)
+    rooms.sack_pile(gc, sx0 + 12.0, (ya + yb) / 2 + 0.3, zt, nx=4, ny=2, nz=2, yaw=-0.05, seed=12)
+    for k, xx in enumerate((sx0 + 7.0, sx0 + 8.2, sx0 + 18.0, sx0 + 19.4)):
+        gc.a("wood", bevel=0.01).box(xx - 0.4, xx + 0.4, (ya + yb) / 2 - 0.4, (ya + yb) / 2 + 0.4, zt, zt + 0.7 + 0.1 * (k % 2))
+    gc.build()
+    # 荷役クレーン(門型・ホーム端): 2本脚+ブーム
+    cr = G("d9f_crane", col="Station")
+    cx = x1 - 2.5
+    for yy in (ya, yb):
+        cr.a("iron_black", bevel=0.01).box(cx - 0.12, cx + 0.12, yy - 0.12, yy + 0.12, zt, zt + 4.2)
+    cr.a("iron_black", bevel=0.01).box(cx - 0.1, cx + 0.1, ya - 2.6, yb + 1.2, zt + 4.0, zt + 4.3)
+    cr.a("iron_black").cyl((cx, ya - 1.4, zt + 4.0), (cx, ya - 1.4, zt + 2.4), 0.03, seg=6)
+    cr.a("iron_black", bevel=0.01).box(cx - 0.2, cx + 0.2, ya - 1.6, ya - 1.2, zt + 2.0, zt + 2.4)
+    cr.build()
+    print("[D9d] 貨物ホームと上屋・クレーンを追加:", FREIGHT)
+
+
 def build_platforms():
     _island("d9_isl2", ISLAND2)
     _island("d9_isl3", ISLAND3)
@@ -196,5 +254,6 @@ def build_platforms():
     _footbridge(20.0)
     _west_extension()
     _wing()
+    _freight()
     print("[D9b] 跨線橋を追加: x=20")
     print("[D9a] 島式ホーム2面を追加:", ISLAND2, ISLAND3)
