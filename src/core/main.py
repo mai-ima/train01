@@ -559,7 +559,7 @@ if args.draft:                       # 確認用の速い設定(最終納品は 
 if os.environ.get('MULTICAM'):
     r.use_persistent_data = True       # 同一シーンを複数カメラで撮る時、BVH等を再利用して2枚目以降を速くする(Blender公式 Performance > Persistent Data)
 scene.view_settings.view_transform = 'AgX'
-for look in ("Medium High Contrast", "AgX - Medium High Contrast", "High Contrast"):
+for look in ((os.environ["LOOK"],) if os.environ.get("LOOK") else ()) + ("Medium High Contrast", "AgX - Medium High Contrast", "High Contrast"):
     try:
         scene.view_settings.look = look
         break
