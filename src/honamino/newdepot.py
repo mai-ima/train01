@@ -5,6 +5,7 @@ import random
 import trackkit
 from trackkit import seg_line, seg_arc, join, build_track
 from lib import Acc
+import lib
 
 # --- 配線(実際の車両基地に倣う): 引き揚げ線は第6線端から緩い曲線(R=200)で出て、斜めのはしご線(約12°)に入り、
 #     はしご線から各留置線が分岐(分岐器の転向曲線 R=150、約1:5相当)して間隔4.5mの平行線になる。台形の敷地(手前の線ほど長い)。
@@ -178,13 +179,30 @@ def build_shed():
     for y in (s["y0"], s["y1"]):
         gl.boxc(cx, y, h * 0.87, w, 0.1, h * 0.26)
     gl.build()
-    roof = Acc("nd_shed_roof", M["tin"], "Station")
     nb = int(w // 10)                                              # D5b: 10m ごとの屋根スパンに分節(段差・母屋・軒先)
     rng_r = random.Random(31)
+    # Q23: スパンごとに別の波板(新旧・色相・汚れ量を変える)+採光窓の帯+雨だれの帯で、反復する単一面をやめる
+    tints = [((0.62, 0.34, 0.2), 0.7, 0.4), ((0.5, 0.3, 0.2), 0.8, 0.7), ((0.7, 0.45, 0.3), 0.55, 0.25), ((0.45, 0.28, 0.2), 0.85, 0.85)]
+    tmats = [lib.mat_pbr(f"tin_roof_v{k}", "CorrugatedSteel005", scale=1.2 + 0.25 * k, hsv=(0.5, 0.9 - 0.05 * k, 0.75 - 0.05 * k), tint=t[0], tint_amt=t[1],
+               bump=0.5, macro=0.35 + 0.1 * k, dirt=t[2], spec=0.45) for k, t in enumerate(tints)]
+    sky = Acc("nd_shed_skylight", M["glass"], "Station")
+    drip = Acc("nd_shed_roof_drip", M["iron_rust"], "Station")
     for i in range(nb):
         x = s["x0"] - 0.5 + (w + 1.0) * (i + 0.5) / nb
-        roof.boxc(x, cy, h + 0.9 + rng_r.uniform(-0.04, 0.04), (w + 1.0) / nb - 0.06, d + 1.6, 0.22)
-    roof.build()
+        zr = h + 0.9 + rng_r.uniform(-0.04, 0.04)
+        wi = (w + 1.0) / nb - 0.06
+        roof = Acc(f"nd_shed_roof_{i}", tmats[rng_r.randrange(len(tmats))], "Station")
+        roof.boxc(x, cy, zr, wi, d + 1.6, 0.22)
+        roof.build()
+        rib = Acc(f"nd_shed_roof_rib_{i}", tmats[0], "Station")                                         # 立ち上がりの棟(波板の畝を形で出す: 約1m間隔)
+        for xr in np.arange(x - wi / 2 + 0.5, x + wi / 2, 1.0):
+            rib.boxc(xr, cy, zr + 0.14, 0.07, d + 1.5, 0.06)
+        rib.build()
+        sky.boxc(x, cy + rng_r.uniform(-0.3, 0.3) * d / 2, zr + 0.13, wi * 0.55, d * 0.18, 0.04)      # 採光窓
+        for yy in (cy - (d + 1.6) / 2, cy + (d + 1.6) / 2):
+            drip.boxc(x, yy, zr - 0.05, wi, 0.12, 0.16)                                                 # 軒先の雨樋
+    sky.build()
+    drip.build()
     rib = Acc("nd_shed_purlin", M["iron_black"], "Station", bevel=0.01)
     for i in range(nb + 1):                                        # 各スパン境に棟と直交する大梁(軒下から見える)
         x = s["x0"] - 0.5 + (w + 1.0) * i / nb
