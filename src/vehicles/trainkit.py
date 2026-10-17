@@ -102,7 +102,7 @@ def vmat(key):
         P = vpaint
         _VM.update({
             "red": vpaint("v_red", (0.50, 0.065, 0.028), rough=0.36, rust=0.2), "cream": vpaint("v_cream", (0.76, 0.64, 0.42), rough=0.38, rust=0.15),
-            "roof": vpaint("v_roof", (0.16, 0.17, 0.18), rough=0.6, rust=0.3, seams=False), "under": vpaint("v_under", (0.16, 0.145, 0.125), rough=0.7, rust=0.45, grime=0.8, seams=False, metal=0.2),
+            "roof": vpaint("v_roof", (0.20, 0.205, 0.21), rough=0.62, rust=0.35, grime=0.9, seams=False), "under": vpaint("v_under", (0.16, 0.145, 0.125), rough=0.7, rust=0.45, grime=0.8, seams=False, metal=0.2),
             "wplank": lib.mat_pbr("wagon_plank", "Planks023A", scale=1.3, hsv=(0.5, 0.95, 0.62), tint=(0.42, 0.16, 0.09), tint_amt=0.75, bump=0.8, dirt=0.5, macro=0.3, spec=0.15),
             "glass": mat_veh_window("veh_window"),
             "moq": lib.mat_plain("veh_moq", (0.07, 0.15, 0.09), rough=0.9, spec=0.1),
