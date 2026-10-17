@@ -776,6 +776,24 @@ if os.environ.get("HIDE_GROUND"):      # 断面確認用: 地面・丘・遠景�
     for _o in bpy.data.objects:
         if _o.type == "MESH" and _rg.match(r"(ground|kit_ground|far_ground|hills|levees|knoll|k2_hill|nd_yard_cinder)", _o.name):
             _o.hide_render = True; _o.hide_viewport = True
+if os.environ.get("DBG_COPLANAR"):   # Q19: 薄い板(厚さ<0.3m)どうしの上面が同一平面(差<0.005m)で xy が重なる組を列挙(黒帯の原因になる)
+    import mathutils
+    _sl = []
+    for _o in bpy.data.objects:
+        if _o.type != "MESH" or _o.hide_render or not _o.data.vertices:
+            continue
+        _bb = [_o.matrix_world @ mathutils.Vector(c) for c in _o.bound_box]
+        _z0, _z1 = min(v.z for v in _bb), max(v.z for v in _bb)
+        if _z1 - _z0 < 0.3:
+            _sl.append((_o.name, min(v.x for v in _bb), max(v.x for v in _bb), min(v.y for v in _bb), max(v.y for v in _bb), _z1))
+    _n = 0
+    for _i in range(len(_sl)):
+        for _j in range(_i + 1, len(_sl)):
+            a, b = _sl[_i], _sl[_j]
+            if abs(a[5] - b[5]) < 0.005 and min(a[2], b[2]) - max(a[1], b[1]) > 0.5 and min(a[4], b[4]) - max(a[3], b[3]) > 0.5:
+                _n += 1
+                if _n <= 60: print("[coplanar]", a[0], b[0], "z=%.3f" % a[5])
+    print("[coplanar] total", _n)
 if os.environ.get("DBG_RECT"):      # デバッグ: "x0,x1,y0,y1" の平面範囲に重なる(地上0.5m超の)オブジェクトを列挙(新設構造の干渉確認用)
     bpy.context.view_layer.update()
     _r = [float(t) for t in os.environ["DBG_RECT"].split(",")]

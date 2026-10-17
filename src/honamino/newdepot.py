@@ -39,11 +39,47 @@ YA, YB = stab_y(0), stab_y(N_STAB - 1)
 SHED = dict(x0=300.0, x1=420.0, y0=stab_y(5) - 2.8, y1=YA + 2.8, h=9.5)
 
 
+def _smooth(u):
+    u = min(max(u, 0.0), 1.0)
+    return u * u * (3 - 2 * u)
+
+
+def build_lead_b(turnout):
+    """S-D11: 入出庫線を複線化。第5線の東端から第2の引き揚げ線(N_leadB)を並行して出し、
+    第6線側の引き揚げ線(N_lead)へは緩い渡り線(約1:8)でつなぐ。第5線⇄第6線の渡り線(T5→T6)も設ける。
+    N_leadB ははしご線と並行する長い引上線で、先端に車止めを置く(2本の引き揚げ線で入出庫が同時に取れる)。"""
+    dT = T5 - T6                                                    # 引き揚げ線の線間(5.5m)
+    rb = LEAD_R + dT
+    cb = _c
+    arcB = seg_arc(cb, rb, 90, 90 - math.degrees(ALPHA))
+    endB = LADDER0 + HDIR * (S0 + DS * 9 + 6.0) + np.array([math.sin(ALPHA), math.cos(ALPHA)]) * dT
+    B = join(seg_line((50.0, T5), (78.0, T5)), arcB, seg_line(arcB[-1], endB))
+    build_track("N_leadB", join(seg_line((68.0, T5), (78.0, T5)), arcB, seg_line(arcB[-1], endB)))   # 68までは第5線本体(core)と重ねない
+    trackkit.buffer_stop(endB[0] + HDIR[0] * 1.0, endB[1] + HDIR[1] * 1.0, -math.degrees(ALPHA))
+    # 渡り線 B→A: 第5線(引き揚げ線B)から第6線側の引き揚げ線Aへ、長さ約44mで寄る(1:8相当)
+    Bd, _s = trackkit.resample(B, 1.0)
+    L = 44.0
+    i0 = int(np.argmax(Bd[:, 0] >= 58.0))
+    Q = []
+    for k in range(int(L) + 1):
+        P = Bd[i0 + k]
+        if P[0] <= 78.0 + 1e-6 and abs(P[1] - T5) < 0.2:
+            A = np.array([P[0], T6])
+        else:
+            v = P - np.array(cb)
+            A = np.array(cb) + v / np.linalg.norm(v) * LEAD_R
+        Q.append(P + (A - P) * _smooth(k / L))
+    X = np.array(Q)
+    build_track("N_leadX", X)
+    turnout(X, "N_toX", sig=True)
+
+
 def build_tracks():
     from kit5 import turnout
     lead = join(seg_line((70.0, T6), (78.0, T6)), seg_arc(_c, LEAD_R, 90, 90 - math.degrees(ALPHA)),
                 seg_line(LADDER0, ladder_pt(N_STAB - 1) + HDIR * 14.0))
     build_track("N_lead", lead)
+    build_lead_b(turnout)
     for k in range(N_STAB):
         L = ladder_pt(k)
         cx, cy = L[0] + TURN_R * math.sin(ALPHA), L[1] + TURN_R * math.cos(ALPHA)
@@ -230,9 +266,9 @@ def build_site():
     plaza.boxc(283.0, -103.0, 0.035, 110.0, 24.0, 0.07)            # 管理棟前の広場
     plaza.boxc(172.0, -118.0, 0.035, 90.0, 52.0, 0.07)             # 技術開発棟前
     plaza.build()
-    road = Acc("nd_road", M["dirt"], "Roads")
-    road.boxc(228.0, -88.0, 0.03, 190.0, 7.0, 0.06)                # 構内道路(はしご線の南側)
-    road.boxc(110.0, -150.0, 0.03, 8.0, 140.0, 0.06)               # 本社側へ南下する道
+    road = Acc("nd_road", M["road"], "Roads")
+    road.boxc(228.0, -88.0, 0.045, 190.0, 7.0, 0.09)                # 構内道路(はしご線の南側)
+    road.boxc(110.0, -150.0, 0.045, 8.0, 140.0, 0.09)               # 本社側へ南下する道
     road.build()
     fence = Acc("nd_fence", M["iron_black"], "Props")
     for x in np.arange(100.0, 480.0, 5.0):                          # 南側境界のフェンス(柱+上下2段の横桟)。旧車庫は敷地の内側に含める

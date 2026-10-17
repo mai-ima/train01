@@ -100,7 +100,8 @@ def build_tracks(cam):
     for nm, P in YARD_PATHS.items():
         trackkit.build_track(nm, P, cam=cam, pebble_radius=44.0)
     trackkit.buffer_stop(54.5, T4, 0)
-    trackkit.buffer_stop(68.5, T5, 0)
+    if not NEWDEPOT_ON:
+        trackkit.buffer_stop(68.5, T5, 0)
     if not NEWDEPOT_ON:
         trackkit.buffer_stop(78.5, T6, 0)
     return YARD_PATHS

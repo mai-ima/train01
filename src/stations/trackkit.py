@@ -127,7 +127,11 @@ def build_track(name, P, wooden=True, ballast=True, fittings=True, cam=None, peb
     TRACKS[name] = P
     DZ = None if zfun is None else np.asarray(zfun(s), float)      # 高低差(m): 高架・地下・築堤用
     if ballast:
-        _sweep_open(name + "_ballast", P, BALLAST_PROFILE, M["ballast"], dz=DZ)
+        # 根本対策(Q19): 分岐・渡り線でバラストが重なる所の上面が同一平面だと影レイが自己交差して真っ黒になる。
+        # 線ごとに上面を 2mm ずつずらして同一平面を作らない(見た目には影響しない)。
+        _bz = 0.002 * (len(TRACKS) % 6)
+        _dzb = np.full(len(P), _bz) if DZ is None else np.asarray(DZ, float) + _bz
+        _sweep_open(name + "_ballast", P, BALLAST_PROFILE, M["ballast"], dz=_dzb)
     # sleepers + fittings
     rng = random.Random(abs(hash(name)) % 100000)
     sl = Acc(name + "_sleepers", M["sleeper"], "Track", bevel=0.012)
