@@ -23,7 +23,7 @@ ap.add_argument("--parts", default="core,station,props,train,veg,hq")
 ap.add_argument("--out", default="test")
 ap.add_argument("--no-render", action="store_true")
 ap.add_argument("--exposure", type=float, default=0.0)
-ap.add_argument("--sky", type=float, default=0.32)
+ap.add_argument("--sky", type=float, default=0.14)
 ap.add_argument("--sun", type=float, default=4.6)
 ap.add_argument("--cloud", type=float, default=0.0)
 ap.add_argument("--noclouds", action="store_true")
@@ -54,6 +54,10 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
 M = common.make_materials()
 parts = set(args.parts.split(","))
+if args.zone and not os.environ.get('ZONE_PARTS'):     # --zone はゾーンビルダーが全部作る。parts(core/station/props/train…)を重ねると全体が二重生成され、同位置の重なりで影が黒く潰れる
+    if parts - {'none', ''}:
+        print('NOTE: --zone 指定のため --parts を無視します(二重生成防止):', sorted(parts))
+    parts = set(p for p in parts if p in ('vtest',))
 
 # ------------------------------------------------------------------ cameras / sun presets
 CAMS = {
@@ -529,6 +533,10 @@ cy.samples = args.samples
 cy.use_adaptive_sampling = True
 cy.adaptive_threshold = 0.03
 cy.use_denoising = True
+if os.environ.get('NODENOISE'):      # 検証用: デノイズ無し
+    cy.use_denoising = False
+if os.environ.get('NOADAPT'):
+    cy.use_adaptive_sampling = False
 try:
     cy.denoiser = 'OPENIMAGEDENOISE'
 except Exception:
@@ -763,6 +771,42 @@ if os.environ.get("DBG_DUP"):      # デバッグ: 名前が「X」と「X.001�
         if _p.type == "MESH" and len(_p.data.vertices) == len(_o.data.vertices) and all(abs(x - y) < 0.01 for x, y in zip(_p.dimensions, _o.dimensions)) and (_p.matrix_world.translation - _o.matrix_world.translation).length < 0.01:
             _k = _m3.group(1)[:20]; _dup[_k] = _dup.get(_k, 0) + 1
     print("[dup] 二重オブジェクト:", sum(_dup.values()), sorted(_dup.items(), key=lambda t: -t[1])[:40])
+if os.environ.get("DBG_RECT"):      # デバッグ: "x0,x1,y0,y1" の平面範囲に重なる(地上0.5m超の)オブジェクトを列挙(新設構造の干渉確認用)
+    bpy.context.view_layer.update()
+    _r = [float(t) for t in os.environ["DBG_RECT"].split(",")]
+    for _o in bpy.data.objects:
+        if _o.type != "MESH" or _o.name.startswith(("d9", "ground", "kit_ground", "far_", "hills")):
+            continue
+        _c = [(_o.matrix_world @ Vector(b)) for b in _o.bound_box]
+        _mn = [min(v[i] for v in _c) for i in range(3)]; _mx = [max(v[i] for v in _c) for i in range(3)]
+        if _mx[0] > _r[0] and _mn[0] < _r[1] and _mx[1] > _r[2] and _mn[1] < _r[3] and _mx[2] > 0.5 and (_mx[0] - _mn[0]) < 200:
+            print("[rect]", _o.name, [round(v, 1) for v in _mn], [round(v, 1) for v in _mx])
+if os.environ.get("DBG_NORM"):      # デバッグ: カスタム法線の有無を集計し、DBG_NORM=clear なら全メッシュの法線を作り直す
+    _cn = {}
+    for _o in bpy.data.objects:
+        if _o.type == "MESH":
+            _m = _o.data
+            if getattr(_m, "has_custom_normals", False):
+                _k = _o.name.split(".")[0].rstrip("0123456789_")[:20]
+                _cn[_k] = _cn.get(_k, 0) + 1
+                if os.environ["DBG_NORM"] == "clear":
+                    bpy.context.view_layer.objects.active = _o
+                    try:
+                        bpy.ops.mesh.customdata_custom_splitnormals_clear()
+                    except Exception as _e:
+                        _m.free_normals_split() if hasattr(_m, "free_normals_split") else print("[norm] failed", _e)
+    print("[norm] カスタム法線つき:", sum(_cn.values()), sorted(_cn.items(), key=lambda t: -t[1])[:25])
+if os.environ.get("DBG_OBJ"):      # デバッグ: 指定オブジェクト名(部分一致)の可視性・ライトリンク・コレクション・モディファイア・UV/頂点色を表示
+    for _o in bpy.data.objects:
+        if _o.type == "MESH" and any(k in _o.name for k in os.environ["DBG_OBJ"].split(",")):
+            _ll = _o.light_linking
+            print("[obj]", _o.name, "col", [c.name for c in _o.users_collection], "vis cam/diff/spec/shadow", _o.visible_camera, _o.visible_diffuse, _o.visible_glossy, _o.visible_shadow,
+                  "holdout", _o.is_holdout, "shcatch", _o.is_shadow_catcher, "recv", _ll.receiver_collection.name if _ll.receiver_collection else None, "blk", _ll.blocker_collection.name if _ll.blocker_collection else None,
+                  "mods", [m.type for m in _o.modifiers], "uv", [u.name for u in _o.data.uv_layers], "attrs", [a.name for a in _o.data.attributes][:6], "scale", [round(v, 2) for v in _o.scale], "display", _o.display_type, "verts", len(_o.data.vertices), "dim", [round(v, 3) for v in _o.dimensions], "loc", [round(v, 3) for v in _o.matrix_world.translation], "parent", _o.parent.name if _o.parent else None, "mats", [m.name if m else None for m in _o.data.materials], "mesh", _o.data.name, "users", _o.data.users)
+    for _l in bpy.data.objects:
+        if _l.type == "LIGHT" and _l.data.type == "SUN":
+            _ll = _l.light_linking
+            print("[sun]", _l.name, "recv", _ll.receiver_collection.name if _ll.receiver_collection else None, "blk", _ll.blocker_collection.name if _ll.blocker_collection else None, "shadow", _l.data.use_shadow, "energy", _l.data.energy)
 def _mcol(m):
     try:
         n = m.node_tree.nodes.get("Principled BSDF") or next(x for x in m.node_tree.nodes if x.type == "BSDF_PRINCIPLED")

@@ -59,6 +59,7 @@ def emit(name, V, T, C, mat, col="Vegetation"):
 
 
 # ------------------------------------------------------------------ exclusion zones
+TREE_EXCL = []       # [(x0, x1, y0, y1)] 樹木を植えない矩形(幹の中心が入る樹は作らない。D9c 西棟など新築の建物が登録)
 EXTRA_EXCL = []      # [(x0, x1, y0, y1)] 草を生やさない追加の矩形(newdepot が登録)
 
 def inside_rect(P, x0, x1, y0, y1):
@@ -336,6 +337,9 @@ def trunk(name, x, y, h, r0, r1, branches=(), mat=None):
 
 
 def zelkova(x, y, h=11.0, rad=5.2, seed=0, col_a=(0.07, 0.15, 0.03), col_b=(0.22, 0.30, 0.06)):
+    for (ex0, ex1, ey0, ey1) in TREE_EXCL:          # 新築の建物と樹冠が重なる樹は植えない(樹冠半径ぶん広げて判定)
+        if ex0 - rad * 0.8 < x < ex1 + rad * 0.8 and ey0 - rad * 0.8 < y < ey1 + rad * 0.8:
+            return
     rng = random.Random(seed)
     br = []
     for k in range(5):
