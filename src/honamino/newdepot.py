@@ -177,14 +177,14 @@ def build_site():
     road.boxc(110.0, -150.0, 0.03, 8.0, 140.0, 0.06)               # 本社側へ南下する道
     road.build()
     fence = Acc("nd_fence", M["iron_black"], "Props")
-    for x in np.arange(100.0, 480.0, 5.0):                          # 南側境界のフェンス(柱+上下2段の横桟)
-        fence.boxc(x, -168.0, 0.9, 0.08, 0.08, 1.8)
-    fence.boxc(290.0, -168.0, 1.6, 380.0, 0.03, 0.04)
-    fence.boxc(290.0, -168.0, 0.7, 380.0, 0.03, 0.04)
+    for x in np.arange(100.0, 480.0, 5.0):                          # 南側境界のフェンス(柱+上下2段の横桟)。旧車庫は敷地の内側に含める
+        fence.boxc(x, -255.0, 0.9, 0.08, 0.08, 1.8)
+    fence.boxc(290.0, -255.0, 1.6, 380.0, 0.03, 0.04)
+    fence.boxc(290.0, -255.0, 0.7, 380.0, 0.03, 0.04)
     fence.build()
     lamps = Acc("nd_poles", M["iron_black"], "Props")
     glow = Acc("nd_pole_lamps", M["lamp_glow"], "Props")
-    for x in np.arange(120.0, 460.0, 30.0):
+    for x in np.arange(120.0, 330.0, 30.0):                         # 街灯は構内道路沿い(はしご線・引込線の上に立たない範囲)
         lamps.boxc(x, -91.5, 4.0, 0.14, 0.14, 8.0)
         lamps.boxc(x, -92.2, 8.0, 0.14, 1.5, 0.1)
         glow.boxc(x, -92.8, 7.9, 0.5, 0.25, 0.08)
@@ -194,7 +194,7 @@ def build_site():
     rng = random.Random(5)
     for k in range(26):                                             # 敷地の周りの並木
         x = 105.0 + k * 14.5 + rng.uniform(-2, 2)
-        veg.zelkova(x, -160.0 + rng.uniform(-2.5, 2.0), h=rng.uniform(8, 12), rad=rng.uniform(3.6, 5.0), seed=k)
+        veg.zelkova(x, (-160.0 if x < 350.0 else -250.0) + rng.uniform(-2.5, 2.0), h=rng.uniform(8, 12), rad=rng.uniform(3.6, 5.0), seed=k)
 
 
 def build_stock():
