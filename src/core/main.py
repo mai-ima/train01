@@ -23,7 +23,7 @@ ap.add_argument("--parts", default="core,station,props,train,veg,hq")
 ap.add_argument("--out", default="test")
 ap.add_argument("--no-render", action="store_true")
 ap.add_argument("--exposure", type=float, default=0.0)
-ap.add_argument("--sky", type=float, default=0.14)
+ap.add_argument("--sky", type=float, default=0.32)
 ap.add_argument("--sun", type=float, default=4.6)
 ap.add_argument("--cloud", type=float, default=0.0)
 ap.add_argument("--noclouds", action="store_true")
@@ -218,6 +218,8 @@ def _cam_clear(v):
 
 
 cam_loc, cam_tgt, cam_lens, sun_az, sun_el = CAMS[args.cam]
+if os.environ.get('SUN_AZ'):      # 検証用: 太陽の方位(度)を上書き
+    sun_az = float(os.environ['SUN_AZ'])
 
 # ------------------------------------------------------------------ build geometry
 if args.zone == "M01":      # E7: 国都中央は kit3.m01(専用ビルダー)。穂波野(M06)は M6 で本体データ(kit3.m06)へ移行済み
@@ -694,7 +696,42 @@ if os.environ.get("DBG_RAYS"):      # デバッグ: "ox,oy,oz,tx,ty,tz;..." の�
         _v = [float(t) for t in _r.split(",")]
         _o0 = Vector(_v[:3]); _dd = (Vector(_v[3:6]) - _o0).normalized()
         _hit, _loc, _nrm, _idx, _ob, _mx = bpy.context.scene.ray_cast(_dg, _o0, _dd)
+        if _hit and os.environ.get("DBG_SUNRAY"):      # 命中点から太陽方向へ再度飛ばし、日陰の原因物を特定
+            _sd = Vector((math.sin(math.radians(sun_az)) * math.cos(math.radians(sun_el)), math.cos(math.radians(sun_az)) * math.cos(math.radians(sun_el)), math.sin(math.radians(sun_el))))
+            _h2, _l2, _n2, _i2, _b2, _m2 = bpy.context.scene.ray_cast(_dg, _loc + _nrm * 0.05, _sd)
+            print("[sunray] 日陰物:", (_b2.name, [round(c, 1) for c in _l2]) if _h2 else "なし(直射あり)", "法線·太陽 =", round(_nrm.dot(_sd), 2))
         print("[ray]", _r, "->", (_ob.name, [m.name if m else None for m in _ob.data.materials][:2], [round(c, 1) for c in _loc], [round(c, 2) for c in _nrm]) if _hit else None)
+if os.environ.get("DBG_BASE"):      # デバッグ: "材質名,..." の Base Color を切り分け(DBG_BASE_MODE=tex: 最初の画像の色を直結 / flat: 灰0.3 / ao: AO入力を外す)
+    _mode = os.environ.get("DBG_BASE_MODE", "tex")
+    for _mn in os.environ["DBG_BASE"].split(","):
+        _m = bpy.data.materials.get(_mn)
+        if not _m or not _m.use_nodes:
+            continue
+        _nt = _m.node_tree
+        _b = next(x for x in _nt.nodes if x.type == "BSDF_PRINCIPLED")
+        for _l in list(_b.inputs["Base Color"].links):
+            _nt.links.remove(_l)
+        if _mode == "swap":
+            _sm = bpy.data.materials.new("dbg_swap"); _sm.use_nodes = True
+            _sm.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (0.3, 0.3, 0.3, 1)
+            for _o in bpy.data.objects:
+                if _o.type == "MESH":
+                    for _i, _sl in enumerate(_o.material_slots):
+                        if _sl.material == _m:
+                            _o.material_slots[_i].material = _sm
+            print("[base]", _mn, "単純材質に置換")
+            continue
+        if _mode == "nobump":
+            for _l in list(_b.inputs["Normal"].links):
+                _nt.links.remove(_l)
+            print("[base]", _mn, "法線入力を切断")
+            continue
+        if _mode == "tex":
+            _t = next(x for x in _nt.nodes if x.type == "TEX_IMAGE")
+            _nt.links.new(_t.outputs["Color"], _b.inputs["Base Color"])
+        else:
+            _b.inputs["Base Color"].default_value = (0.3, 0.3, 0.3, 1)
+        print("[base]", _mn, _mode)
 if os.environ.get("DBG_TREE"):      # デバッグ: 指定マテリアル名(カンマ区切り)のノード構成と入力値を表示
     for _mn in os.environ["DBG_TREE"].split(","):
         _m = bpy.data.materials.get(_mn)
@@ -706,6 +743,13 @@ if os.environ.get("DBG_TREE"):      # デバッグ: 指定マテリアル名(カ
                 if hasattr(_i, "default_value") and not _i.links and _i.name in ("Base Color", "Color", "Roughness", "Metallic", "Alpha", "Fac", "Factor", "Strength", "Emission Strength"):
                     _v = _i.default_value
                     _ins.append((_i.name, [round(c, 2) for c in _v] if hasattr(_v, "__len__") else round(_v, 2)))
+            if _n.type == "TEX_IMAGE":
+                _im = _n.image
+                try:
+                    _px = list(_im.pixels[:4000]) if _im and _im.size[0] else []
+                    print("[treeimg]", _mn, _n.name, _im.name if _im else None, tuple(_im.size) if _im else None, _im.colorspace_settings.name if _im else None, "平均", round(sum(_px) / max(1, len(_px)), 3), "packed" if _im and _im.packed_file else "file", _im.filepath if _im else "")
+                except Exception as _e:
+                    print("[treeimg] failed", _mn, _e)
             print("[tree]", _mn, _n.name, _n.type, _ins, [(l.from_node.name, l.to_socket.name) for i in _n.inputs for l in i.links][:6])
 if os.environ.get("DBG_DUP"):      # デバッグ: 名前が「X」と「X.001」で形・範囲が同じ(=二重生成)のオブジェクトを集計
     bpy.context.view_layer.update()
