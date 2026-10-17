@@ -230,7 +230,7 @@ def build_site():
     plaza.boxc(283.0, -103.0, 0.035, 110.0, 24.0, 0.07)            # 管理棟前の広場
     plaza.boxc(172.0, -118.0, 0.035, 90.0, 52.0, 0.07)             # 技術開発棟前
     plaza.build()
-    road = Acc("nd_road", M["stone"], "Roads")
+    road = Acc("nd_road", M["dirt"], "Roads")
     road.boxc(228.0, -88.0, 0.03, 190.0, 7.0, 0.06)                # 構内道路(はしご線の南側)
     road.boxc(110.0, -150.0, 0.03, 8.0, 140.0, 0.06)               # 本社側へ南下する道
     road.build()
