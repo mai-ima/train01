@@ -269,7 +269,7 @@ function draw(){
     if(s.id==='M06')el('circle',{cx:s.xy[0],cy:s.xy[1],r:15,fill:'none',stroke:'#f2c14e','stroke-width':2.5},g);
     var lab=LABEL[s.id]||[0,-18,'middle'];
     var t=el('text',{'class':'lab',x:s.xy[0]+lab[0],y:s.xy[1]+lab[1],'text-anchor':lab[2]},g);t.textContent=s.name;
-    if(showKana){var k=el('text',{'class':'kana',x:s.xy[0]+lab[0],y:s.xy[1]+lab[1]+13,'text-anchor':lab[2]},g);k.textContent=s.kana}
+    if(showKana){var k=el('text',{'class':'kana',x:s.xy[0]+lab[0],y:s.xy[1]+lab[1]+(lab[1]<0?-19:13),'text-anchor':lab[2]},g);k.textContent=s.kana}
     g.addEventListener('click',function(){pick(s.id)});
     g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(s.id)}});
   });
@@ -281,7 +281,7 @@ function draw(){
     var tl=el('title',{},g);tl.textContent=f.name;
     g.addEventListener('click',function(){pickFac(f)});
   });
-  [['国鉄 穂波本線',330,572,'HM'],['湯の里支線',1040,480,'YB'],['穂波空港線(穂波新都線)',548,700,'SH'],['汐見臨港鉄道',840,255,'HR'],['大湊市電',430,255,'TR'],['湾岸高速鉄道',590,255,'BM'],['国都電鉄',62,350,'KE'],['国都地下鉄',215,660,'KM'],['山麓鉄道 山麓線',850,650,'SR']].forEach(function(x){
+  [['国鉄 穂波本線',330,572,'HM'],['湯の里支線',1040,480,'YB'],['穂波空港線(穂波新都線)',548,722,'SH'],['汐見臨港鉄道',840,255,'HR'],['大湊市電',430,255,'TR'],['湾岸高速鉄道',590,255,'BM'],['国都電鉄',62,350,'KE'],['国都地下鉄',215,660,'KM'],['山麓鉄道 山麓線',850,650,'SR']].forEach(function(x){
     if(!active[x[3]])return;var t=el('text',{x:x[1],y:x[2],'text-anchor':'middle','font-size':12,style:'fill:'+NET.lines[x[3]].color+';font-weight:700;letter-spacing:.1em'},gs);t.textContent=x[0]});
   applyHL();
 }

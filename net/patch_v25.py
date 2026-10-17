@@ -11,5 +11,7 @@ js = open("v25/news.js").read()
 m = '/* ---------- v2.4: 端末別'
 assert m in t
 t = t.replace(m, js + "\n" + m, 1)
+t = t.replace("y:s.xy[1]+lab[1]+13,'text-anchor':lab[2]},g);k.textContent", "y:s.xy[1]+lab[1]+(lab[1]<0?-19:13),'text-anchor':lab[2]},g);k.textContent")  # R10b: 上置きラベルはふりがなも上へ
+t = t.replace("['穂波空港線(穂波新都線)',548,700,'SH']", "['穂波空港線(穂波新都線)',548,722,'SH']")  # R10b: 駅記号との重なり解消
 open("map_tmpl_v25.html", "w").write(t)
 print("v2.5 template", len(t))
