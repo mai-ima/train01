@@ -67,6 +67,30 @@ def _tris(off, seg, rings):
     return T
 
 
+def _cards(c, br, nr, bc, n, conif=False):
+    """葉カード(小三角)を樹冠の表面に散らして、塊状のシルエットを崩す。"""
+    V, T, C = [], [], []
+    for i in range(n):
+        d = nr.normal(size=3) * np.array([1, 1, 1.6 if conif else 0.75])
+        d /= np.linalg.norm(d) + 1e-9
+        p = np.array(c) + d * br * nr.uniform(0.82, 1.2)
+        t1 = np.cross(d, [0, 0, 1.0])
+        if np.linalg.norm(t1) < 1e-3:
+            t1 = np.array([1.0, 0, 0])
+        t1 /= np.linalg.norm(t1)
+        t2 = np.cross(d, t1)
+        a0 = nr.uniform(0, 6.28)
+        u = t1 * math.cos(a0) + t2 * math.sin(a0)
+        v = -t1 * math.sin(a0) + t2 * math.cos(a0)
+        sz = nr.uniform(0.16, 0.34)
+        V += [p - u * sz * 0.5, p + u * sz * 0.5, p + v * sz + d * 0.04]
+        sh = nr.uniform(0.0, 1.0) * (0.4 + 0.6 * (d[2] * 0.5 + 0.5))
+        col = np.array(bc) * (0.7 + 1.1 * sh) * nr.uniform(0.8, 1.3)
+        C += [list(col) + [1.0]] * 3
+        T += [(3 * i, 3 * i + 1, 3 * i + 2), (3 * i, 3 * i + 2, 3 * i + 1)]
+    return np.array(V), T, np.array(C)
+
+
 def _skip_ranges(items, L):
     out = []
     for kind, kw in items:
@@ -133,14 +157,14 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
 
         def ok(i, off, clear):
             x, y = Pr[i, 0] + nrm[i, 0] * off, Pr[i, 1] + nrm[i, 1] * off
-            if i < 45 or i > n - 45:
+            if i < 22 or i > n - 22:
                 _REJ["端"] += 1
                 return None
             s = s_[i]
             if any(lo < s < hi for lo, hi in skips):
                 _REJ["構造物"] += 1
                 return None
-            if _near(gstn, x, y, 100.0):
+            if _near(gstn, x, y, 60.0):
                 _REJ["駅圏"] += 1
                 return None
             if clear > 0 and _near(gall, x, y, clear):        # 他の線路(複線の相方を含む)が近い
@@ -149,14 +173,14 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
             return (x, y)
 
         for side in (-1, 1):
-            i = 45
-            while i < n - 45:
+            i = 22
+            while i < n - 22:
                 frac = i / n
                 st = tuple(ta[k] * (1 - frac) + tb[k] * frac for k in range(4))
                 kind = rng.random()
                 seglen = int(rng.uniform(22, 55))          # 2m刻み → 44〜110m
                 depth = rng.uniform(20.0, 55.0)
-                i_end = min(i + seglen, n - 46)
+                i_end = min(i + seglen, n - 23)
                 off0 = rng.uniform(11.0, 17.0)
                 if kind < st[0] * 1.15:                  # 田畑(畦つき)
                     mid = (i + i_end) // 2
@@ -166,19 +190,24 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                         tone = rng.uniform(0.85, 1.15)
                         col = (0.30, 0.27, 0.10) if harvest else (0.13, 0.30, 0.07)
                         vv = []
+                        nd = max(2, int(depth / 0.9) + 1)       # 畝(うね): 奥行き方向に0.9m刻みで高さと色を交互に
                         for j in range(i, i_end + 1, 2):
-                            for d in (0.0, depth):
+                            for kd in range(nd):
+                                d = depth * kd / (nd - 1)
                                 x, y = Pr[j, 0] + nrm[j, 0] * side * (off0 + d), Pr[j, 1] + nrm[j, 1] * side * (off0 + d)
-                                vv.append((x, y, 0.025))
+                                vv.append((x, y, 0.02 + (0.07 if kd % 2 else 0.0)))
                         m = (i_end - i) // 2 + 1
                         base = sum(len(v) for v in fv)
                         arr = np.array(vv)
                         for k in range(m - 1):
-                            a0, a1, b0, b1 = base + 2 * k, base + 2 * k + 1, base + 2 * k + 2, base + 2 * k + 3
-                            ft += [(a0, a1, b0), (b0, a1, b1)]
+                            for kd in range(nd - 1):
+                                a0, a1 = base + k * nd + kd, base + k * nd + kd + 1
+                                b0, b1 = base + (k + 1) * nd + kd, base + (k + 1) * nd + kd + 1
+                                ft += [(a0, a1, b0), (b0, a1, b1)]
                         fv.append(arr)
                         fcol = np.array(col) * tone
-                        fc = np.tile(np.append(fcol, 1.0), (len(arr), 1)) * np.array([[1, 1, 1, 1]])
+                        stripe = np.array([(1.0 if kd % 2 else 0.72) for _ in range(m) for kd in range(nd)])[:, None]
+                        fc = np.tile(np.append(fcol, 1.0), (len(arr), 1)) * np.concatenate([stripe * np.array([[1, 1, 1]]), np.ones((len(arr), 1))], 1) * nr_.uniform(0.9, 1.1, (len(arr), 1))
                         total["fields"] += 1
                         _FC.append(fc)
                         # 畦(道側の細い土手)
@@ -188,8 +217,8 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                             lv.append(((x0, y0), (x1, y1)))
                 i = i_end + int(rng.uniform(3, 18))
             # 樹木: 防風林の列と疎林(町タイプの密度)
-            j = 45
-            while j < n - 45:
+            j = 22
+            while j < n - 22:
                 frac = j / n
                 st = tuple(ta[k] * (1 - frac) + tb[k] * frac for k in range(4))
                 clump = mn.noise(Vector((Pr[j, 0] * 0.006, Pr[j, 1] * 0.006, 1.0 + side)))
@@ -223,6 +252,11 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                                 bc = np.array([0.040, 0.085, 0.028]) * rng.uniform(0.8, 1.3)
                             sh = np.clip((Vb[:, 2] - z) / (hc * 2.0 + 1e-3), 0, 1)[:, None]
                             tc.append(np.concatenate([bc[None, :] * (0.55 + 0.9 * sh) * nr_.uniform(0.7, 1.35, (len(Vb), 1)), np.ones((len(Vb), 1))], 1))
+                            cv, ct_, cc_ = _cards(c, rl, nr_, bc * 1.5, max(40, int(260 * rl * rl)), conif)
+                            base2 = sum(len(v) for v in tv)
+                            tv.append(cv)
+                            tt += [(base2 + a, base2 + b, base2 + c2) for (a, b, c2) in ct_]
+                            tc.append(cc_)
                         # 幹(細い角柱)
                         trunk = []
                         for dx, dy in ((-0.13, -0.13), (0.13, -0.13), (0.13, 0.13), (-0.13, 0.13)):
@@ -236,13 +270,13 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                         total["trees"] += 1
                 j += max(1, int(rng.uniform(2, 9)))
             # 柵(線路際、区間でとぎれる)
-            j = 45
-            while j < n - 45:
+            j = 22
+            while j < n - 22:
                 seglen = int(rng.uniform(20, 90))
                 if rng.random() < 0.55:
-                    for jj in range(j, min(j + seglen, n - 46), 3):
+                    for jj in range(j, min(j + seglen, n - 23), 3):
                         q = ok(jj, side * 6.4, 0)
-                        q2 = ok(min(jj + 3, n - 46), side * 6.4, 0)
+                        q2 = ok(min(jj + 3, n - 23), side * 6.4, 0)
                         if q is None or q2 is None:
                             continue
                         pv.append((q, q2))
