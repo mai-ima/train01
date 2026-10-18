@@ -6,7 +6,7 @@ from common import *
 _VM = {}
 
 
-def vpaint(name, color, rough=0.5, rust=0.25, grime=0.8, seams=True, metal=0.0, panel=(1.15, 0.80)):
+def vpaint(name, color, rough=0.5, rust=0.25, grime=0.8, seams=True, metal=0.0, panel=(1.15, 0.80), flat=False):
     """Weathered rolling-stock paint: panel seams (bump), rain streaks, lower-body grime, sun fade, rust blooms."""
     m = lib.Mat(name)
     x, y, z = m.sep(m.obj)
@@ -34,9 +34,12 @@ def vpaint(name, color, rough=0.5, rust=0.25, grime=0.8, seams=True, metal=0.0, 
     h = m.math('ADD', m.math('MULTIPLY', rmask, n_f), m.math('MULTIPLY', n_f, 0.12))
     if seams:
         br = m.node('ShaderNodeTexBrick')
-        m.setall(br, {'Vector': m.combine(m.math('ADD', x, y), z, 0.0), 'Scale': 1.0, 'Mortar Size': 0.006, 'Mortar Smooth': 0.3,
+        m.setall(br, {'Vector': m.combine(x, y, 0.0) if flat else m.combine(m.math('ADD', x, y), z, 0.0), 'Scale': 1.0, 'Mortar Size': 0.006, 'Mortar Smooth': 0.3,
                       'Brick Width': panel[0], 'Row Height': panel[1], 'Bias': 0.0})
         h = m.math('ADD', h, m.math('MULTIPLY', br.outputs['Fac'], 0.6))
+        if flat:      # 屋根: 張り板(防水布・鋼板)ごとの塗り替え差(明暗)
+            pv = m.ramp(br.outputs['Color'] if 'Color' in br.outputs.keys() else br.outputs['Fac'], [(0.0, (0.85, 0.85, 0.85)), (1.0, (1.12, 1.12, 1.12))])
+            col = m.mix(1.0, col, pv, 'MULTIPLY')
     nrm = m.bump(h, 0.5, 0.012)
     rr = m.math('ADD', rough, m.math('ADD', m.math('MULTIPLY', rmask, 0.4), m.math('MULTIPLY', gm, 0.25)), clamp=True)
     m.principled(**{'Base Color': col, 'Roughness': rr, 'Metallic': metal, 'Specular IOR Level': 0.45, 'Normal': nrm})
@@ -104,7 +107,7 @@ def vmat(key):
         P = vpaint
         _VM.update({
             "red": vpaint("v_red", (0.50, 0.065, 0.028), rough=0.36, rust=0.2), "cream": vpaint("v_cream", (0.76, 0.64, 0.42), rough=0.38, rust=0.15),
-            "roof": vpaint("v_roof", (0.20, 0.205, 0.21), rough=0.62, rust=0.35, grime=0.9, seams=False), "under": vpaint("v_under", (0.16, 0.145, 0.125), rough=0.7, rust=0.45, grime=0.8, seams=False, metal=0.2),
+            "roof": vpaint("v_roof", (0.20, 0.205, 0.21), rough=0.62, rust=0.35, grime=0.9, seams=True, panel=(2.4, 0.62), flat=True), "under": vpaint("v_under", (0.16, 0.145, 0.125), rough=0.7, rust=0.45, grime=0.8, seams=False, metal=0.2),
             "wplank": lib.mat_pbr("wagon_plank", "Planks023A", scale=1.3, hsv=(0.5, 0.95, 0.62), tint=(0.42, 0.16, 0.09), tint_amt=0.75, bump=0.8, dirt=0.5, macro=0.3, spec=0.15),
             "glass": mat_veh_window("veh_window"),
             "moq": lib.mat_plain("veh_moq", (0.07, 0.15, 0.09), rough=0.9, spec=0.1),
