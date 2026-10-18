@@ -226,7 +226,7 @@ def m01():
     ops = {"E": [(cy0 + 4 + 8.0 * i, cy0 + 4 + 8.0 * i + 5.0, zf + 0.2, zf + 7.5, 'glass') for i in range(5)] +
                 [(yc - 3.0, yc + 3.0, zf, zf + 4.2, 'open')],
            "W": [(cy0 + 2, yc - 2, zf, zf + 8.5, 'open'), (yc + 2, cy1 - 2, zf, zf + 8.5, 'open')],
-           "S": [(xb0 + 6, xb0 + 10, zf, zf + 3.8, 'open')], "N": [(xb0 + 6, xb0 + 10, zf, zf + 3.8, 'open')]}
+           "S": [(xb0 + 6, xb0 + 10, zf + 1.0, zf + 3.8, 'glass')], "N": [(xb0 + 6, xb0 + 10, zf + 1.0, zf + 3.8, 'glass')]}   # K2: 南北壁の隣は中実の翼棟なので、通り抜けられない『開口』ではなく窓にする
     shell(g, xb0, xb1, cy0, cy1, ZP, zc0 + 12.0, 0.5, ops, wall="brick")
     g.a("plat_top").box(xb0 + 0.5, xb1 - 0.5, cy0 + 0.5, cy1 - 0.5, ZP - 0.05, zf)
     g.a("plasterw").box(xb0 + 0.5, xb1 - 0.5, cy0 + 0.5, cy1 - 0.5, zc0 + 11.4, zc0 + 11.6)
