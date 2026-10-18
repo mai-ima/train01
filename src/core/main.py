@@ -58,9 +58,9 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
 M = common.make_materials()
 parts = set(args.parts.split(","))
-if args.zone and not os.environ.get('ZONE_PARTS'):     # --zone はゾーンビルダーが全部作る。parts(core/station/props/train…)を重ねると全体が二重生成され、同位置の重なりで影が黒く潰れる
+if (args.zone or args.world) and not os.environ.get('ZONE_PARTS'):     # --zone/--world はゾーンビルダーが全部作る(--world で既定 parts のままだと原点の基本パーツが重なり真っ黒になった)。parts(core/station/props/train…)を重ねると全体が二重生成され、同位置の重なりで影が黒く潰れる
     if parts - {'none', ''}:
-        print('NOTE: --zone 指定のため --parts を無視します(二重生成防止):', sorted(parts))
+        print('NOTE: --zone/--world 指定のため --parts を無視します(二重生成防止):', sorted(parts))
     parts = set(p for p in parts if p in ('vtest',))
 
 # ------------------------------------------------------------------ cameras / sun presets

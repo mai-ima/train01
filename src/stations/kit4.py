@@ -85,9 +85,9 @@ for _s, (_rb, _rf) in REACH_V.items():
     if _s in DESIGN and abs(bend(_s)) > math.radians(12):
         _d = bend(_s)
         _T = min(_rb, _rf)
-        _R = _T / math.tan(abs(_d) / 2)
-        kit2.CURVE_OVERRIDE[_s] = math.copysign(_R, _d)
-        _x = int(_R * math.sin(abs(_d) / 2))
+        _Rc = _T / math.tan(abs(_d) / 2)
+        kit2.CURVE_OVERRIDE[_s] = math.copysign(_Rc, _d)
+        _x = int(_Rc * math.sin(abs(_d) / 2))
         kit2.REACH[_s] = (_x, _x)
 
 
