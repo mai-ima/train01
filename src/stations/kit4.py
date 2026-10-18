@@ -347,7 +347,7 @@ def build_links(only=None, verbose=True):
         _, r, P, k = bj
         if ja:      # 向きは a→b にそろえる(線路としては向き無関係)
             pass
-        emit(ln, a, b, ka, k, P, rep, poles, mainP, junction=j)
+        emit(ln, a, b, ka, k, P, rep, poles, mainP, junction=j, rev=(jb and not ja))
     poles.build()
     if verbose:
         for r in rep:
@@ -502,7 +502,7 @@ def _power(line, a, b):
     return None
 
 
-def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None):
+def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None, rev=False):
     EDGES.append(dict(id=f"{ln}_{a}_{b}_{ka}_{kb}", line=ln, kind="link", a=a, b=b, ka=ka, kb=kb, junction=junction, pts=P))
     r = min_radius(P)
     nm = f"net_{ln}_{a}_{b}_{ka}_{kb}"
@@ -510,6 +510,22 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None):
     Pr, s_ = trackkit.resample(np.asarray(P, float), 1.0)
     L_ = float(s_[-1])
     prof, items = struct_plan(ln, a, b, L_) if ((not junction and ka == 0) or ln in ("KM", "KE", "TR", "BM")) else ([], [])
+    if rev and (prof or items):
+        # 分岐リンクで分岐点が b 側のとき、曲線 P は b→a の向き。struct_plan は a→b 基準なので s を鏡像にする
+        if callable(prof):
+            _f = prof
+            prof = (lambda s, _f=_f, _L=L_: _f(_L - np.asarray(s, float)))
+        else:
+            prof = [(L_ - s1_, L_ - s0_, h_, rp_) for (s0_, s1_, h_, rp_) in prof]
+        _it = []
+        for kind_, kw_ in items:
+            kw2 = dict(kw_)
+            if "s0" in kw2 and "s1" in kw2:
+                kw2["s0"], kw2["s1"] = L_ - kw_["s1"], L_ - kw_["s0"]
+            elif "s" in kw2:
+                kw2["s"] = L_ - kw_["s"]
+            _it.append((kind_, kw2))
+        items = _it
     zf = (prof if callable(prof) else kit5.make_zfun(prof)) if (callable(prof) or prof) else None
     if SZ.get(b) and not junction and ka == 0 and (a, b) != ("K02", "K03"):
         pass
