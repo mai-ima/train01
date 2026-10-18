@@ -559,6 +559,14 @@ def _windows(v, S, tot, seed):
                     yy0, yy1 = sorted((s * (h - 0.082), s * (h + 0.006)))
                     _fillet(v, upk, x0, zw1, r_top, 1, -1, yy0, yy1); _fillet(v, upk, x1, zw1, r_top, -1, -1, yy0, yy1)
                     _fillet(v, upk, x0, zs, r_bot, 1, 1, yy0, yy1); _fillet(v, upk, x1, zs, r_bot, -1, 1, yy0, yy1)
+                if win != "square":      # 窓まわりの張り出し枠: 窓下の水切り(全形式)+窓上ヘッダー(旧型・私鉄・周遊は太く、新性能は細く)
+                    fo = 0.018 if win in ("arch", "grand", "sash2", "bus") else 0.010
+                    hd = 0.050 if win in ("arch", "grand", "sash2") else 0.022
+                    yo0, yo1 = sorted((s * (h - 0.01), s * (h + fo)))
+                    fk3 = v.A(upk, 0.003)
+                    fk3.box(x0 - 0.012, x1 + 0.012, yo0, yo1, zs - 0.045, zs - 0.012)        # 窓下の水切り(窓台)
+                    fk3.box(x0 - 0.012, x1 + 0.012, yo0, yo1, zw1 + 0.012, zw1 + 0.012 + hd)    # 窓上ヘッダー
+                    v.A("black", 0.002).box(x0 - 0.012, x1 + 0.012, *sorted((s * (h - 0.01), s * (h + fo * 0.4))), zs - 0.050, zs - 0.045)   # 水切りの影の線
                 if rnd.random() < cp and win not in ("wide", "grand", "square"):
                     lo = zw1 - (zw1 - zs) * rnd.uniform(0.25, 0.7)
                     v.A("curtain").box(x0 + 0.01, x1 - 0.01, *sorted((s * (h - 0.115), s * (h - 0.095))), lo, zw1)
