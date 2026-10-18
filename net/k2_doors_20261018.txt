@@ -1,0 +1,165 @@
+DOORS M01 3 blocked 0 []
+INTERF M01 {'m01_conc_brick': (1, 44), 'm01_conc_glass': (1, 44), 'm01_conc_iron_black': (1, 68), 'm01_conc_plasterw': (1, 16), 'm01_conc_tin': (1, 16), 'm01_conc_wood_dark': (1, 544), 'm01_plat_-9_concrete': (1, 6), 'm01_plat_-9_plat_top': (1, 4), 'm01_platfurn_glass': (1, 24), 'm01_platfurn_iron_black': (1, 40), 'm01_platfurn_tin': (1, 24), 'm01_platfurn_wood_dark': (1, 192), 'zsusuki': (1, 242)
+STOCKHIT M01 0 []
+FLOAT M01 0 []
+DOORS F01 4 blocked 0 []
+INTERF F01 {'zsusuki': (1, 109)}
+STOCKHIT F01 0 []
+FLOAT F01 0 []
+DOORS M02 18 blocked 0 []
+INTERF M02 {}
+STOCKHIT M02 0 []
+FLOAT M02 0 []
+DOORS M03 21 blocked 0 []
+INTERF M03 {'zsusuki': (1, 96)}
+STOCKHIT M03 0 []
+FLOAT M03 1 [('k2_ovnm_M03', {'zmin': 8.05, 'gap': 0.65, 'n': 2})]
+DOORS M04 46 blocked 0 []
+INTERF M04 {'zsusuki': (1, 79)}
+STOCKHIT M04 0 []
+FLOAT M04 0 []
+DOORS M05 16 blocked 0 []
+INTERF M05 {'zsusuki': (1, 108)}
+STOCKHIT M05 0 []
+FLOAT M05 0 []
+DOORS M08 56 blocked 1 [{'kind': 'door', 'at': [-1.0, 12.3], 'hit': 'k2_bld_M08_pl_ochre', 'dbg': [(0.3, 2.4, (0.59, 'k2_bld_M08_pl_ochre')), (0.3, 3.1, (0.59, 'k2_bld_M08_pl_ochre')), (0.5, 2.4, (0.59, 'k2_bld_M08_pl_ochre')), (0.5, 3.1, (0.59, 'k2_bld_M08_pl_ochre')), (0.7, 2.4, (0.59, 'k2_bld_M08_pl_ochre')), (0.7, 3.1, (0.59, 'k2_bld_M08_pl_ochre'))], 'dist': 0.59}]
+INTERF M08 {'zsusuki': (1, 85)}
+STOCKHIT M08 0 []
+FLOAT M08 0 []
+DOORS M07 39 blocked 0 []
+INTERF M07 {'zsusuki': (1, 40)}
+STOCKHIT M07 0 []
+FLOAT M07 0 []
+DOORS M09 6 blocked 1 [{'kind': 'door', 'at': [2.1, 9.3], 'hit': 'k2_bld_M09_wood', 'dbg': [(0.3, 2.4, (0.59, 'k2_bld_M09_wood')), (0.3, 3.1, (0.59, 'k2_bld_M09_wood')), (0.5, 2.4, (0.59, 'k2_bld_M09_wood')), (0.5, 3.1, (0.59, 'k2_bld_M09_wood')), (0.7, 2.4, (0.59, 'k2_bld_M09_wood')), (0.7, 3.1, (0.59, 'k2_bld_M09_wood'))], 'dist': 0.59}]
+INTERF M09 {'zsusuki': (1, 3)}
+STOCKHIT M09 0 []
+FLOAT M09 0 []
+DOORS M11 43 blocked 0 []
+INTERF M11 {}
+STOCKHIT M11 0 []
+FLOAT M11 0 []
+DOORS M10 35 blocked 0 []
+INTERF M10 {'zsusuki': (1, 26)}
+STOCKHIT M10 0 []
+FLOAT M10 0 []
+DOORS M12 11 blocked 0 []
+INTERF M12 {}
+STOCKHIT M12 0 []
+FLOAT M12 0 []
+DOORS M13 36 blocked 0 []
+INTERF M13 {}
+STOCKHIT M13 0 []
+FLOAT M13 0 []
+DOORS L01 17 blocked 0 []
+INTERF L01 {}
+STOCKHIT L01 0 []
+FLOAT L01 0 []
+DOORS M14 5 blocked 1 [{'kind': 'door', 'at': [0.8, 12.2], 'hit': 'k8c_M14_pl_blue', 'dbg': [(0.3, 2.4, (1.03, 'k8c_M14_pl_blue')), (0.5, 2.4, (0.43, 'k2_bld_M14_concrete')), (0.5, 3.1, (0.43, 'k2_bld_M14_concrete')), (0.7, 2.4, (1.03, 'k8c_M14_pl_blue'))], 'dist': 1.03}]
+INTERF M14 {'zsusuki': (1, 83)}
+STOCKHIT M14 0 []
+FLOAT M14 0 []
+DOORS M15 10 blocked 0 []
+INTERF M15 {'zsusuki': (1, 45)}
+STOCKHIT M15 0 []
+FLOAT M15 0 []
+DOORS M16 41 blocked 0 []
+INTERF M16 {'zsusuki': (1, 34)}
+STOCKHIT M16 0 []
+FLOAT M16 0 []
+DOORS M18 14 blocked 0 []
+INTERF M18 {'zsusuki': (1, 68)}
+STOCKHIT M18 0 []
+FLOAT M18 0 []
+DOORS M17 22 blocked 0 []
+INTERF M17 {}
+STOCKHIT M17 0 []
+FLOAT M17 0 []
+DOORS M19 7 blocked 0 []
+INTERF M19 {}
+STOCKHIT M19 2 [('m19_mono_iron_black', {'hits': 10}), ('zsusuki', {'hits': 111})]
+FLOAT M19 0 []
+DOORS R02 14 blocked 0 []
+INTERF R02 {'zsusuki': (1, 107)}
+STOCKHIT R02 2 [('zgrass1', {'hits': 4}), ('zsusuki', {'hits': 60})]
+FLOAT R02 0 []
+DOORS TR02 20 blocked 0 []
+INTERF TR02 {}
+STOCKHIT TR02 0 []
+FLOAT TR02 0 []
+DOORS B02 2 blocked 0 []
+INTERF B02 {}
+STOCKHIT B02 0 []
+FLOAT B02 0 []
+DOORS SH02 11 blocked 1 [{'kind': 'door', 'at': [0.4, 13.4], 'hit': 'k8c_SH02_pl_green', 'dbg': [(0.3, 2.4, (1.03, 'k8c_SH02_pl_green')), (0.5, 2.4, (1.03, 'k8c_SH02_pl_green')), (0.7, 2.4, (1.03, 'k8c_SH02_pl_green'))], 'dist': 1.03}]
+INTERF SH02 {'zsusuki': (1, 41)}
+STOCKHIT SH02 0 []
+FLOAT SH02 1 [('k2_ovnm_SH02', {'zmin': 8.05, 'gap': 0.65, 'n': 2})]
+DOORS SH03 4 blocked 0 []
+INTERF SH03 {'zsusuki': (1, 144)}
+STOCKHIT SH03 0 []
+FLOAT SH03 0 []
+DOORS SH04 27 blocked 0 []
+INTERF SH04 {'zsusuki': (1, 91)}
+STOCKHIT SH04 0 []
+FLOAT SH04 0 []
+DOORS SH05 22 blocked 0 []
+INTERF SH05 {'zsusuki': (1, 81)}
+STOCKHIT SH05 0 []
+FLOAT SH05 0 []
+DOORS SH06 4 blocked 0 []
+INTERF SH06 {'zsusuki': (1, 105)}
+STOCKHIT SH06 0 []
+FLOAT SH06 0 []
+DOORS SH07 2 blocked 0 []
+INTERF SH07 {'zsusuki': (1, 18)}
+STOCKHIT SH07 0 []
+FLOAT SH07 0 []
+DOORS SH08 3 blocked 0 []
+INTERF SH08 {'zsusuki': (1, 47)}
+STOCKHIT SH08 0 []
+FLOAT SH08 0 []
+DOORS Y02 20 blocked 0 []
+INTERF Y02 {'zsusuki': (1, 127)}
+STOCKHIT Y02 0 []
+FLOAT Y02 0 []
+DOORS Y03 21 blocked 0 []
+INTERF Y03 {'zsusuki': (1, 96)}
+STOCKHIT Y03 0 []
+FLOAT Y03 1 [('lm', {'zmin': -4.0, 'gap': 99.0, 'n': 2})]
+DOORS Y04 8 blocked 1 [{'kind': 'door', 'at': [1.3, 8.8], 'hit': 'k2_bld_Y04_wall', 'dbg': [(0.3, 2.4, (0.59, 'k2_bld_Y04_wall')), (0.3, 3.1, (0.59, 'k2_bld_Y04_wall')), (0.5, 2.4, (0.59, 'k2_bld_Y04_wall')), (0.5, 3.1, (0.59, 'k2_bld_Y04_wall')), (0.7, 2.4, (0.59, 'k2_bld_Y04_wall')), (0.7, 3.1, (0.59, 'k2_bld_Y04_wall'))], 'dist': 0.59}]
+INTERF Y04 {'zsusuki': (1, 82)}
+STOCKHIT Y04 0 []
+FLOAT Y04 0 []
+DOORS K02 22 blocked 0 []
+INTERF K02 {'k6_K02_hall_concrete': (2, 380), 'k6_K02_hall_iron_black': (1, 16)}
+STOCKHIT K02 0 []
+FLOAT K02 4 [('k6_K02_ehm', {'zmin': -3.0, 'gap': 0.86, 'n': 92}), ('k6_K02_ehp', {'zmin': -3.0, 'gap': 0.86, 'n': 92}), ('k6_K02_platA', {'zmin': -7.4, 'gap': 0.2, 'n': 2}), ('k6_K02_platB', {'zmin': -7.4, 'gap': 0.2, 'n': 2})]
+DOORS K03 25 blocked 0 []
+INTERF K03 {}
+STOCKHIT K03 0 []
+FLOAT K03 0 []
+DOORS T02 22 blocked 0 []
+INTERF T02 {}
+STOCKHIT T02 0 []
+FLOAT T02 3 [('k6_T02_ehm', {'zmin': -3.0, 'gap': 0.86, 'n': 46}), ('k6_T02_ehp', {'zmin': -3.0, 'gap': 0.86, 'n': 46}), ('k6_T02_plat', {'zmin': -7.4, 'gap': 0.2, 'n': 2})]
+DOORS T03 40 blocked 0 []
+INTERF T03 {}
+STOCKHIT T03 0 []
+FLOAT T03 3 [('k6_T03_ehm', {'zmin': -3.0, 'gap': 0.86, 'n': 46}), ('k6_T03_ehp', {'zmin': -3.0, 'gap': 0.86, 'n': 46}), ('k6_T03_plat', {'zmin': -7.4, 'gap': 0.2, 'n': 2})]
+DOORS T04 6 blocked 0 []
+INTERF T04 {'zsusuki': (1, 87)}
+STOCKHIT T04 2 [('zgrass1', {'hits': 3}), ('zsusuki', {'hits': 53})]
+FLOAT T04 0 []
+DOORS S03 11 blocked 0 []
+INTERF S03 {'zsusuki': (1, 33)}
+STOCKHIT S03 0 []
+FLOAT S03 0 []
+DOORS S02 11 blocked 0 []
+INTERF S02 {'zsusuki': (1, 44)}
+STOCKHIT S02 0 []
+FLOAT S02 0 []
+DOORS S04 26 blocked 0 []
+INTERF S04 {'zsusuki': (1, 74)}
+STOCKHIT S04 0 []
+FLOAT S04 0 []
+done

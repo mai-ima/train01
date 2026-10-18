@@ -194,7 +194,10 @@ def concourse(g, x0, x1, y0, y1, zf, xo, c, st, rng):
     face_plane(f"k8c_{sid}_clock", "clock.png", 'W', xo - 0.17, yw + 1.2, zf + 2.2, 0.55, h=0.55)
     # 券売機(N壁際の東端)
     v_ = ["pl_blue", "post_red", "pl_green"]
-    for kk, xx in enumerate((xo - 1.0, xo - 2.0)):
+    _ng = [(d["a0"], d["a1"]) for d in R.DOORS if d["axis"] == "x" and y1 - 1.0 <= d["p1"] <= y1 + 0.3 and d["stack"] == list(R.SZ_STACK)]   # N壁の出入口(K2: 券売機が N の出入口をふさいでいた)
+    _cand = [xo - 1.0, xo - 2.0, xo - 3.0, xo - 4.0, xo - 5.0, x0 + 1.0, x0 + 2.0]
+    _pos = [xx for xx in _cand if x0 + 0.6 < xx and not any(a - 0.7 < xx < b + 0.7 for (a, b) in _ng)][:2] or [xo - 1.0, xo - 2.0]
+    for kk, xx in enumerate(_pos):
         vk = v_[(kk + rng.randrange(3)) % 3]
         vk = vk if vk in M else "iron_black"
         A(gi, vk, 0.02).box(xx - 0.4, xx + 0.4, y1 - 0.62, y1 - 0.16, zf, zf + 1.7)

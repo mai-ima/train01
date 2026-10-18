@@ -167,12 +167,17 @@ def make_ops(v, rng, zf, door_side='S'):
         L = a1 - a0
         step = rng.choice([2.2, 2.6, 3.0]) if side in "SN" else 3.2
         n = max(1, int((L - 1.2) // step))
+        i_d2 = n // 2                                                   # door2 の区画: 北側に接続する翼棟(L/T/U 型)の前を避ける(K2: 扉の目の前が隣の棟の壁だった)
+        _avoid = v.get("door2_avoid") if side == v.get("door2") else None
+        if _avoid:
+            _ok = [i for i in range(n) if not any(a - 0.9 < a0 + (i + 0.5) * L / n < b + 0.9 for (a, b) in _avoid)]
+            i_d2 = min(_ok, key=lambda i: abs(i - n // 2)) if _ok else -1       # 全区画が翼棟の前なら door2 は作らない(翼棟側の北扉が駅前の出入口になる)
         for f in range(nfl):
             z0 = zf + f * 3.0 + 1.0
             for i in range(n):
                 c = a0 + (i + 0.5) * L / n
                 w = rng.choice([1.0, 1.2, 1.4]) if side in "SN" else 1.0
-                if f == 0 and ((side == door_side and i == n // 2) or (side == v.get("door2") and i == n // 2)):
+                if f == 0 and ((side == door_side and i == n // 2) or (side == v.get("door2") and i == i_d2)):
                     ops[side].append((c - 0.7, c + 0.7, zf, zf + 2.05, 'door' if side == 'N' else 'open'))
                 else:
                     ops[side].append((c - w / 2, c + w / 2, z0, z0 + 1.1 + rng.choice([0, 0.2, 0.4]), 'glass'))
@@ -963,6 +968,7 @@ def build_design(sid):
             vols = plan_volumes(plan, w, dep, d["nfl"], d["roof"], d["wall"], rng)
             _zh0 = 0.0
             vols[0].setdefault("door2", "N")           # B6e/E5所見: 駅前(N側)に出入口が無い駅舎があった → 主棟の駅前側にも出入口を設ける
+            vols[0]["door2_avoid"] = [(_v["x0"], _v["x1"]) for _v in vols[1:] if _v.get("y0", 0) >= dep - 0.01]   # 北側に接続する翼棟の x 範囲
             for k_, v in enumerate(vols):
                 _z = volume(g, v, rng, st, interior=(k_ == 0))
                 if k_ == 0:
