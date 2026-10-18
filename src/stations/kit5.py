@@ -268,7 +268,7 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=34.0, inner_w=2
                 veg.sugi(0.0, 0.0, rng_t.uniform(9, 17), seed=rng_t.randrange(10 ** 6))
     except Exception as e:
         print("hill trees failed (skipped)", e)
-    # 坑口の切り立った面(石積み): 丘の断面の下を埋め、トンネル口の部分だけ開ける
+    # 坑口の切り立った面(土の斜面): 丘の断面の下を埋め、トンネル口の部分だけ開ける
     for (i, flipc) in ((0, True), (len(ss) - 1, False)):
         verts, tris = [], []
         K = Vh.shape[1]
@@ -287,7 +287,7 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=34.0, inner_w=2
             T = np.array(tris)
             if flipc:
                 T = T[:, ::-1]
-            np_mesh(f"{name}_face{i}", np.array(verts), T, M["k5_stone"], "Ground", smooth=False)
+            np_mesh(f"{name}_face{i}", np.array(verts), T, M.get("grass_ground", M["k5_earth"]), "Ground", smooth=False)   # 丘の端面は土の斜面(石積みは坑口の門だけ)
     sweep(prof_i, M["k5_conc"], name + "_lining", True)
     # 坑口: 石積みの門(外周と内周の間を埋める)
     g = G(name + "_portal", "Props")
