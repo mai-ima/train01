@@ -1324,8 +1324,9 @@ def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
         return v.A(key, 0.0, True)
 
     def limb(key, p0, p1, r0, r1):
-        A(key).tube(p0, p1, [(0, r0, r0), (0.5, (r0 + r1) / 2 * 1.04, (r0 + r1) / 2 * 1.04), (1, r1, r1)], seg=10, side=SD)
-        A(key).sphere(p1, (r1, r1, r1), seg=8, rings=5)
+        A(key).tube(p0, p1, [(0, r0, r0), (0.5, (r0 + r1) / 2 * 1.04, (r0 + r1) / 2 * 1.04), (1, r1, r1)], seg=14, side=SD)
+        A(key).sphere(p0, (r0 * 1.14, r0 * 1.14, r0 * 1.14), seg=14, rings=9)      # 付け根(肩・股関節・肘)の球: 円柱の切り口を見せない
+        A(key).sphere(p1, (r1 * 1.12, r1 * 1.12, r1 * 1.12), seg=14, rings=9)
 
     def face(hz):
         for sd in (-1, 1):
@@ -1351,7 +1352,7 @@ def _rider_body(v, x, y, zfl, ang=0.0, seated=True, kind=None, rnd=None):
 
     def torso(z0, z1, lean):
         """胴: 臀部→腰→胸→肩のロフト(半幅/半奥行は体格 bw で変える)。"""
-        prof = [(0.0, 0.150 * bw, 0.105), (0.22, 0.140 * bw, 0.097), (0.50, 0.168 * bw, 0.108), (0.82, 0.196 * bw, 0.098), (0.95, 0.150 * bw, 0.070), (1.0, 0.07, 0.055)]
+        prof = [(0.0, 0.150 * bw, 0.105), (0.22, 0.140 * bw, 0.097), (0.50, 0.168 * bw, 0.108), (0.74, 0.188 * bw, 0.104), (0.84, 0.196 * bw, 0.092), (0.91, 0.172 * bw, 0.074), (0.96, 0.118, 0.060), (1.0, 0.062, 0.052)]
         A(jk).tube(P(-0.05, 0, z0), P(-0.05 + lean, 0, z1), prof, seg=14, side=SD)
 
     if seated:
