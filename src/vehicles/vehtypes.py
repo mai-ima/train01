@@ -620,8 +620,8 @@ def _cab(v, S, e, tot, nose):
     # 運転台: 機器台+制御器+計器+運転士席
     dx = e * (xe - 0.55)
     yd = -0.52 if fr != "subfront" else -0.62
-    v.A("t_cab", 0.01).box(*sorted((dx - e * 0.22, dx + e * 0.22)), -h + 0.1, h - 0.1, zfl, zfl + 0.88)
-    v.A("t_grey", 0.01).box(*sorted((dx - e * 0.25, dx + e * 0.12)), -h + 0.12, h - 0.12, zfl + 0.88, zfl + 0.94)
+    v.A("dark", 0.01).box(*sorted((dx - e * 0.22, dx + e * 0.22)), -h + 0.1, h - 0.1, zfl, zfl + 0.88)
+    v.A("dark", 0.01).box(*sorted((dx - e * 0.25, dx + e * 0.12)), -h + 0.12, h - 0.12, zfl + 0.88, zfl + 0.94)
     v.A("black").box(*sorted((dx - e * 0.18, dx + e * 0.02)), yd - 0.32, yd + 0.32, zfl + 0.94, zfl + 1.02)     # 計器盤
     v.A("dark").box(*sorted((dx - e * 0.08, dx - e * 0.12)), yd - 0.10, yd + 0.10, zfl + 1.0, zfl + 1.04)   # 速度計
     v.A("steel").cyl((dx - e * 0.28, yd - 0.45, zfl + 0.94), (dx - e * 0.28, yd - 0.45, zfl + 1.08), 0.013, 0.013, seg=6)
@@ -2023,7 +2023,7 @@ def make(tid, name="emu", seed=11, num_img=None, ends=("cab", "cab"), pant=True)
             steps_down(v, dx, s, h, zfl - 0.1, n=2)
     _under(v, S)
     for fx in (-L * 0.30, 0.0, L * 0.30):                                    # 床下の補助光(地面反射の代わり。台車・機器を読めるように)
-        v.lights.append((fx, 0.0, 0.55, 5.0, 1.6, 90.0, (1.0, 0.92, 0.80)))
+        v.lights.append((fx, 0.0, 0.55, 5.0, 2.4, 260.0, (1.0, 0.92, 0.80)))
     _roof(v, S)
     lg = {"jnr_dc": ("logo_new.png", 0.50), "jnr_sub": ("logo_new.png", 0.62), "jnr_exp": ("logo_new.png", 0.70),
           "jnr_ltd": ("logo_new.png", 0.52), "jnr_ac": ("logo_new.png", 0.56), "ke": ("logo_ke.png", 0.60), "km": ("logo_km.png", 0.46), "kiha_std": ("logo_new.png", 0.55), "kiha_exp": ("logo_new.png", 0.66),
