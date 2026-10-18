@@ -89,6 +89,16 @@ def truss_bridge(P, s0, s1, name="truss", h=7.5, width=7.0, zfun=None):
             steel.box(p[0] - 0.22, p[0] + 0.22, p[1] - 0.22, p[1] + 0.22, zk + zdeck - 0.9, zk + zdeck + h)
         a, b = pos[k] + nrm[k] * width / 2, pos[k] - nrm[k] * width / 2
         g.a("k5_steel").sbox((a[0], a[1], zk + zdeck), (b[0], b[1], zk + zdeck), 0.3, 0.55)       # 床桁
+        tg = np.array([math.cos(ang[k]), math.sin(ang[k])])
+        for sgn in (-1, 1):                                                                       # 格点の隅板(ガセット)とリベット列
+            pg = pos[k] + nrm[k] * sgn * (width / 2 + 0.2)
+            for zz, hh in ((zk + zdeck, 0.95), (zk + zdeck + h, 0.8)):
+                q0, q1 = pg - tg * 0.7, pg + tg * 0.7
+                g.a("k5_steel").sbox((q0[0], q0[1], zz), (q1[0], q1[1], zz), 0.05, hh)
+                for rv in (-0.45, -0.15, 0.15, 0.45):
+                    for dz in (-0.3, 0.3):
+                        rp = pg + tg * rv + nrm[k] * sgn * 0.04
+                        g.a("k5_steel").sbox((rp[0], rp[1], zz + dz), (rp[0], rp[1], zz + dz + 0.06), 0.07, 0.07)
         g.a("k5_steel").sbox((a[0], a[1], zk + zdeck + h), (b[0], b[1], zk + zdeck + h), 0.25, 0.35)   # 上横構
     for k in range(nb):
         for sgn in (-1, 1):
