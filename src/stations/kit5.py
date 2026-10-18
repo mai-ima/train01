@@ -554,10 +554,27 @@ def level_crossing(P, s, name="lc", road_w=4.6):
     for sg in (-1, 1):
         for tt in (-1, 1):
             p = c + t * sg * (road_w / 2 + 0.9) + n * tt * 3.3
-            g.a("iron_black").cyl((p[0], p[1], 0.0), (p[0], p[1], 3.1), 0.06, seg=6)
-            g.a("post_red" if "post_red" in M else "iron_black").box(p[0] - 0.25, p[0] + 0.25, p[1] - 0.04, p[1] + 0.04, 2.3, 2.9)
-            q = p - t * sg * (road_w / 2 + 0.2)
-            g.a("white_paint" if "white_paint" in M else "k5_conc").sbox((p[0], p[1], 1.0), (q[0], q[1], 1.0), 0.08, 0.1)
+            g.a("iron_black").cyl((p[0], p[1], 0.0), (p[0], p[1], 3.3), 0.055, seg=8)
+            face = -n * tt                                    # 標識面は道路の接近側(線路から離れる向き)ではなく道路側へ向ける
+            # 踏切警標(X字の十字板): 白地の板2枚を交差させる
+            for k in (-1, 1):
+                u0 = p + t * 0.55 * k + face * 0.0
+                u1 = p - t * 0.55 * k
+                g.a("white_paint").sbox((u0[0], u0[1], 2.95 + 0.30 * k), (u1[0], u1[1], 2.95 - 0.30 * k), 0.11, 0.025)
+            # 警報灯2灯(赤)を横木に並べる
+            bar0, bar1 = p - t * 0.45 + face * 0.08, p + t * 0.45 + face * 0.08
+            g.a("iron_black").sbox((bar0[0], bar0[1], 2.45), (bar1[0], bar1[1], 2.45), 0.05, 0.05)
+            for k in (-1, 1):
+                q = p + t * 0.4 * k + face * 0.12
+                g.a("post_red").cyl((q[0], q[1], 2.36), (q[0] + face[0] * 0.06, q[1] + face[1] * 0.06, 2.36), 0.15, seg=14)
+            # 遮断機の機械箱と、紅白縞の遮断竿(下りた状態で道路を横切る)
+            g.a("iron_black").box(p[0] - 0.18, p[0] + 0.18, p[1] - 0.18, p[1] + 0.18, 0.0, 0.9)
+            tip = p - t * sg * (road_w / 2 + 0.25)
+            for j in range(8):
+                f0, f1 = j / 8.0, (j + 1) / 8.0
+                m0 = (p[0] + (tip[0] - p[0]) * f0, p[1] + (tip[1] - p[1]) * f0)
+                m1 = (p[0] + (tip[0] - p[0]) * f1, p[1] + (tip[1] - p[1]) * f1)
+                g.a("post_red" if j % 2 else "white_paint").sbox((m0[0], m0[1], 1.0), (m1[0], m1[1], 1.0), 0.07, 0.10)
     g.build()
 
 
