@@ -293,6 +293,9 @@ if args.world:
     ga.box(-3400, 4600, -2600, 3400, -0.30, -0.01)
     ga.build()
     kit4.build_links()
+    if os.environ.get('LINK_SCENERY', '1') != '0':        # C14: 駅間の沿線景観(柵・田畑・樹林)
+        import scenery, kit2 as _k2s
+        scenery.link_scenery(kit4.EDGES, kit4.struct_plan, kit4.origin, lambda sid: _k2s.DESIGN.get(sid, {}).get('town', 'urban'))
     sel = args.world
     for sid in kit4.SB:
         ox, oy = kit4.origin(sid)
