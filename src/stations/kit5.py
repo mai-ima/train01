@@ -39,7 +39,7 @@ def mats5():
         M["k5_stone"] = lib.mat_plaster("k5_stone", (0.30, 0.285, 0.26), dirt=1.0)
         M["k5_earth"] = lib.mat_plain("k5_earth", (0.12, 0.17, 0.07), rough=1.0)
         M["k5_conc"] = lib.mat_plaster("k5_conc", (0.52, 0.52, 0.50), dirt=0.8)
-        M["k5_steel"] = lib.mat_paint("k5_steel", (0.10, 0.12, 0.13), rough=0.6, rust=0.6)
+        M["k5_steel"] = lib.mat_paint("k5_steel", (0.035, 0.045, 0.05), rough=0.6, rust=0.6)
         M["k5_timber"] = lib.mat_plain("k5_timber", (0.18, 0.13, 0.08), rough=0.9)
     if "ug_conc" not in M:     # 実写PBR(ambientCG CC0): 構造物・地下・舗装用
         M["ug_conc"] = lib.mat_pbr("ug_conc", "Concrete031", scale=2.6, tint=(0.95, 0.93, 0.88), tint_amt=0.3, bump=0.5, macro=0.2, dirt=0.0, spec=0.2)
