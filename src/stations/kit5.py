@@ -520,7 +520,7 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
     # 軸が斜めでも作れるよう sbox で組む
     a0, a1 = c - n * (span / 2 + 6.0), c + n * (span / 2 + 6.0)
     g.a("k5_steel").sbox((a0[0], a0[1], zh - 0.45), (a1[0], a1[1], zh - 0.45), road_w, 0.9)
-    g.a("k5_conc").sbox((a0[0], a0[1], zh), (a1[0], a1[1], zh), road_w, 0.2)
+    g.a("road" if "road" in M else "k5_conc").sbox((a0[0], a0[1], zh), (a1[0], a1[1], zh), road_w, 0.2)
     for sg in (-1, 1):
         p0 = c - n * (span / 2 + 6.0) + t * sg * road_w / 2
         p1 = c + n * (span / 2 + 6.0) + t * sg * road_w / 2
@@ -532,21 +532,31 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
         p = c + n * sg * (span / 2 + 0.8)
         g.a("k5_stone", bevel=0.05).sbox((p[0], p[1], -0.2), (p[0], p[1], zh - 0.9), road_w + 1.0, 1.6)
     g.build()
-    # 取付道路(スロープ)
+    # 取付道路(盛土の坂): 断面は台形(法面勾配 1:1.8)の滑らかなメッシュ。縦壁の箱を段々に積まない
     for sg in (-1, 1):
         p0 = c + n * sg * (span / 2 + 0.8)
         p1 = c + n * sg * (span / 2 + 6.0 + 28.0)
-        pts = np.linspace(0, 1, 12)
-        P3 = [tuple(p0 + (p1 - p0) * u) for u in pts]
-        for i, u in enumerate(pts):
-            pass
-        g2 = G(name + "_ramp" + str(sg), "Props")
-        for i in range(len(pts) - 1):
-            za, zb = zh * (1 - pts[i]), zh * (1 - pts[i + 1])
-            qa, qb = p0 + (p1 - p0) * pts[i], p0 + (p1 - p0) * pts[i + 1]
-            g2.a("k5_earth").sbox((qa[0], qa[1], za / 2 - 0.1), (qb[0], qb[1], zb / 2 - 0.1), road_w + 4.0, max(za, zb) * 0.9 + 0.2)
-            g2.a("asphalt" if "asphalt" in M else "k5_conc").sbox((qa[0], qa[1], za), (qb[0], qb[1], zb), road_w, 0.15)
-        g2.build()
+        us = np.linspace(0, 1, 18)
+        VB, VR = [], []
+        for u in us:
+            q = p0 + (p1 - p0) * u
+            h = zh * (1 - u)
+            for off, z in ((-(road_w / 2 + 0.5 + 1.8 * max(h, 0.0)), -0.05), (-(road_w / 2 + 0.5), h - 0.12), (road_w / 2 + 0.5, h - 0.12), (road_w / 2 + 0.5 + 1.8 * max(h, 0.0), -0.05)):
+                VB.append((q[0] + t[0] * off, q[1] + t[1] * off, max(z, -0.05)))
+            for off in (-road_w / 2, road_w / 2):
+                VR.append((q[0] + t[0] * off, q[1] + t[1] * off, h + 0.02))
+        def strip(V, k):
+            T = []
+            Va = np.asarray(V, float)
+            for i in range(len(us) - 1):
+                for j in range(k - 1):
+                    a_, b_, c_, d_ = i * k + j, (i + 1) * k + j, (i + 1) * k + j + 1, i * k + j + 1
+                    for tri in ((a_, b_, c_), (a_, c_, d_)):
+                        nz = np.cross(Va[tri[1]] - Va[tri[0]], Va[tri[2]] - Va[tri[0]])[2]
+                        T.append(tri if nz >= 0 else (tri[0], tri[2], tri[1]))     # 法線を上向きにそろえる(左右で巻き方向が逆になり、片側が黒くなっていた)
+            return np.array(T)
+        np_mesh(f"{name}_bank{sg}", np.array(VB), strip(VB, 4), M.get("grass_ground", M["k5_earth"]), "Ground", smooth=True)
+        np_mesh(f"{name}_road{sg}", np.array(VR), strip(VR, 2), M["road"], "Ground", smooth=False)
 
 
 def level_crossing(P, s, name="lc", road_w=4.6):
