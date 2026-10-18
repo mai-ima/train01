@@ -247,7 +247,7 @@ if args.zone:
         import re as _re, kit2 as _k2
         _k2.mats2()
         for _o in bpy.data.objects:
-            if _o.type == "MESH" and _re.match(r"(hills|knoll|far_ground|kit_ground|k2_hill|k2_sand)", _o.name):
+            if _o.type == "MESH" and _re.match(r"(hills|knoll|far_ground|kit_ground|k2_hill|k2_sand)", _o.name) and not _o.name.endswith("_forest"):   # T6: 里山の樹林(knoll_*_forest)まで雪面材にすると白い玉の山になる
                 _o.data.materials.clear(); _o.data.materials.append(M["snow"])
             elif _o.type == "MESH" and _re.match(r"k2_(platA|platB|isl\d?)_top", _o.name):
                 _o.data.materials.clear(); _o.data.materials.append(M["snow"])        # ホーム面に積雪
