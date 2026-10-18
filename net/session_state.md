@@ -332,3 +332,6 @@ Z-A 構造種別(地下/路面/モノレール/高架) / Z-B 駅外観・上空�
 
 ## x13f 撮影開始(2026-10-17)
 - x13e 後の変更(ボンネット窓上壁・バッファ皿形・台車側梁/軸箱/ばね)を含む48枚を out/x13f に撮影中(run_x13f.sh、約3時間)。run_wip.sh の stock_cfg 退避は git HEAD から取る方式に変更(並行実行で 150B のテスト設定が残る不具合の再発防止)。
+
+## x13f 撮影完了(2026-10-18)
+- out/x13f 48枚(emuA/emuB/kiha × 人物ON/OFF × 8視点)を撮影。同一コードで通し撮影(途中変更なし)。stock_cfg 575 B 復元確認。JPEG q88 を renders/work/x13f へ。ブリーフ docs/audit_briefs/x13f_brief.md。次: strict-auditor(Sonnet)で再監査し、点数を正直に記録。
