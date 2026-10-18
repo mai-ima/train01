@@ -227,6 +227,12 @@ def _gasket(v, e, a0, a1, b1, b0, wd=0.034):
         gk.sbox((pa[0] + 0.012 * e, pa[1], pa[2]), (pb[0] + 0.012 * e, pb[1], pb[2]), wd, 0.036)
 
 
+def _rim(v, p0, p1, r):
+    """灯具の縁(ベゼル): ガラスの付け根にひと回り大きい金属リングを置き、灯具を面に埋め込まれた円盤でなく部品に見せる。"""
+    q = tuple(a + (b - a) * 0.55 for a, b in zip(p0, p1))
+    v.A("steel").cyl(p0, q, r + 0.028, r + 0.028, seg=20)
+
+
 def _pane4(acc, p00, p10, p11, p01, t=0.016, n=(1, 0, 0)):
     """4点の薄い板(法線 n 方向へ厚み t)。"""
     i = len(acc.V)
@@ -721,6 +727,7 @@ def _front0(v, S, e, nose):
             v.A("lampglass").box(*sorted((X(xl + 0.06), X(xl + 0.074))), sg * 0.80 - 0.11, sg * 0.80 + 0.11, 1.22, 1.36)
             v.A("t_sred").cyl((X(xl), sg * 0.40, 1.12), (X(xl + 0.05), sg * 0.40, 1.12), 0.05, 0.05, seg=10)
         v.A("lampglass").cyl((X(xe + 0.02), 0, zt + 0.08), (X(xe + 0.07), 0, zt + 0.08), 0.09, 0.09, seg=12)
+        _rim(v, (X(xe + 0.02), 0, zt + 0.08), (X(xe + 0.07), 0, zt + 0.08), 0.09)
         return
     if fr == "gate":
         # 貫通扉形(気動車): 中央に幅0.80の貫通扉、左右に小さな窓。前面は垂直で、腰に大きな前照灯ケース。
@@ -734,6 +741,7 @@ def _front0(v, S, e, nose):
             pil.box(*sorted((X(xe - 0.08), X(xe + 0.04))), sgn * 0.52 - 0.05, sgn * 0.52 + 0.05, zws, zwt)
             v.A("t_steel").cyl((X(xe + 0.0), sgn * 1.12, zfl + 0.52), (X(xe + 0.09), sgn * 1.12, zfl + 0.52), 0.15, 0.15, seg=16)
             v.A("lampglass").cyl((X(xe + 0.09), sgn * 1.12, zfl + 0.52), (X(xe + 0.10), sgn * 1.12, zfl + 0.52), 0.115, 0.115, seg=16)
+            _rim(v, (X(xe + 0.09), sgn * 1.12, zfl + 0.52), (X(xe + 0.10), sgn * 1.12, zfl + 0.52), 0.115)
         v.A("t_steel").box(*sorted((X(xe + 0.0), X(xe + 0.04))), -0.12, 0.12, zt + 0.02, zt + 0.12)      # 屋根上の標識灯
         return
     if fr in ("flat", "subfront"):
@@ -792,11 +800,12 @@ def _front0(v, S, e, nose):
             for s in (-1, 1):
                 v.A("black").cyl((X(xe), s * 0.90, zt - 0.20), (X(xe + 0.12), s * 0.90, zt - 0.20), 0.14, 0.13, seg=14)
                 v.A("lampglass").cyl((X(xe + 0.12), s * 0.90, zt - 0.20), (X(xe + 0.14), s * 0.90, zt - 0.20), 0.105, 0.105, seg=14)
+                _rim(v, (X(xe + 0.12), s * 0.90, zt - 0.20), (X(xe + 0.14), s * 0.90, zt - 0.20), 0.105)
                 v.A("t_sred").cyl((X(xe), s * 1.18, 1.30), (X(xe + 0.05), s * 1.18, 1.30), 0.06, 0.06, seg=10)
         else:                 # subway
             for s in (-1, 1):
                 v.A("black").box(*sorted((X(xe), X(xe + 0.05))), s * 1.10 - 0.09, s * 1.10 + 0.09, zws - 0.06, zws + 0.12)
-                v.A("lampglass").box(*sorted((X(xe + 0.05), X(xe + 0.062))), s * 1.10 - 0.06, s * 1.10 + 0.06, zws - 0.03, zws + 0.09)
+                v.A("lampglass").box(*sorted((X(xe + 0.05), X(xe + 0.062))), s * 1.10 - 0.06, s * 1.10 + 0.06, zws - 0.16, zws - 0.04)
                 v.A("t_sred").box(*sorted((X(xe), X(xe + 0.04))), s * 0.90 - 0.04, s * 0.90 + 0.04, zws - 0.2, zws - 0.1)
             v.A("lamp_glow").box(*sorted((X(xe + 0.03), X(xe + 0.04))), -0.5, -0.2, zt - 0.26, zt - 0.14)
         if fr == "flat" and S["z"][4] > 3.4:
@@ -831,9 +840,11 @@ def _front0(v, S, e, nose):
         v.A("lamp_glow").cyl((X(xe + ap * 0.82 - rake), 0.0, zt + 0.05), (X(xe + ap * 0.82 - rake + 0.04 * e), 0.0, zt + 0.05), 0.10, 0.10, seg=12)
         v.A("black").cyl((X(xe + ap * 0.82 - rake - 0.02 * e), 0.0, zt + 0.05), (X(xe + ap * 0.82 - rake + 0.02 * e), 0.0, zt + 0.05), 0.15, 0.15, seg=14)
         v.A("lampglass").cyl((X(xe + ap * 0.82 - rake + 0.02 * e), 0.0, zt + 0.05), (X(xe + ap * 0.82 - rake + 0.05 * e), 0.0, zt + 0.05), 0.115, 0.115, seg=14)
+        _rim(v, (X(xe + ap * 0.82 - rake + 0.02 * e), 0.0, zt + 0.05), (X(xe + ap * 0.82 - rake + 0.05 * e), 0.0, zt + 0.05), 0.115)
         for s in (-1, 1):                                   # 尾灯(マスク下部)
             v.A("t_sred").cyl((X(xe + ap * 0.45), s * 0.62, 1.34), (X(xe + ap * 0.45 + 0.05), s * 0.62, 1.34), 0.065, 0.065, seg=10)
             v.A("lampglass").cyl((X(xe + ap * 0.45), s * 0.95, 1.55), (X(xe + ap * 0.45 + 0.05), s * 0.95, 1.55), 0.07, 0.07, seg=10)
+            _rim(v, (X(xe + ap * 0.45), s * 0.95, 1.55), (X(xe + ap * 0.45 + 0.05), s * 0.95, 1.55), 0.07)
         v.A("t_steel").cyl((X(xe + ap * 0.6), -0.4, zwt - 0.1), (X(xe + ap * 0.6), -0.05, zws + 0.3), 0.011, 0.011, seg=5)
         if S.get("pano"):                                   # 縦に並ぶ小型LEDの前照灯(両端の柱)
             for s in (-1, 1):
@@ -867,6 +878,7 @@ def _front0(v, S, e, nose):
         for s in (-1, 1):
             v.A("black").cyl((X(xe + nl * 0.96), s * 0.70, 1.38), (X(xe + nl * 1.01), s * 0.70, 1.38), 0.13, 0.12, seg=16)
             v.A("lampglass").cyl((X(xe + nl * 1.01), s * 0.70, 1.38), (X(xe + nl * 1.015 + 0.02 * e), s * 0.70, 1.38), 0.095, 0.09, seg=16)
+            _rim(v, (X(xe + nl * 1.01), s * 0.70, 1.38), (X(xe + nl * 1.015 + 0.02 * e), s * 0.70, 1.38), 0.095)
             v.A("t_ltdred").cyl((X(xe + nl * 0.93), s * 0.88, 1.36), (X(xe + nl * 0.94), s * 0.88, 1.36), 0.06, 0.06, seg=10)
         v.A("t_white").box(*sorted((X(xe + nl * 0.60), X(xe + nl * 0.60 + 0.03 * e))), -0.38, 0.38, 1.40, 1.76) if False else None
         pass  # ヘッドマーク掛けは _signs で
@@ -914,9 +926,11 @@ def _front0(v, S, e, nose):
         # 前照灯: 前面上部に1灯+窓下に2灯の丸目
         v.A("black").cyl((X(xc - 0.05), 0, zt + 0.12), (X(xc + 0.03), 0, zt + 0.12), 0.15, 0.14, seg=16)
         v.A("lampglass").cyl((X(xc + 0.03), 0, zt + 0.12), (X(xc + 0.05 * 1), 0, zt + 0.12), 0.115, 0.115, seg=16)
+        _rim(v, (X(xc + 0.03), 0, zt + 0.12), (X(xc + 0.05 * 1), 0, zt + 0.12), 0.115)
         for s in (-1, 1):
             v.A("black").cyl((X(xe + nl * 0.55), s * 0.72, 1.40), (X(xe + nl * 0.55 + 0.05), s * 0.72, 1.40), 0.11, 0.11, seg=14)
             v.A("lampglass").cyl((X(xe + nl * 0.55 + 0.05), s * 0.72, 1.40), (X(xe + nl * 0.55 + 0.065), s * 0.72, 1.40), 0.08, 0.08, seg=14)
+            _rim(v, (X(xe + nl * 0.55 + 0.05), s * 0.72, 1.40), (X(xe + nl * 0.55 + 0.065), s * 0.72, 1.40), 0.08)
             v.A("t_sred").cyl((X(xe + nl * 0.30), s * 1.12, 1.30), (X(xe + nl * 0.30 + 0.05), s * 1.12, 1.30), 0.06, 0.06, seg=10)
         v.A("t_gold").box(*sorted((X(xe + nl * 0.82), X(xe + nl * 0.82 + 0.02 * e))), -0.5, 0.5, 1.12, 1.17)    # 金色の飾り帯
         v.A("t_ivory").box(*sorted((X(xe + nl * 0.30), X(xe + nl * 0.30 + 0.01 * e)))   , -0.35, 0.35, 1.0, 1.04) if False else None
