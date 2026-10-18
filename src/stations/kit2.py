@@ -706,7 +706,7 @@ def town_along(pts, sid, st, rng, style, dens, xskip, sides=("L", "R"), off=2.6,
 
 
 # ----------------------------------------------------------------- per-station designs
-ELEC_STN = {"M02", "M03", "M04", "M05", "SH04", "SH05", "SH06", "SH07", "SH08"}
+ELEC_STN = {"M02", "M03", "M04", "M05", "SH04", "SH05", "SH06", "SH07", "SH08", "F01"}   # F01: 国都貨物(電化辺に接する・C12)
 D = lambda **k: k
 DESIGN = {
  "M02": D(yaw=8, curve=("S", 12), plan="I", w=15, d=8, nfl=2, roof="flat", wall="pl_grey", plat="island", ntr=3, canopy="steel", cross="fb_steel", terrain=["pond"], road="straight", town="urban", dens=0.85, lm=[("monument", -40, 26)], bx=-4),

@@ -345,7 +345,7 @@ def snowshed(P, s0, s1, name="snowshed", zfun=None, half=4.2, h=6.0, steel=False
     g.build()
 
 
-def catenary(P, s0, s1, name="cat", zfun=None, side=1, ac=False, span=50.0):
+def catenary(P, s0, s1, name="cat", zfun=None, side=1, ac=False, span=50.0, posts=True):
     """電車線(架線)柱とトロリ線・ちょう架線・吊架線。
     直流1500V: 鋼管柱+片持ちの腕金(トロリ線高5.2m)。交流20kV: 細い鋼管柱+がい子2連の片持ち、トロリ線5.4m(最新方式=軽量コンパウンド)。"""
     mats5()
@@ -362,7 +362,7 @@ def catenary(P, s0, s1, name="cat", zfun=None, side=1, ac=False, span=50.0):
     pp, pa = frames_at(P, ss)
     pz = np.zeros(len(ss)) if zfun is None else zfun(ss)
     pn = np.stack([-np.sin(pa), np.cos(pa)], 1)
-    for k in range(len(ss)):
+    for k in (range(len(ss)) if posts else ()):        # posts=False: 多線区間(ガントリー支持)では柱と腕金を作らず線だけ張る
         q = pp[k] + pn[k] * side * 3.2
         z = pz[k]
         w = 0.22 if ac else 0.32
@@ -636,3 +636,20 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     # 海面
     pts = [tuple(p + n * side * 40.0) for p, n in zip(pos[::3], nrm[::3])]
     core.ribbon(name + "_sea", pts, 70.0, M["water"], z0=0.03, rut=False, col="Ground")
+
+
+def gantry(x, y0, y1, z, hc=5.2, name="gantry", w=0.34):
+    """多線区間の門形ビーム(ヘッドスパン代わりの鋼製ガントリー): y0〜y1 を跨ぎ、両端に鋼管柱。トロリ線高 hc の上に梁を渡す。"""
+    mats5()
+    g = G(name, "Props")
+    top = z + hc + 2.0
+    for yy in (y0, y1):
+        g.a("k5_steel", bevel=0.01).sbox((x, yy, z), (x, yy, top + 0.3), w, w)
+        g.a("k5_steel").sbox((x, yy, z - 0.05), (x, yy, z + 0.45), w + 0.3, w + 0.3)          # 基礎
+    g.a("k5_steel").sbox((x, y0, top), (x, y1, top), 0.22, 0.30)                              # 上弦梁
+    g.a("k5_steel").sbox((x, y0, top - 0.9), (x, y1, top - 0.9), 0.12, 0.12)                  # 下弦
+    n = max(2, int((y1 - y0) / 3.0))
+    for k in range(n + 1):                                                                    # ラチス斜材
+        ya = y0 + (y1 - y0) * k / n
+        g.a("k5_steel").sbox((x, ya, top - 0.9), (x, ya, top), 0.06, 0.06)
+    g.build()

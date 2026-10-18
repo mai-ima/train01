@@ -130,6 +130,28 @@ def m01():
             gk.a("iron_black").box(x - 0.12, x + 0.12, ym - 0.12, ym + 0.12, 0.0, ZP + 4.2)
         gk.a("tin").extrude_x([(ym - 6.2, ZP + 3.9), (ym, ZP + 4.7), (ym + 6.2, ZP + 3.9), (ym + 6.2, ZP + 3.84), (ym, ZP + 4.64), (ym - 6.2, ZP + 3.84)], -160, -4)
     gk.build()
+    # ---- 架線(直流電化): 多線区間は柱を立てず、門形ガントリー(進入部)と屋根からの吊り棒(上屋内)で支持する(C12)
+    try:
+        import kit5
+        gy = lambda x, i: (lambda yy, yc: yy + (yc + (i - len(ys) / 2) * 0.45 - yy) * (1 - ss((x - (-215)) / 80.0)))(ys[i], np.mean(ys) * 0.6 if i % 2 == 0 else np.mean(ys) * 0.6 + 4.4)
+        jn_n = groups[0][2]                                          # JNR の線数(先頭から)
+        for i, yy in enumerate(ys):
+            x_end = 0.0 if i < jn_n else -162.0                     # KE は上屋(低い切妻)の手前で終端
+            xs_c = np.linspace(-300.0, x_end, int((x_end + 300.0) / 1.0) + 1)
+            Pc = np.stack([xs_c, np.array([gy(x, i) for x in xs_c])], 1)
+            kit5.catenary(Pc, 12.0, len(Pc) - 4.0 if i < jn_n else len(Pc) - 2.0, name=f"m01_cat{i}", side=1, ac=False, posts=False)
+        for xg in (-290.0, -250.0, -210.0, -172.0):                   # 進入部ガントリー: 島の間(4.4m)に柱、梁は柱どうしを結ぶ
+            my = [ys[0] - 3.0] + [(gy(xg, 2 * n + 1) + gy(xg, 2 * n + 2)) / 2.0 for n in range(len(ys) // 2 - 1)] + [ys[-1] + 3.0]
+            for a_, b_ in zip(my[:-1], my[1:]):
+                kit5.gantry(xg, a_, b_, 0.0, name=f"m01_gan_{int(xg)}_{int(a_)}")
+        gh_ = G("m01_cat_hang", "Props")                              # 大屋根(JNR)の骨組みから吊り棒でトロリ線を保持
+        top_ = ZP + 9.0
+        for xr in np.arange(-136, 1, 17.0):
+            for i in range(jn_n):
+                gh_.a("iron_black").sbox((xr, ys[i], top_ - 0.4), (xr, ys[i], 6.4), 0.03, 0.03)
+        gh_.build()
+    except Exception as e_:
+        print("m01 catenary failed", e_)
     # ---- headhouse: wings (solid brick, windows) + hollow central concourse
     yH0, yH1 = ys[0] - 14.0, ys[-1] + 14.0
     gh = G("m01_head", "Buildings")
