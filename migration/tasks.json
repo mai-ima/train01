@@ -553,7 +553,7 @@
   },
   {
     "id": 133,
-    "status": "in_progress",
+    "status": "completed",
     "subject": "【C10】全線路の完全接続(3D連続性の目視) 再開めど: Z-A3〜A6後。最初の一手: net/orient_graph.py と interf.py を再実行し、wl*画像を3視点で撮って継ぎ目を確認。"
   },
   {
