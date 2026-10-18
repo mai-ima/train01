@@ -447,6 +447,10 @@ def struct_plan(ln, a, b, L):
     elif key == ("M19", "B02"):
         prof = kit7.ramp_fn([(0, MONO_Z0), (L, MONO_Z1)], ease=20)
         items += [("mono", dict(s0=0.0, s1=L))]
+    if not items and not prof and ln in ("HM", "SH", "SR", "HR", "YB") and L >= 180:
+        # C15: 構造物のない地上リンクには踏切を1か所(位置はリンクごとに固定の乱数。両端の駅から60m以上離す)
+        h = sum(map(ord, f"{ln}{a}{b}"))
+        items += [("lc", dict(s=min(max(fr(0.3 + (h % 40) / 100.0), 60.0), L - 60.0)))]
     if a in SZ and key != ("K03", "M03"):
         pass
     return prof, items
