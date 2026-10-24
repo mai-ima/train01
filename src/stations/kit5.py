@@ -533,18 +533,35 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
     for sg in (-1, 1):
         p = c + n * sg * (span / 2 + 1.0)
         g.a("k5_conc", bevel=0.05).box(p[0] - road_w / 2, p[0] + road_w / 2, p[1] - road_w / 2, p[1] + road_w / 2, -0.2, zh - 0.6) if False else None
-    # 軸が斜めでも作れるよう sbox で組む
-    a0, a1 = c - n * (span / 2 + 6.0), c + n * (span / 2 + 6.0)
-    g.a("k5_steel").sbox((a0[0], a0[1], zh - 0.45), (a1[0], a1[1], zh - 0.45), road_w, 0.9)
-    g.a("road" if "road" in M else "k5_conc").sbox((a0[0], a0[1], zh), (a1[0], a1[1], zh), road_w, 0.2)
-    for sg in (-1, 1):
-        p0 = c - n * (span / 2 + 6.0) + t * sg * road_w / 2
-        p1 = c + n * (span / 2 + 6.0) + t * sg * road_w / 2
-        g.a("k5_steel").sbox((p0[0], p0[1], zh + 0.55), (p1[0], p1[1], zh + 0.55), 0.12, 0.9)
-        for q in np.linspace(0, 1, 9):
+    # 軸が斜めでも作れるよう sbox で組む。桁・床版は橋台の間(±(span/2+0.9))だけ。盛土部分には伸ばさない(盛土面より上に突き出していた)
+    L2 = span / 2 + 0.9
+    a0, a1 = c - n * L2, c + n * L2
+    g.a("k5_conc").sbox((a0[0], a0[1], zh - 0.12), (a1[0], a1[1], zh - 0.12), road_w + 0.9, 0.24)          # RC床版
+    g.a("road" if "road" in M else "k5_conc").sbox((a0[0], a0[1], zh + 0.02), (a1[0], a1[1], zh + 0.02), road_w, 0.1)   # 舗装
+    gx = road_w / 2 - 0.15
+    for sg in (-1, 1):                                                                                      # 鋼板桁(腹板+上下フランジ)×2
+        q0, q1 = a0 + t * sg * gx, a1 + t * sg * gx
+        g.a("k5_steel").sbox((q0[0], q0[1], zh - 0.95), (q1[0], q1[1], zh - 0.95), 0.1, 1.15)
+        g.a("k5_steel").sbox((q0[0], q0[1], zh - 0.36), (q1[0], q1[1], zh - 0.36), 0.52, 0.09)
+        g.a("k5_steel").sbox((q0[0], q0[1], zh - 1.5), (q1[0], q1[1], zh - 1.5), 0.52, 0.1)
+        for k in range(1, int(2 * L2 / 1.8)):                                                             # 垂直補剛材
+            qq = a0 + (a1 - a0) * (k * 1.8 / (2 * L2)) + t * sg * (gx + (0.07 if sg > 0 else -0.07))
+            g.a("k5_steel").box(qq[0] - 0.04, qq[0] + 0.04, qq[1] - 0.04, qq[1] + 0.04, zh - 1.45, zh - 0.4)
+    for k in range(1, int(2 * L2 / 3.0)):                                                                  # 横桁(対傾構)
+        qa = a0 + (a1 - a0) * (k * 3.0 / (2 * L2))
+        e0, e1 = qa - t * gx, qa + t * gx
+        g.a("k5_steel").sbox((e0[0], e0[1], zh - 1.4), (e1[0], e1[1], zh - 1.4), 0.1, 0.14)
+        g.a("k5_steel").sbox((e0[0], e0[1], zh - 1.4), (e1[0], e1[1], zh - 0.45), 0.06, 0.06)
+    for sg in (-1, 1):                                                                                      # 縁石+パイプ高欄(上桟・中桟・支柱)
+        p0 = a0 + t * sg * (road_w / 2 + 0.3)
+        p1 = a1 + t * sg * (road_w / 2 + 0.3)
+        g.a("k5_conc").sbox((p0[0], p0[1], zh + 0.12), (p1[0], p1[1], zh + 0.12), 0.34, 0.3)
+        for hh, ww in ((1.05, 0.07), (0.62, 0.05)):
+            g.a("k5_steel").sbox((p0[0], p0[1], zh + hh + 0.12), (p1[0], p1[1], zh + hh + 0.12), ww, ww)
+        for q in np.linspace(0, 1, int(2 * L2 / 1.4) + 1):
             pq = p0 + (p1 - p0) * q
-            g.a("k5_steel").box(pq[0] - 0.05, pq[0] + 0.05, pq[1] - 0.05, pq[1] + 0.05, zh, zh + 1.0)
-    for sg in (-1, 1):
+            g.a("k5_steel").box(pq[0] - 0.05, pq[0] + 0.05, pq[1] - 0.05, pq[1] + 0.05, zh + 0.25, zh + 1.15)
+    for sg in (-1, 1):                                                                                      # 橋台(石積みの胸壁。盛土が両側を抱くので翼壁は別に立てない)
         p = c + n * sg * (span / 2 + 0.8)
         g.a("k5_stone", bevel=0.05).sbox((p[0], p[1], -0.2), (p[0], p[1], zh - 0.9), road_w + 1.0, 1.6)
     g.build()
