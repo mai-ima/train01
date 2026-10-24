@@ -72,7 +72,7 @@ def make_materials():
                   bump=0.9, bump_dist=0.04, macro=0.25, spec=0.0)
     M["soil"] = P("soil", "Ground110", scale=1.6, hsv=(0.5, 0.9, 0.7), bump=0.8, macro=0.2, spec=0.0)
     M["grass_ground"] = P("grass_ground", "Grass004", scale=1.6, hsv=(0.49, 0.62, 0.78), tint=(0.98, 0.88, 0.48),
-                          tint_amt=0.8, bump=0.8, macro=0.3, spec=0.0)
+                          tint_amt=0.8, bump=0.8, macro=0.3, spec=0.0, patch=0.6)
     M["bark"] = P("bark", "Bark001", scale=0.9, hsv=(0.5, 0.65, 0.7), tint=(0.8, 0.72, 0.62), tint_amt=0.5,
                   bump=1.2, spec=0.15)
     M["tin"] = P("tin_roof", "CorrugatedSteel005", scale=1.2, hsv=(0.5, 0.9, 0.75), tint=(0.62, 0.34, 0.2),

@@ -805,8 +805,8 @@ def pbr_layer(m, tid, scale=1.0, rot=(0, 0, 0), vec=None):
 
 
 def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None, rough_add=0.0, bump=0.5,
-            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0):
-    """Photo-based material. `macro` breaks up tiling with large-scale value noise; `dirt` adds grime streaks."""
+            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0):
+    """Photo-based material. `patch` adds 数十m規模の斑(乾いた草・土の露出・濃い草むら: 地面が単色に見える問題の対策)。 `macro` breaks up tiling with large-scale value noise; `dirt` adds grime streaks."""
     m = Mat(name)
     L = pbr_layer(m, tid, scale, rot)
     col = L["col"]
@@ -826,6 +826,12 @@ def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None,
         k = min(0.5, macro * 1.6)
         mac2 = m.ramp(nz2, [(0.3, (1 - k * 0.6, 1 - k * 0.2, 1 - k * 0.9)), (0.7, (1 + k * 0.5, 1 + k * 0.3, 1 - k * 0.2))])
         col = m.mix(1.0, col, mac2, 'MULTIPLY')
+    if patch > 0:
+        dry = m.ramp(m.noise(scale=0.05, detail=3), [(0.40, (1.0, 1.0, 1.0)), (0.58, (1 + 0.9 * patch, 1 + 0.5 * patch, 1 - 0.25 * patch))])
+        lush = m.ramp(m.noise(scale=0.17, detail=4), [(0.35, (1 - 0.38 * patch, 1 - 0.2 * patch, 1 - 0.45 * patch)), (0.65, (1 + 0.2 * patch, 1 + 0.12 * patch, 1.0))])
+        bare = m.ramp(m.noise(scale=0.11, detail=2), [(0.60, (1.0, 1.0, 1.0)), (0.74, (1 + 1.3 * patch, 1 + 0.7 * patch, 1 + 0.15 * patch))])
+        for pm in (dry, lush, bare):
+            col = m.mix(1.0, col, pm, 'MULTIPLY')
     if dirt > 0:
         x, y, z = m.sep(m.obj)
         streak = m.ramp(m.noise(m.mapping(scale=(5, 5, 0.5)), scale=2.2, detail=5),
