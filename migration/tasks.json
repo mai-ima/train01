@@ -984,7 +984,7 @@
     "id": 212,
     "subject": "【X14】監査基準を超超超厳格へ強化",
     "status": "in_progress",
-    "description": "audit_rubric.md 反映済み・運用継続"
+    "description": "audit_rubric.md 反映済み・運用継続 【2026-10-24 追記】人物の監査は最終監査(X9)のみ。それ以外の監査では人物を採点対象外にする(docs/audit_rubric.md・strict-auditor に反映)。"
   },
   {
     "id": 213,
