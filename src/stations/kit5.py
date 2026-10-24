@@ -169,6 +169,9 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
             p0, p1 = a0 + nrm[i] * sg * (width / 2 - 0.2), a1 + nrm[i + 1] * sg * (width / 2 - 0.2)
             g.a("k5_stone").sbox((p0[0], p0[1], zt[i] + 0.45), (p1[0], p1[1], zt[i + 1] + 0.45), 0.4, 0.9)
             g.a("k5_stone").sbox((p0[0], p0[1], zt[i] + 0.95), (p1[0], p1[1], zt[i + 1] + 0.95), 0.55, 0.14)
+            g.a("k5_stone").sbox((p0[0], p0[1], zt[i] - 0.05), (p1[0], p1[1], zt[i + 1] - 0.05), 0.62, 0.16)   # 帯石(コーニス)
+            if i % 4 == 0:                                                                                       # 親柱状の束石
+                g.a("k5_stone", bevel=0.03).box(p0[0] - 0.3, p0[0] + 0.3, p0[1] - 0.3, p0[1] + 0.3, zt[i] + 0.45, zt[i] + 1.18)
     # アーチ
     for k in range(na):
         sa, sb = s0 + k * span, s0 + (k + 1) * span
