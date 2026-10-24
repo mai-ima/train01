@@ -150,7 +150,7 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
         tang /= (np.linalg.norm(tang, axis=1, keepdims=True) + 1e-9)
         nrm = np.stack([-tang[:, 1], tang[:, 0]], 1)
         n = len(Pr)
-        fv, ft = [], []          # 田畑
+        fv, fts, fk = [], [], []   # 田畑(1区画ごとの頂点・三角形・刈田か)
         lv = []                  # 畦
         tv, tt, tc = [], [], []  # 樹木
         pv = []                  # 柵
@@ -197,18 +197,22 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                                 x, y = Pr[j, 0] + nrm[j, 0] * side * (off0 + d), Pr[j, 1] + nrm[j, 1] * side * (off0 + d)
                                 vv.append((x, y, 0.02 + (0.07 if kd % 2 else 0.0)))
                         m = (i_end - i) // 2 + 1
-                        base = sum(len(v) for v in fv)
                         arr = np.array(vv)
+                        loc_t = []
                         for k in range(m - 1):
                             for kd in range(nd - 1):
-                                a0, a1 = base + k * nd + kd, base + k * nd + kd + 1
-                                b0, b1 = base + (k + 1) * nd + kd, base + (k + 1) * nd + kd + 1
-                                ft += [(a0, a1, b0), (b0, a1, b1)]
+                                a0, a1 = k * nd + kd, k * nd + kd + 1
+                                b0, b1 = (k + 1) * nd + kd, (k + 1) * nd + kd + 1
+                                loc_t += [(a0, a1, b0), (b0, a1, b1)]
                         fv.append(arr)
+                        fts.append(loc_t)
+                        fk.append(harvest)
                         fcol = np.array(col) * tone
                         stripe = np.array([(1.0 if kd % 2 else 0.72) for _ in range(m) for kd in range(nd)])[:, None]
                         fc = np.tile(np.append(fcol, 1.0), (len(arr), 1)) * np.concatenate([stripe * np.array([[1, 1, 1]]), np.ones((len(arr), 1))], 1) * nr_.uniform(0.9, 1.1, (len(arr), 1))
                         total["fields"] += 1
+                        if verbose:
+                            print("  field", ln, a, b, "harvest" if harvest else "green", [round(float(v)) for v in arr[len(arr) // 2][:2]])
                         _FC.append(fc)
                         # 畦(道側の細い土手)
                         for j in range(i, i_end, 3):
@@ -281,10 +285,17 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                             continue
                         pv.append((q, q2))
                 j += seglen + int(rng.uniform(4, 30))
-        if fv:
-            V = np.concatenate(fv)
+        if "scn_paddy" not in M:      # 沿線用の青田: 周囲の草より少し明るい程度の稲の緑(共通の paddy は黄が強く、白っぽく飛んで見える)
+            M["scn_paddy"] = lib.mat_paddy("scn_paddy", green=(0.10, 0.24, 0.045), yellow=(0.26, 0.31, 0.07))
+        for hv, mname in ((False, "scn_paddy"), (True, "stubble")):           # 青田=稲の列の材質、刈田=刈り株の材質(区画ごとに種別で分けて1メッシュずつ)
+            sel = [i_ for i_ in range(len(fv)) if fk[i_] == hv]
+            if not sel:
+                continue
             import veg
-            veg.np_mesh(f"scn_fields_{ln}_{a}_{b}", V, np.array(ft), M["leaf"], "Terrain", colors=np.concatenate(_FC), smooth=False)
+            Vs, Ts, off_ = [], [], 0
+            for i_ in sel:
+                Vs.append(fv[i_]); Ts += [(a_ + off_, b_ + off_, c_ + off_) for (a_, b_, c_) in fts[i_]]; off_ += len(fv[i_])
+            veg.np_mesh(f"scn_fields_{mname}_{ln}_{a}_{b}", np.concatenate(Vs), np.array(Ts), M[mname], "Terrain", smooth=False)
         _FC.clear()
         if tv:
             import veg
