@@ -65,9 +65,11 @@ def river(P, s, width=40.0, length=700.0, name="river", wiggle=22.0, seed=0, flo
     ph = rng.uniform(0, 6.28)
     lat = wiggle * np.sin(ts / 120.0 + ph) * smooth01((np.abs(ts) - 30) / 80.0)       # 橋の下は直線
     pts = [tuple(c + d * t + nrm * l) for t, l in zip(ts, lat)]
-    core.ribbon(name, pts, width, M["water"], z0=0.03, rut=False, col="Ground")
+    core.ribbon(name, pts, width, M["water"], z0=0.05, rut=False, col="Ground")
     # 護岸の縁
-    core.ribbon(name + "_bank", [tuple(np.array(p) + 0) for p in pts], width + 5.0, M["k5_earth"], z0=0.015, rut=False, col="Ground")
+    # 岸: 外側に土の帯(湿った泥)、水際に砂利の帯。水面が地面に直線で刺さって見える問題の対策
+    core.ribbon(name + "_bank", [tuple(np.array(p) + 0) for p in pts], width + 9.0, M["dirt"], z0=0.034, rut=False, col="Ground")
+    core.ribbon(name + "_shore", [tuple(np.array(p) + 0) for p in pts], width + 3.4, M["ballast"], z0=0.042, rut=False, col="Ground")
 
 
 def truss_bridge(P, s0, s1, name="truss", h=7.5, width=7.0, zfun=None):
