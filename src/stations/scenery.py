@@ -237,11 +237,17 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                         z = 0.0
                         rad = rng.uniform(2.2, 4.2) * (0.7 if conif else 1.0) * (0.75 if bam else 1.0)
                         hc = rng.uniform(3.2, 5.0) if not conif else rng.uniform(4.0, 7.0)
-                        nl = 1 if conif else rng.choice((2, 2, 3))
+                        nl = 1 if conif else (rng.choice((2, 3)) if bam else rng.choice((4, 5, 6, 7)))   # 広葉樹は枝先ごとの葉房を複数(球1個の塊状を避け、隙間のある不規則な樹冠に)
                         for li in range(nl):
-                            ox, oy = (0.0, 0.0) if li == 0 else (rng.uniform(-0.5, 0.5) * rad, rng.uniform(-0.5, 0.5) * rad)
-                            rl = rad * (0.62 if conif else (0.9 if li == 0 else rng.uniform(0.5, 0.7)))
-                            c = (x + ox, y + oy, z + hc + (0 if li == 0 else rng.uniform(-0.2, 0.7) * rad))
+                            if conif or bam or li == 0:
+                                ox, oy = (0.0, 0.0) if li == 0 else (rng.uniform(-0.5, 0.5) * rad, rng.uniform(-0.5, 0.5) * rad)
+                                rl = rad * (0.62 if conif else (0.9 if li == 0 else rng.uniform(0.5, 0.7)))
+                                c = (x + ox, y + oy, z + hc + (0 if li == 0 else rng.uniform(-0.2, 0.7) * rad))
+                            else:
+                                ang_l = rng.uniform(0, 6.283)
+                                dist_l = rng.uniform(0.45, 1.0) * rad
+                                rl = rad * rng.uniform(0.42, 0.62)
+                                c = (x + math.cos(ang_l) * dist_l, y + math.sin(ang_l) * dist_l, z + hc + rng.uniform(-0.35, 0.75) * rad)
                             Vb, seg, rings = _blob(c, rl, rng, k=0.5)
                             if conif:
                                 Vb[:, 2] = c[2] + (Vb[:, 2] - c[2]) * 2.0
