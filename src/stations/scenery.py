@@ -21,6 +21,7 @@ STYLE = {            # 町タイプ -> (田畑の割合, 樹木の密度, 針葉
     "alpine": (0.02, 0.60, 0.80, 0.0), "onsen": (0.10, 0.60, 0.40, 0.10), "port": (0.0, 0.10, 0.0, 0.0),
     "freight": (0.05, 0.12, 0.05, 0.0), "airport": (0.30, 0.10, 0.0, 0.0),
 }
+ZELKOVA_RATIO = float(__import__("os").environ.get("LINK_ZELKOVA", "0.5"))     # 沿線の広葉樹のうち、枝つきの樹形(veg.zelkova)にする割合
 SKIP_KINDS_S = ("truss", "arch", "river", "tunnel", "cut", "viaduct", "trestle", "sea", "subway", "street", "mono")     # 築堤(embank)・雪覆い(shed)は線路際だけを占めるので除外しない
 GRID = 12.0
 
@@ -238,6 +239,13 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                         rad = rng.uniform(2.2, 4.2) * (0.7 if conif else 1.0) * (0.75 if bam else 1.0)
                         hc = rng.uniform(3.2, 5.0) if not conif else rng.uniform(4.0, 7.0)
                         nl = 1 if conif else (rng.choice((2, 3)) if bam else rng.choice((4, 5, 6, 7)))   # 広葉樹は枝先ごとの葉房を複数(球1個の塊状を避け、隙間のある不規則な樹冠に)
+                        if (not conif) and (not bam) and rng.random() < ZELKOVA_RATIO:
+                            try:        # 駅ゾーンと同じ枝つきの樹形(幹+主枝+葉房9個)。球塊の簡易樹より写実的
+                                import veg
+                                veg.zelkova(x, y, h=rng.uniform(7.0, 11.0), rad=rng.uniform(3.4, 5.0), seed=rng.randrange(10 ** 7))
+                                nl = 0
+                            except Exception as e:
+                                print("scenery zelkova failed (fallback to blob)", e)
                         for li in range(nl):
                             if conif or bam or li == 0:
                                 ox, oy = (0.0, 0.0) if li == 0 else (rng.uniform(-0.5, 0.5) * rad, rng.uniform(-0.5, 0.5) * rad)
