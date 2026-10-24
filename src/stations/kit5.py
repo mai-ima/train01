@@ -506,13 +506,15 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0):
     pos, ang = frames_at(P, ss)
     nrm = np.stack([-np.sin(ang), np.cos(ang)], 1)
     zt = h * smooth01((ss - s0) / ramp) * smooth01((s1 - ss) / ramp)
-    prof = [(-half - h * 1.6 - 1, 0.0), (-half - 0.5, 1.0), (half + 0.5, 1.0), (half + h * 1.6 + 1, 0.0)]
-    N, K = len(ss), 4
+    # 法面: 法尻→法面中腹(やや急)→法肩(バラスト肩のすぐ下)。旧: 法肩がバラスト面より0.3m下で、バラストの側面が垂直な灰色の壁に見えていた
+    toe = half + h * 1.6 + 1
+    prof = [(-toe, 0.0), (-(half + 2.3), 0.78), (-half - 0.6, 0.985), (half + 0.6, 0.985), (half + 2.3, 0.78), (toe, 0.0)]
+    N, K = len(ss), 6
     V = np.zeros((N, K, 3))
     for k, (off, f) in enumerate(prof):
         V[:, k, 0] = pos[:, 0] + nrm[:, 0] * (off if f == 0 else off)
         V[:, k, 1] = pos[:, 1] + nrm[:, 1] * (off if f == 0 else off)
-        V[:, k, 2] = -0.05 + (zt - 0.3) * f
+        V[:, k, 2] = -0.05 + (zt - 0.08) * f
     idx = np.arange(N * K).reshape(N, K)
     a, b, c, d = idx[:-1, :-1], idx[1:, :-1], idx[1:, 1:], idx[:-1, 1:]
     T = np.concatenate([np.stack([a, b, c], -1).reshape(-1, 3), np.stack([a, c, d], -1).reshape(-1, 3)])
