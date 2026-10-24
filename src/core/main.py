@@ -43,7 +43,7 @@ ap.add_argument("--people", default="on", help="人物の表示: on | off | cars
 ap.add_argument("--stock", default="on", help="停車車両の表示: on | off | 駅ID,駅ID(その駅のみ表示)")
 ap.add_argument("--interf", action="store_true", help="線路干渉検査(--zone)")
 ap.add_argument("--zone", default="", help="station id -> kit zone only")
-ap.add_argument("--world", default="", help="markers | all | id,id,... : 全駅を世界座標に配置+駅間線路")
+ap.add_argument("--world", default="", help="markers | bare | all | id,id,... : 全駅を世界座標に配置+駅間線路(bare=駅も目印も置かない)")
 ap.add_argument("--rig-export", default="", help="車両リグ構造+メタデータをJSON出力")
 ap.add_argument("--pano-start", type=int, default=0)
 ap.add_argument("--dof", type=float, default=0.0, help="f-stop; 0=off")
@@ -300,6 +300,8 @@ if args.world:
     for sid in kit4.SB:
         ox, oy = kit4.origin(sid)
         yw = kit4.yaw_of(sid)
+        if sel == "bare":
+            continue                      # 駅も目印も置かない(駅間の線路・構造物・沿線だけを監査用に撮る)
         if sel == "markers":
             g = G(f"mk_{sid}", "Props")
             g.a("iron_black").box(-30, 30, -6, 6, 0.0, 60)

@@ -73,7 +73,7 @@ def _cards(c, br, nr, bc, n, conif=False):
     for i in range(n):
         d = nr.normal(size=3) * np.array([1, 1, 1.6 if conif else 0.75])
         d /= np.linalg.norm(d) + 1e-9
-        p = np.array(c) + d * br * nr.uniform(0.82, 1.2)
+        p = np.array(c) + d * br * nr.uniform(0.68, 1.04)      # 内側〜表面に重ねる(外へ突き出すと黒い三角の破片に見える)
         t1 = np.cross(d, [0, 0, 1.0])
         if np.linalg.norm(t1) < 1e-3:
             t1 = np.array([1.0, 0, 0])
@@ -82,10 +82,10 @@ def _cards(c, br, nr, bc, n, conif=False):
         a0 = nr.uniform(0, 6.28)
         u = t1 * math.cos(a0) + t2 * math.sin(a0)
         v = -t1 * math.sin(a0) + t2 * math.cos(a0)
-        sz = nr.uniform(0.16, 0.34)
+        sz = nr.uniform(0.28, 0.55)
         V += [p - u * sz * 0.5, p + u * sz * 0.5, p + v * sz + d * 0.04]
         sh = nr.uniform(0.0, 1.0) * (0.4 + 0.6 * (d[2] * 0.5 + 0.5))
-        col = np.array(bc) * (0.7 + 1.1 * sh) * nr.uniform(0.8, 1.3)
+        col = np.array(bc) * (0.95 + 1.6 * sh) * nr.uniform(0.85, 1.35)
         C += [list(col) + [1.0]] * 3
         T += [(3 * i, 3 * i + 1, 3 * i + 2), (3 * i, 3 * i + 2, 3 * i + 1)]
     return np.array(V), T, np.array(C)
@@ -256,7 +256,7 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                                 bc = np.array([0.040, 0.085, 0.028]) * rng.uniform(0.8, 1.3)
                             sh = np.clip((Vb[:, 2] - z) / (hc * 2.0 + 1e-3), 0, 1)[:, None]
                             tc.append(np.concatenate([bc[None, :] * (0.55 + 0.9 * sh) * nr_.uniform(0.7, 1.35, (len(Vb), 1)), np.ones((len(Vb), 1))], 1))
-                            cv, ct_, cc_ = _cards(c, rl, nr_, bc * 1.5, max(40, int(260 * rl * rl)), conif)
+                            cv, ct_, cc_ = _cards(c, rl, nr_, bc * 1.5, max(60, int(420 * rl * rl)), conif)
                             base2 = sum(len(v) for v in tv)
                             tv.append(cv)
                             tt += [(base2 + a, base2 + b, base2 + c2) for (a, b, c2) in ct_]
