@@ -505,6 +505,10 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0):
     np_mesh(name, V.reshape(-1, 3), T, M["k5_earth"], "Ground", smooth=True)
 
 
+import os as _os_dbg
+DOUBLE_SIDED_DBG = _os_dbg.environ.get('BANK_DOUBLE') == '1'     # 検証用: 盛土を両面にして、裏面から見たときの黒面かを切り分ける
+
+
 def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
     """こ線橋: 道路が線路を直角にまたぐ(コンクリート橋台+鉄桁、両側に坂道)。"""
     mats5()
@@ -554,8 +558,19 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
                     for tri in ((a_, b_, c_), (a_, c_, d_)):
                         nz = np.cross(Va[tri[1]] - Va[tri[0]], Va[tri[2]] - Va[tri[0]])[2]
                         T.append(tri if nz >= 0 else (tri[0], tri[2], tri[1]))     # 法線を上向きにそろえる(左右で巻き方向が逆になり、片側が黒くなっていた)
-            return np.array(T)
-        np_mesh(f"{name}_bank{sg}", np.array(VB), strip(VB, 4), M.get("grass_ground", M["k5_earth"]), "Ground", smooth=True)
+            T = np.array(T)
+            return np.concatenate([T, T[:, ::-1]]) if DOUBLE_SIDED_DBG else T
+        # 橋台側の端(u=0)に蓋をして盛土を閉じる。蓋が無いと、開いた断面から盛土の内側に視線が入り、斜面を裏側から見て真っ黒になる(裏面はシェーディング法線が反転する)
+        nb0 = len(VB)
+        VB = VB + VB[:4]
+        cap = [(nb0, nb0 + 1, nb0 + 2), (nb0, nb0 + 2, nb0 + 3)]
+        Tm = strip(VB[:nb0], 4).tolist()
+        Va = np.asarray(VB, float)
+        face_dir = -sg * n                                  # 蓋の外向き=橋の中心側
+        for tri in cap:
+            nn = np.cross(Va[tri[1]] - Va[tri[0]], Va[tri[2]] - Va[tri[0]])
+            Tm.append(list(tri) if (nn[0] * face_dir[0] + nn[1] * face_dir[1]) >= 0 else [tri[0], tri[2], tri[1]])
+        np_mesh(f"{name}_bank{sg}", np.array(VB), np.array(Tm), M.get("grass_ground", M["k5_earth"]), "Ground", smooth=False)
         np_mesh(f"{name}_road{sg}", np.array(VR), strip(VR, 2), M["road"], "Ground", smooth=False)
 
 

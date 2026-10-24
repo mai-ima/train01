@@ -304,6 +304,9 @@ if args.world:
             g = G(f"mk_{sid}", "Props")
             g.a("iron_black").box(-30, 30, -6, 6, 0.0, 60)
             g.build()
+            for _mo in bpy.data.objects:          # 駅位置の目印(60m の黒い直方体)は成果物ではない。影を落とさない・映り込まない(長い影が盛土や橋に黒い楔形を作っていた)
+                if _mo.name.startswith(f"mk_{sid}"):
+                    _mo.visible_shadow = False
             e = bpy.data.objects.new("mkz", None)
             for n in [n for n in bpy.data.objects.keys() if n.startswith(f"mk_{sid}")]:
                 bpy.data.objects[n].parent = e
@@ -862,6 +865,27 @@ if os.environ.get("DBG_NORM"):      # デバッグ: カスタム法線の有無�
                     except Exception as _e:
                         _m.free_normals_split() if hasattr(_m, "free_normals_split") else print("[norm] failed", _e)
     print("[norm] カスタム法線つき:", sum(_cn.values()), sorted(_cn.items(), key=lambda t: -t[1])[:25])
+if os.environ.get("DBG_HIDE"):      # デバッグ: 指定オブジェクト名(部分一致)をレンダから隠して、どの物体が黒面の原因かを切り分ける
+    _n = 0
+    for _o in bpy.data.objects:
+        if _o.type == "MESH" and any(k in _o.name for k in os.environ["DBG_HIDE"].split(",")):
+            _o.hide_render = True; _n += 1
+    print("[hide]", _n, "objects")
+if os.environ.get("DBG_NOSHADOW"):      # デバッグ: 指定オブジェクト名(部分一致)が影を落とさないようにして、影が原因かを切り分ける
+    _n = 0
+    for _o in bpy.data.objects:
+        if _o.type == "MESH" and any(k in _o.name for k in os.environ["DBG_NOSHADOW"].split(",")):
+            _o.visible_shadow = False; _n += 1
+    print("[noshadow]", _n, "objects")
+if os.environ.get("DBG_MESH"):      # デバッグ: 指定メッシュ(部分一致)の面法線(上向き/下向き)・頂点範囲・面数をダンプ
+    for _o in bpy.data.objects:
+        if _o.type == "MESH" and any(k in _o.name for k in os.environ["DBG_MESH"].split(",")):
+            _m = _o.data
+            _up = sum(1 for _p in _m.polygons if _p.normal.z > 0.01); _dn = sum(1 for _p in _m.polygons if _p.normal.z < -0.01); _sd = len(_m.polygons) - _up - _dn
+            _vz = [v.co.z for v in _m.vertices]
+            print("[mesh]", _o.name, "faces", len(_m.polygons), "up", _up, "down", _dn, "side", _sd, "zrange", round(min(_vz), 2), round(max(_vz), 2), "smooth", any(_p.use_smooth for _p in _m.polygons))
+            for _p in _m.polygons[:40]:
+                print("   poly", _p.index, "n", [round(c, 2) for c in _p.normal], "c", [round(c, 1) for c in _p.center])
 if os.environ.get("DBG_OBJ"):      # デバッグ: 指定オブジェクト名(部分一致)の可視性・ライトリンク・コレクション・モディファイア・UV/頂点色を表示
     for _o in bpy.data.objects:
         if _o.type == "MESH" and any(k in _o.name for k in os.environ["DBG_OBJ"].split(",")):
@@ -872,7 +896,7 @@ if os.environ.get("DBG_OBJ"):      # デバッグ: 指定オブジェクト名(�
     for _l in bpy.data.objects:
         if _l.type == "LIGHT" and _l.data.type == "SUN":
             _ll = _l.light_linking
-            print("[sun]", _l.name, "recv", _ll.receiver_collection.name if _ll.receiver_collection else None, "blk", _ll.blocker_collection.name if _ll.blocker_collection else None, "shadow", _l.data.use_shadow, "energy", _l.data.energy)
+            print("[sun-dir]", [round(c, 3) for c in (_l.matrix_world.to_quaternion() @ Vector((0, 0, -1)))], "(光の進行方向)", "az/el設定", round(sun_az, 1), round(sun_el, 1)); print("[sun]", _l.name, "recv", _ll.receiver_collection.name if _ll.receiver_collection else None, "blk", _ll.blocker_collection.name if _ll.blocker_collection else None, "shadow", _l.data.use_shadow, "energy", _l.data.energy)
 def _mcol(m):
     try:
         n = m.node_tree.nodes.get("Principled BSDF") or next(x for x in m.node_tree.nodes if x.type == "BSDF_PRINCIPLED")
@@ -1045,6 +1069,25 @@ if not args.no_render and os.environ.get('MULTICAM'):
         cob.location = (_v[0], _v[1], _v[2])
         cob.rotation_euler = (Vector((_v[3], _v[4], _v[5])) - Vector(cob.location)).to_track_quat('-Z', 'Y').to_euler()
         cam.lens = _v[6] if len(_v) > 6 else 30
+        if os.environ.get("DBG_SEG") and _i == 0:      # デバッグ: 線分(カメラ→対象)と外接箱が交差する全メッシュを列挙(非表示・レンダ時に追加された物体の検出)
+            bpy.context.view_layer.update()
+            _sg = [float(t) for t in os.environ["DBG_SEG"].split(",")]
+            _a, _b = Vector(_sg[:3]), Vector(_sg[3:6]); _dv = _b - _a
+            for _o in bpy.data.objects:
+                if _o.type != "MESH":
+                    continue
+                _bb = [(_o.matrix_world @ Vector(_q)) for _q in _o.bound_box]
+                _lo = [min(q[k] for q in _bb) for k in range(3)]; _hi = [max(q[k] for q in _bb) for k in range(3)]
+                _t0, _t1 = 0.0, 1.0
+                for _k in range(3):
+                    if abs(_dv[_k]) < 1e-9:
+                        if _a[_k] < _lo[_k] or _a[_k] > _hi[_k]:
+                            _t0, _t1 = 1.0, 0.0
+                        continue
+                    _u0, _u1 = (_lo[_k] - _a[_k]) / _dv[_k], (_hi[_k] - _a[_k]) / _dv[_k]
+                    _t0, _t1 = max(_t0, min(_u0, _u1)), min(_t1, max(_u0, _u1))
+                if _t0 <= _t1 and (_hi[0] - _lo[0]) < 400:
+                    print("[seg]", _o.name, "hide_render", _o.hide_render, "hide_vp", _o.hide_viewport, "cam", _o.visible_camera, "shadow", _o.visible_shadow, "col", [c.name for c in _o.users_collection], "mats", [m.name if m else None for m in _o.data.materials][:2], "bbox", [round(v, 1) for v in _lo], [round(v, 1) for v in _hi])
         if _both:
             _people(True)
         r.filepath = f"{OUT}/{args.out}_{_i}.png"
