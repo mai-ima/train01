@@ -615,6 +615,16 @@ def level_crossing(P, s, name="lc", road_w=4.6):
     core.ribbon(name + "_road", pts, road_w, asph if "asphalt" in M else M["road"], z0=0.016, rut=False)
     g = G(name, "Props")
     g.a("k5_timber").sbox((c[0] - n[0] * 2.4, c[1] - n[1] * 2.4, 0.12), (c[0] + n[0] * 2.4, c[1] + n[1] * 2.4, 0.12), road_w, 0.14)
+    # 踏切の舗装(道路は n 方向、幅は t 方向): 板張りの外側にコンクリート踏板、道路の縁に縁石、路面に停止線
+    for sn in (-1, 1):
+        e0, e1 = c + n * sn * 2.4, c + n * sn * 3.9
+        g.a("k5_conc").sbox((e0[0], e0[1], 0.06), (e1[0], e1[1], 0.06), road_w, 0.12)         # 端部の踏板
+        for st in (-1, 1):
+            k0 = c + t * st * (road_w / 2 + 0.12) + n * sn * 2.4
+            k1 = c + t * st * (road_w / 2 + 0.12) + n * sn * 9.0
+            g.a("k5_stone").sbox((k0[0], k0[1], 0.12), (k1[0], k1[1], 0.12), 0.22, 0.24)       # 縁石
+        sa, sb = c + n * sn * 6.0 - t * (road_w / 2 - 0.25), c + n * sn * 6.0 + t * (road_w / 2 - 0.25)
+        g.a("white_paint").sbox((sa[0], sa[1], 0.03), (sb[0], sb[1], 0.03), 0.3, 0.02)         # 停止線
     for sg in (-1, 1):
         for tt in (-1, 1):
             p = c + t * sg * (road_w / 2 + 0.9) + n * tt * 3.3
