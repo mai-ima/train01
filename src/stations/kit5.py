@@ -132,7 +132,7 @@ def truss_bridge(P, s0, s1, name="truss", h=7.5, width=7.0, zfun=None):
         # 橋台(石積み)と支承
         for sgn in (-1, 1):
             p = pos[k] + nrm[k] * sgn * (width / 2)
-            g.a("k5_stone", bevel=0.05).box(p[0] - 1.4, p[0] + 1.4, p[1] - 1.4, p[1] + 1.4, -2.5, zb - 0.4)
+            g.a("ug_stone", bevel=0.05).box(p[0] - 1.4, p[0] + 1.4, p[1] - 1.4, p[1] + 1.4, -2.5, zb - 0.4)
             g.a("iron_black").box(p[0] - 0.5, p[0] + 0.5, p[1] - 0.5, p[1] + 0.5, zb - 0.5, zb - 0.3)
     # 縦桁・床板
     for sgn in (-0.9, 0.9):
@@ -144,7 +144,7 @@ def truss_bridge(P, s0, s1, name="truss", h=7.5, width=7.0, zfun=None):
     for k in range(1, nb, 2):
         for sgn in (-1, 1):
             p = pos[k] + nrm[k] * sgn * (width / 2 - 0.3)
-            g.a("k5_stone", bevel=0.05).box(p[0] - 1.0, p[0] + 1.0, p[1] - 1.0, p[1] + 1.0, -2.5, zs[k] + zdeck - 0.5)
+            g.a("ug_stone", bevel=0.05).box(p[0] - 1.0, p[0] + 1.0, p[1] - 1.0, p[1] + 1.0, -2.5, zs[k] + zdeck - 0.5)
     g.build()
 
 
@@ -300,11 +300,11 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
         # 門柱+まぐさ
         for sg in (-1, 1):
             q = p + n_ * sg * (inner_w + 1.0) - tdir * 0.0
-            g.a("k5_stone", bevel=0.03).box(q[0] - 0.9, q[0] + 0.9, q[1] - 0.9, q[1] + 0.9, z0 - 0.2, z0 + 5.8)
+            g.a("ug_brick", bevel=0.03).box(q[0] - 0.9, q[0] + 0.9, q[1] - 0.9, q[1] + 0.9, z0 - 0.2, z0 + 5.8)
         qa = p + n_ * (inner_w + 1.0)
         qb = p - n_ * (inner_w + 1.0)
-        g.a("k5_stone", bevel=0.03).sbox((qa[0], qa[1], z0 + 6.0), (qb[0], qb[1], z0 + 6.0), 1.4, 1.2)
-        g.a("k5_stone").sbox((qa[0], qa[1], z0 + 6.8), (qb[0], qb[1], z0 + 6.8), 1.0, 0.5)
+        g.a("ug_brick", bevel=0.03).sbox((qa[0], qa[1], z0 + 6.0), (qb[0], qb[1], z0 + 6.0), 1.4, 1.2)
+        g.a("ug_brick").sbox((qa[0], qa[1], z0 + 6.8), (qb[0], qb[1], z0 + 6.8), 1.0, 0.5)
         # 翼壁: 門柱から外へ開く石積みの擁壁(段状に低くなる)。坑口前の土を押さえる
         outv = tdir * sgn
         for sg in (-1, 1):
@@ -312,8 +312,8 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
             for j, (du, dv, hh) in enumerate(((2.2, 1.6, 4.6), (4.4, 3.4, 3.2), (6.6, 5.4, 1.9))):
                 a_ = base_pt + n_ * sg * (dv - 1.6 if j else 0.0) + outv * (du - 2.2 if j else 0.0)
                 b_ = base_pt + n_ * sg * dv + outv * du
-                g.a("k5_stone", bevel=0.02).sbox((a_[0], a_[1], z0 + hh / 2 - 0.2), (b_[0], b_[1], z0 + hh / 2 - 0.2), 0.7, hh)
-                g.a("k5_stone").sbox((a_[0], a_[1], z0 + hh - 0.1), (b_[0], b_[1], z0 + hh - 0.1), 0.9, 0.14)   # 笠石
+                g.a("ug_brick", bevel=0.02).sbox((a_[0], a_[1], z0 + hh / 2 - 0.2), (b_[0], b_[1], z0 + hh / 2 - 0.2), 0.7, hh)
+                g.a("ug_brick").sbox((a_[0], a_[1], z0 + hh - 0.1), (b_[0], b_[1], z0 + hh - 0.1), 0.9, 0.14)   # 笠石
     g.build()
 
 
@@ -563,7 +563,7 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
             g.a("k5_steel").box(pq[0] - 0.05, pq[0] + 0.05, pq[1] - 0.05, pq[1] + 0.05, zh + 0.25, zh + 1.15)
     for sg in (-1, 1):                                                                                      # 橋台(石積みの胸壁。盛土が両側を抱くので翼壁は別に立てない)
         p = c + n * sg * (span / 2 + 0.8)
-        g.a("k5_stone", bevel=0.05).sbox((p[0], p[1], -0.2), (p[0], p[1], zh - 0.9), road_w + 1.0, 1.6)
+        g.a("ug_conc2", bevel=0.05).sbox((p[0], p[1], -0.2), (p[0], p[1], zh - 0.9), road_w + 1.0, 1.6)
     g.build()
     # 取付道路(盛土の坂): 断面は台形(法面勾配 1:1.8)の滑らかなメッシュ。縦壁の箱を段々に積まない
     for sg in (-1, 1):
