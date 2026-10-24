@@ -177,7 +177,7 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
     # アーチ
     for k in range(na):
         sa, sb = s0 + k * span, s0 + (k + 1) * span
-        sub = np.linspace(sa + 0.9, sb - 0.9, 121)
+        sub = np.linspace(sa + 0.7, sb - 0.7, 121)
         pp, aa = frames_at(P, sub)
         zsub = np.asarray(zfun(sub), float) if zfun is not None else np.zeros(len(sub))
         zz = float(np.mean(zsub))
