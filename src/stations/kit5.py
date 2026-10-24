@@ -470,7 +470,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         T = np.concatenate([np.stack([a, b, c], -1).reshape(-1, 3), np.stack([a, c, d], -1).reshape(-1, 3)])
         if sgn > 0:
             T = T[:, ::-1]
-        np_mesh(f"{name}_{nm}", V.reshape(-1, 3), T, M["k5_earth"], "Ground", smooth=True)
+        np_mesh(f"{name}_{nm}", V.reshape(-1, 3), T, M.get("grass_ground", M["k5_earth"]), "Ground", smooth=True)
     if trees:
         import veg
         rng = random.Random(seed)
@@ -502,7 +502,7 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0):
     idx = np.arange(N * K).reshape(N, K)
     a, b, c, d = idx[:-1, :-1], idx[1:, :-1], idx[1:, 1:], idx[:-1, 1:]
     T = np.concatenate([np.stack([a, b, c], -1).reshape(-1, 3), np.stack([a, c, d], -1).reshape(-1, 3)])
-    np_mesh(name, V.reshape(-1, 3), T, M["k5_earth"], "Ground", smooth=True)
+    np_mesh(name, V.reshape(-1, 3), T, M.get("grass_ground", M["k5_earth"]), "Ground", smooth=True)
 
 
 import os as _os_dbg
