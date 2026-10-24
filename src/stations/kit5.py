@@ -214,7 +214,7 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
     g.build()
 
 
-def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=34.0, inner_w=2.5, inner_h=5.2):
+def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2.5, inner_h=5.2):
     """覆土トンネル: 外側は盛土の丘、内側はコンクリート覆工(中を歩ける)。坑口に石積みの門。"""
     mats5()
     ss = np.arange(s0, s1 + 0.5, 2.0)
@@ -222,8 +222,8 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=34.0, inner_w=2
     zs = np.zeros(len(ss)) if zfun is None else zfun(ss)
     nrm = np.stack([-np.sin(ang), np.cos(ang)], 1)
     # 外側断面(左地面→頂→右地面)
-    uo = np.linspace(-1, 1, 25)
-    hump = lambda u: mound * (1 - u ** 2) ** 1.15
+    uo = np.linspace(-1, 1, (int(2 * half / 2.6) // 2) * 2 + 1)      # 列間隔≈2.6m(坑口の開口判定は列間隔が inner_w 程度に収まることが前提。奇数で中央列を確保)
+    hump = lambda u: mound * (1 - abs(u) ** 1.7) ** 1.6
     prof_o = [(half * u, -0.05 + hump(u)) for u in uo]
     # 内側断面(アーチ)
     ui = np.linspace(-1, 1, 13)
@@ -247,7 +247,7 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=34.0, inner_w=2
             fe = 0.62 + 0.38 * (ends * ends * (3 - 2 * ends))
             for k, (off, z) in enumerate(prof):
                 edge = 1.0 - abs(off) / half
-                wob = 1.6 * np.sin(0.045 * ss + 2.1 * off / half) * np.clip(edge * 2, 0, 1) + 0.9 * np.sin(0.11 * ss + 5.0 * off / half) * np.clip(edge * 2, 0, 1)
+                wob = 3.4 * np.sin(0.037 * ss + 2.1 * off / half + 0.8) * np.clip(edge * 2, 0, 1) + 1.5 * np.sin(0.093 * ss + 5.0 * off / half) * np.clip(edge * 2, 0, 1) + 0.7 * np.sin(0.21 * ss + 9.0 * off / half) * np.clip(edge * 3, 0, 1)
                 V[:, k, 2] = zs - 0.05 + np.where(z > 0.01, (z + 0.0) * fe + wob * 0.0 + wob, 0.0)
         idx = np.arange(N * K).reshape(N, K)
         a, b, c, d = idx[:-1, :-1], idx[1:, :-1], idx[1:, 1:], idx[:-1, 1:]
