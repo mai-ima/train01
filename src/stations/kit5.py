@@ -175,16 +175,16 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
     # アーチ
     for k in range(na):
         sa, sb = s0 + k * span, s0 + (k + 1) * span
-        sub = np.linspace(sa + 0.9, sb - 0.9, 41)
+        sub = np.linspace(sa + 0.9, sb - 0.9, 121)
         pp, aa = frames_at(P, sub)
         zsub = np.asarray(zfun(sub), float) if zfun is not None else np.zeros(len(sub))
         zz = float(np.mean(zsub))
         zcrown = zz - 0.35 - 0.9 - 0.8 - 0.8      # アーチ内面の頂点
         zspring = zcrown - rise
-        u = np.linspace(-1, 1, 41)
+        u = np.linspace(-1, 1, 121)
         arc = zspring + rise * np.sqrt(np.clip(1 - u ** 2, 0, 1))
         nn = np.stack([-np.sin(aa), np.cos(aa)], 1)
-        for i in range(40):
+        for i in range(120):
             # アーチ輪(石)
             g.a("k5_stone").sbox((pp[i][0], pp[i][1], arc[i] + 0.4), (pp[i + 1][0], pp[i + 1][1], arc[i + 1] + 0.4), width - 0.1, 0.85)
             # 拱上壁: アーチ輪の上〜床版下面を、両側の外面で埋める
