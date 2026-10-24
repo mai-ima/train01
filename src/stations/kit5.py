@@ -305,6 +305,15 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=34.0, inner_w=2
         qb = p - n_ * (inner_w + 1.0)
         g.a("k5_stone", bevel=0.03).sbox((qa[0], qa[1], z0 + 6.0), (qb[0], qb[1], z0 + 6.0), 1.4, 1.2)
         g.a("k5_stone").sbox((qa[0], qa[1], z0 + 6.8), (qb[0], qb[1], z0 + 6.8), 1.0, 0.5)
+        # 翼壁: 門柱から外へ開く石積みの擁壁(段状に低くなる)。坑口前の土を押さえる
+        outv = tdir * sgn
+        for sg in (-1, 1):
+            base_pt = p + n_ * sg * (inner_w + 1.9)
+            for j, (du, dv, hh) in enumerate(((2.2, 1.6, 4.6), (4.4, 3.4, 3.2), (6.6, 5.4, 1.9))):
+                a_ = base_pt + n_ * sg * (dv - 1.6 if j else 0.0) + outv * (du - 2.2 if j else 0.0)
+                b_ = base_pt + n_ * sg * dv + outv * du
+                g.a("k5_stone", bevel=0.02).sbox((a_[0], a_[1], z0 + hh / 2 - 0.2), (b_[0], b_[1], z0 + hh / 2 - 0.2), 0.7, hh)
+                g.a("k5_stone").sbox((a_[0], a_[1], z0 + hh - 0.1), (b_[0], b_[1], z0 + hh - 0.1), 0.9, 0.14)   # 笠石
     g.build()
 
 
