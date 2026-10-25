@@ -294,6 +294,16 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
                 T = T[:, ::-1]
             np_mesh(f"{name}_face{i}", np.array(verts), T, M.get("grass_ground", M["k5_earth"]), "Ground", smooth=False)   # 丘の端面は土の斜面(石積みは坑口の門だけ)
     sweep(prof_i, M["k5_conc"], name + "_lining", True)
+    # 坑内灯: 両側の側壁の高さ3.0mに10m間隔で発光する灯具(監査指摘「内部が真っ黒で照明が無い」)
+    if "tun_lamp" not in M:
+        M["tun_lamp"] = lib.mat_emissive("tun_lamp", (1.0, 0.82, 0.50), strength=450.0)
+    gl = G(name + "_lamps", "Props")
+    for i in range(3, len(ss) - 3, 5):
+        for sg in (-1, 1):
+            q = pos[i] + nrm[i] * sg * (inner_w - 0.22)
+            gl.a("tun_lamp").box(q[0] - 0.14, q[0] + 0.14, q[1] - 0.14, q[1] + 0.14, zs[i] + 2.9, zs[i] + 3.12)
+            gl.a("iron_black").box(q[0] - 0.17, q[0] + 0.17, q[1] - 0.17, q[1] + 0.17, zs[i] + 3.12, zs[i] + 3.2)      # 灯具の笠
+    gl.build()
     # 坑口: 石積みの門(外周と内周の間を埋める)
     g = G(name + "_portal", "Props")
     for (i, sgn) in ((0, -1), (len(ss) - 1, 1)):

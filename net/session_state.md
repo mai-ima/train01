@@ -562,3 +562,9 @@ Q25 の確認済み項目: 台帳検査(net/ledger_check.py)=異常なし(228件
 
 ## 2026-10-25 Q25 未定義の材質キー(asphalt/white/brass/copper/yellow_grass)を定義+検出ツール追加
 詳細は docs/ROOT_CAUSES.md の Q25。common.make_materials() に4材質を追加、src/checks/matkeys_check.py(未定義0件)を追加。SH04 を ZA/E の2視点で撮影して破綻なしを確認(白線は 0.07m 幅で全景では見えない。platform() 単体で white_line 材質のオブジェクト生成を確認)。残: kit.py の platform 以外で `if "white" in M` 等を使う描画(kit3:220/569)も白で描かれるようになる。
+
+## 2026-10-25 Q25 既存の自動検査の実行結果(すべて合格)
+orient_graph: 1029組・12°超0 / trackcheck: 逸脱0 / vehcheck: 23形式・逸脱0 / ledger_check: 228件・誤完了候補0 / healthscan: 直近58ログ問題なし。
+
+## 2026-10-25 C15 トンネル坑内に坑内灯(kit5.tunnel)
+両側の側壁・高さ2.9〜3.1mに10m間隔で発光灯具+笠。発光強度は 22 では灯具だけが光って壁面が照らされず(発光面が0.28m四方で総光量が不足)、450 に上げて灯具まわりに光だまりができた(renders/work/c14/c15_tunnel_lamps.jpg。坑内2視点)。評価: 灯具の間は暗く、床の線路は見えない。坑内の断面・照明の「存在」は示せたが、写実には遠い(灯具の種類・壁の汚れ・排水溝・避難所・距離標が未)。
