@@ -789,6 +789,16 @@ def viaduct(P, s0, s1, name="viaduct", width=8.4, zfun=None, span=12.0):
     g.build()
 
 
+def _tetrapod(g, x, y, z, rz, sc=1.0, leg=0.95, r0=0.42, r1=0.26):
+    """テトラポッド: 中心から正四面体の4方向へ円錐台の脚。rz は鉛直軸まわりの回転。"""
+    c, sn = math.cos(rz), math.sin(rz)
+    for (dx, dy, dz) in ((1, 1, 1), (1, -1, -1), (-1, 1, -1), (-1, -1, 1)):
+        d = np.array([dx, dy, dz], float) / math.sqrt(3.0)
+        d = np.array([d[0] * c - d[1] * sn, d[0] * sn + d[1] * c, d[2]])
+        p1 = np.array([x, y, z]) + d * leg * sc
+        g.a("k5_conc", bevel=0.0).cyl((x, y, z), tuple(p1), r0 * sc, r1 * sc, seg=8, caps=True)
+
+
 def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     """防波堤・護岸: 線路の海側にコンクリート壁と消波ブロック。"""
     mats5()
@@ -802,7 +812,7 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
         g.a("k5_conc").sbox((p0[0], p0[1], h / 2 - 0.2), (p1[0], p1[1], h / 2 - 0.2), 1.0, h + 0.4)
         for j in range(2):
             q = pos[i] + nrm[i] * side * (9.0 + 2.2 * j + rng.uniform(-0.4, 0.4))
-            g.a("k5_conc", bevel=0.1).boxc(q[0], q[1], 0.5, 1.4, 1.4, 1.4, rz=rng.uniform(0, 1.5))
+            _tetrapod(g, q[0], q[1], 0.62, rng.uniform(0, 6.28), rng.uniform(0.9, 1.15))      # Q25: 消波ブロックが立方体だった。テトラポッド(4脚)にする
     g.build()
     # 海面
     pts = [tuple(p + n * side * 40.0) for p, n in zip(pos[::3], nrm[::3])]
