@@ -465,7 +465,7 @@ def struct_plan(ln, a, b, L):
     return prof, items
 
 
-def run_items(P, items, zfun, nm, shift_vec=None):
+def run_items(P, items, zfun, nm, shift_vec=None, ends=None):
     for (kind, kw) in items:
         n = f"{nm}_{kind}_{int(kw.get('s0', kw.get('s', 0)))}"
         if kind == "truss":
@@ -475,7 +475,7 @@ def run_items(P, items, zfun, nm, shift_vec=None):
         elif kind == "river":
             kit5.river(P, name=n, **kw)
         elif kind == "tunnel":
-            kit5.tunnel(P, name=n, zfun=zfun, **kw)
+            kit5.tunnel(P, name=n, zfun=zfun, **({"plate": SB[ends[0]]["name"] + "隧道"} if ends and ends[0] in SB else {}), **kw)
         elif kind == "shed":
             kit5.snowshed(P, name=n, zfun=zfun, **kw)
         elif kind == "cut":
@@ -560,7 +560,7 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None, rev=False):
         trackkit.build_track(nm, P, wooden=True, ballast=(tech == "rail"), fittings=(tech == "rail"), cam=None, zfun=zf)
     if items:
         kit5.mats5()
-        run_items(Pr, items, zf, nm)
+        run_items(Pr, items, zf, nm, ends=(a, b))
     if junction and TECH[ln] == "rail":
         try:
             kit5.turnout(Pr, name=nm + "_pt")

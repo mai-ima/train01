@@ -225,7 +225,31 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
     g.build()
 
 
-def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2.5, inner_h=5.2):
+def _plate_png(text):
+    """坑口の扁額(石板に刻んだ文字)の画像。tex/ に文字列ごとのファイル名で保存し、あればそれを使う。"""
+    import hashlib
+    from PIL import Image, ImageDraw, ImageFont
+    fn = "tunplate_" + hashlib.md5(text.encode()).hexdigest()[:10] + ".png"
+    path = f"{lib.TEX}/{fn}"
+    if not os.path.exists(path):
+        W, H = 1040, 224
+        im = Image.new("RGB", (W, H), (196, 192, 180))
+        d = ImageDraw.Draw(im)
+        size = 150
+        f = ImageFont.truetype("/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc", size, index=0)
+        while d.textlength(text, font=f) > W - 90 and size > 40:       # 長い名前は枠に収まるまで縮める(L01 は8字以上で右端が切れていた)
+            size -= 6
+            f = ImageFont.truetype("/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc", size, index=0)
+        tw = d.textlength(text, font=f)
+        yy = (H - size) // 2 - 4
+        d.text(((W - tw) / 2 + 3, yy + 3), text, font=f, fill=(228, 224, 212))      # 彫りの明部
+        d.text(((W - tw) / 2, yy), text, font=f, fill=(46, 42, 38))                 # 刻字
+        d.rectangle([6, 6, W - 7, H - 7], outline=(88, 84, 76), width=5)
+        im.save(path)
+    return fn
+
+
+def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2.5, inner_h=5.2, plate=None):
     """覆土トンネル: 外側は盛土の丘、内側はコンクリート覆工(中を歩ける)。坑口に石積みの門。"""
     mats5()
     ss = np.arange(s0, s1 + 0.5, 2.0)
@@ -345,6 +369,21 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
                 g.a("ug_brick", bevel=0.02).sbox((a_[0], a_[1], z0 + hh / 2 - 0.2), (b_[0], b_[1], z0 + hh / 2 - 0.2), 0.7, hh)
                 g.a("ug_brick").sbox((a_[0], a_[1], z0 + hh - 0.1), (b_[0], b_[1], z0 + hh - 0.1), 0.9, 0.14)   # 笠石
     g.build()
+    if plate:      # 扁額の文字(石板の外面に画像を貼る。画像の右方向は坑口を外から見た時の右)
+        try:
+            fn = _plate_png(plate)
+            for (i, sgn) in ((0, -1), (len(ss) - 1, 1)):
+                p, n_, z0 = pos[i], nrm[i], zs[i]
+                tdir = np.array([math.cos(ang[i]), math.sin(ang[i])])
+                outv = tdir * sgn
+                right = np.array([-outv[1], outv[0]])
+                c = p + outv * 0.78 + outv * 0.085
+                zc = z0 + 6.05
+                hw, hh = 1.3, 0.28
+                cr = [np.append(c - right * hw, zc - hh), np.append(c + right * hw, zc - hh), np.append(c + right * hw, zc + hh), np.append(c - right * hw, zc + hh)]
+                lib.image_plane(f"{name}_plate{i}", cr, fn, col="Props")
+        except Exception as e:
+            print("tunnel plate failed (skipped)", e)
 
 
 def snowshed(P, s0, s1, name="snowshed", zfun=None, half=4.2, h=6.0, steel=False):
