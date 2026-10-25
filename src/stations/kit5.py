@@ -279,7 +279,7 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
         K = Vh.shape[1]
         for k in range(K - 1):
             a_, b_ = Vh[i, k], Vh[i, k + 1]
-            za0, zb0 = zs[i] - 0.2, zs[i] - 0.2
+            za0, zb0 = -0.3, -0.3     # Q25: 端面の下端が線路高さ(zs-0.2)で、丘の中空の内部(暗い)が下の隙間から黒い線として見えていた。地面まで下ろす
             oa, ob = abs(prof_o[k][0]), abs(prof_o[k + 1][0])
             if max(oa, ob) <= inner_w + 0.5:        # 開口は坑の幅(列間隔≈2.8m)に収まる列だけ。min で判定すると隣の列まで開いて、門の外側に黒い隙間が出る
                 za0 = zb0 = zs[i] + 7.3
