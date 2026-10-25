@@ -282,6 +282,8 @@ if args.zone:
         _j.dump(_s5, open(f"{_R}/out/stockhit_{args.zone}.json", "w"), ensure_ascii=False)
         print("STOCKHIT", args.zone, len(_s5), list(_s5.items())[:6])
         print("FLOAT", args.zone, len(_f), list(_f.items())[:6])
+        if floatcheck.KNOWN_HITS:
+            print("FLOAT_KNOWN", args.zone, len(floatcheck.KNOWN_HITS), "(目視確認済みの既知。根拠は net/float_known.json)")
 if args.world:
     import kit2 as kit
     import kit4, trackkit, lib

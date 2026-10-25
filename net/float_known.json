@@ -1,0 +1,15 @@
+{
+ "note": "floatcheck の既知(目視で浮きでないと確認済み)の許可リスト。追加するときは必ず根拠の画像と理由を書く。根拠なしの追加は禁止。",
+ "items": [
+  {
+   "re": "^k6_(K02|T02|T03)_eh[mp]$",
+   "evidence": "renders/work/c14/q25_k02_stair_down.jpg, q25_k02_stair_side.jpg, q25_k02_hall_wall.jpg (2026-10-25 断面3視点)",
+   "reason": "階段室ライニング下端と床スラブの測定上の差(gap 0.86)。階段は手すり付きでホーム階まで連続し、見た目の浮き・隙間なし"
+  },
+  {
+   "re": "^k6_(K02|T02|T03)_plat[AB]?$",
+   "evidence": "renders/work/c14/q25_k02_hall_wall.jpg (2026-10-25)",
+   "reason": "地下ホームの最下点(zmin -7.4)が路盤床の上に載る差 gap 0.2(許容と同値)。見た目の隙間なし"
+  }
+ ]
+}

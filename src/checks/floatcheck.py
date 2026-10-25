@@ -1,8 +1,14 @@
 """K3: 浮き検査。建物/駅施設の「グループ(名前の接頭辞)」の最下点から真下へレイを飛ばし、
 自分以外の面(地面・ホーム・路盤)までの隙間が GAP を超えるものを列挙(高架など意図的な高さは名前で除外)。"""
-import re, numpy as np, bpy
+import re, json, os, numpy as np, bpy
 from mathutils import Vector
 GAP = 0.2
+KNOWN_HITS = {}      # 既知(目視確認済み)の報告。net/float_known.json の正規表現に一致したもの。run() の戻り値には入れず、別に出す
+
+
+def _known():
+    p = os.path.join(os.environ.get("STATION_ROOT") or os.path.dirname(os.path.abspath(__file__)), "net", "float_known.json")
+    return json.load(open(p))["items"] if os.path.exists(p) else []
 SKIP = re.compile(r"^(bb_|kit_ground|far_|hills|knoll|stk_|veh|room_|sky|sun|cam)|(_ovnm|_via|_beam|_sig|_cat|trk|track|catenary|bridge|_over|fb_|canopy|_snow|k6_K03|k6_B02|m19_head|_quay|_pier|_poles|k2_cross|_hall|_nm|_ship|ferry|_tt|_stop|^lm$)", re.I)   # Q25: _ovnm=橋上通路の壁付け駅名板(下に面が無いのが正常。M03 の偽陽性)
 def prefix(n):
     return re.split(r"[_.]", n, 1)[0] if not n.startswith("k2_") and not n.startswith("k6_") and not n.startswith("m19_") else "_".join(re.split(r"[_.]", n)[:3])
@@ -37,5 +43,10 @@ def run(sid):
                     o = Vector((loc.x, loc.y, loc.z - 0.01)); continue
                 gaps.append(float(zmin - loc.z)); break
         if gaps and min(gaps) > GAP:
-            res[g] = dict(zmin=round(zmin, 2), gap=round(min(gaps), 2), n=len(lst))
+            d = dict(zmin=round(zmin, 2), gap=round(min(gaps), 2), n=len(lst))
+            kn = next((k for k in _known() if re.search(k["re"], g)), None)
+            if kn:      # 目視で浮きでないと確認済み(根拠の画像つき)。件数には数えず別に出す
+                KNOWN_HITS[g] = dict(d, evidence=kn["evidence"])
+            else:
+                res[g] = d
     return res
