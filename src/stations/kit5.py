@@ -107,12 +107,21 @@ def truss_bridge(P, s0, s1, name="truss", h=7.5, width=7.0, zfun=None):
             p0 = pos[k] + nrm[k] * sgn * width / 2
             p1 = pos[k + 1] + nrm[k + 1] * sgn * width / 2
             z0, z1 = zs[k], zs[k + 1]
-            g.a("k5_steel").sbox((p0[0], p0[1], z0 + zdeck), (p1[0], p1[1], z1 + zdeck), 0.35, 0.6)               # 下弦
-            g.a("k5_steel").sbox((p0[0], p0[1], z0 + zdeck + h), (p1[0], p1[1], z1 + zdeck + h), 0.35, 0.5)       # 上弦
-            if k % 2 == 0:
-                g.a("k5_steel").sbox((p0[0], p0[1], z0 + zdeck), (p1[0], p1[1], z1 + zdeck + h), 0.22, 0.3)        # 斜材 /
-            else:
-                g.a("k5_steel").sbox((p0[0], p0[1], z0 + zdeck + h), (p1[0], p1[1], z1 + zdeck), 0.22, 0.3)        # 斜材 \
+            # Q25: 弦材が平らな角材だった。ウェブ+上下フランジ(I形断面)にして、鋼橋の部材らしい断面にする
+            for zc, dep in ((zdeck, 0.6), (zdeck + h, 0.5)):                                                      # 下弦 / 上弦
+                g.a("k5_steel").sbox((p0[0], p0[1], z0 + zc), (p1[0], p1[1], z1 + zc), 0.07, dep)                  # ウェブ
+                for fz in (-dep / 2, dep / 2):
+                    g.a("k5_steel").sbox((p0[0], p0[1], z0 + zc + fz), (p1[0], p1[1], z1 + zc + fz), 0.38, 0.07)   # フランジ
+            for dn in (-0.09, 0.09):                                                                                # 斜材は二枚板(溝形)+間のレーシング板
+                pa0 = p0 + nrm[k] * dn; pa1 = p1 + nrm[k + 1] * dn
+                if k % 2 == 0:
+                    g.a("k5_steel").sbox((pa0[0], pa0[1], z0 + zdeck), (pa1[0], pa1[1], z1 + zdeck + h), 0.04, 0.3)        # 斜材 /
+                else:
+                    g.a("k5_steel").sbox((pa0[0], pa0[1], z0 + zdeck + h), (pa1[0], pa1[1], z1 + zdeck), 0.04, 0.3)        # 斜材 \
+            for fr in (0.25, 0.5, 0.75):
+                pm = p0 + (p1 - p0) * fr
+                zm = (z0 + zdeck + (z1 - z0 + h) * fr) if k % 2 == 0 else (z0 + zdeck + h + (z1 - z0 - h) * fr)
+                g.a("k5_steel").box(pm[0] - 0.12, pm[0] + 0.12, pm[1] - 0.12, pm[1] + 0.12, zm - 0.03, zm + 0.03)       # レーシング板(目安)
     # 上横構(X字)と端部の橋門構(ポータル)、下横構
     for k in range(nb):
         a0, a1 = pos[k] + nrm[k] * width / 2, pos[k + 1] - nrm[k + 1] * width / 2
