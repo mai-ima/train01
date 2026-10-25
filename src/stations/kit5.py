@@ -762,16 +762,16 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
             T = np.array(T)
             return np.concatenate([T, T[:, ::-1]]) if DOUBLE_SIDED_DBG else T
         # 橋台側の端(u=0)に蓋をして盛土を閉じる。蓋が無いと、開いた断面から盛土の内側に視線が入り、斜面を裏側から見て真っ黒になる(裏面はシェーディング法線が反転する)
-        nb0 = len(VB)
-        VB = VB + VB[:8]
-        cap = [(nb0, nb0 + j, nb0 + j + 1) for j in range(1, 7)]      # 8点の断面を扇状に塞ぐ
-        Tm = strip(VB[:nb0], 8).tolist()
+        # 蓋は盛土の材質(草)ではなく擁壁のコンクリート面にする。草の材質だと、橋の脇から見える盛土の端面が地面から浮いた逆三角の草の板に見えていた(C17監査の最優先指摘)
         Va = np.asarray(VB, float)
+        np_mesh(f"{name}_bank{sg}", Va, strip(VB, 8), M.get("grass_ground", M["k5_earth"]), "Ground", smooth=False)
         face_dir = -sg * n                                  # 蓋の外向き=橋の中心側
-        for tri in cap:
-            nn = np.cross(Va[tri[1]] - Va[tri[0]], Va[tri[2]] - Va[tri[0]])
-            Tm.append(list(tri) if (nn[0] * face_dir[0] + nn[1] * face_dir[1]) >= 0 else [tri[0], tri[2], tri[1]])
-        np_mesh(f"{name}_bank{sg}", np.array(VB), np.array(Tm), M.get("grass_ground", M["k5_earth"]), "Ground", smooth=False)
+        cv = Va[:8].copy()
+        cap = []
+        for j in range(1, 7):
+            nn = np.cross(cv[j] - cv[0], cv[j + 1] - cv[0])
+            cap.append([0, j, j + 1] if (nn[0] * face_dir[0] + nn[1] * face_dir[1]) >= 0 else [0, j + 1, j])
+        np_mesh(f"{name}_bankwall{sg}", cv, np.array(cap), M["ug_conc2"], "Ground", smooth=False)
         np_mesh(f"{name}_road{sg}", np.array(VR), strip(VR, 2), M["ug_asph"], "Ground", smooth=False)
 
 
