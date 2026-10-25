@@ -571,3 +571,5 @@ orient_graph: 1029組・12°超0 / trackcheck: 逸脱0 / vehcheck: 23形式・�
 
 ## 2026-10-25 Q25b トラス橋の水没を修正(prof 欠落)— 詳細は docs/ROOT_CAUSES.md の Q25b
 M03–M04(100mに縮小・3m持ち上げ)と Y02–Y03(2.5m)に prof と取付盛土(fill)を追加。DBG_BB を main.py に追加。次: 線路勾配の自動検査(最大3.5%超を報告)、画像は renders/work/c14/c15_truss_raised.jpg。
+
+## 2026-10-25 Q25c 勾配検査ツール gradecheck.py を追加(16/19区間が35‰超。設計判断が要るため変更せず記録のみ)。詳細は docs/ROOT_CAUSES.md。次に決める: 極端な3区間(SH03–SH04・L01–M14・S03–S04)の高低差を下げるか。
