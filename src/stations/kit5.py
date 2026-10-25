@@ -346,14 +346,14 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
         rng_b = random.Random(int(s0) + 11)
         N_, K_ = Vh.shape[0], Vh.shape[1]
         bp = []
-        for _ in range(int(14 + min(40, (s1 - s0) / 4))):
+        for _ in range(int(26 + min(60, (s1 - s0) / 3))):
             i = rng_b.choice(list(range(0, min(6, N_))) + list(range(max(0, N_ - 6), N_)) + [rng_b.randrange(N_)])
             k = rng_b.randrange(2, K_ - 2)
             if abs(prof_o[k][0]) < inner_w + 4.5 and (i < 6 or i > N_ - 7):
                 continue            # 坑口の真上は空けておく
             p3 = Vh[i, k]
             bp.append((float(p3[0]), float(p3[1]), float(p3[2])))
-        _boulders(name + "_rocks", bp, seed=int(s0) + 5)
+        _boulders(name + "_rocks", bp, seed=int(s0) + 5, r0=0.8, r1=2.6)
     except Exception as e:
         print("hill rocks failed (skipped)", e)
     # 坑口の切り立った面(土の斜面): 丘の断面の下を埋め、トンネル口の部分だけ開ける
