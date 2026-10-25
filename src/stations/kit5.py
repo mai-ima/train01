@@ -208,6 +208,13 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
                 if ztop_w - zlo > 0.05:
                     g.a("ug_stone").sbox((q0[0], q0[1], (zlo + ztop_w) / 2), (q1[0], q1[1], (zlo + ztop_w) / 2), 0.6, ztop_w - zlo)
             # 中詰め(内側の見えない部分は薄く)
+        # Q25/C17: 迫石・要石が無く石積みが一様だった(監査)。頂部の要石と、起拱部(橋脚上)の迫り元石を両側の外面へ張り出す
+        tgp = np.stack([np.cos(aa), np.sin(aa)], 1)
+        for sg in (-1, 1):
+            for iu, hh_, ll_ in ((60, 1.15, 1.0), (4, 0.9, 1.1), (116, 0.9, 1.1)):
+                qc = pp[iu] + nn[iu] * sg * (width / 2 + 0.06)
+                zc_ = arc[iu] + 0.4 + (0.0 if iu == 60 else 0.25)
+                g.a("ug_stone", bevel=0.03).sbox((qc[0] - tgp[iu][0] * ll_ / 2, qc[1] - tgp[iu][1] * ll_ / 2, zc_), (qc[0] + tgp[iu][0] * ll_ / 2, qc[1] + tgp[iu][1] * ll_ / 2, zc_), 0.34, hh_)
         # 橋脚(スパン境界)・橋台
         for s_e, abut in ((sa, k == 0), (sb, k == na - 1)):
             pe, ae = frames_at(P, [s_e])
