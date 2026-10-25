@@ -282,7 +282,7 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
             za0, zb0 = -0.3, -0.3     # Q25: 端面の下端が線路高さ(zs-0.2)で、丘の中空の内部(暗い)が下の隙間から黒い線として見えていた。地面まで下ろす
             oa, ob = abs(prof_o[k][0]), abs(prof_o[k + 1][0])
             if max(oa, ob) <= inner_w + 0.5:        # 開口は坑の幅(列間隔≈2.8m)に収まる列だけ。min で判定すると隣の列まで開いて、門の外側に黒い隙間が出る
-                za0 = zb0 = zs[i] + 7.3
+                za0 = zb0 = zs[i] + 6.9      # Q25: 開口の上端が門の笠石の上端(7.05)より高い 7.3 で、笠石の背後に黒い隙間(中空の丘の内部)が見えていた。笠石の中に収める
                 if max(a_[2], b_[2]) <= za0 + 0.05:
                     continue
             base = len(verts)
@@ -317,6 +317,9 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
         qb = p - n_ * (inner_w + 1.0)
         g.a("ug_brick", bevel=0.03).sbox((qa[0], qa[1], z0 + 6.0), (qb[0], qb[1], z0 + 6.0), 1.4, 1.2)
         g.a("ug_brick").sbox((qa[0], qa[1], z0 + 6.8), (qb[0], qb[1], z0 + 6.8), 1.0, 0.5)
+        # 扁額: 坑口の上に石の銘板(白い石板を門の外面へ少し出す。監査指摘「銘板が無い」)
+        pn = p + tdir * sgn * 0.78
+        g.a("ug_stone").sbox((pn[0] + n_[0] * 1.5, pn[1] + n_[1] * 1.5, z0 + 6.05), (pn[0] - n_[0] * 1.5, pn[1] - n_[1] * 1.5, z0 + 6.05), 0.14, 0.7)
         # 翼壁: 門柱から外へ開く石積みの擁壁(段状に低くなる)。坑口前の土を押さえる
         outv = tdir * sgn
         for sg in (-1, 1):
