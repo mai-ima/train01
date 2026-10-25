@@ -509,13 +509,19 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
                 print("sugi failed", _e)
 
 
-def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0):
-    """築堤の法面(線路の高さ zfun と合わせて使う)。"""
+def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, holes=()):
+    """築堤の法面(線路の高さ zfun と合わせて使う)。
+    zfun を渡すと、線路の高さ関数にそのまま追従する盛土になる(橋の取付部など)。holes=[(a,b)] の区間(橋の下)は盛土を地面の高さに落とす。"""
     mats5()
     ss = np.arange(s0, s1 + 0.5, 2.0)
     pos, ang = frames_at(P, ss)
     nrm = np.stack([-np.sin(ang), np.cos(ang)], 1)
-    zt = h * smooth01((ss - s0) / ramp) * smooth01((s1 - ss) / ramp)
+    if zfun is not None:
+        zt = np.asarray(zfun(ss), float).copy()
+        for (ha, hb) in holes:
+            zt[(ss > ha) & (ss < hb)] = 0.0
+    else:
+        zt = h * smooth01((ss - s0) / ramp) * smooth01((s1 - ss) / ramp)
     # 法面: 法尻→法面中腹(やや急)→法肩(バラスト肩のすぐ下)。旧: 法肩がバラスト面より0.3m下で、バラストの側面が垂直な灰色の壁に見えていた
     toe = half + h * 1.6 + 1
     prof = [(-toe, 0.0), (-(half + 2.3), 0.78), (-half - 0.6, 0.985), (half + 0.6, 0.985), (half + 2.3, 0.78), (toe, 0.0)]

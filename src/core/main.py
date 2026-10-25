@@ -644,6 +644,14 @@ if os.environ.get("DBG_GRID"):
         for _gy in range(-130, -69, 10):
             _ga.boxc(_gx, _gy, 6.0 + (_gx - 320) / 10.0 * 1.5, 0.5, 0.5, 12.0 + (_gx - 320) / 10.0 * 3.0)
     _ga.build()
+if os.environ.get("DBG_BB"):            # 診断用: 名前に DBG_BB を含むオブジェクトの範囲(x,y,z)と頂点数を出力(Q25)
+    for _o in bpy.data.objects:
+        if os.environ["DBG_BB"] in _o.name:
+            try:
+                _bb = [(_o.matrix_world @ Vector(_p)) for _p in _o.bound_box]
+                print("[DBGBB]", _o.name, [round(min(getattr(p, a) for p in _bb), 1) for a in "xyz"], [round(max(getattr(p, a) for p in _bb), 1) for a in "xyz"], len(_o.data.vertices) if _o.type == "MESH" else "-")
+            except Exception as _e:
+                print("[DBGBB] failed", _o.name, _e)
 if os.environ.get("DBG_ALL"):
     for _o in bpy.data.objects:
         try:

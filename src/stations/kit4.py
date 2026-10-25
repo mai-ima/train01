@@ -367,7 +367,11 @@ def struct_plan(ln, a, b, L):
     key = (a, b)
     fr = lambda x: x * L
     if key == ("M03", "M04"):
-        items += [("truss", dict(s0=fr(0.5) - 71, s1=fr(0.5) + 71, width=11.0)), ("river", dict(s=fr(0.5), width=60.0))]
+        # Q25: 以前は線路の高低(prof)が無く、橋床が地面の高さ(z≈-1.0)=水面より下で、橋が水没して見えた。橋を100mに縮め、取付部を築堤で3m持ち上げる
+        _s0, _s1 = fr(0.5) - 50, fr(0.5) + 50
+        prof += [(_s0 - 60, _s1 + 60, 3.0, 58.0)]
+        items += [("truss", dict(s0=_s0, s1=_s1, width=11.0)), ("river", dict(s=fr(0.5), width=60.0)),
+                  ("fill", dict(s0=_s0 - 60, s1=_s1 + 60, holes=[(_s0 - 2, _s1 + 2)]))]
     elif key == ("M05", "M06"):
         items += [("lc", dict(s=fr(x))) for x in (0.3, 0.55, 0.8)]
     elif key == ("M06", "M07"):
@@ -400,7 +404,10 @@ def struct_plan(ln, a, b, L):
         prof += [(fr(0.05), fr(0.93), 2.5, 60.0)]
         items += [("embank", dict(s0=fr(0.05), s1=fr(0.93), h=2.5)), ("sea", dict(s0=fr(0.1), s1=fr(0.9)))]
     elif key == ("Y02", "Y03"):
-        items += [("truss", dict(s0=fr(0.5) - 18, s1=fr(0.5) + 18, width=4.2)), ("river", dict(s=fr(0.5), width=14.0, wiggle=12.0))]
+        _s0, _s1 = fr(0.5) - 18, fr(0.5) + 18               # Q25: 橋床が水面より下だった(prof 無し)。取付部を築堤で2.5m持ち上げる
+        prof += [(_s0 - 52, _s1 + 52, 2.5, 50.0)]
+        items += [("truss", dict(s0=_s0, s1=_s1, width=4.2)), ("river", dict(s=fr(0.5), width=14.0, wiggle=12.0)),
+                  ("fill", dict(s0=_s0 - 52, s1=_s1 + 52, holes=[(_s0 - 2, _s1 + 2)]))]
     elif key == ("S02", "S03"):
         items += [("cut", dict(s0=fr(0.25), s1=fr(0.75), trees=8, seed=7))]
     elif key == ("S03", "S04"):
@@ -473,6 +480,8 @@ def run_items(P, items, zfun, nm, shift_vec=None):
             kit5.cutting(P, name=n, **kw)
         elif kind == "embank":
             kit5.embankment(P, name=n, **kw)
+        elif kind == "fill":                 # 線路の高さ関数(zfun)に追従する盛土(橋の取付部)
+            kit5.embankment(P, name=n, zfun=zfun, **kw)
         elif kind == "over":
             kit5.overbridge(P, name=n, **kw)
         elif kind == "lc":
@@ -524,6 +533,8 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None, rev=False):
                 kw2["s0"], kw2["s1"] = L_ - kw_["s1"], L_ - kw_["s0"]
             elif "s" in kw2:
                 kw2["s"] = L_ - kw_["s"]
+            if "holes" in kw2:        # 盛土の穴(橋の下)の区間も鏡映する
+                kw2["holes"] = [(L_ - hb_, L_ - ha_) for (ha_, hb_) in kw_["holes"]]
             _it.append((kind_, kw2))
         items = _it
     zf = (prof if callable(prof) else kit5.make_zfun(prof)) if (callable(prof) or prof) else None
