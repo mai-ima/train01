@@ -601,7 +601,9 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
     pos, ang = frames_at(P, ss)
     nrm = np.stack([-np.sin(ang), np.cos(ang)], 1)
     for sgn, nm in ((-1, "a"), (1, "b")):
-        prof = [(sgn * half, -0.05), (sgn * (half + 0.3), h * 0.5), (sgn * (half + 3.0), h), (sgn * (half + 8.0), h * 0.9), (sgn * (half + 14.0), -0.05)]
+        # Q25/C17: 法面が1枚のつるつるの壁だった(監査)。高さの半分に小段(平場)を設けた2段の法面にして、天端から外へなだらかに落とす
+        prof = [(sgn * half, -0.05), (sgn * (half + 0.4), h * 0.42), (sgn * (half + 2.0), h * 0.48), (sgn * (half + 3.8), h * 0.5), (sgn * (half + 4.4), h * 0.55),
+                (sgn * (half + 6.4), h), (sgn * (half + 9.5), h * 0.92), (sgn * (half + 15.0), -0.05)]
         N, K = len(ss), len(prof)
         V = np.zeros((N, K, 3))
         edge = smooth01((ss - s0) / 40.0) * smooth01((s1 - ss) / 40.0)
