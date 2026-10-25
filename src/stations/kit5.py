@@ -176,9 +176,10 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
     # 床版+高欄
     for i in range(len(ss) - 1):
         a0, a1 = pos[i], pos[i + 1]
-        g.a("k5_conc").sbox((a0[0], a0[1], zt[i] - 0.45), (a1[0], a1[1], zt[i + 1] - 0.45), width, 0.9)
+        g.a("k5_conc").sbox((a0[0], a0[1], zt[i] - 0.45), (a1[0], a1[1], zt[i + 1] - 0.45), width - 0.5, 0.9)      # Q25/C17: 床版の側面が白い帯として見えていた(監査)。コンクリートは内側に引き、外面は石積みで覆う
         for sg in (-1, 1):
             p0, p1 = a0 + nrm[i] * sg * (width / 2 - 0.2), a1 + nrm[i + 1] * sg * (width / 2 - 0.2)
+            g.a("ug_stone").sbox((p0[0], p0[1], zt[i] - 0.45), (p1[0], p1[1], zt[i + 1] - 0.45), 0.45, 0.9)           # 床版の外面の石積み
             g.a("ug_stone").sbox((p0[0], p0[1], zt[i] + 0.45), (p1[0], p1[1], zt[i + 1] + 0.45), 0.4, 0.9)
             g.a("ug_stone").sbox((p0[0], p0[1], zt[i] + 0.95), (p1[0], p1[1], zt[i + 1] + 0.95), 0.55, 0.14)
             g.a("ug_stone").sbox((p0[0], p0[1], zt[i] - 0.05), (p1[0], p1[1], zt[i + 1] - 0.05), 0.62, 0.16)   # 帯石(コーニス)
