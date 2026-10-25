@@ -413,7 +413,8 @@ def struct_plan(ln, a, b, L):
     elif key == ("S03", "S04"):
         s0, s1 = fr(0.5) - 15, fr(0.5) + 15
         prof += [(s0 - 60, s1 + 60, 2.5, 70.0)]   # Q25: 取付勾配が180‰だった。高さ2.5m・擦り付け70mへ
-        items += [("trestle", dict(s0=s0, s1=s1)), ("river", dict(s=fr(0.5), width=10.0, wiggle=10.0))]
+        items += [("trestle", dict(s0=s0, s1=s1)), ("river", dict(s=fr(0.5), width=10.0, wiggle=10.0)),
+                  ("fill", dict(s0=s0 - 60, s1=s1 + 60, holes=[(s0 - 2, s1 + 2)]))]   # Q25: 取付の路盤が築堤なしで垂直の厚板になっていた
     elif key == ("SH02", "SH03"):
         prof += [(fr(0.1), fr(0.9), 2.0, 40.0)]
         items += [("over", dict(s=fr(0.15))), ("embank", dict(s0=fr(0.1), s1=fr(0.9), h=2.0))]
