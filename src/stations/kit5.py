@@ -45,6 +45,7 @@ def mats5():
         M["ug_conc"] = lib.mat_pbr("ug_conc", "Concrete031", scale=2.6, tint=(0.95, 0.93, 0.88), tint_amt=0.3, bump=0.5, macro=0.2, dirt=0.0, spec=0.2)
         M["ug_conc2"] = lib.mat_pbr("ug_conc2", "Concrete048", scale=2.8, bump=0.6, macro=0.2, dirt=0.0, spec=0.2)
         M["ug_asph"] = lib.mat_pbr("ug_asph", "Asphalt032", scale=2.2, hsv=(0.5, 1.0, 0.62), bump=0.7, macro=0.25, spec=0.25)
+        M["k5_rock"] = lib.mat_pbr("k5_rock", "Ground110", scale=1.6, tint=(0.62, 0.60, 0.56), tint_amt=0.55, bump=1.0, macro=0.25, spec=0.15)
         M["ug_stone"] = lib.mat_pbr("ug_stone", "Bricks102", scale=1.8, bump=0.9, macro=0.15, spec=0.2)
         M["ug_brick"] = lib.mat_pbr("ug_brick", "Bricks097", scale=1.4, bump=0.8, macro=0.2, spec=0.25)
         M["ug_tile"] = lib.mat_pbr("ug_tile", "Tiles107", scale=2.4, bump=0.3, macro=0.1, spec=0.5)
@@ -225,6 +226,35 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
     g.build()
 
 
+def _boulders(name, pts, seed=1, r0=0.5, r1=1.5):
+    """丘の斜面・法尻に置く岩(ゆがめた多面体)。pts は岩の中心の位置 [(x,y,z),...]。1個=緯度5×経度8の頂点、半径と高さをランダムに崩す。"""
+    rng = np.random.default_rng(seed)
+    V, T = [], []
+    nl, nm = 5, 8
+    for (x, y, z) in pts:
+        r = rng.uniform(r0, r1)
+        sx, sy, sz = r * rng.uniform(0.8, 1.3), r * rng.uniform(0.8, 1.3), r * rng.uniform(0.5, 0.85)
+        base = len(V)
+        V.append((x, y, z - sz * 0.35))
+        for a in range(1, nl):
+            th = math.pi * a / nl
+            for b in range(nm):
+                ph = 2 * math.pi * b / nm
+                k = rng.uniform(0.78, 1.18)
+                V.append((x + sx * k * math.sin(th) * math.cos(ph), y + sy * k * math.sin(th) * math.sin(ph), z - sz * 0.35 + sz * k * math.cos(th)))
+        V.append((x, y, z + sz * 0.95))
+        top = len(V) - 1
+        for b in range(nm):
+            b2 = (b + 1) % nm
+            T.append((base, base + 1 + b2, base + 1 + b))
+            for a in range(nl - 2):
+                p0, p1, p2, p3 = base + 1 + a * nm + b, base + 1 + a * nm + b2, base + 1 + (a + 1) * nm + b2, base + 1 + (a + 1) * nm + b
+                T += [(p0, p1, p2), (p0, p2, p3)]
+            T.append((top, base + 1 + (nl - 2) * nm + b, base + 1 + (nl - 2) * nm + b2))
+    if V:
+        np_mesh(name, np.array(V), np.array(T), M["k5_rock"], "Ground", smooth=False)
+
+
 def _plate_png(text):
     """坑口の扁額(石板に刻んだ文字)の画像。tex/ に文字列ごとのファイル名で保存し、あればそれを使う。"""
     import hashlib
@@ -311,6 +341,21 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
                 veg.sugi(0.0, 0.0, rng_t.uniform(9, 17), seed=rng_t.randrange(10 ** 6))
     except Exception as e:
         print("hill trees failed (skipped)", e)
+    # Q25/C17: 丘が単色の草の半球だった(独立監査)。坑口まわりと法尻に岩を散らして土砂・露岩の変化を出す
+    try:
+        rng_b = random.Random(int(s0) + 11)
+        N_, K_ = Vh.shape[0], Vh.shape[1]
+        bp = []
+        for _ in range(int(14 + min(40, (s1 - s0) / 4))):
+            i = rng_b.choice(list(range(0, min(6, N_))) + list(range(max(0, N_ - 6), N_)) + [rng_b.randrange(N_)])
+            k = rng_b.randrange(2, K_ - 2)
+            if abs(prof_o[k][0]) < inner_w + 4.5 and (i < 6 or i > N_ - 7):
+                continue            # 坑口の真上は空けておく
+            p3 = Vh[i, k]
+            bp.append((float(p3[0]), float(p3[1]), float(p3[2])))
+        _boulders(name + "_rocks", bp, seed=int(s0) + 5)
+    except Exception as e:
+        print("hill rocks failed (skipped)", e)
     # 坑口の切り立った面(土の斜面): 丘の断面の下を埋め、トンネル口の部分だけ開ける
     for (i, flipc) in ((0, True), (len(ss) - 1, False)):
         verts, tris = [], []
