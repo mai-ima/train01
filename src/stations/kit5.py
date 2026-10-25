@@ -772,6 +772,25 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
             nn = np.cross(cv[j] - cv[0], cv[j + 1] - cv[0])
             cap.append([0, j, j + 1] if (nn[0] * face_dir[0] + nn[1] * face_dir[1]) >= 0 else [0, j + 1, j])
         np_mesh(f"{name}_bankwall{sg}", cv, np.array(cap), M["ug_conc2"], "Ground", smooth=False)
+        # 擁壁の面に型枠の打継ぎ目(1.5mごとの水平線)と、足元の泥はね帯を付ける。無地の1枚板だった(C17監査)
+        pc = c + n * sg * (span / 2 + 0.8)
+        offs = np.array([(v[0] - pc[0]) * t[0] + (v[1] - pc[1]) * t[1] for v in cv])
+        zs_ = cv[:, 2]
+        oi = np.argsort(offs)
+        xs_ = np.linspace(offs.min(), offs.max(), 200)
+        hs_ = np.interp(xs_, offs[oi], zs_[oi])
+        gj = G(f"{name}_bwjoint{sg}", "Props")
+        for zj in np.arange(1.5, zh, 1.5):
+            ok_ = xs_[hs_ > zj + 0.05]
+            if len(ok_) < 2:
+                continue
+            q0 = pc + t * ok_[0] + face_dir * 0.03
+            q1 = pc + t * ok_[-1] + face_dir * 0.03
+            gj.a("iron_black").sbox((q0[0], q0[1], zj), (q1[0], q1[1], zj), 0.04, 0.05)
+        q0 = pc + t * offs.min() + face_dir * 0.03
+        q1 = pc + t * offs.max() + face_dir * 0.03
+        gj.a("ug_asph").sbox((q0[0], q0[1], 0.3), (q1[0], q1[1], 0.3), 0.03, 0.6)
+        gj.build()
         np_mesh(f"{name}_road{sg}", np.array(VR), strip(VR, 2), M["ug_asph"], "Ground", smooth=False)
 
 
