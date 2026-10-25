@@ -46,6 +46,7 @@ def mats5():
         M["ug_conc2"] = lib.mat_pbr("ug_conc2", "Concrete048", scale=2.8, bump=0.6, macro=0.2, dirt=0.0, spec=0.2)
         M["ug_asph"] = lib.mat_pbr("ug_asph", "Asphalt032", scale=2.2, hsv=(0.5, 1.0, 0.62), bump=0.7, macro=0.25, spec=0.25)
         M["k5_rock"] = lib.mat_pbr("k5_rock", "Ground110", scale=1.6, tint=(0.62, 0.60, 0.56), tint_amt=0.55, bump=1.0, macro=0.25, spec=0.15)
+        M["k5_soil"] = lib.mat_pbr("k5_soil", "Ground110", scale=2.4, tint=(0.34, 0.22, 0.12), tint_amt=0.85, bump=1.2, macro=0.45, spec=0.05)
         M["ug_stone"] = lib.mat_pbr("ug_stone", "Bricks102", scale=1.8, bump=0.9, macro=0.15, spec=0.2)
         M["ug_brick"] = lib.mat_pbr("ug_brick", "Bricks097", scale=1.4, bump=0.8, macro=0.2, spec=0.25)
         M["ug_tile"] = lib.mat_pbr("ug_tile", "Tiles107", scale=2.4, bump=0.3, macro=0.1, spec=0.5)
@@ -332,7 +333,18 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
         T = np.concatenate([np.stack([a, b, c], -1).reshape(-1, 3), np.stack([a, c, d], -1).reshape(-1, 3)])
         if flip:
             T = T[:, ::-1]
-        np_mesh(nm, V.reshape(-1, 3), T, mat, "Ground", smooth=True)
+        ob_ = np_mesh(nm, V.reshape(-1, 3), T, mat, "Ground", smooth=True)
+        if not flip:
+            # C17: 丘が単色の草だった → 斜面の中腹〜法尻に土肌の帯(面ごとに素材を割り当て)
+            ob_.data.materials.append(M["k5_soil"])
+            nT = len(T) // 2
+            ii, kk = np.divmod(np.arange(nT), K - 1)
+            hgt = V[:, :, 2].reshape(N, K)
+            zr = (hgt[ii, kk] - zs[ii]) / max(1.0, float(hgt.max() - zs.min()))
+            band = np.sin(0.11 * ss[ii] + 3.0 * kk / K) + 0.7 * np.sin(0.29 * ss[ii] - 2.0 * kk)
+            soil = (zr < 0.28 + 0.12 * band) | (zr < 0.05)
+            mi = np.concatenate([soil, soil]).astype(int)
+            ob_.data.polygons.foreach_set("material_index", mi.tolist())
         return V
     Vh = sweep(prof_o, M.get("grass_ground", M["k5_earth"]), name + "_hill", False)
     # 丘の木(杉・雑木)
