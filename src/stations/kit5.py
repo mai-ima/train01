@@ -288,7 +288,7 @@ def _plate_png(text):
     return fn
 
 
-def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2.5, inner_h=5.2, plate=None):
+def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2.5, inner_h=5.2, plate=None, style=None):
     """覆土トンネル: 外側は盛土の丘、内側はコンクリート覆工(中を歩ける)。坑口に石積みの門。"""
     mats5()
     ss = np.arange(s0, s1 + 0.5, 2.0)
@@ -408,6 +408,13 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
             gl.a("iron_black").box(q[0] - 0.17, q[0] + 0.17, q[1] - 0.17, q[1] + 0.17, zs[i] + 3.12, zs[i] + 3.2)      # 灯具の笠
     gl.build()
     # 坑口: 石積みの門(外周と内周の間を埋める)
+    # C17: 3つの坑口が同じ煉瓦門だった(独立監査)。名前のCRCで 0=煉瓦の段状翼壁 / 1=切石積みの低い直線翼壁 / 2=コンクリートの無装飾の袖壁 に決める
+    import zlib
+    pstyle = zlib.crc32(name.encode()) % 3 if style is None else style
+    pm = ("ug_brick", "ug_stone", "ug_conc2")[pstyle]
+    wing = (((0.45, 3.0, 5.5), (0.45, 6.0, 4.0), (0.45, 9.0, 2.5)),
+            ((0.45, 4.5, 3.6), (0.45, 9.0, 3.6)),
+            ((0.45, 3.0, 6.4), (0.45, 6.0, 6.4), (0.45, 9.0, 6.4), (0.45, 12.0, 6.4)))[pstyle]
     g = G(name + "_portal", "Props")
     for (i, sgn) in ((0, -1), (len(ss) - 1, 1)):
         p, n_, z0 = pos[i], nrm[i], zs[i]
@@ -415,11 +422,11 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
         # 門柱+まぐさ
         for sg in (-1, 1):
             q = p + n_ * sg * (inner_w + 1.0) - tdir * 0.0
-            g.a("ug_brick", bevel=0.03).box(q[0] - 0.9, q[0] + 0.9, q[1] - 0.9, q[1] + 0.9, z0 - 0.2, z0 + 5.8)
+            g.a(pm, bevel=0.03).box(q[0] - 0.9, q[0] + 0.9, q[1] - 0.9, q[1] + 0.9, z0 - 0.2, z0 + 5.8)
         qa = p + n_ * (inner_w + 1.0)
         qb = p - n_ * (inner_w + 1.0)
-        g.a("ug_brick", bevel=0.03).sbox((qa[0], qa[1], z0 + 6.0), (qb[0], qb[1], z0 + 6.0), 1.4, 1.2)
-        g.a("ug_brick").sbox((qa[0], qa[1], z0 + 6.8), (qb[0], qb[1], z0 + 6.8), 1.0, 0.5)
+        g.a(pm, bevel=0.03).sbox((qa[0], qa[1], z0 + 6.0), (qb[0], qb[1], z0 + 6.0), 1.4, 1.2)
+        g.a(pm).sbox((qa[0], qa[1], z0 + 6.8), (qb[0], qb[1], z0 + 6.8), 1.0, 0.5)
         # 扁額: 坑口の上に石の銘板(白い石板を門の外面へ少し出す。監査指摘「銘板が無い」)
         pn = p + tdir * sgn * 0.78
         g.a("ug_stone").sbox((pn[0] + n_[0] * 1.5, pn[1] + n_[1] * 1.5, z0 + 6.05), (pn[0] - n_[0] * 1.5, pn[1] - n_[1] * 1.5, z0 + 6.05), 0.14, 0.7)
@@ -428,11 +435,11 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
         for sg in (-1, 1):
             base_pt = p + n_ * sg * (inner_w + 1.9)
             # Q25: 翼壁を outv(坑口の外)へ6.6m張り出すと、丘の端面(垂直)から離れた野原に壁だけが立っていた。端面に沿って横へ段状に下げる(端面の外へ0.45m)
-            for j, (du, dv, hh) in enumerate(((0.45, 3.0, 5.5), (0.45, 6.0, 4.0), (0.45, 9.0, 2.5))):
-                a_ = base_pt + n_ * sg * (dv - 3.0 if j else 0.0) + outv * du
+            for j, (du, dv, hh) in enumerate(wing):
+                a_ = base_pt + n_ * sg * (wing[j - 1][1] if j else 0.0) + outv * du
                 b_ = base_pt + n_ * sg * dv + outv * du
-                g.a("ug_brick", bevel=0.02).sbox((a_[0], a_[1], z0 + hh / 2 - 0.2), (b_[0], b_[1], z0 + hh / 2 - 0.2), 0.7, hh)
-                g.a("ug_brick").sbox((a_[0], a_[1], z0 + hh - 0.1), (b_[0], b_[1], z0 + hh - 0.1), 0.9, 0.14)   # 笠石
+                g.a(pm, bevel=0.02).sbox((a_[0], a_[1], z0 + hh / 2 - 0.2), (b_[0], b_[1], z0 + hh / 2 - 0.2), 0.7, hh)
+                g.a(pm).sbox((a_[0], a_[1], z0 + hh - 0.1), (b_[0], b_[1], z0 + hh - 0.1), 0.9, 0.14)   # 笠石
     g.build()
     if plate:      # 扁額の文字(石板の外面に画像を貼る。画像の右方向は坑口を外から見た時の右)
         try:
