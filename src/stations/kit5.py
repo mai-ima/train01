@@ -440,6 +440,13 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
                 b_ = base_pt + n_ * sg * dv + outv * du
                 g.a(pm, bevel=0.02).sbox((a_[0], a_[1], z0 + hh / 2 - 0.2), (b_[0], b_[1], z0 + hh / 2 - 0.2), 0.7, hh)
                 g.a(pm).sbox((a_[0], a_[1], z0 + hh - 0.1), (b_[0], b_[1], z0 + hh - 0.1), 0.9, 0.14)   # 笠石
+                if pstyle == 2:      # C17: 無装飾のコンクリート袖壁が白一色だった → 3mごとの打継ぎ目地と、壁脚の雨はねの汚れ帯
+                    wl = float(np.hypot(*(b_ - a_)))
+                    for t_ in np.arange(1.5, wl, 3.0):
+                        q_ = a_ + (b_ - a_) * (t_ / wl) + outv * (du + 0.36)
+                        g.a("iron_black").sbox((q_[0], q_[1], z0 + hh / 2 - 0.2), (q_[0] + outv[0] * 0.02, q_[1] + outv[1] * 0.02, z0 + hh / 2 - 0.2), 0.05, hh)
+                    qa_, qb_ = a_ + outv * (du + 0.36), b_ + outv * (du + 0.36)
+                    g.a("ug_asph").sbox((qa_[0], qa_[1], z0 + 0.35), (qb_[0], qb_[1], z0 + 0.35), 0.03, 0.9)
     g.build()
     if plate:      # 扁額の文字(石板の外面に画像を貼る。画像の右方向は坑口を外から見た時の右)
         try:
