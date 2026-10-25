@@ -333,8 +333,9 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
         outv = tdir * sgn
         for sg in (-1, 1):
             base_pt = p + n_ * sg * (inner_w + 1.9)
-            for j, (du, dv, hh) in enumerate(((2.2, 1.6, 4.6), (4.4, 3.4, 3.2), (6.6, 5.4, 1.9))):
-                a_ = base_pt + n_ * sg * (dv - 1.6 if j else 0.0) + outv * (du - 2.2 if j else 0.0)
+            # Q25: 翼壁を outv(坑口の外)へ6.6m張り出すと、丘の端面(垂直)から離れた野原に壁だけが立っていた。端面に沿って横へ段状に下げる(端面の外へ0.45m)
+            for j, (du, dv, hh) in enumerate(((0.45, 3.0, 5.5), (0.45, 6.0, 4.0), (0.45, 9.0, 2.5))):
+                a_ = base_pt + n_ * sg * (dv - 3.0 if j else 0.0) + outv * du
                 b_ = base_pt + n_ * sg * dv + outv * du
                 g.a("ug_brick", bevel=0.02).sbox((a_[0], a_[1], z0 + hh / 2 - 0.2), (b_[0], b_[1], z0 + hh / 2 - 0.2), 0.7, hh)
                 g.a("ug_brick").sbox((a_[0], a_[1], z0 + hh - 0.1), (b_[0], b_[1], z0 + hh - 0.1), 0.9, 0.14)   # 笠石
