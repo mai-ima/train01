@@ -54,6 +54,9 @@ def _tpoint(sid, k, x):
         tf, _ = trackkit.frames(Pk)
         i = int(np.argmin(np.abs(Pk[:, 0] - x)))
         return float(Pk[i, 0]), float(Pk[i, 1]), math.atan2(tf[i, 1], tf[i, 0])
+    if sid == "M01":
+        import kit3
+        return kit3.m01_track_pt(k, x)
     lt = kit4.local_tracks(sid)
     if k >= len(lt):
         return None

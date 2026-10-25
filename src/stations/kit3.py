@@ -29,6 +29,31 @@ def ss(t):
 
 
 # ------------------------------------------------------------------ M01 国都中央
+def m01_track_pt(i, x):
+    """M01 の i 番線の局所 x における (x, y, yaw)。m01() の線路生成(喉元 x=-300 で束ね、x>-135 で本来の y)と同じ式。
+    Q25: zone_stock._tpoint が全線を喉元の y の直線として返し、干渉検査・停車車両の位置が実レールとずれていた"""
+    ys, groups, fan = m01_layout()
+    yy = ys[i]
+
+    def yk(xv):
+        return yy + (fan[i] - yy) * (1.0 - float(ss((xv + 215.0) / 80.0)))
+    dy = yk(x + 0.5) - yk(x - 0.5)
+    return float(x), float(yk(x)), math.atan2(dy, 1.0)
+
+
+def m01_platform_x0(ys, fan, a, b, x_lo=-205.0, x_hi=-2.0, clear=1.55):
+    """M01 のホーム a〜b(横)の西端 x。喉元からの線路の開き(束ね→本来の y)が終わり、どの線路中心もホーム+余白に入らなくなる所から始める。
+    Q25: 一律 x=-205 から始めていたため、島式ホーム0の上を線0が斜めに横切っていた(開き終わりは x≈-137)"""
+    last = None
+    for x in np.arange(x_lo, x_hi, 1.0):
+        for j, yy in enumerate(ys):
+            yk = yy + (fan[j] - yy) * (1.0 - float(ss((x + 215.0) / 80.0)))
+            if a - clear < yk < b + clear:
+                last = x
+                break
+    return x_lo if last is None else float(last) + 3.0
+
+
 def m01_layout():
     ys = []
     y = -74.0
@@ -73,17 +98,24 @@ def m01():
         P = np.stack([xs, yk], 1)
         trackkit.build_track(f"m01_trk{i}", P, wooden=True, ballast=True, fittings=(i % 3 == 0), cam=None)
         trackkit.buffer_stop(0.5, yy, 0)
+    _fan = m01_layout()[2]
+    px0 = {}
     for (a, b, gname) in plats:
-        platform(-205, -2, a, b, name=f"m01_plat_{int(a)}")
+        px0[a] = m01_platform_x0(ys, _fan, a, b)
+        platform(px0[a], -2, a, b, name=f"m01_plat_{int(a)}")
     # platform furniture: benches, lamps, number boards, kiosks
     gp = G("m01_platfurn", "Props")
     for ia, (a, b, gname) in enumerate(plats):
         ym = (a + b) / 2
         for x in np.arange(-190, -8, 14.0):
+            if x < px0[a] + 3.0:
+                continue
             gp.a("iron_black").box(x - 0.05, x + 0.05, ym - 0.05, ym + 0.05, ZP, ZP + 3.4)
             gp.a("wood_dark").box(x - 1.2, x + 1.2, ym - 0.35 - 0.9, ym - 0.05 - 0.9, ZP + 0.4, ZP + 0.45)
             gp.a("wood_dark").box(x - 1.2, x + 1.2, ym + 0.05 + 0.9, ym + 0.35 + 0.9, ZP + 0.4, ZP + 0.45)
         for x in (-30, -80, -140):
+            if x - 2.0 < px0[a]:
+                continue
             gp.a("wood_dark").box(x - 1.6, x + 1.6, ym - 1.0, ym + 1.0, ZP, ZP + 2.3)
             gp.a("glass").box(x - 1.45, x + 1.45, ym - 1.02, ym - 0.98, ZP + 0.9, ZP + 2.0)
             gp.a("tin").box(x - 1.9, x + 1.9, ym - 1.3, ym + 1.3, ZP + 2.3, ZP + 2.45)

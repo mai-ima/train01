@@ -1,3 +1,4 @@
+import os
 """線路干渉の自動検出: 線路中心線の限界(横±LAT m, 高さ ZMIN〜ZMAX)に頂点が入る非軌道メッシュを列挙。"""
 import json, math, re
 import numpy as np
@@ -41,6 +42,8 @@ def run(sid, path=None):
     if not tr:
         return {}
     allp = np.vstack(tr)
+    if os.environ.get("DBG_INTERF"):
+        print("[DBGINTERF] tracks last pt", [(k, [round(float(v), 1) for v in P[-1]], [round(float(v), 1) for v in P[0]]) for k, P in enumerate(tr)])
     lo, hi = allp.min(0) - 3, allp.max(0) + 3
     import zone_stock as _zs
     zr = 9.0 if sid == "B02" else _zs.SPECIAL_Z.get(sid, 0.0)   # 軌条面の高さ(高架/地下/モノレールは地面と別)
@@ -76,6 +79,10 @@ def run(sid, path=None):
             if d is None:
                 continue
             hit |= d < lat
+        if hit.any() and os.environ.get("DBG_INTERF") and os.environ["DBG_INTERF"] in ob.name:     # 調査用: 干渉している頂点の座標と最寄りの線路
+            for q in w[hit][:6]:
+                dd = [(float(np.min(np.hypot(q[0] - P[:, 0], q[1] - P[:, 1]))), k) for k, P in enumerate(tr)]
+                print("[DBGINTERF]", ob.name, [round(float(v), 2) for v in q], min(dd))
         if hit.any():
             key = re.sub(r"[_.]?\d+$", "", ob.name)
             r = res.setdefault(key, {"n": 0, "verts": 0, "ex": ob.name, "z": float(w[hit][:, 2].max())})
