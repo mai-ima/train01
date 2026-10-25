@@ -454,7 +454,7 @@ def snowshed(P, s0, s1, name="snowshed", zfun=None, half=4.2, h=6.0, steel=False
     for i in range(len(ss) - 1):
         z0, z1 = zs[i], zs[i + 1]
         p0, p1 = pos[i] + nrm[i] * half, pos[i + 1] + nrm[i + 1] * half
-        g.a("k5_conc").sbox((p0[0], p0[1], z0 + hm / 2), (p1[0], p1[1], z1 + hm / 2), 0.45, hm)      # 山側壁
+        g.a("ug_conc2").sbox((p0[0], p0[1], z0 + hm / 2), (p1[0], p1[1], z1 + hm / 2), 0.45, hm)      # 山側壁(写真ベースの打放し。Q25/C17: 屋根も壁も無地の白板だった)
         g.a("k5_conc").sbox((p0[0], p0[1], z0 + 0.45), (p1[0], p1[1], z1 + 0.45), 0.85, 0.9)        # 壁の根固め
         # 屋根スラブ(横断勾配: 山側高く谷側低く)。 1区間ごとに傾斜させて並べる
         c = (pos[i] + pos[i + 1]) / 2
@@ -462,6 +462,16 @@ def snowshed(P, s0, s1, name="snowshed", zfun=None, half=4.2, h=6.0, steel=False
         a = c + nrm[i] * (half + 0.2)
         b = c - nrm[i] * (half + 1.4)
         g.a("k5_conc").sbox((a[0], a[1], za + hm + 0.15), (b[0], b[1], za + hv + 0.1), step + 0.05, 0.4)
+        # 屋根の目地(伸縮目地の立ち上がり)と雪止めフェンス(鋼管の支柱+2段の横桟)
+        ja, jb = c - tan[i] * step / 2 + nrm[i] * (half + 0.2), c - tan[i] * step / 2 - nrm[i] * (half + 1.4)
+        g.a("ug_conc2").sbox((ja[0], ja[1], za + hm + 0.4), (jb[0], jb[1], za + hv + 0.35), 0.18, 0.12)
+        fe_ = c - nrm[i] * (half + 1.2)
+        for tt in (-1.2, 0.0, 1.2):
+            fp = fe_ + tan[i] * tt
+            g.a("k5_steel").cyl((fp[0], fp[1], za + hv + 0.3), (fp[0], fp[1], za + hv + 1.25), 0.04, seg=6)
+        for hh in (0.65, 1.1):
+            f0, f1 = fe_ - tan[i] * step / 2, fe_ + tan[i] * step / 2
+            g.a("k5_steel").sbox((f0[0], f0[1], za + hv + hh), (f1[0], f1[1], za + hv + hh), 0.05, 0.05)
         # 谷側の雪止め(縁の立ち上がり)
         e = c - nrm[i] * (half + 1.4)
         g.a("k5_conc").sbox((e[0] - tan[i][0] * step / 2, e[1] - tan[i][1] * step / 2, za + hv + 0.45), (e[0] + tan[i][0] * step / 2, e[1] + tan[i][1] * step / 2, za + hv + 0.45), 0.4, 0.4)
