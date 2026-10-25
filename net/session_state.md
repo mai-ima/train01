@@ -559,3 +559,6 @@ mound断面を (1-|u|^1.7)^1.6、half 34→46、うねり振幅を約2倍に。�
 ## 2026-10-25 Q25 跨線橋端の「黒い塊(樹木)」を調査 → 不具合ではなかった
 座標を出力して確認(HM M07-M08): 樹木は s=148, 162(橋は s=115、除外範囲 85〜145)で、橋から進行方向に約32m離れた位置。ramp の道路(幅±3m)とは重ならず、遠近で橋端に重なって見えただけ。除外処理は正常。デバッグ出力は戻した。
 Q25 の確認済み項目: 台帳検査(net/ledger_check.py)=異常なし(228件・重複なし・誤完了候補0)/ healthscan 直近58ログ=問題なし。
+
+## 2026-10-25 Q25 未定義の材質キー(asphalt/white/brass/copper/yellow_grass)を定義+検出ツール追加
+詳細は docs/ROOT_CAUSES.md の Q25。common.make_materials() に4材質を追加、src/checks/matkeys_check.py(未定義0件)を追加。SH04 を ZA/E の2視点で撮影して破綻なしを確認(白線は 0.07m 幅で全景では見えない。platform() 単体で white_line 材質のオブジェクト生成を確認)。残: kit.py の platform 以外で `if "white" in M` 等を使う描画(kit3:220/569)も白で描かれるようになる。

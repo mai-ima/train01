@@ -88,6 +88,11 @@ def make_materials():
     M["iron_rust"] = lib.mat_paint("iron_rust", (0.09, 0.07, 0.06), rough=0.78, rust=0.55, metal=0.08, rust_scale=1.6)   # 橙の斑と金属反射を抑え、暗い褐色の錆に
     M["white_paint"] = lib.mat_paint("white_paint", (0.72, 0.70, 0.64), rough=0.6, rust=0.25)
     M["post_red"] = lib.mat_paint("post_red", (0.50, 0.035, 0.025), rough=0.35, rust=0.35)
+    # Q25: 以下は参照されているのに未定義で、`"white" in M` 等の条件により白線が描かれない・別材質に静かに置換される状態だった
+    M["white"] = lib.mat_paint("white_line", (0.80, 0.79, 0.74), rough=0.55, rust=0.0)           # ホーム端の白線(kit.platform)・白い円筒など
+    M["brass"] = lib.mat_paint("brass", (0.45, 0.32, 0.10), rough=0.35, rust=0.1, metal=0.8)       # 真鍮の飾り(国都中央の旗竿など)
+    M["copper"] = lib.mat_paint("copper_patina", (0.22, 0.38, 0.32), rough=0.5, rust=0.15)         # 緑青の銅板屋根(kit6)
+    M["yellow_grass"] = lib.mat_plain("yellow_grass", (0.45, 0.38, 0.14), rough=1.0)               # 干し草・刈り草(sig)
     M["porcelain"] = lib.mat_plain("porcelain", (0.85, 0.85, 0.82), rough=0.15, spec=0.7)
     M["rubber"] = lib.mat_plain("rubber", (0.02, 0.02, 0.02), rough=0.85)
     M["chrome"] = lib.mat_plain("chrome", (0.55, 0.55, 0.57), rough=0.25, metal=1.0)

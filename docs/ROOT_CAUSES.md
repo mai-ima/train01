@@ -61,3 +61,11 @@
 - 症状: 同じコードでも実行ごとに枕木・金具・樹木の配置などが微妙に変わり、修正前後の比較(例: 黒い楔の有無)が乱数の影響を受ける。
 - 原因: `abs(hash(name))`(core.py:211, main.py:257, trackkit.py:136/178)。Python の文字列 hash は実行ごとにランダム化される。
 - 対策: すべてのレンダ起動で `PYTHONHASHSEED=0` を設定する(scripts と実行例に追記)。新規コードでは hash() を使わず、名前から決まる固定計算(文字コードの加重和など)を使う。
+
+## Q25 未定義の材質キーへの「静かなフォールバック」(2026-10-25)
+- 症状: ① 踏切の取付道路が砂色の土の道(アスファルトのはずが) ② 全駅でホーム端の白線が描かれない ③ 国都中央の真鍮飾りが黒鉄、kit6 の銅板屋根が鉄板、干し草が暗い木色に置換
+- 根本原因: コードが `M["asphalt"] if "asphalt" in M else M["road"]` / `g.a("white")… if "white" in M else None` の形で材質を参照していたが、**キー(asphalt・white・brass・copper・yellow_grass)が M にどこでも定義されていなかった**。条件式のため例外にならず、別材質への置換・描画の省略が静かに起きた(未定義でも気づけない書き方そのものが原因)。
+- 対策: common.make_materials() に white・brass・copper・yellow_grass を定義。踏切は写真ベースの ug_asph を直接使用。検出ツール `src/checks/matkeys_check.py` を追加(参照されているのに静的にも実行時にも定義が無いキーを列挙。現在 0 件)。
+- 影響: ホーム端の白線が全駅で新たに描かれる(0.07m幅のため全景では見分けにくい。platform() 単体で白線オブジェクトの生成を確認)。真鍮・銅板・干し草の見え方が変わる。
+- 再発防止: 材質は `M["key"]` で直接参照して未定義なら KeyError で落とす書き方にする(`if key in M else` のフォールバックを新規に書かない)。大きな変更の後は matkeys_check.py を回す。
+- 併せて: 生成結果に影響しうる無言の except 3か所(scenery.py の station_origin・struct_plan、veg.py の props.FOOT)を「…failed」付き出力にして healthscan の対象にした。
