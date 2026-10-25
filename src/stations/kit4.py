@@ -390,9 +390,10 @@ def struct_plan(ln, a, b, L):
     elif key == ("M12", "M13"):
         items += [("shed", dict(s0=fr(0.1), s1=fr(0.95)))]
     elif key == ("L01", "M14"):
-        s0, s1 = fr(0.1), fr(0.5)
+        s0, s1 = fr(0.05), fr(0.45)
         prof += [(s0 - 42, s1 + 42, 2.0, 40.0)]   # Q25: 区間38mに高低差5mは勾配180‰。橋床は水面上に出る2.0mへ
-        items += [("truss", dict(s0=s0, s1=s1, width=5.0)), ("river", dict(s=(s0 + s1) / 2, width=24.0, wiggle=15.0)), ("tunnel", dict(s0=fr(0.62), s1=fr(0.95)))]
+        # Q25: 区間38mに幅24m+蛇行15mの川と坑口が重なり、水面が坑口の翼壁・丘の下まで入っていた。川幅14m・蛇行2mへ
+        items += [("truss", dict(s0=s0, s1=s1, width=5.0)), ("river", dict(s=(s0 + s1) / 2, width=14.0, wiggle=2.0)), ("tunnel", dict(s0=fr(0.62), s1=fr(0.95)))]
     elif key == ("M14", "M15"):
         prof += [(fr(0.05), fr(0.95), 2.5, 50.0)]
         items += [("embank", dict(s0=fr(0.05), s1=fr(0.95), h=2.5)), ("sea", dict(s0=fr(0.1), s1=fr(0.9)))]
