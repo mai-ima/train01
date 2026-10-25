@@ -32,7 +32,7 @@ def run(sid):
             o = Vector((float(p[0]), float(p[1]), zmin + 0.02))
             for _ in range(4):
                 ok, loc, nrm, idx, hob, mat = sc.ray_cast(dg, o, Vector((0, 0, -1)), distance=60.0)
-                if not ok: gaps.append(99.0); break
+                if not ok: gaps.append(99.0 if zmin > 0.0 else 0.0); break      # Q25: 最下点が地面より下(基礎・橋台の根入れ)で下に何も無いのは浮きではない(Y03 の橋台 zmin=-4 の偽陽性)
                 if hob.name in names:
                     o = Vector((loc.x, loc.y, loc.z - 0.01)); continue
                 gaps.append(float(zmin - loc.z)); break
