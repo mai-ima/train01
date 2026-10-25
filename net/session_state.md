@@ -555,3 +555,7 @@ mound断面を (1-|u|^1.7)^1.6、half 34→46、うねり振幅を約2倍に。�
 - 踏切の取付道路・跨線橋の路面を ug_asph(写真ベース)に変更。4視点で確認(renders/work/c14/c15_road_asphalt.jpg)。根本原因: 踏切コードの `M["asphalt"] if "asphalt" in M` は M に "asphalt" が存在せず、常に砂色の M["road"](土の道)にフォールバックしていた。
 - Q25: 何も出力しない except が18か所(スキャン: re で except 後4行に print/raise/log/warn/failed が無いもの)。うち生成結果に影響しうる3か所(scenery.py の station_origin・struct_plan、veg.py の props.FOOT)を「…failed」付きの出力に変更(healthscan の対象になる)。残り15か所は Blender のバージョン差吸収・補助スクリプトなどで無害と判断(main.py の use_nodes/denoiser/look 等)。
 - 撮影ビルドでは新しい failed 行は出なかった(=現状この3か所は失敗していない)。
+
+## 2026-10-25 Q25 跨線橋端の「黒い塊(樹木)」を調査 → 不具合ではなかった
+座標を出力して確認(HM M07-M08): 樹木は s=148, 162(橋は s=115、除外範囲 85〜145)で、橋から進行方向に約32m離れた位置。ramp の道路(幅±3m)とは重ならず、遠近で橋端に重なって見えただけ。除外処理は正常。デバッグ出力は戻した。
+Q25 の確認済み項目: 台帳検査(net/ledger_check.py)=異常なし(228件・重複なし・誤完了候補0)/ healthscan 直近58ログ=問題なし。
