@@ -867,9 +867,17 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     for i in range(len(ss) - 1):
         p0, p1 = pos[i] + nrm[i] * side * 7.0, pos[i + 1] + nrm[i + 1] * side * 7.0
         g.a("k5_conc").sbox((p0[0], p0[1], h / 2 - 0.2), (p1[0], p1[1], h / 2 - 0.2), 1.0, h + 0.4)
-        for j in range(2):
-            q = pos[i] + nrm[i] * side * (9.0 + 2.2 * j + rng.uniform(-0.4, 0.4))
-            _tetrapod(g, q[0], q[1], 0.62, rng.uniform(0, 6.28), rng.uniform(0.9, 1.15))      # Q25: 消波ブロックが立方体だった。テトラポッド(4脚)にする
+        w0, w1 = pos[i] + nrm[i] * side * 7.55, pos[i + 1] + nrm[i + 1] * side * 7.55
+        g.a("k5_conc").sbox((w0[0], w0[1], h + 0.05), (w1[0], w1[1], h + 0.05), 0.3, 0.7)           # Q25/C17: 波返し(海側へ張り出す立ち上がり)。護岸が白い箱だった(監査)
+        for j in range(4):
+            # 乱積み: 沖側ほど低く、位置を散らして2〜3層(下層は広く、上層は壁寄り)。捨石を足元に敷く
+            off = 9.0 + 1.7 * j + rng.uniform(-0.5, 0.5)
+            q = pos[i] + nrm[i] * side * off + (pos[i + 1] - pos[i]) * rng.uniform(-0.3, 0.3)
+            zq = 0.62 + (0.55 if j == 0 and rng.random() < 0.6 else 0.0)       # 壁寄りは一段積む
+            _tetrapod(g, q[0], q[1], zq, rng.uniform(0, 6.28), rng.uniform(0.85, 1.2))      # Q25: 消波ブロックが立方体だった。テトラポッド(4脚)にする
+        for _ in range(3):
+            q = pos[i] + nrm[i] * side * rng.uniform(7.9, 14.5) + (pos[i + 1] - pos[i]) * rng.uniform(-0.4, 0.4)
+            g.a("k5_stone", bevel=0.05).boxc(q[0], q[1], 0.12, rng.uniform(0.5, 1.1), rng.uniform(0.5, 1.1), rng.uniform(0.3, 0.6), rz=rng.uniform(0, 3.0))   # 捨石
     g.build()
     # 海面
     pts = [tuple(p + n * side * 40.0) for p, n in zip(pos[::3], nrm[::3])]
