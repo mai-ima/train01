@@ -23,6 +23,10 @@ def tracks_xy(sid, xr=(-160, 160), step=1.5):
             b, f = lt[k].get("back"), lt[k].get("front")
             if b: x0 = max(x0, min(b[0], 36.0 if f is None else f[0]))
             x1 = min(x1, f[0] if f else lt[k].get("xend", 36.0))
+        _ro = bpy.data.objects.get(f"{sid.lower()}_trk{k}_railL")      # Q25: 頭端駅(M01)は線路が x=0 で終わり、その先はコンコース。実レールの範囲で中心線を切る(既定の ±160m だと終端の先まで延びて偽の干渉が出ていた)
+        if _ro is not None and len(_ro.data.vertices):
+            _xs = [(_ro.matrix_world @ v.co).x for v in _ro.data.vertices]
+            x0, x1 = max(x0, min(_xs)), min(x1, max(_xs))
         for x in np.arange(x0, x1, step):
             tp = zone_stock._tpoint(sid, k, float(x))
             if tp: pts.append((tp[0], tp[1]))
