@@ -391,7 +391,7 @@ def struct_plan(ln, a, b, L):
         items += [("shed", dict(s0=fr(0.1), s1=fr(0.95)))]
     elif key == ("L01", "M14"):
         s0, s1 = fr(0.1), fr(0.5)
-        prof += [(s0 - 42, s1 + 42, 5.0, 40.0)]
+        prof += [(s0 - 42, s1 + 42, 2.0, 40.0)]   # Q25: 区間38mに高低差5mは勾配180‰。橋床は水面上に出る2.0mへ
         items += [("truss", dict(s0=s0, s1=s1, width=5.0)), ("river", dict(s=(s0 + s1) / 2, width=24.0, wiggle=15.0)), ("tunnel", dict(s0=fr(0.62), s1=fr(0.95)))]
     elif key == ("M14", "M15"):
         prof += [(fr(0.05), fr(0.95), 2.5, 50.0)]
@@ -412,14 +412,14 @@ def struct_plan(ln, a, b, L):
         items += [("cut", dict(s0=fr(0.25), s1=fr(0.75), trees=8, seed=7))]
     elif key == ("S03", "S04"):
         s0, s1 = fr(0.5) - 15, fr(0.5) + 15
-        prof += [(s0 - 5, s1 + 5, 3.0, 25.0)]
+        prof += [(s0 - 60, s1 + 60, 2.5, 70.0)]   # Q25: 取付勾配が180‰だった。高さ2.5m・擦り付け70mへ
         items += [("trestle", dict(s0=s0, s1=s1)), ("river", dict(s=fr(0.5), width=10.0, wiggle=10.0))]
     elif key == ("SH02", "SH03"):
         prof += [(fr(0.1), fr(0.9), 2.0, 40.0)]
         items += [("over", dict(s=fr(0.15))), ("embank", dict(s0=fr(0.1), s1=fr(0.9), h=2.0))]
     elif key == ("SH03", "SH04"):
         s0, s1 = fr(0.2), fr(0.8)
-        prof += [(s0 - 20, s1 + 20, 6.0, 30.0)]
+        prof += [(s0 - 24, s1 + 24, 2.5, 40.0)]   # Q25: 区間121mに高低差6mは勾配300‰。高さ2.5m・擦り付け40mへ
         items += [("viaduct", dict(s0=s0, s1=s1)), ("river", dict(s=fr(0.5), width=22.0, wiggle=14.0))]
     elif key == ("SH04", "SH05"):
         prof += [(fr(0.1), fr(0.9), 2.0, 40.0)]
