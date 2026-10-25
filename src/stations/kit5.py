@@ -254,12 +254,17 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
             V[:, k, 2] = zs + z
         if not flip:     # 丘: 坑口側は切り立った面(高さ9m)、中央へ向かって盛り上がり、うねりを加える
             L = max(1.0, ss[-1] - ss[0])
-            ends = np.minimum((ss - ss[0]) / (0.18 * L), (ss[-1] - ss) / (0.18 * L)).clip(0, 1)
-            fe = 0.62 + 0.38 * (ends * ends * (3 - 2 * ends))
+            ends = np.minimum((ss - ss[0]) / (0.35 * L), (ss[-1] - ss) / (0.35 * L)).clip(0, 1)
+            ends_s = ends * ends * (3 - 2 * ends)
+            fe = 0.62 + 0.38 * ends_s
             for k, (off, z) in enumerate(prof):
                 edge = 1.0 - abs(off) / half
+                # Q25: 端面が幅±46m・高さ9mの垂直な草の壁になっていた。坑口の翼壁の外側(横6m〜)は端へ向かって低く落とし、斜めの法面にする
+                lat = float(np.clip((abs(off) - 6.0) / 20.0, 0, 1))
+                lat = lat * lat * (3 - 2 * lat)
+                fe = (0.62 + 0.38 * ends_s) * (1.0 - lat * (1.0 - ends_s))
                 wob = 3.4 * np.sin(0.037 * ss + 2.1 * off / half + 0.8) * np.clip(edge * 2, 0, 1) + 1.5 * np.sin(0.093 * ss + 5.0 * off / half) * np.clip(edge * 2, 0, 1) + 0.7 * np.sin(0.21 * ss + 9.0 * off / half) * np.clip(edge * 3, 0, 1)
-                V[:, k, 2] = zs - 0.05 + np.where(z > 0.01, (z + 0.0) * fe + wob * 0.0 + wob, 0.0)
+                V[:, k, 2] = zs - 0.05 + np.where(z > 0.01, z * fe + wob * (1.0 - lat * (1.0 - ends_s)), 0.0)
         idx = np.arange(N * K).reshape(N, K)
         a, b, c, d = idx[:-1, :-1], idx[1:, :-1], idx[1:, 1:], idx[:-1, 1:]
         T = np.concatenate([np.stack([a, b, c], -1).reshape(-1, 3), np.stack([a, c, d], -1).reshape(-1, 3)])
