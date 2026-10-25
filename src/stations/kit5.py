@@ -696,7 +696,11 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
         for u in us:
             q = p0 + (p1 - p0) * u
             h = zh * (1 - u)
-            for off, z in ((-(road_w / 2 + 0.5 + 1.8 * max(h, 0.0)), -0.05), (-(road_w / 2 + 0.5), h - 0.12), (road_w / 2 + 0.5, h - 0.12), (road_w / 2 + 0.5 + 1.8 * max(h, 0.0), -0.05)):
+            hh_ = max(h, 0.0)
+            hb_, bw_ = hh_ * 0.5, min(1.2, 0.5 * hh_)                 # Q25/C17: 法面が1枚の斜面だった(監査)。高さの半分に小段(幅最大1.2m)を設けて2段にする
+            sh_ = road_w / 2 + 0.5
+            for off, z in ((-(sh_ + 1.8 * (hh_ - hb_) + bw_ + 1.8 * hb_), -0.05), (-(sh_ + 1.8 * (hh_ - hb_) + bw_), hb_), (-(sh_ + 1.8 * (hh_ - hb_)), hb_), (-sh_, h - 0.12),
+                           (sh_, h - 0.12), (sh_ + 1.8 * (hh_ - hb_), hb_), (sh_ + 1.8 * (hh_ - hb_) + bw_, hb_), (sh_ + 1.8 * (hh_ - hb_) + bw_ + 1.8 * hb_, -0.05)):
                 VB.append((q[0] + t[0] * off, q[1] + t[1] * off, max(z, -0.05)))
             for off in (-road_w / 2, road_w / 2):
                 VR.append((q[0] + t[0] * off, q[1] + t[1] * off, h + 0.02))
@@ -713,9 +717,9 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
             return np.concatenate([T, T[:, ::-1]]) if DOUBLE_SIDED_DBG else T
         # 橋台側の端(u=0)に蓋をして盛土を閉じる。蓋が無いと、開いた断面から盛土の内側に視線が入り、斜面を裏側から見て真っ黒になる(裏面はシェーディング法線が反転する)
         nb0 = len(VB)
-        VB = VB + VB[:4]
-        cap = [(nb0, nb0 + 1, nb0 + 2), (nb0, nb0 + 2, nb0 + 3)]
-        Tm = strip(VB[:nb0], 4).tolist()
+        VB = VB + VB[:8]
+        cap = [(nb0, nb0 + j, nb0 + j + 1) for j in range(1, 7)]      # 8点の断面を扇状に塞ぐ
+        Tm = strip(VB[:nb0], 8).tolist()
         Va = np.asarray(VB, float)
         face_dir = -sg * n                                  # 蓋の外向き=橋の中心側
         for tri in cap:
