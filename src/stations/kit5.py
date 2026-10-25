@@ -688,6 +688,9 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
         g.a("k5_timber").sbox((a[0], a[1], zs[i] - 0.4), (b[0], b[1], zs[i] - 0.4), 0.3, 0.3)
         if i % 2 == 0:
             g.a("k5_timber").sbox((a[0], a[1], zs[i] - 1.8), (b[0], b[1], zs[i] - 0.5), 0.1, 0.12)
+        for sg in (-1, 1):      # Q25: 手すりに支柱が無く細い線だけが浮いて見えていた
+            q = pos[i] + nrm[i] * sg * (width / 2 + 0.25)
+            g.a("k5_timber").box(q[0] - 0.06, q[0] + 0.06, q[1] - 0.06, q[1] + 0.06, zs[i] - 0.3, zs[i] + 0.78)
     for i in range(len(ss) - 1):
         for sg in (-1, 0, 1):
             p0 = pos[i] + nrm[i] * sg * 1.0
