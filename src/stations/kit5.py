@@ -541,7 +541,7 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
     L2 = span / 2 + 0.9
     a0, a1 = c - n * L2, c + n * L2
     g.a("k5_conc").sbox((a0[0], a0[1], zh - 0.12), (a1[0], a1[1], zh - 0.12), road_w + 0.9, 0.24)          # RC床版
-    g.a("road" if "road" in M else "k5_conc").sbox((a0[0], a0[1], zh + 0.02), (a1[0], a1[1], zh + 0.02), road_w, 0.1)   # 舗装
+    g.a("ug_asph").sbox((a0[0], a0[1], zh + 0.02), (a1[0], a1[1], zh + 0.02), road_w, 0.1)   # 舗装(アスファルト)
     gx = road_w / 2 - 0.15
     for sg in (-1, 1):                                                                                      # 鋼板桁(腹板+上下フランジ)×2
         q0, q1 = a0 + t * sg * gx, a1 + t * sg * gx
@@ -604,7 +604,7 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
             nn = np.cross(Va[tri[1]] - Va[tri[0]], Va[tri[2]] - Va[tri[0]])
             Tm.append(list(tri) if (nn[0] * face_dir[0] + nn[1] * face_dir[1]) >= 0 else [tri[0], tri[2], tri[1]])
         np_mesh(f"{name}_bank{sg}", np.array(VB), np.array(Tm), M.get("grass_ground", M["k5_earth"]), "Ground", smooth=False)
-        np_mesh(f"{name}_road{sg}", np.array(VR), strip(VR, 2), M["road"], "Ground", smooth=False)
+        np_mesh(f"{name}_road{sg}", np.array(VR), strip(VR, 2), M["ug_asph"], "Ground", smooth=False)
 
 
 def level_crossing(P, s, name="lc", road_w=4.6):
@@ -615,8 +615,8 @@ def level_crossing(P, s, name="lc", road_w=4.6):
     t = np.array([math.cos(a), math.sin(a)])
     n = np.array([-t[1], t[0]])
     pts = [tuple(c + n * u) for u in (-120, -40, 0, 40, 120)]
-    asph = M["asphalt"] if "asphalt" in M else M["road"]
-    core.ribbon(name + "_road", pts, road_w, asph if "asphalt" in M else M["road"], z0=0.016, rut=False)
+    asph = M["ug_asph"]          # 写真ベースのアスファルト(旧: M["asphalt"] は未定義で、砂色の土の道になっていた)
+    core.ribbon(name + "_road", pts, road_w, asph, z0=0.016, rut=False)
     g = G(name, "Props")
     g.a("k5_timber").sbox((c[0] - n[0] * 2.4, c[1] - n[1] * 2.4, 0.12), (c[0] + n[0] * 2.4, c[1] + n[1] * 2.4, 0.12), road_w, 0.14)
     # 踏切の舗装(道路は n 方向、幅は t 方向): 板張りの外側にコンクリート踏板、道路の縁に縁石、路面に停止線

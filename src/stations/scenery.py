@@ -118,8 +118,8 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
             if sid:
                 try:
                     stn.append(tuple(station_origin(sid)))
-                except Exception:
-                    pass
+                except Exception as _e:
+                    print("scenery station_origin failed", sid, _e)      # 駅の除外範囲が効かなくなる(healthscan の対象)
     gall, gstn = _grid(allpts), _grid(stn)
     total = dict(trees=0, fields=0, fence=0)
     done_corr = set()
@@ -138,7 +138,8 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
             continue
         try:
             _, items = struct_plan(ln, a, b, L)
-        except Exception:
+        except Exception as _e:
+            print("scenery struct_plan failed", ln, a, b, _e)            # 構造物の除外が効かず、橋・踏切の上に樹木・畑が載る(healthscan の対象)
             items = []
         skips = _skip_ranges(items, L)
         if verbose:

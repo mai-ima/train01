@@ -550,3 +550,8 @@ mound断面を (1-|u|^1.7)^1.6、half 34→46、うねり振幅を約2倍に。�
 
 ## 2026-10-25 ユーザー指示: 中断を解除して続行+【Q25】既存システムの不具合修正を追加
 再開の最初の作業: 作業側 kit5.py の未検証変更(踏切・跨線橋の道路を ug_asph に)を4視点で確認→可否判断。以後 Q25 として、(1) 既に分かっている不具合(跨線橋端の樹木が除外範囲に入らない件・healthscan 対象外の握りつぶし except・台帳の件数不整合など)を一覧化、(2) 症状でなく根本原因を特定して修正、(3) 3視点以上で確認、の順で進める。
+
+## 2026-10-25 C15 道路をアスファルトに/Q25 無言 except の洗い出し(1回目)
+- 踏切の取付道路・跨線橋の路面を ug_asph(写真ベース)に変更。4視点で確認(renders/work/c14/c15_road_asphalt.jpg)。根本原因: 踏切コードの `M["asphalt"] if "asphalt" in M` は M に "asphalt" が存在せず、常に砂色の M["road"](土の道)にフォールバックしていた。
+- Q25: 何も出力しない except が18か所(スキャン: re で except 後4行に print/raise/log/warn/failed が無いもの)。うち生成結果に影響しうる3か所(scenery.py の station_origin・struct_plan、veg.py の props.FOOT)を「…failed」付きの出力に変更(healthscan の対象になる)。残り15か所は Blender のバージョン差吸収・補助スクリプトなどで無害と判断(main.py の use_nodes/denoiser/look 等)。
+- 撮影ビルドでは新しい failed 行は出なかった(=現状この3か所は失敗していない)。

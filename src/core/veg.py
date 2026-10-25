@@ -84,8 +84,8 @@ def free_mask(P):
         import props
         for (a, b, c, d) in props.FOOT:
             bad |= inside_rect(P, a, b, c, d)
-    except Exception:
-        pass
+    except Exception as _e:
+        print("veg props.FOOT failed", _e)        # 建物の足跡の除外が効かず、建物の中に草が生える(healthscan の対象)
     try:
         import newdepot as _nd
         _nd.register_grass_exclusion()                                # 構築順に依存せず登録する(冪等)
