@@ -764,7 +764,18 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
         # 橋台側の端(u=0)に蓋をして盛土を閉じる。蓋が無いと、開いた断面から盛土の内側に視線が入り、斜面を裏側から見て真っ黒になる(裏面はシェーディング法線が反転する)
         # 蓋は盛土の材質(草)ではなく擁壁のコンクリート面にする。草の材質だと、橋の脇から見える盛土の端面が地面から浮いた逆三角の草の板に見えていた(C17監査の最優先指摘)
         Va = np.asarray(VB, float)
-        np_mesh(f"{name}_bank{sg}", Va, strip(VB, 8), M.get("grass_ground", M["k5_earth"]), "Ground", smooth=False)
+        ob_b = np_mesh(f"{name}_bank{sg}", Va, strip(VB, 8), M.get("grass_ground", M["k5_earth"]), "Ground", smooth=False)
+        # 法面の下半分(地面〜小段)は石張りにして、草一色の斜面の単調さをなくす(C17監査)。断面の区間0と6が下段の法面
+        ob_b.data.materials.append(M["ug_stone"])
+        nseg = len(us) - 1
+        mi_ = np.zeros(nseg * 7 * 2, dtype=int)
+        for i_ in range(nseg):
+            for j_ in (0, 6):
+                mi_[(i_ * 7 + j_) * 2:(i_ * 7 + j_) * 2 + 2] = 1
+        if len(ob_b.data.polygons) == len(mi_):
+            ob_b.data.polygons.foreach_set("material_index", mi_.tolist())
+        else:
+            print("overbridge bank: 面数が想定と違うため石張りを付けません(failed)", len(ob_b.data.polygons), len(mi_))
         face_dir = -sg * n                                  # 蓋の外向き=橋の中心側
         cv = Va[:8].copy()
         cap = []
