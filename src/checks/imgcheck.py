@@ -11,7 +11,8 @@ for pat in sys.argv[1:]:
         white = sum(hist[250:]) / sum(hist) * 100
         flags = []
         if mean < 25: flags.append("黒つぶれ")
-        if sd < 14: flags.append("単色(遮蔽/壁埋没)")
+        if sd < 14 and mean >= 25: flags.append("単色(要目視: 俯瞰の草地は誤検出あり。壁埋没なら無効視点)")
+        elif sd < 14: flags.append("単色(遮蔽/壁埋没)")
         if white > 12: flags.append(f"白飛び{white:.0f}%")
         if flags:
             bad += 1; print("NG", f, f"mean={mean:.0f} sd={sd:.0f}", ",".join(flags))
