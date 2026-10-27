@@ -853,12 +853,20 @@ def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None,
 
 
 def mat_pbr_blend(name, tid_a, tid_b, scale_a=1.0, scale_b=1.0, mask=None, tint_a=None, tint_b=None, bump=0.6,
-                  macro=0.15, extra_dark=None):
+                  macro=0.15, extra_dark=None, hsv_a=None, hsv_b=None, spec=0.25):
     """Blend two photo textures by a mask socket-builder `mask(m)` (e.g. vertex colour / noise)."""
     m = Mat(name)
     A = pbr_layer(m, tid_a, scale_a)
     B = pbr_layer(m, tid_b, scale_b)
     ca, cb = A["col"], B["col"]
+    for _c, _hs in (("a", hsv_a), ("b", hsv_b)):          # 色相・彩度・明度の補正(周囲の草/土の材質と色味を合わせる)
+        if _hs is not None:
+            _h = m.node('ShaderNodeHueSaturation')
+            m.setall(_h, {'Hue': _hs[0], 'Saturation': _hs[1], 'Value': _hs[2], 'Fac': 1.0, 'Color': ca if _c == "a" else cb})
+            if _c == "a":
+                ca = _h.outputs['Color']
+            else:
+                cb = _h.outputs['Color']
     if tint_a is not None:
         ca = m.mix(1.0, ca, tint_a, 'MULTIPLY')
     if tint_b is not None:
@@ -876,7 +884,7 @@ def mat_pbr_blend(name, tid_a, tid_b, scale_a=1.0, scale_b=1.0, mask=None, tint_
     ha, hb = A["height"], B["height"]
     h = m.mix(f, ha, hb)
     nrm = m.bump(h, bump, 0.03)
-    m.principled(**{'Base Color': col, 'Roughness': rr, 'Specular IOR Level': 0.25, 'Normal': nrm})
+    m.principled(**{'Base Color': col, 'Roughness': rr, 'Specular IOR Level': spec, 'Normal': nrm})
     return m.m
 
 

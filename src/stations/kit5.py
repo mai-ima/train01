@@ -48,6 +48,14 @@ def mats5():
         M["k5_rock"] = lib.mat_pbr("k5_rock", "Ground110", scale=1.6, tint=(0.62, 0.60, 0.56), tint_amt=0.55, bump=1.0, macro=0.25, spec=0.15)
         M["k5_soil"] = lib.mat_pbr("k5_soil", "Ground110", scale=2.4, tint=(0.34, 0.22, 0.12), tint_amt=0.85, bump=1.2, macro=0.45, spec=0.05)
         M["ug_stone"] = lib.mat_pbr("ug_stone", "Bricks102", scale=1.8, bump=0.9, macro=0.15, spec=0.2)
+        def _hill_mask(m):                                       # 頂点カラー(高さ帯)+ノイズで草↔土を滑らかに混ぜる(面ごとの割当だとタイル状にギザギザしていた)
+            sx, sy, sz = m.sep(m.attr_color("Col"))
+            nz = m.noise(scale=0.07, detail=5, rough=0.6)
+            f = m.math('ADD', sx, m.math('MULTIPLY', m.math('SUBTRACT', nz, 0.5), 0.9))
+            return m.ramp(f, [(0.42, (0, 0, 0)), (0.58, (1, 1, 1))])
+        M["k5_hillsoil"] = lib.mat_pbr_blend("k5_hillsoil", "Grass004", "Ground110", scale_a=1.6, scale_b=2.4, mask=_hill_mask,
+                                             tint_a=(0.98, 0.88, 0.48), tint_b=(0.34, 0.22, 0.12), bump=0.8, macro=0.3,
+                                             hsv_a=(0.49, 0.62, 0.78), spec=0.0)
         M["k5_pitch"] = lib.mat_pbr("k5_pitch", "Bricks102", scale=3.2, tint=(0.5, 0.46, 0.4), tint_amt=0.7, bump=0.9, macro=0.3, dirt=0.5, spec=0.12)      # 法面の石張り: 擁壁用より小粒で暗く、泥汚れ
         M["ug_brick"] = lib.mat_pbr("ug_brick", "Bricks097", scale=1.4, bump=0.8, macro=0.2, spec=0.25)
         M["ug_tile"] = lib.mat_pbr("ug_tile", "Tiles107", scale=2.4, bump=0.3, macro=0.1, spec=0.5)
@@ -334,18 +342,20 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
         T = np.concatenate([np.stack([a, b, c], -1).reshape(-1, 3), np.stack([a, c, d], -1).reshape(-1, 3)])
         if flip:
             T = T[:, ::-1]
-        ob_ = np_mesh(nm, V.reshape(-1, 3), T, mat, "Ground", smooth=True)
-        if not flip:
-            # C17: 丘が単色の草だった → 斜面の中腹〜法尻に土肌の帯(面ごとに素材を割り当て)
-            ob_.data.materials.append(M["k5_soil"])
-            nT = len(T) // 2
-            ii, kk = np.divmod(np.arange(nT), K - 1)
+        if flip:
+            np_mesh(nm, V.reshape(-1, 3), T, mat, "Ground", smooth=True)
+        else:
+            # C17: 丘が単色の草だった → 斜面の中腹〜法尻に土肌の帯。高さ帯を頂点カラーに焼き、シェーダで草↔土を滑らかに混ぜる
             hgt = V[:, :, 2].reshape(N, K)
-            zr = (hgt[ii, kk] - zs[ii]) / max(1.0, float(hgt.max() - zs.min()))
-            band = np.sin(0.11 * ss[ii] + 3.0 * kk / K) + 0.7 * np.sin(0.29 * ss[ii] - 2.0 * kk)
-            soil = (zr < 0.28 + 0.12 * band) | (zr < 0.05)
-            mi = np.concatenate([soil, soil]).astype(int)
-            ob_.data.polygons.foreach_set("material_index", mi.tolist())
+            zr = (hgt - zs[:, None]) / max(1.0, float(hgt.max() - zs.min()))
+            kk_ = np.arange(K)[None, :]
+            band = np.sin(0.11 * ss[:, None] + 3.0 * kk_ / K) + 0.7 * np.sin(0.29 * ss[:, None] - 2.0 * kk_)
+            soil_v = np.clip((0.28 + 0.12 * band - zr) / 0.10, 0.0, 1.0)
+            soil_v = np.maximum(soil_v, (zr < 0.05).astype(float))
+            cols = np.zeros((N * K, 4), dtype=np.float32)
+            cols[:, 0] = soil_v.reshape(-1)
+            cols[:, 3] = 1.0
+            np_mesh(nm, V.reshape(-1, 3), T, M["k5_hillsoil"], "Ground", smooth=True, colors=cols)
         return V
     Vh = sweep(prof_o, M.get("grass_ground", M["k5_earth"]), name + "_hill", False)
     # 丘の木(杉・雑木)
