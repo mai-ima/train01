@@ -39,6 +39,7 @@ def mats5():
         M["k5_stone"] = lib.mat_plaster("k5_stone", (0.30, 0.285, 0.26), dirt=1.0)
         M["k5_earth"] = lib.mat_plain("k5_earth", (0.12, 0.17, 0.07), rough=1.0)
         M["k5_gravel"] = lib.mat_plain("k5_gravel", (0.30, 0.27, 0.22), rough=1.0)
+        M["k5_foam"] = lib.mat_plain("k5_foam", (0.62, 0.66, 0.68), rough=0.95)
         M["k5_conc"] = lib.mat_plaster("k5_conc", (0.52, 0.52, 0.50), dirt=0.8)
         M["k5_steel"] = lib.mat_paint("k5_steel", (0.035, 0.045, 0.05), rough=0.6, rust=0.6)
         M["k5_timber"] = lib.mat_plain("k5_timber", (0.18, 0.13, 0.08), rough=0.9)
@@ -1000,6 +1001,9 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     # C17: 幅70mの帯だと沖側の直線の縁が草地に露出し「青い長方形」に見えた(海28視点の目視)ため、水平線まで届く幅500mの帯にする。
     # 試行の記録: ①70m帯+大水面を重ねる/別高さで重ねる→透過水面が二重になり真っ黒 ②扇状メッシュ→区間外に黒い穴 ③70m帯と大水面を隣接→曲線で楔形の隙間。
     # 500m帯は曲線の内側で自己交差して遠景に細い暗い筋が出るが、他案より破綻が少ない(未達: 筋の除去)。
+    # 護岸の足元に泡の帯(不透明・水面より少し上。透過する水面と重ねない)。監査で「汀線・泡が無い」(水面系で最低点)
+    fpts = [tuple(p + n * side * 8.6) for p, n in zip(pos[::3], nrm[::3])]
+    core.ribbon(name + "_foam", fpts, 1.6, M["k5_foam"], z0=0.045, rut=False, col="Ground")
     sea_w = 500.0
     ss_sea = np.arange(s0 - 120.0, s1 + 120.5, 9.0)
     pos_s, ang_s = frames_at(P, ss_sea)
