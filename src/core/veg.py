@@ -382,7 +382,7 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
     g.cyl((x, y, -0.1), (x, y, h * 0.9), 0.28, 0.07, seg=8)
     g.build()
     Vs, Ts, Cs, off = [], [], [], 0
-    tiers = 15
+    tiers = 24
     for t in range(tiers):
         f = t / (tiers - 1)
         z0 = h * (0.16 + 0.8 * f)
@@ -392,16 +392,16 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
         V = [ap]
         for s in range(seg):
             a = 2 * math.pi * s / seg + rng.uniform(-0.1, 0.1)
-            rr = rad * rng.uniform(0.55, 1.2)
-            V.append((x + math.cos(a) * rr, y + math.sin(a) * rr, z0 - 0.4 + rng.uniform(-0.35, 0.3)))
+            rr = rad * rng.uniform(0.4, 1.3) * (1.0 if s % 3 else 0.62)      # C17/Q14: 枝先の長短を大きくして円錐の輪郭を崩す
+            V.append((x + math.cos(a) * rr, y + math.sin(a) * rr, z0 - 0.55 + rng.uniform(-0.5, 0.25) - 0.25 * (rr / (rad + 1e-6))))
         V.append((x, y, z0 - 0.6))
         n = len(V)
         for s in range(seg):
             a, b = 1 + s, 1 + (s + 1) % seg
             Ts += [(off, off + a, off + b), (off + n - 1, off + b, off + a)]
         V = np.array(V)
-        cl = np.array([0.012, 0.035, 0.016]) * (1 + 0.5 * f)
-        Cc = np.tile(cl, (n, 1)) * rng.uniform(0.8, 1.2, (n, 1))
+        cl = np.array([0.030, 0.075, 0.036]) * (1 + 0.5 * f) * rng.uniform(0.85, 1.2)      # C17/Q14: 暗すぎて黒緑の塊に見えた(段ごとにも濃淡)
+        Cc = np.tile(cl, (n, 1)) * rng.uniform(0.65, 1.35, (n, 1))
         Cc[0] = cl * 1.4
         Vs.append(V)
         Cs.append(np.concatenate([Cc, np.ones((n, 1))], 1))
