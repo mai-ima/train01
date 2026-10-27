@@ -936,6 +936,18 @@ def viaduct(P, s0, s1, name="viaduct", width=8.4, zfun=None, span=12.0):
             p0, p1 = a0 + nrm[i] * sg * width / 2, a1 + nrm[i + 1] * sg * width / 2
             g.a("k5_conc").sbox((p0[0], p0[1], zs[i] + 0.1), (p1[0], p1[1], zs[i + 1] + 0.1), 0.3, 1.1)
             g.a("k5_steel").sbox((p0[0], p0[1], zs[i] + 1.15), (p1[0], p1[1], zs[i + 1] + 1.15), 0.08, 0.5)
+    # C17: 桁の両端が草地から板のように立ち上がっていた(高架桁橋7視点の目視)。橋台の背面壁と段状の翼壁を付ける
+    for e, outward in ((0, -1.0), (len(ss) - 1, 1.0)):
+        o = tng[e] * outward
+        hb = max(zs[e], 0.0) + 0.5
+        b0, b1 = pos[e] - nrm[e] * (width / 2 + 0.5), pos[e] + nrm[e] * (width / 2 + 0.5)
+        g.a("k5_conc").sbox((b0[0], b0[1], hb / 2 - 0.3), (b1[0], b1[1], hb / 2 - 0.3), 0.7, hb + 0.6)      # 橋台背面壁
+        for sg in (-1, 1):
+            for k in range(4):                                                                              # 翼壁(沖へ段状に低くなる)
+                q0 = pos[e] + nrm[e] * sg * (width / 2 + 0.4) + o * (1.5 * k)
+                q1 = q0 + o * 1.5
+                hk = max(hb * (1.0 - 0.22 * k), 0.4)
+                g.a("k5_conc").sbox((q0[0], q0[1], hk / 2 - 0.3), (q1[0], q1[1], hk / 2 - 0.3), 0.35, hk + 0.6)
     g.build()
 
 
