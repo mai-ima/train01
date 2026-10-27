@@ -973,8 +973,13 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
             g.a("k5_stone", bevel=0.05).boxc(q[0], q[1], 0.12, rng.uniform(0.5, 1.1), rng.uniform(0.5, 1.1), rng.uniform(0.3, 0.6), rz=rng.uniform(0, 3.0))   # 捨石
     g.build()
     # 海面
-    pts = [tuple(p + n * side * 40.0) for p, n in zip(pos[::3], nrm[::3])]
-    core.ribbon(name + "_sea", pts, 70.0, M["water"], z0=0.03, rut=False, col="Ground")
+    # C17: 幅70mの帯だと沖側の直線の縁が草地に露出し「青い長方形」に見えた(海28視点の目視)。水平線まで届く幅にし、両端も延長して縁を見せない
+    sea_w = 500.0
+    ss_sea = np.arange(s0 - 120.0, s1 + 120.5, 9.0)
+    pos_s, ang_s = frames_at(P, ss_sea)
+    nrm_s = np.stack([-np.sin(ang_s), np.cos(ang_s)], 1)
+    pts = [tuple(p + n * side * (5.0 + sea_w / 2)) for p, n in zip(pos_s, nrm_s)]
+    core.ribbon(name + "_sea", pts, sea_w, M["water"], z0=0.03, rut=False, col="Ground")
 
 
 def gantry(x, y0, y1, z, hc=5.2, name="gantry", w=0.34):
