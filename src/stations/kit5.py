@@ -48,6 +48,7 @@ def mats5():
         M["k5_rock"] = lib.mat_pbr("k5_rock", "Ground110", scale=1.6, tint=(0.62, 0.60, 0.56), tint_amt=0.55, bump=1.0, macro=0.25, spec=0.15)
         M["k5_soil"] = lib.mat_pbr("k5_soil", "Ground110", scale=2.4, tint=(0.34, 0.22, 0.12), tint_amt=0.85, bump=1.2, macro=0.45, spec=0.05)
         M["ug_stone"] = lib.mat_pbr("ug_stone", "Bricks102", scale=1.8, bump=0.9, macro=0.15, spec=0.2)
+        M["k5_pitch"] = lib.mat_pbr("k5_pitch", "Bricks102", scale=3.2, tint=(0.5, 0.46, 0.4), tint_amt=0.7, bump=0.9, macro=0.3, dirt=0.5, spec=0.12)      # 法面の石張り: 擁壁用より小粒で暗く、泥汚れ
         M["ug_brick"] = lib.mat_pbr("ug_brick", "Bricks097", scale=1.4, bump=0.8, macro=0.2, spec=0.25)
         M["ug_tile"] = lib.mat_pbr("ug_tile", "Tiles107", scale=2.4, bump=0.3, macro=0.1, spec=0.5)
         M["ug_floor"] = lib.mat_pbr("ug_floor", "Tiles139", scale=2.4, bump=0.3, macro=0.12, spec=0.4)
@@ -642,7 +643,19 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         T = np.concatenate([np.stack([a, b, c], -1).reshape(-1, 3), np.stack([a, c, d], -1).reshape(-1, 3)])
         if sgn > 0:
             T = T[:, ::-1]
-        np_mesh(f"{name}_{nm}", V.reshape(-1, 3), T, M.get("grass_ground", M["k5_earth"]), "Ground", smooth=True)
+        ob_c = np_mesh(f"{name}_{nm}", V.reshape(-1, 3), T, M.get("grass_ground", M["k5_earth"]), "Ground", smooth=True)
+        # 切土の法面を材質で分ける(C17監査: 草一色の斜面だった)。線路際の急な面=石張り、小段=土、上段=草
+        ob_c.data.materials.append(M["k5_pitch"])
+        ob_c.data.materials.append(M["k5_soil"])
+        jj = np.tile(np.arange(K - 1), N - 1)
+        sel = np.zeros(len(jj), dtype=int)
+        sel[jj == 0] = 1
+        sel[(jj >= 1) & (jj <= 3)] = 2
+        mi_c = np.concatenate([sel, sel])
+        if len(ob_c.data.polygons) == len(mi_c):
+            ob_c.data.polygons.foreach_set("material_index", mi_c.tolist())
+        else:
+            print("cutting: 面数が想定と違うため材質分けを付けません(failed)", len(ob_c.data.polygons), len(mi_c))
     if trees:
         import veg
         rng = random.Random(seed)
@@ -766,7 +779,7 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
         Va = np.asarray(VB, float)
         ob_b = np_mesh(f"{name}_bank{sg}", Va, strip(VB, 8), M.get("grass_ground", M["k5_earth"]), "Ground", smooth=False)
         # 法面の下半分(地面〜小段)は石張りにして、草一色の斜面の単調さをなくす(C17監査)。断面の区間0と6が下段の法面
-        ob_b.data.materials.append(M["ug_stone"])
+        ob_b.data.materials.append(M["k5_pitch"])
         nseg = len(us) - 1
         mi_ = np.zeros(nseg * 7 * 2, dtype=int)
         for i_ in range(nseg):
