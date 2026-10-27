@@ -723,6 +723,21 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
     cols[:, 0] = soil.reshape(-1)
     cols[:, 3] = 1.0
     np_mesh(name, V.reshape(-1, 3), T, M["k5_hillsoil"], "Ground", smooth=True, colors=cols)
+    # C17: 法面の石(法尻〜中腹に疎な群れ)。盛土が低い所(zt<0.8)には置かない
+    rp = []
+    for i in np.where(rg.random(N) > 0.965)[0]:
+        if zt[i] < 0.8 or i < 3 or i > N - 4:
+            continue
+        sd = 1 if rg.random() < 0.5 else -1
+        k = 0 if sd < 0 else K - 1
+        k2 = 1 if sd < 0 else K - 2
+        for _ in range(int(rg.integers(2, 5))):
+            u = rg.uniform(0.0, 0.7)
+            j = min(max(i + int(rg.integers(-2, 3)), 0), N - 1)
+            q = V[j, k] * (1 - u) + V[j, k2] * u
+            rp.append((q[0], q[1], q[2] + 0.05))
+    if rp:
+        _boulders(name + "_rocks", rp, seed=int(abs(s0)) % 9973 + 3, r0=0.25, r1=0.7)
 
 
 import os as _os_dbg
