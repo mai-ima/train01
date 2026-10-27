@@ -463,7 +463,12 @@ def mat_water(name, deep=(0.03, 0.10, 0.13), shallow=(0.10, 0.22, 0.24)):
     h = m.mix(1.0, (0.5, 0.5, 0.5), rip, 'ADD') if hasattr(m, 'mix') else rip
     nrm = m.bump(rip, strength=0.35, dist=0.25)
     col = m.ramp(big, [(0.30, deep), (0.75, shallow)])
-    m.principled(**{'Base Color': col, 'Roughness': 0.05, 'Specular IOR Level': 0.9, 'Normal': nrm})
+    # C17/T4: 空を映すだけの平板に見えた(独立監査で水面系が最低点)。波頭の白濁(細かい2層のノイズの上位だけ)と、反射の弱め・波長の異なる法線を足す
+    crest = m.ramp(m.noise(scale=0.22, detail=6, rough=0.6), [(0.76, (0.0, 0.0, 0.0)), (0.84, (1.0, 1.0, 1.0))])
+    col = m.mix(crest, col, (0.78, 0.84, 0.86))
+    swell = m.noise(scale=0.12, detail=2, rough=0.5)
+    nrm = m.bump(m.mix(0.5, rip, swell), strength=0.45, dist=0.3)
+    m.principled(**{'Base Color': col, 'Roughness': 0.09, 'Specular IOR Level': 0.6, 'Normal': nrm})
     return m.m
 
 
