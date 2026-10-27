@@ -709,7 +709,20 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
     idx = np.arange(N * K).reshape(N, K)
     a, b, c, d = idx[:-1, :-1], idx[1:, :-1], idx[1:, 1:], idx[:-1, 1:]
     T = np.concatenate([np.stack([a, b, c], -1).reshape(-1, 3), np.stack([a, c, d], -1).reshape(-1, 3)])
-    np_mesh(name, V.reshape(-1, 3), T, M.get("grass_ground", M["k5_earth"]), "Ground", smooth=True)
+    # C17: 築堤の法面が単色の草だった(監査・築堤42視点の目視)。法尻の土の帯と、法面の侵食溝・裸地の斑を頂点カラーに焼き、草↔土を滑らかに混ぜる
+    rg = np.random.default_rng(int(abs(s0)) % 99991 + 7)
+    gul = (rg.random(N) > 0.95).astype(float) * rg.uniform(0.4, 0.9, N)      # 溝はまばらに・濃さも不揃いに
+    gul = np.convolve(gul, np.array([0.3, 1.0, 0.3]), mode="same").clip(0, 1)                    # 溝は2〜3列にまたがる
+    patch = np.clip((np.sin(0.09 * ss + 1.1) * np.sin(0.037 * ss + 2.3) - 0.25) * 3.0, 0, 1)      # 裸地の斑
+    soil = np.zeros((N, K))
+    soil[:, 0] = soil[:, K - 1] = 0.5 * (0.6 + 0.4 * patch)                                         # 法尻(濃淡あり)
+    soil[:, 1] = np.maximum(0.45 * patch, 0.9 * gul)
+    soil[:, K - 2] = np.maximum(0.45 * patch[::-1], 0.9 * gul)
+    soil[:, 2] = soil[:, K - 3] = 0.8 * gul
+    cols = np.zeros((N * K, 4), dtype=np.float32)
+    cols[:, 0] = soil.reshape(-1)
+    cols[:, 3] = 1.0
+    np_mesh(name, V.reshape(-1, 3), T, M["k5_hillsoil"], "Ground", smooth=True, colors=cols)
 
 
 import os as _os_dbg
