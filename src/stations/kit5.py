@@ -44,6 +44,7 @@ def mats5():
     if "ug_conc" not in M:     # 実写PBR(ambientCG CC0): 構造物・地下・舗装用
         M["ug_conc"] = lib.mat_pbr("ug_conc", "Concrete031", scale=2.6, tint=(0.95, 0.93, 0.88), tint_amt=0.3, bump=0.5, macro=0.2, dirt=0.0, spec=0.2)
         M["ug_conc2"] = lib.mat_pbr("ug_conc2", "Concrete048", scale=2.8, bump=0.6, macro=0.2, dirt=0.0, spec=0.2)
+        M["k5_conc"] = lib.mat_pbr("k5_conc", "Concrete031", scale=2.2, hsv=(0.5, 0.6, 1.5), tint=(0.95, 0.94, 0.90), tint_amt=0.4, bump=0.7, macro=0.4, dirt=0.5, spec=0.12, patch=0.2)   # C17: 無地の漆喰(mat_plaster)だった桁・橋脚を実写PBR+汚れ・斑に
         M["ug_asph"] = lib.mat_pbr("ug_asph", "Asphalt032", scale=2.2, hsv=(0.5, 1.0, 0.62), bump=0.7, macro=0.25, spec=0.25)
         M["k5_rock"] = lib.mat_pbr("k5_rock", "Ground110", scale=1.6, tint=(0.62, 0.60, 0.56), tint_amt=0.55, bump=1.0, macro=0.25, spec=0.15)
         M["k5_soil"] = lib.mat_pbr("k5_soil", "Ground110", scale=2.4, tint=(0.34, 0.22, 0.12), tint_amt=0.85, bump=1.2, macro=0.45, spec=0.05)
