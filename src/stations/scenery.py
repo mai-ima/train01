@@ -263,12 +263,13 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                             base = sum(len(v) for v in tv)
                             tv.append(Vb)
                             tt += _tris(base, seg, rings)
+                            # C17/Q14: 沿線樹の葉色が草(0.1〜0.3)より遥かに暗く、遠目に青黒い塊に見えた(shed/桟橋/海の目視)。草地と並べて自然な暗い緑に引き上げる
                             if conif:
-                                bc = np.array([0.014, 0.034, 0.020])
+                                bc = np.array([0.030, 0.070, 0.040])
                             elif bam:
-                                bc = np.array([0.060, 0.120, 0.030])
+                                bc = np.array([0.110, 0.190, 0.050])
                             else:
-                                bc = np.array([0.040, 0.085, 0.028]) * rng.uniform(0.8, 1.3)
+                                bc = np.array([0.100, 0.170, 0.045]) * rng.uniform(0.8, 1.3)
                             sh = np.clip((Vb[:, 2] - z) / (hc * 2.0 + 1e-3), 0, 1)[:, None]
                             tc.append(np.concatenate([bc[None, :] * (0.55 + 0.9 * sh) * nr_.uniform(0.7, 1.35, (len(Vb), 1)), np.ones((len(Vb), 1))], 1))
                             cv, ct_, cc_ = _cards(c, rl, nr_, bc * 1.5, max(60, int(420 * rl * rl)), conif)
