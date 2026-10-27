@@ -670,6 +670,20 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             ob_c.data.polygons.foreach_set("material_index", mi_c.tolist())
         else:
             print("cutting: 面数が想定と違うため材質分けを付けません(failed)", len(ob_c.data.polygons), len(mi_c))
+        # C17: 法面(小段〜上段)に疎な岩の群れ。草一色の壁を崩す
+        rg = np.random.default_rng(seed * 31 + (7 if sgn > 0 else 3) + int(abs(s0)) % 997)
+        rp = []
+        for i in np.where(rg.random(N) > 0.82)[0]:
+            if edge[i] < 0.6:
+                continue
+            for _ in range(int(rg.integers(2, 5))):
+                k0 = int(rg.integers(3, 7))
+                u = rg.uniform(0.0, 1.0)
+                j = min(max(i + int(rg.integers(-2, 3)), 0), N - 1)
+                q = V[j, k0] * (1 - u) + V[j, k0 + 1] * u
+                rp.append((q[0], q[1], q[2] + 0.05))
+        if rp:
+            _boulders(f"{name}_{nm}_rocks", rp, seed=seed + (11 if sgn > 0 else 5), r0=0.45, r1=1.4)
     if trees:
         import veg
         rng = random.Random(seed)
