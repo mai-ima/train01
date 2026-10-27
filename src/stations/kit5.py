@@ -38,6 +38,7 @@ def mats5():
     if "k5_stone" not in M:
         M["k5_stone"] = lib.mat_plaster("k5_stone", (0.30, 0.285, 0.26), dirt=1.0)
         M["k5_earth"] = lib.mat_plain("k5_earth", (0.12, 0.17, 0.07), rough=1.0)
+        M["k5_gravel"] = lib.mat_plain("k5_gravel", (0.30, 0.27, 0.22), rough=1.0)
         M["k5_conc"] = lib.mat_plaster("k5_conc", (0.52, 0.52, 0.50), dirt=0.8)
         M["k5_steel"] = lib.mat_paint("k5_steel", (0.035, 0.045, 0.05), rough=0.6, rust=0.6)
         M["k5_timber"] = lib.mat_plain("k5_timber", (0.18, 0.13, 0.08), rough=0.9)
@@ -839,8 +840,19 @@ def level_crossing(P, s, name="lc", road_w=4.6):
     n = np.array([-t[1], t[0]])
     pts = [tuple(c + n * u) for u in (-120, -40, 0, 40, 120)]
     asph = M["ug_asph"]          # 写真ベースのアスファルト(旧: M["asphalt"] は未定義で、砂色の土の道になっていた)
+    # C17: 道路が幅の狭い灰色の帯で路肩も区画線も無く、20か所すべて同一の意匠だった(踏切20視点の目視)。名前から決まる変化(幅・遮断機の有無・路肩)と路肩・中央線を足す
+    var = sum(ord(ch) for ch in name) % 6
+    road_w = road_w * (0.8, 1.0, 1.15, 0.9, 1.3, 1.0)[var]
+    has_gate = var % 3 != 0                                  # 第3種(遮断機なし・警報機のみ)を混ぜる
+    core.ribbon(name + "_shoulder", pts, road_w + 2.6, M["k5_gravel"], z0=0.008, rut=False)          # 砂利の路肩
     core.ribbon(name + "_road", pts, road_w, asph, z0=0.016, rut=False)
     g = G(name, "Props")
+    if road_w >= 4.4:
+        for sn in (-1, 1):                                    # 中央線(踏切の手前だけ・破線)
+            for k in range(10):
+                d0 = 11.0 + k * 3.0
+                a0, a1 = c + n * sn * d0, c + n * sn * (d0 + 1.6)
+                g.a("white_paint").sbox((a0[0], a0[1], 0.03), (a1[0], a1[1], 0.03), 0.12, 0.02)
     g.a("k5_timber").sbox((c[0] - n[0] * 2.4, c[1] - n[1] * 2.4, 0.12), (c[0] + n[0] * 2.4, c[1] + n[1] * 2.4, 0.12), road_w, 0.14)
     # 踏切の舗装(道路は n 方向、幅は t 方向): 板張りの外側にコンクリート踏板、道路の縁に縁石、路面に停止線
     for sn in (-1, 1):
@@ -871,7 +883,7 @@ def level_crossing(P, s, name="lc", road_w=4.6):
             # 遮断機の機械箱と、紅白縞の遮断竿(下りた状態で道路を横切る)
             g.a("iron_black").box(p[0] - 0.18, p[0] + 0.18, p[1] - 0.18, p[1] + 0.18, 0.0, 0.9)
             tip = p - t * sg * (road_w / 2 + 0.25)
-            for j in range(8):
+            for j in range(8 if has_gate else 0):
                 f0, f1 = j / 8.0, (j + 1) / 8.0
                 m0 = (p[0] + (tip[0] - p[0]) * f0, p[1] + (tip[1] - p[1]) * f0)
                 m1 = (p[0] + (tip[0] - p[0]) * f1, p[1] + (tip[1] - p[1]) * f1)
