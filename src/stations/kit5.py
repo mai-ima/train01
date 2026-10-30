@@ -49,7 +49,7 @@ def mats5():
         M["k5_conc"] = lib.mat_pbr("k5_conc", "Concrete031", scale=2.2, hsv=(0.5, 0.6, 1.5), tint=(0.95, 0.94, 0.90), tint_amt=0.4, bump=0.7, macro=0.4, dirt=0.5, spec=0.12)   # C17: 無地の漆喰(mat_plaster)だった桁・橋脚を実写PBR+汚れ・斑に
         M["k5_shedwall"] = lib.mat_pbr("k5_shedwall", "Concrete048", scale=1.6, hsv=(0.5, 0.8, 0.8), tint=(0.9, 0.88, 0.82), tint_amt=0.35, bump=0.8, macro=0.4, dirt=0.7, spec=0.1)   # C17: 雪覆い側壁の長大な無地面に汚れ・斑を載せる
         M["ug_asph"] = lib.mat_pbr("ug_asph", "Asphalt032", scale=2.2, hsv=(0.5, 1.0, 0.62), bump=0.7, macro=0.25, spec=0.25)
-        M["k5_rock"] = lib.mat_pbr("k5_rock", "Ground110", scale=1.6, tint=(0.62, 0.60, 0.56), tint_amt=0.55, bump=1.0, macro=0.25, spec=0.15)
+        M["k5_rock"] = lib.mat_pbr("k5_rock", "Ground110", scale=1.6, tint=(0.62, 0.60, 0.56), tint_amt=0.55, bump=1.0, macro=0.25, spec=0.05)
         M["k5_soil"] = lib.mat_pbr("k5_soil", "Ground110", scale=2.4, tint=(0.34, 0.22, 0.12), tint_amt=0.85, bump=1.2, macro=0.45, spec=0.05)
         M["ug_stone"] = lib.mat_pbr("ug_stone", "Bricks102", scale=1.8, bump=0.9, macro=0.15, spec=0.2)
         def _hill_mask(m):                                       # 頂点カラー(高さ帯)+ノイズで草↔土を滑らかに混ぜる(面ごとの割当だとタイル状にギザギザしていた)
@@ -254,19 +254,19 @@ def _boulders(name, pts, seed=1, r0=0.5, r1=1.5):
     """丘の斜面・法尻に置く岩(ゆがめた多面体)。pts は岩の中心の位置 [(x,y,z),...]。1個=緯度5×経度8の頂点、半径と高さをランダムに崩す。"""
     rng = np.random.default_rng(seed)
     V, T = [], []
-    nl, nm = 5, 8
+    nl, nm = 8, 14                                                      # 細分化(粗いポリゴンが角ばって見えた)
     for (x, y, z) in pts:
         r = rng.uniform(r0, r1)
         sx, sy, sz = r * rng.uniform(0.8, 1.3), r * rng.uniform(0.8, 1.3), r * rng.uniform(0.5, 0.85)
         base = len(V)
-        V.append((x, y, z - sz * 0.35))
+        V.append((x, y, z - sz * 0.55))
         for a in range(1, nl):
             th = math.pi * a / nl
             for b in range(nm):
                 ph = 2 * math.pi * b / nm
-                k = rng.uniform(0.78, 1.18)
-                V.append((x + sx * k * math.sin(th) * math.cos(ph), y + sy * k * math.sin(th) * math.sin(ph), z - sz * 0.35 + sz * k * math.cos(th)))
-        V.append((x, y, z + sz * 0.95))
+                k = rng.uniform(0.86, 1.14)
+                V.append((x + sx * k * math.sin(th) * math.cos(ph), y + sy * k * math.sin(th) * math.sin(ph), z - sz * 0.55 + sz * k * math.cos(th)))
+        V.append((x, y, z - sz * 0.55 + sz * 0.95 * 1.0))
         top = len(V) - 1
         for b in range(nm):
             b2 = (b + 1) % nm
@@ -276,7 +276,7 @@ def _boulders(name, pts, seed=1, r0=0.5, r1=1.5):
                 T += [(p0, p1, p2), (p0, p2, p3)]
             T.append((top, base + 1 + (nl - 2) * nm + b, base + 1 + (nl - 2) * nm + b2))
     if V:
-        np_mesh(name, np.array(V), np.array(T), M["k5_rock"], "Ground", smooth=False)
+        np_mesh(name, np.array(V), np.array(T), M["k5_rock"], "Ground", smooth=True)
 
 
 def _plate_png(text):
@@ -835,7 +835,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
                 q = V[j, k0] * (1 - u) + V[j, k0 + 1] * u
                 rp.append((q[0], q[1], q[2] + 0.05))
         if rp:
-            _boulders(f"{name}_{nm}_rocks", rp, seed=seed + (11 if sgn > 0 else 5), r0=0.25, r1=0.8)
+            _boulders(f"{name}_{nm}_rocks", rp, seed=seed + (11 if sgn > 0 else 5), r0=0.18, r1=0.5)
     if trees:
         import veg
         rng = random.Random(seed)

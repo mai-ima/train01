@@ -419,16 +419,16 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
             a3 = 2 * math.pi * (s3 + rng.uniform(-0.3, 0.3)) / seg
             blen = rad * rng.uniform(0.85, 1.35)
             sag = rng.uniform(0.12, 0.32)
-            nseg = 6
+            nseg = 8
             for q in range(1, nseg + 1):
                 fq = q / nseg
                 bx, by = x + math.cos(a3) * blen * fq, y + math.sin(a3) * blen * fq
                 bz = z0 + 0.35 - sag * fq * fq - 0.35 * fq
                 for sd in (-1, 1):
                     tx, ty = -math.sin(a3) * sd, math.cos(a3) * sd
-                    wq = 0.16 * (1.1 - 0.5 * fq)
+                    wq = 0.10 * (1.1 - 0.5 * fq)
                     Vc = np.array([(bx, by, bz), (bx + tx * wq, by + ty * wq, bz - 0.08),
-                                   (bx + math.cos(a3) * 0.12 + tx * wq * 0.5, by + math.sin(a3) * 0.12 + ty * wq * 0.5, bz - 0.34 - 0.2 * fq)])
+                                   (bx + math.cos(a3) * 0.12 + tx * wq * 0.5, by + math.sin(a3) * 0.12 + ty * wq * 0.5, bz - 0.24 - 0.14 * fq)])
                     Cd = np.tile(cl * rng.uniform(0.8, 1.5), (3, 1))
                     Cd[2] *= 0.7
                     Vs.append(Vc)
