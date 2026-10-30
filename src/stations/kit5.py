@@ -828,6 +828,28 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
     cols[:, 0] = soil.reshape(-1)
     cols[:, 3] = 1.0
     np_mesh(name, V.reshape(-1, 3), T, M["k5_hillsoil"], "Ground", smooth=True, colors=cols)
+    # C17: 築堤の法面にも草の房・ススキ(切通しと同方式)。盛土が低い所(zt<0.6)と裸地は避ける
+    import veg as _veg
+    gp, gh, gs = [], [], []
+    for i in range(2, N - 2):
+        if zt[i] < 0.6:
+            continue
+        for _ in range(30):
+            k0 = int(rg.integers(0, K - 1)); u = rg.uniform(0, 1)
+            if k0 == 2:
+                continue                      # 法肩の平場(バラスト直下)には生やさない
+            q = V[i, k0] * (1 - u) + V[i, k0 + 1] * u
+            if rg.random() < soil[i, k0] * 0.9:
+                continue
+            gp.append(q); gh.append(rg.uniform(0.25, 0.6)); gs.append(rg.random() < 0.15)
+    if gp:
+        gp = np.array(gp); gh = np.array(gh); gs = np.array(gs)
+        for nm2, msk, kw in (("tuft", ~gs, dict(k=5, spread=0.16, cb=(0.07, 0.12, 0.025), ct=(0.30, 0.33, 0.09))),
+                             ("susuki", gs, dict(k=7, spread=0.2, wmean=0.03, cb=(0.10, 0.12, 0.04), ct=(0.55, 0.50, 0.30), lean=0.45, jit=0.4))):
+            if msk.any():
+                hh = gh[msk] * (2.4 if nm2 == "susuki" else 1.0)
+                Vv, Tt, Cc = _veg.tufts(gp[msk][:, :2], gp[msk][:, 2], hh, seed=int(abs(s0)) % 977 + 17, **kw)
+                _veg.emit(f"{name}_{nm2}", Vv, Tt, Cc, M["blade"])
     # C17: 法面の石(法尻〜中腹に疎な群れ)。盛土が低い所(zt<0.8)には置かない
     rp = []
     for i in np.where(rg.random(N) > 0.965)[0]:
