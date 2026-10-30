@@ -1078,6 +1078,14 @@ if not args.no_render and os.environ.get('MULTICAM'):
             _v = [float(t) for t in _c.split(',')]
         if _c.strip().startswith('@') and _c.strip()[1:] in ("A", "E", "L", "F", "P", "T", "R"):      # 構造物に視界を塞がれるカメラは横にずらす(E3 所見: M03 の A が壁で遮られた)
             _v[0], _v[1], _v[2] = _cam_clear(_v)
+        if not _c.strip().startswith('@'):                  # Q11/C17: 数値指定のカメラが地形の下に埋まると真っ黒になる(世界座標では標高が一定でない)。上向き光線が Ground の裏面に当たるなら地表+元の高さへ持ち上げる
+            _dgc = bpy.context.evaluated_depsgraph_get()
+            _okc, _locc, _nrc, _ic, _obc, _mc = bpy.context.scene.ray_cast(_dgc, Vector((_v[0], _v[1], _v[2])), Vector((0, 0, 1)), distance=400.0)
+            if _okc and _nrc.z > 0 and any(c.name == "Ground" for c in _obc.users_collection):
+                _dz = _locc.z - _v[2]
+                print(f"[cam] 地形の下に埋まっていたため {_dz + 1.7:+.1f} m 持ち上げ(カメラ高さ {_v[2]:.1f}→{_locc.z + 1.7:.1f})", flush=True)
+                _v[5] += _dz + 1.7 if len(_v) > 5 else 0.0
+                _v[2] = _locc.z + 1.7
         cob.location = (_v[0], _v[1], _v[2])
         cob.rotation_euler = (Vector((_v[3], _v[4], _v[5])) - Vector(cob.location)).to_track_quat('-Z', 'Y').to_euler()
         cam.lens = _v[6] if len(_v) > 6 else 30
@@ -1098,7 +1106,7 @@ if not args.no_render and os.environ.get('MULTICAM'):
                         continue
                     _u0, _u1 = (_lo[_k] - _a[_k]) / _dv[_k], (_hi[_k] - _a[_k]) / _dv[_k]
                     _t0, _t1 = max(_t0, min(_u0, _u1)), min(_t1, max(_u0, _u1))
-                if _t0 <= _t1 and (_hi[0] - _lo[0]) < 400:
+                if _t0 <= _t1 and (_hi[0] - _lo[0]) < float(os.environ.get("DBG_SEG_MAXW", "400")):
                     print("[seg]", _o.name, "hide_render", _o.hide_render, "hide_vp", _o.hide_viewport, "cam", _o.visible_camera, "shadow", _o.visible_shadow, "col", [c.name for c in _o.users_collection], "mats", [m.name if m else None for m in _o.data.materials][:2], "bbox", [round(v, 1) for v in _lo], [round(v, 1) for v in _hi])
         if _both:
             _people(True)
