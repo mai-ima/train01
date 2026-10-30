@@ -582,6 +582,8 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None, rev=False):
             i = int(si)
             if zf is not None and (float(zf(si)) < -0.3 or float(zf(si)) > 1.5):
                 continue
+            if any(k_ == "cut" and kw_["s0"] - 6.0 <= si <= kw_["s1"] + 6.0 for k_, kw_ in items):
+                continue                                  # 切通し区間は擁壁天端に電柱基部がめり込むため立てない
             q = Q[i] + n[i] * 3.6
             props.pole(poles, float(q[0]), float(q[1]), h=8.0, arms=((7.4, 0.9, 3),), axis='y', old=True)
 
