@@ -418,8 +418,10 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
         for s2 in range(seg):
             for _k in range(9):
                 a = 2 * math.pi * (s2 + rng.uniform(0, 1)) / seg
-                rr = rad * rng.uniform(0.7, 1.15)
-                bx, by, bz = x + math.cos(a) * rr, y + math.sin(a) * rr, z0 - 0.45 + rng.uniform(-0.2, 0.15)
+                u = rng.uniform(0.7, 1.15) if _k < 5 else rng.uniform(0.3, 0.8)      # 後半の房は円錐面の内側にも付け、平らな面を覆う
+                rr = rad * u
+                bz0 = z0 - 0.45 + (1.0 - min(u, 1.0)) * (ap[2] - (z0 - 0.45)) * 0.9
+                bx, by, bz = x + math.cos(a) * rr, y + math.sin(a) * rr, bz0 + rng.uniform(-0.2, 0.15)
                 ln = rng.uniform(0.12, 0.36) * (1.0 + 0.5 * (1 - f))      # Q14: 小さな針葉の房を多数(大きな破片状を避ける)
                 wd = rng.uniform(0.03, 0.075)
                 tx, ty = -math.sin(a), math.cos(a)
