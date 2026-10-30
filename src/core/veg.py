@@ -398,7 +398,7 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
         V = [ap]
         for s in range(seg):
             a = 2 * math.pi * s / seg + rng.uniform(-0.1, 0.1)
-            rr = rad * rng.uniform(0.4, 1.3) * (1.0 if s % 3 else 0.62)      # C17/Q14: 枝先の長短を大きくして円錐の輪郭を崩す
+            rr = rad * 0.62 * rng.uniform(0.4, 1.3) * (1.0 if s % 3 else 0.62)      # C17/Q14: 枝先の長短を大きくして円錐の輪郭を崩す
             V.append((x + math.cos(a) * rr, y + math.sin(a) * rr, z0 - 0.55 + rng.uniform(-0.5, 0.25) - 0.25 * (rr / (rad + 1e-6))))
         V.append((x, y, z0 - 0.6))
         n = len(V)
@@ -414,6 +414,27 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
         Vs.append(V)
         Cs.append(np.concatenate([Cc, np.ones((n, 1))], 1))
         off += n
+        # Q14: 放射状に垂れる枝(円錐面の代わりに見せる)。枝1本=曲線上の小さな針葉カードの列
+        for s3 in range(seg):
+            a3 = 2 * math.pi * (s3 + rng.uniform(-0.3, 0.3)) / seg
+            blen = rad * rng.uniform(0.85, 1.35)
+            sag = rng.uniform(0.25, 0.6)
+            nseg = 6
+            for q in range(1, nseg + 1):
+                fq = q / nseg
+                bx, by = x + math.cos(a3) * blen * fq, y + math.sin(a3) * blen * fq
+                bz = z0 + 0.35 - sag * fq * fq - 0.5 * fq
+                for sd in (-1, 1):
+                    tx, ty = -math.sin(a3) * sd, math.cos(a3) * sd
+                    wq = 0.16 * (1.1 - 0.5 * fq)
+                    Vc = np.array([(bx, by, bz), (bx + tx * wq, by + ty * wq, bz - 0.08),
+                                   (bx + math.cos(a3) * 0.12 + tx * wq * 0.5, by + math.sin(a3) * 0.12 + ty * wq * 0.5, bz - 0.34 - 0.2 * fq)])
+                    Cd = np.tile(cl * rng.uniform(0.8, 1.5), (3, 1))
+                    Cd[2] *= 0.7
+                    Vs.append(Vc)
+                    Cs.append(np.concatenate([Cd, np.ones((3, 1))], 1))
+                    Ts += [(off, off + 1, off + 2), (off, off + 2, off + 1)]
+                    off += 3
         # C17/Q14: 段の縁から垂れる細い針葉カード(円錐の滑らかな輪郭を崩し、枝先の房を出す)。下の段ほど長く、個体差あり
         for s2 in range(seg):
             for _k in range(9):
