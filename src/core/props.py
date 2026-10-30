@@ -325,6 +325,7 @@ def pole(g, x, y, h=8.2, arms=((7.5, 0.9, 3),), axis='y', old=False, transformer
     """Wooden pole; arms: (z, half_length, n_insulators). axis = direction of crossarm. returns list of wire anchors [(x,y,z)]"""
     bk = g.a("pole" if old else "pole_new")
     bk.cyl((x, y, 0.0), (x, y, h), 0.17, 0.10, seg=10)
+    g.a("concrete" if "concrete" in M else "pole_new").cyl((x, y, -0.05), (x, y, 0.55), 0.26, 0.21, seg=10)    # 根元のコンクリート基礎(根巻き)
     anchors = []
     for (z, hl, ni) in arms:
         d = (0, 1) if axis == 'y' else (1, 0)
@@ -335,9 +336,9 @@ def pole(g, x, y, h=8.2, arms=((7.5, 0.9, 3),), axis='y', old=False, transformer
         for k in range(ni):
             off = (k - (ni - 1) / 2) * (2 * hl / max(ni, 1)) * (1.0 if ni > 1 else 0.0)
             ix, iy = x + d[0] * off, y + d[1] * off
-            g.a("porcelain").cyl((ix, iy, z + 0.05), (ix, iy, z + 0.16), 0.035, seg=8)
-            g.a("porcelain").cyl((ix, iy, z + 0.16), (ix, iy, z + 0.22), 0.022, seg=8)
-            anchors.append((ix, iy, z + 0.22))
+            g.a("porcelain").cyl((ix, iy, z + 0.05), (ix, iy, z + 0.20), 0.055, seg=8)
+            g.a("porcelain").cyl((ix, iy, z + 0.20), (ix, iy, z + 0.28), 0.032, seg=8)
+            anchors.append((ix, iy, z + 0.28))
     if transformer:
         g.a("tr_grey", bevel=0.02).cyl((x + 0.3, y, h - 2.4), (x + 0.3, y, h - 1.35), 0.26, seg=12)
         g.a("iron_black").sbox((x + 0.1, y, h - 1.6), (x + 0.3, y, h - 1.6), 0.05, 0.4)
