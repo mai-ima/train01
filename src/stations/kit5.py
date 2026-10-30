@@ -669,8 +669,9 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         gul = np.convolve(gul, np.array([0.3, 1.0, 0.3]), mode="same").clip(0, 1)
         patch = np.clip((np.sin(0.08 * ss + 0.7 * sgn) * np.sin(0.041 * ss + 1.9) - 0.2) * 3.0, 0, 1)
         soil = np.zeros((N, K))
+        soil[:, 1:4] = 0.55 + 0.3 * patch[:, None]
         soil[:, 4] = np.maximum(0.5 * patch, 0.7 * gul)
-        soil[:, 5] = np.maximum(0.35 * patch, 0.95 * gul)
+        soil[:, 5] = np.maximum(0.35 * patch, 0.95 * gul * rgc.uniform(0.3, 1.0, N))
         soil[:, 6] = np.maximum(0.3 * patch[::-1], 0.85 * gul)
         soil[:, 7] = 0.5
         cols_c = np.zeros((N * K, 4), dtype=np.float32)
@@ -683,7 +684,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         jj = np.tile(np.arange(K - 1), N - 1)
         sel = np.zeros(len(jj), dtype=int)
         sel[jj == 0] = 1
-        sel[(jj >= 1) & (jj <= 3)] = 2
+        # 監査(44点): 小段が粗い砂利に見えた → 小段は草↔土の頂点カラー面(slot0)へ
         mi_c = np.concatenate([sel, sel])
         if len(ob_c.data.polygons) == len(mi_c):
             ob_c.data.polygons.foreach_set("material_index", mi_c.tolist())
@@ -717,7 +718,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
                 q = V[j, k0] * (1 - u) + V[j, k0 + 1] * u
                 rp.append((q[0], q[1], q[2] + 0.05))
         if rp:
-            _boulders(f"{name}_{nm}_rocks", rp, seed=seed + (11 if sgn > 0 else 5), r0=0.45, r1=1.4)
+            _boulders(f"{name}_{nm}_rocks", rp, seed=seed + (11 if sgn > 0 else 5), r0=0.25, r1=0.8)
     if trees:
         import veg
         rng = random.Random(seed)
