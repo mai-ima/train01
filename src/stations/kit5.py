@@ -648,10 +648,16 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         N, K = len(ss), len(prof)
         V = np.zeros((N, K, 3))
         edge = smooth01((ss - s0) / 40.0) * smooth01((s1 - ss) / 40.0)
+        # C17: 法肩・法尻が定規で引いた直線だった → 上段ほど長手方向に波打たせる(位置と高さを滑らかな乱数で揺らす)
+        rgw = np.random.default_rng(seed * 13 + int(abs(s0)) % 983 + (4 if sgn > 0 else 2))
+        wob = np.convolve(rgw.normal(0, 1, N), np.ones(7) / 7, mode="same")
+        wob = wob / (np.abs(wob).max() + 1e-6)
         for k, (off, z) in enumerate(prof):
-            V[:, k, 0] = pos[:, 0] + nrm[:, 0] * off
-            V[:, k, 1] = pos[:, 1] + nrm[:, 1] * off
-            V[:, k, 2] = z * edge if z > 0 else z
+            amp = (0.0, 0.0, 0.0, 0.1, 0.25, 0.7, 1.4, 2.2)[k]
+            o2 = off + sgn * amp * wob * edge
+            V[:, k, 0] = pos[:, 0] + nrm[:, 0] * o2
+            V[:, k, 1] = pos[:, 1] + nrm[:, 1] * o2
+            V[:, k, 2] = (z + (0.0 if k < 5 else 0.35 * wob * (k - 4) * 0.5)) * edge if z > 0 else z
         idx = np.arange(N * K).reshape(N, K)
         a, b, c, d = idx[:-1, :-1], idx[1:, :-1], idx[1:, 1:], idx[:-1, 1:]
         T = np.concatenate([np.stack([a, b, c], -1).reshape(-1, 3), np.stack([a, c, d], -1).reshape(-1, 3)])
@@ -659,7 +665,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             T = T[:, ::-1]
         # C17: 上段の法面は築堤と同じ頂点カラー(草↔土)。侵食溝(上段ほど濃い)と裸地の斑を焼く
         rgc = np.random.default_rng(seed * 17 + int(abs(s0)) % 991 + (5 if sgn > 0 else 1))
-        gul = (rgc.random(N) > 0.93).astype(float) * rgc.uniform(0.4, 0.95, N)
+        gul = (rgc.random(N) > 0.88).astype(float) * rgc.uniform(0.3, 0.95, N)
         gul = np.convolve(gul, np.array([0.3, 1.0, 0.3]), mode="same").clip(0, 1)
         patch = np.clip((np.sin(0.08 * ss + 0.7 * sgn) * np.sin(0.041 * ss + 1.9) - 0.2) * 3.0, 0, 1)
         soil = np.zeros((N, K))
