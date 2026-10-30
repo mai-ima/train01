@@ -378,14 +378,20 @@ def sakura(x, y, seed=0, h=6.0, rad=3.2):
 
 def sugi(x, y, h=14.0, r=2.0, seed=0):
     rng = np.random.default_rng(seed)
+    x0, y0 = x, y
+    # Q14: 個体差(全木が同じ暗緑の円錐に見えた)。木ごとの色味・傾き・下枝の枯れ上がり高さ
+    tone = np.array([rng.uniform(0.6, 2.4), rng.uniform(0.9, 2.1), rng.uniform(0.5, 1.7)])
+    lean = (rng.normal(0, 0.035), rng.normal(0, 0.035))
+    dead_h = rng.uniform(0.0, 0.16)
     g = Acc(f"sugi_{seed}_trunk", M["bark"], "Trees")
-    g.cyl((x, y, -0.1), (x, y, h * 0.9), 0.28, 0.07, seg=8)
+    g.cyl((x, y, -0.1), (x0 + lean[0] * h * 0.9, y0 + lean[1] * h * 0.9, h * 0.9), 0.28, 0.07, seg=8)
     g.build()
     Vs, Ts, Cs, off = [], [], [], 0
     tiers = 24
     for t in range(tiers):
         f = t / (tiers - 1)
         z0 = h * (0.16 + 0.8 * f)
+        x, y = x0 + lean[0] * z0, y0 + lean[1] * z0
         rad = r * (1.0 - 0.82 * f) * rng.uniform(0.85, 1.15)
         seg = 18
         ap = (x, y, z0 + 1.5 - 0.9 * f)
@@ -400,7 +406,9 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
             a, b = 1 + s, 1 + (s + 1) % seg
             Ts += [(off, off + a, off + b), (off + n - 1, off + b, off + a)]
         V = np.array(V)
-        cl = np.array([0.030, 0.075, 0.036]) * (1 + 0.5 * f) * rng.uniform(0.85, 1.2)      # C17/Q14: 暗すぎて黒緑の塊に見えた(段ごとにも濃淡)
+        cl = np.array([0.030, 0.075, 0.036]) * tone * (1 + 0.5 * f) * rng.uniform(0.85, 1.2)
+        if f < dead_h:
+            cl = np.array([0.10, 0.065, 0.035]) * rng.uniform(0.7, 1.2)          # 枯れ上がった下枝(茶)      # C17/Q14: 暗すぎて黒緑の塊に見えた(段ごとにも濃淡)
         Cc = np.tile(cl, (n, 1)) * rng.uniform(0.65, 1.35, (n, 1))
         Cc[0] = cl * 1.4
         Vs.append(V)
