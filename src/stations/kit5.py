@@ -669,10 +669,13 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         gul = np.convolve(gul, np.array([0.3, 1.0, 0.3]), mode="same").clip(0, 1)
         patch = np.clip((np.sin(0.08 * ss + 0.7 * sgn) * np.sin(0.041 * ss + 1.9) - 0.2) * 3.0, 0, 1)
         soil = np.zeros((N, K))
-        soil[:, 1:4] = 0.55 + 0.3 * patch[:, None]
-        soil[:, 4] = np.maximum(0.5 * patch, 0.7 * gul)
-        soil[:, 5] = np.maximum(0.35 * patch, 0.95 * gul * rgc.uniform(0.3, 1.0, N))
-        soil[:, 6] = np.maximum(0.3 * patch[::-1], 0.85 * gul)
+        soil[:, 1:4] = (0.35 + 0.35 * patch[:, None]) * rgc.uniform(0.6, 1.0, (N, 3))
+        soil[:, 4] = np.maximum(0.5 * patch, 0.7 * gul * rgc.uniform(0.4, 1.0, N))
+        # 溝は段ごとに長手方向へずらし(斜めに走る侵食筋)、濃さも不揃いにして縦の長方形を避ける
+        g5 = np.roll(gul, 1) * rgc.uniform(0.3, 1.0, N)
+        g6 = np.roll(gul, 2) * rgc.uniform(0.2, 0.9, N)
+        soil[:, 5] = np.maximum(0.35 * patch, 0.95 * g5)
+        soil[:, 6] = np.maximum(0.3 * patch[::-1], 0.85 * g6)
         soil[:, 7] = 0.5
         cols_c = np.zeros((N * K, 4), dtype=np.float32)
         cols_c[:, 0] = soil.reshape(-1)
