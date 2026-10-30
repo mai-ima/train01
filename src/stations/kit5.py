@@ -665,7 +665,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             T = T[:, ::-1]
         # C17: 上段の法面は築堤と同じ頂点カラー(草↔土)。侵食溝(上段ほど濃い)と裸地の斑を焼く
         rgc = np.random.default_rng(seed * 17 + int(abs(s0)) % 991 + (5 if sgn > 0 else 1))
-        gul = (rgc.random(N) > 0.88).astype(float) * rgc.uniform(0.3, 0.95, N)
+        gul = (rgc.random(N) > 0.80).astype(float) * rgc.uniform(0.3, 0.95, N)
         gul = np.convolve(gul, np.array([0.3, 1.0, 0.3]), mode="same").clip(0, 1)
         patch = np.clip((np.sin(0.08 * ss + 0.7 * sgn) * np.sin(0.041 * ss + 1.9) - 0.2) * 3.0, 0, 1)
         soil = np.zeros((N, K))
@@ -676,6 +676,8 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         g6 = np.roll(gul, 2) * rgc.uniform(0.2, 0.9, N)
         soil[:, 5] = np.maximum(0.35 * patch, 0.95 * g5)
         soil[:, 6] = np.maximum(0.3 * patch[::-1], 0.85 * g6)
+        soil[:, 3] = np.maximum(soil[:, 3], 0.95 * np.roll(gul, -1))           # 雨裂は上段から下段まで斜めに続く(途中で切れた長方形を避ける)
+        soil[:, 2] = np.maximum(soil[:, 2], 0.9 * np.roll(gul, -2))
         soil[:, 7] = 0.5
         cols_c = np.zeros((N * K, 4), dtype=np.float32)
         cols_c[:, 0] = soil.reshape(-1)
