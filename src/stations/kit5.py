@@ -60,7 +60,7 @@ def mats5():
         M["k5_hillsoil"] = lib.mat_pbr_blend("k5_hillsoil", "Grass004", "Ground110", scale_a=1.6, scale_b=2.4, mask=_hill_mask,
                                              tint_a=(0.98, 0.88, 0.48), tint_b=(0.34, 0.22, 0.12), bump=0.8, macro=0.3,
                                              hsv_a=(0.49, 0.62, 0.78), spec=0.0)
-        M["k5_pitch"] = lib.mat_pbr("k5_pitch", "Bricks102", scale=3.2, tint=(0.5, 0.46, 0.4), tint_amt=0.7, bump=0.9, macro=0.65, dirt=0.95, spec=0.12)      # 法面の石張り(C17: 経年を強める=水垢・色むら): 擁壁用より小粒で暗く、泥汚れ
+        M["k5_pitch"] = lib.mat_pbr("k5_pitch", "Bricks102", scale=2.3, tint=(0.5, 0.46, 0.4), tint_amt=0.7, bump=1.7, bump_dist=0.035, macro=0.75, dirt=0.95, spec=0.12)      # 法面の石張り(C17: 経年を強める=水垢・色むら): 擁壁用より小粒で暗く、泥汚れ
         M["ug_brick"] = lib.mat_pbr("ug_brick", "Bricks097", scale=1.4, bump=0.8, macro=0.2, spec=0.25)
         M["ug_tile"] = lib.mat_pbr("ug_tile", "Tiles107", scale=2.4, bump=0.3, macro=0.1, spec=0.5)
         M["ug_floor"] = lib.mat_pbr("ug_floor", "Tiles139", scale=2.4, bump=0.3, macro=0.12, spec=0.4)
