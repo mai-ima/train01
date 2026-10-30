@@ -845,7 +845,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             off = sgn * (half + rng.uniform(4, 16))
             p = pos[i] + nrm[i] * off
             try:
-                veg.sugi(float(p[0]), float(p[1]), rng.uniform(9, 16))
+                veg.sugi(float(p[0]), float(p[1]), rng.uniform(8, 17), r=rng.uniform(1.4, 2.5), seed=rng.randrange(10 ** 6))
             except Exception as _e:
                 print("sugi failed", _e)
 
