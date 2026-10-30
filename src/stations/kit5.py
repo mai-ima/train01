@@ -56,7 +56,7 @@ def mats5():
             sx, sy, sz = m.sep(m.attr_color("Col"))
             nz = m.noise(scale=0.07, detail=5, rough=0.6)
             f = m.math('ADD', sx, m.math('MULTIPLY', m.math('SUBTRACT', nz, 0.5), 0.9))
-            return m.ramp(f, [(0.42, (0, 0, 0)), (0.58, (1, 1, 1))])
+            return m.ramp(f, [(0.34, (0, 0, 0)), (0.66, (1, 1, 1))])      # 縁をぼかす(0.42-0.58 → 0.34-0.66): 土のパッチが貼り紙状に見えるのを避け、草と混ざらせる
         M["k5_hillsoil"] = lib.mat_pbr_blend("k5_hillsoil", "Grass004", "Ground110", scale_a=1.6, scale_b=2.4, mask=_hill_mask,
                                              tint_a=(0.98, 0.88, 0.48), tint_b=(0.34, 0.22, 0.12), bump=0.8, macro=0.3,
                                              hsv_a=(0.49, 0.62, 0.78), spec=0.0)
