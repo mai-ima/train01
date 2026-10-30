@@ -61,6 +61,8 @@ def mats5():
                                              tint_a=(0.98, 0.88, 0.48), tint_b=(0.34, 0.22, 0.12), bump=0.8, macro=0.3,
                                              hsv_a=(0.49, 0.62, 0.78), spec=0.0)
         M["k5_pitch"] = lib.mat_pbr("k5_pitch", "Bricks102", scale=2.3, tint=(0.5, 0.46, 0.4), tint_amt=0.7, bump=1.7, bump_dist=0.035, macro=0.75, dirt=0.95, stain=0.85, spec=0.12)      # 法面の石張り(C17: 経年を強める=水垢・色むら): 擁壁用より小粒で暗く、泥汚れ
+        for _gk, _tn in enumerate(((0.62, 0.55, 0.44), (0.42, 0.40, 0.37), (0.55, 0.50, 0.46))):      # 石ブロックの色味違い(砂岩・安山岩・やや赤い石)
+            M[f"k5_blk{_gk}"] = lib.mat_pbr(f"k5_blk{_gk}", "Bricks102", scale=1.3, tint=_tn, tint_amt=0.85, bump=1.2, macro=0.6, dirt=0.9, stain=0.8, spec=0.1)
         M["ug_brick"] = lib.mat_pbr("ug_brick", "Bricks097", scale=1.4, bump=0.8, macro=0.2, spec=0.25)
         M["ug_tile"] = lib.mat_pbr("ug_tile", "Tiles107", scale=2.4, bump=0.3, macro=0.1, spec=0.5)
         M["ug_floor"] = lib.mat_pbr("ug_floor", "Tiles139", scale=2.4, bump=0.3, macro=0.12, spec=0.4)
@@ -725,6 +727,53 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         if sgn > 0:
             CT = CT[:, ::-1]
         np_mesh(f"{name}_{nm}_coping", CV.reshape(-1, 3), CT, M["k5_conc"], "Props", smooth=False)
+        # C17: 石積みの実メッシュ化(監査: テクスチャのタイル状繰り返し)。壁面(行0→1)に不揃いな石ブロックを千鳥に並べ、浮き出し量・隙間・寸法・色味を石ごとに変える
+        if edge.max() > 0.05:
+            rgs = np.random.default_rng(seed * 29 + int(abs(s0)) % 977 + (3 if sgn > 0 else 8))
+            NZ, NX = 7, 4
+            ii, rr, cc = np.meshgrid(np.arange(N - 1), np.arange(NZ), np.arange(NX), indexing="ij")
+            ii, rr, cc = ii.ravel(), rr.ravel(), cc.ravel()
+            keep = edge[ii] > 0.08
+            ii, rr, cc = ii[keep], rr[keep], cc[keep]
+            Mb = len(ii)
+            shift = np.where(rr % 2 == 1, 0.5, 0.0) / NX
+            wj = rgs.uniform(0.80, 0.97, Mb) / NX
+            u0 = cc / NX + shift + rgs.uniform(0.0, 0.02, Mb)
+            u1 = np.minimum(u0 + wj, 1.0)
+            hz = 1.0 / NZ
+            v0 = rr * hz + rgs.uniform(0.01, 0.03, Mb)
+            v1 = (rr + 1) * hz - rgs.uniform(0.01, 0.03, Mb)
+            ok_b = u1 - u0 > 0.08
+            ii, u0, u1, v0, v1 = ii[ok_b], u0[ok_b], u1[ok_b], v0[ok_b], v1[ok_b]
+            Mb = len(ii)
+            def _P(u, v):
+                A = V[ii, 0] * (1 - u)[:, None] + V[ii + 1, 0] * u[:, None]
+                B = V[ii, 1] * (1 - u)[:, None] + V[ii + 1, 1] * u[:, None]
+                return A * (1 - v)[:, None] + B * v[:, None]
+            base = np.stack([_P(u0, v0), _P(u1, v0), _P(u1, v1), _P(u0, v1)], 1)          # (M,4,3)
+            tu = V[ii + 1, 0] - V[ii, 0]
+            tv = V[ii, 1] - V[ii, 0]
+            nn = np.cross(tu, tv)
+            nn /= (np.linalg.norm(nn, axis=1, keepdims=True) + 1e-9)
+            toward = np.stack([-sgn * nrm[ii, 0], -sgn * nrm[ii, 1], np.zeros(Mb)], 1)
+            nn *= np.sign((nn * toward).sum(1, keepdims=True) + 1e-9)
+            Cn = base.mean(1, keepdims=True)
+            dd = rgs.uniform(0.03, 0.11, Mb)[:, None, None]
+            front = Cn + (base - Cn) * rgs.uniform(0.84, 0.94, Mb)[:, None, None] + nn[:, None, :] * dd
+            SV = np.concatenate([base, front], 1)                                        # (M,8,3)
+            tri_loc = [(4, 5, 6), (4, 6, 7)]
+            for k in range(4):
+                k2 = (k + 1) % 4
+                tri_loc += [(k, k2, 4 + k2), (k, 4 + k2, 4 + k)]
+            tri_loc = np.array(tri_loc)
+            grp = rgs.integers(0, 3, Mb)
+            for gk in range(3):
+                sel_b = np.where(grp == gk)[0]
+                if len(sel_b) == 0:
+                    continue
+                Vg = SV[sel_b].reshape(-1, 3)
+                Tg = (tri_loc[None, :, :] + (np.arange(len(sel_b)) * 8)[:, None, None]).reshape(-1, 3)
+                np_mesh(f"{name}_{nm}_blk{gk}", Vg, Tg, M[f"k5_blk{gk}"], "Props", smooth=False)
         # C17: 石張り壁の水抜き孔(暗い小穴)。6 m 間隔・位置を少しずらして壁面に並べる
         tx, ty = np.cos(ang), np.sin(ang)
         wq, wt, rq, rt = [], [], [], []
