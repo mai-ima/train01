@@ -708,6 +708,21 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         if sgn > 0:
             GT = GT[:, ::-1]
         np_mesh(f"{name}_{nm}_gutter", GV.reshape(-1, 3), GT, M["k5_conc"], "Ground", smooth=False)
+        # C17: 石張り壁の天端に笠石(コンクリートの帽子)。壁の上端(off=half+0.4, z=h*0.42)に沿わせる
+        zt0 = V[:, 1, 2]
+        cp = [(-0.15, -0.12), (-0.15, 0.14), (0.45, 0.14), (0.45, -0.12)]
+        CV = np.zeros((N, 4, 3))
+        for k, (dx, dz) in enumerate(cp):
+            o3 = half + 0.4 + dx
+            CV[:, k, 0] = pos[:, 0] + nrm[:, 0] * sgn * o3
+            CV[:, k, 1] = pos[:, 1] + nrm[:, 1] * sgn * o3
+            CV[:, k, 2] = zt0 + dz
+        ci = np.arange(N * 4).reshape(N, 4)
+        c0, c1, c2, c3 = ci[:-1], ci[1:], np.roll(ci, -1, axis=1)[1:], np.roll(ci, -1, axis=1)[:-1]
+        CT = np.concatenate([np.stack([c0, c1, c2], -1).reshape(-1, 3), np.stack([c0, c2, c3], -1).reshape(-1, 3)])
+        if sgn > 0:
+            CT = CT[:, ::-1]
+        np_mesh(f"{name}_{nm}_coping", CV.reshape(-1, 3), CT, M["k5_conc"], "Ground", smooth=False)
         # C17: 法面(小段〜上段)に疎な岩の群れ。草一色の壁を崩す
         rg = np.random.default_rng(seed * 31 + (7 if sgn > 0 else 3) + int(abs(s0)) % 997)
         rp = []
