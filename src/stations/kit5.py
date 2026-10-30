@@ -747,15 +747,16 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         for i in range(2, N - 2):
             if edge[i] < 0.5:
                 continue
-            for _ in range(40):
+            for _ in range(110):
                 k0 = int(rgt.integers(4, K - 1)); u = rgt.uniform(0, 1)
-                q = V[i, k0] * (1 - u) + V[i, k0 + 1] * u
+                t = rgt.random()
+                q = (V[i, k0] * (1 - u) + V[i, k0 + 1] * u) * (1 - t) + (V[i + 1, k0] * (1 - u) + V[i + 1, k0 + 1] * u) * t
                 if rgt.random() < soil[i, k0] * 0.9:
                     continue
-                gp.append(q); gh.append(rgt.uniform(0.25, 0.6)); gs.append(rgt.random() < 0.18)
+                gp.append(q); gh.append(rgt.uniform(0.14, 0.36)); gs.append(rgt.random() < 0.05)
         if gp:
             gp = np.array(gp); gh = np.array(gh); gs = np.array(gs)
-            for nm2, msk, kw in (("tuft", ~gs, dict(k=5, spread=0.16, cb=(0.07, 0.12, 0.025), ct=(0.30, 0.33, 0.09))),
+            for nm2, msk, kw in (("tuft", ~gs, dict(k=8, spread=0.14, wmean=0.045, cb=(0.06, 0.11, 0.022), ct=(0.24, 0.30, 0.08))),
                                  ("susuki", gs, dict(k=7, spread=0.2, wmean=0.03, cb=(0.10, 0.12, 0.04), ct=(0.55, 0.50, 0.30), lean=0.45, jit=0.4))):
                 if msk.any():
                     hh = gh[msk] * (2.4 if nm2 == "susuki" else 1.0)
@@ -834,17 +835,18 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
     for i in range(2, N - 2):
         if zt[i] < 0.6:
             continue
-        for _ in range(30):
+        for _ in range(110):
             k0 = int(rg.integers(0, K - 1)); u = rg.uniform(0, 1)
             if k0 == 2:
                 continue                      # 法肩の平場(バラスト直下)には生やさない
-            q = V[i, k0] * (1 - u) + V[i, k0 + 1] * u
+            t = rg.random()                  # 断面の間もランダムに補間(等間隔の列にならないように)
+            q = (V[i, k0] * (1 - u) + V[i, k0 + 1] * u) * (1 - t) + (V[i + 1, k0] * (1 - u) + V[i + 1, k0 + 1] * u) * t
             if rg.random() < soil[i, k0] * 0.9:
                 continue
-            gp.append(q); gh.append(rg.uniform(0.25, 0.6)); gs.append(rg.random() < 0.15)
+            gp.append(q); gh.append(rg.uniform(0.14, 0.36)); gs.append(rg.random() < 0.05)
     if gp:
         gp = np.array(gp); gh = np.array(gh); gs = np.array(gs)
-        for nm2, msk, kw in (("tuft", ~gs, dict(k=5, spread=0.16, cb=(0.07, 0.12, 0.025), ct=(0.30, 0.33, 0.09))),
+        for nm2, msk, kw in (("tuft", ~gs, dict(k=8, spread=0.14, wmean=0.045, cb=(0.06, 0.11, 0.022), ct=(0.24, 0.30, 0.08))),
                              ("susuki", gs, dict(k=7, spread=0.2, wmean=0.03, cb=(0.10, 0.12, 0.04), ct=(0.55, 0.50, 0.30), lean=0.45, jit=0.4))):
             if msk.any():
                 hh = gh[msk] * (2.4 if nm2 == "susuki" else 1.0)
