@@ -689,6 +689,21 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             ob_c.data.polygons.foreach_set("material_index", mi_c.tolist())
         else:
             print("cutting: 面数が想定と違うため材質分けを付けません(failed)", len(ob_c.data.polygons), len(mi_c))
+        # C17: 法尻の側溝(コンクリートU字溝)。溝底と両側の縁を持つ断面を長手方向に押し出す
+        gA, gB = half - 1.55, half - 0.75
+        gp = [(gA, 0.12), (gA, -0.14), (gB, -0.14), (gB, 0.12), (gB + 0.12, 0.12), (gB + 0.12, -0.22), (gA - 0.12, -0.22), (gA - 0.12, 0.12)]
+        GK = len(gp)
+        GV = np.zeros((N, GK, 3))
+        for k, (off, z) in enumerate(gp):
+            GV[:, k, 0] = pos[:, 0] + nrm[:, 0] * sgn * off
+            GV[:, k, 1] = pos[:, 1] + nrm[:, 1] * sgn * off
+            GV[:, k, 2] = z
+        gi = np.arange(N * GK).reshape(N, GK)
+        ga, gb, gc, gd = gi[:-1, :], gi[1:, :], np.roll(gi, -1, axis=1)[1:, :], np.roll(gi, -1, axis=1)[:-1, :]
+        GT = np.concatenate([np.stack([ga, gb, gc], -1).reshape(-1, 3), np.stack([ga, gc, gd], -1).reshape(-1, 3)])
+        if sgn > 0:
+            GT = GT[:, ::-1]
+        np_mesh(f"{name}_{nm}_gutter", GV.reshape(-1, 3), GT, M["k5_conc"], "Ground", smooth=False)
         # C17: 法面(小段〜上段)に疎な岩の群れ。草一色の壁を崩す
         rg = np.random.default_rng(seed * 31 + (7 if sgn > 0 else 3) + int(abs(s0)) % 997)
         rp = []
