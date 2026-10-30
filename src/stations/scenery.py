@@ -303,7 +303,7 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                         pv.append((q, q2))
                 j += seglen + int(rng.uniform(4, 30))
         if "scn_paddy" not in M:      # 沿線用の青田: 周囲の草より少し明るい程度の稲の緑(共通の paddy は黄が強く、白っぽく飛んで見える)
-            M["scn_paddy"] = lib.mat_paddy("scn_paddy", green=(0.10, 0.24, 0.045), yellow=(0.26, 0.31, 0.07))
+            M["scn_paddy"] = lib.mat_paddy("scn_paddy", green=(0.085, 0.125, 0.022), yellow=(0.17, 0.165, 0.035))   # C17: 周囲の草より明るい淡いミント色の板に見えた → 反射率を約半分に
         for hv, mname in ((False, "scn_paddy"), (True, "stubble")):           # 青田=稲の列の材質、刈田=刈り株の材質(区画ごとに種別で分けて1メッシュずつ)
             sel = [i_ for i_ in range(len(fv)) if fk[i_] == hv]
             if not sel:
