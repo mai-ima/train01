@@ -740,6 +740,27 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             wt += [(b, b + 1, b + 2), (b, b + 2, b + 3), (b, b + 2, b + 1), (b, b + 3, b + 2)]
         if wq:
             np_mesh(f"{name}_{nm}_weep", np.array(wq), np.array(wt), M["k5_steel"], "Ground", smooth=False)
+        # C17: 法面の草の房・ススキ(独立監査: 滑らかなベタ面)。上段(行4〜7)に散布し、裸地(soil濃い所)には生やさない
+        import veg as _veg
+        rgt = np.random.default_rng(seed * 7 + int(abs(s0)) % 971 + (9 if sgn > 0 else 4))
+        gp, gh, gs = [], [], []
+        for i in range(2, N - 2):
+            if edge[i] < 0.5:
+                continue
+            for _ in range(40):
+                k0 = int(rgt.integers(4, K - 1)); u = rgt.uniform(0, 1)
+                q = V[i, k0] * (1 - u) + V[i, k0 + 1] * u
+                if rgt.random() < soil[i, k0] * 0.9:
+                    continue
+                gp.append(q); gh.append(rgt.uniform(0.25, 0.6)); gs.append(rgt.random() < 0.18)
+        if gp:
+            gp = np.array(gp); gh = np.array(gh); gs = np.array(gs)
+            for nm2, msk, kw in (("tuft", ~gs, dict(k=5, spread=0.16, cb=(0.07, 0.12, 0.025), ct=(0.30, 0.33, 0.09))),
+                                 ("susuki", gs, dict(k=7, spread=0.2, wmean=0.03, cb=(0.10, 0.12, 0.04), ct=(0.55, 0.50, 0.30), lean=0.45, jit=0.4))):
+                if msk.any():
+                    hh = gh[msk] * (2.4 if nm2 == "susuki" else 1.0)
+                    Vv, Tt, Cc = _veg.tufts(gp[msk][:, :2], gp[msk][:, 2], hh, seed=seed + 31, **kw)
+                    _veg.emit(f"{name}_{nm}_{nm2}", Vv, Tt, Cc, M["blade"])
         # C17: 法面(小段〜上段)に疎な岩の群れ。草一色の壁を崩す
         rg = np.random.default_rng(seed * 31 + (7 if sgn > 0 else 3) + int(abs(s0)) % 997)
         rp = []
