@@ -416,12 +416,12 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
         off += n
         # C17/Q14: 段の縁から垂れる細い針葉カード(円錐の滑らかな輪郭を崩し、枝先の房を出す)。下の段ほど長く、個体差あり
         for s2 in range(seg):
-            for _k in range(5):
+            for _k in range(9):
                 a = 2 * math.pi * (s2 + rng.uniform(0, 1)) / seg
                 rr = rad * rng.uniform(0.7, 1.15)
                 bx, by, bz = x + math.cos(a) * rr, y + math.sin(a) * rr, z0 - 0.45 + rng.uniform(-0.2, 0.15)
-                ln = rng.uniform(0.18, 0.5) * (1.0 + 0.5 * (1 - f))      # Q14: 小さな針葉の房を多数(大きな破片状を避ける)
-                wd = rng.uniform(0.045, 0.11)
+                ln = rng.uniform(0.12, 0.36) * (1.0 + 0.5 * (1 - f))      # Q14: 小さな針葉の房を多数(大きな破片状を避ける)
+                wd = rng.uniform(0.03, 0.075)
                 tx, ty = -math.sin(a), math.cos(a)
                 Vc = np.array([(bx - tx * wd, by - ty * wd, bz), (bx + tx * wd, by + ty * wd, bz),
                                (bx + math.cos(a) * 0.12, by + math.sin(a) * 0.12, bz - ln)])
