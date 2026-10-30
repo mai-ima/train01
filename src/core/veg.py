@@ -406,7 +406,7 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
             a, b = 1 + s, 1 + (s + 1) % seg
             Ts += [(off, off + a, off + b), (off + n - 1, off + b, off + a)]
         V = np.array(V)
-        cl = np.array([0.030, 0.075, 0.036]) * tone * (1 + 0.5 * f) * rng.uniform(0.85, 1.2)
+        cl = np.array([0.030, 0.075, 0.036]) * tone * (1.25 + 0.5 * f) * rng.uniform(0.85, 1.2)
         if f < dead_h:
             cl = np.array([0.10, 0.065, 0.035]) * rng.uniform(0.7, 1.2)          # 枯れ上がった下枝(茶)      # C17/Q14: 暗すぎて黒緑の塊に見えた(段ごとにも濃淡)
         Cc = np.tile(cl, (n, 1)) * rng.uniform(0.65, 1.35, (n, 1))
@@ -418,12 +418,12 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
         for s3 in range(seg):
             a3 = 2 * math.pi * (s3 + rng.uniform(-0.3, 0.3)) / seg
             blen = rad * rng.uniform(0.85, 1.35)
-            sag = rng.uniform(0.25, 0.6)
+            sag = rng.uniform(0.12, 0.32)
             nseg = 6
             for q in range(1, nseg + 1):
                 fq = q / nseg
                 bx, by = x + math.cos(a3) * blen * fq, y + math.sin(a3) * blen * fq
-                bz = z0 + 0.35 - sag * fq * fq - 0.5 * fq
+                bz = z0 + 0.35 - sag * fq * fq - 0.35 * fq
                 for sd in (-1, 1):
                     tx, ty = -math.sin(a3) * sd, math.cos(a3) * sd
                     wq = 0.16 * (1.1 - 0.5 * fq)
