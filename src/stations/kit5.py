@@ -723,6 +723,23 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         if sgn > 0:
             CT = CT[:, ::-1]
         np_mesh(f"{name}_{nm}_coping", CV.reshape(-1, 3), CT, M["k5_conc"], "Ground", smooth=False)
+        # C17: 石張り壁の水抜き孔(暗い小穴)。6 m 間隔・位置を少しずらして壁面に並べる
+        tx, ty = np.cos(ang), np.sin(ang)
+        wq, wt = [], []
+        for i in range(2, N - 2, 3):
+            if edge[i] < 0.6:
+                continue
+            f = 0.30 + 0.12 * ((i * 37) % 5) / 4.0
+            oo = half + 0.4 * f - 0.03
+            zc = -0.05 + f * (zt0[i] + 0.05)
+            cx = pos[i, 0] + nrm[i, 0] * sgn * oo
+            cy = pos[i, 1] + nrm[i, 1] * sgn * oo
+            b = len(wq)
+            for du, dz in ((-0.09, -0.09), (0.09, -0.09), (0.09, 0.09), (-0.09, 0.09)):
+                wq.append((cx + tx[i] * du, cy + ty[i] * du, zc + dz))
+            wt += [(b, b + 1, b + 2), (b, b + 2, b + 3), (b, b + 2, b + 1), (b, b + 3, b + 2)]
+        if wq:
+            np_mesh(f"{name}_{nm}_weep", np.array(wq), np.array(wt), M["k5_steel"], "Ground", smooth=False)
         # C17: 法面(小段〜上段)に疎な岩の群れ。草一色の壁を崩す
         rg = np.random.default_rng(seed * 31 + (7 if sgn > 0 else 3) + int(abs(s0)) % 997)
         rp = []
