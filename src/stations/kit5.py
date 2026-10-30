@@ -54,11 +54,11 @@ def mats5():
         M["ug_stone"] = lib.mat_pbr("ug_stone", "Bricks102", scale=1.8, bump=0.9, macro=0.15, spec=0.2)
         def _hill_mask(m):                                       # 頂点カラー(高さ帯)+ノイズで草↔土を滑らかに混ぜる(面ごとの割当だとタイル状にギザギザしていた)
             sx, sy, sz = m.sep(m.attr_color("Col"))
-            nz = m.noise(scale=0.07, detail=5, rough=0.6)
-            f = m.math('ADD', sx, m.math('MULTIPLY', m.math('SUBTRACT', nz, 0.5), 0.9))
-            return m.ramp(f, [(0.34, (0, 0, 0)), (0.66, (1, 1, 1))])      # 縁をぼかす(0.42-0.58 → 0.34-0.66): 土のパッチが貼り紙状に見えるのを避け、草と混ざらせる
+            nz = m.math('ADD', m.math('MULTIPLY', m.noise(scale=0.07, detail=5, rough=0.6), 0.65), m.math('MULTIPLY', m.noise(scale=0.35, detail=4, rough=0.65), 0.35))      # 大小2スケールのノイズで縁を不規則に
+            f = m.math('ADD', sx, m.math('MULTIPLY', m.math('SUBTRACT', nz, 0.5), 1.0))
+            return m.ramp(f, [(0.26, (0, 0, 0)), (0.5, (0.35, 0.35, 0.35)), (0.74, (1, 1, 1))])      # 縁をぼかす(0.42-0.58 → 0.34-0.66): 土のパッチが貼り紙状に見えるのを避け、草と混ざらせる
         M["k5_hillsoil"] = lib.mat_pbr_blend("k5_hillsoil", "Grass004", "Ground110", scale_a=1.6, scale_b=2.4, mask=_hill_mask,
-                                             tint_a=(0.98, 0.88, 0.48), tint_b=(0.34, 0.22, 0.12), bump=0.8, macro=0.3,
+                                             tint_a=(0.98, 0.88, 0.48), tint_b=(0.29, 0.21, 0.12), bump=0.8, macro=0.3,
                                              hsv_a=(0.49, 0.62, 0.78), spec=0.0)
         M["k5_pitch"] = lib.mat_pbr("k5_pitch", "Bricks102", scale=2.3, tint=(0.5, 0.46, 0.4), tint_amt=0.7, bump=1.7, bump_dist=0.035, macro=0.75, dirt=0.95, stain=0.85, spec=0.12)      # 法面の石張り(C17: 経年を強める=水垢・色むら): 擁壁用より小粒で暗く、泥汚れ
         for _gk, _tn in enumerate(((0.62, 0.55, 0.44), (0.42, 0.40, 0.37), (0.55, 0.50, 0.46))):      # 石ブロックの色味違い(砂岩・安山岩・やや赤い石)
