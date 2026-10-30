@@ -426,9 +426,9 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
                 bz = z0 + 0.35 - sag * fq * fq - 0.35 * fq
                 for sd in (-1, 1):
                     tx, ty = -math.sin(a3) * sd, math.cos(a3) * sd
-                    wq = 0.10 * (1.1 - 0.5 * fq)
+                    wq = 0.062 * (1.1 - 0.5 * fq)      # 針葉らしく細く(三角の葉片感を減らす)
                     Vc = np.array([(bx, by, bz), (bx + tx * wq, by + ty * wq, bz - 0.08),
-                                   (bx + math.cos(a3) * 0.12 + tx * wq * 0.5, by + math.sin(a3) * 0.12 + ty * wq * 0.5, bz - 0.24 - 0.14 * fq)])
+                                   (bx + math.cos(a3) * 0.12 + tx * wq * 0.5, by + math.sin(a3) * 0.12 + ty * wq * 0.5, bz - 0.30 - 0.16 * fq)])
                     Cd = np.tile(cl * rng.uniform(0.8, 1.5), (3, 1))
                     Cd[2] *= 0.7
                     Vs.append(Vc)
