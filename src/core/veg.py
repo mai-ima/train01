@@ -448,8 +448,8 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
                 tx, ty = -math.sin(a), math.cos(a)
                 Vc = np.array([(bx - tx * wd, by - ty * wd, bz), (bx + tx * wd, by + ty * wd, bz),
                                (bx + math.cos(a) * 0.12, by + math.sin(a) * 0.12, bz - ln)])
-                Cd = np.tile(cl * rng.uniform(0.8, 1.5), (3, 1))
-                Cd[2] *= 0.7
+                Cd = np.tile(cl * rng.uniform(0.7, 1.7), (3, 1))
+                Cd[2] *= 1.35 * rng.uniform(0.9, 1.5)                     # 針葉の先は明るく(暗緑のベタ面を避け、新芽の色を出す)
                 Vs.append(Vc)
                 Cs.append(np.concatenate([Cd, np.ones((3, 1))], 1))
                 Ts += [(off, off + 1, off + 2), (off, off + 2, off + 1)]
