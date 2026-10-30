@@ -190,7 +190,8 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                     if all(v is not None for v in q):
                         harvest = rng.random() < 0.38
                         tone = rng.uniform(0.85, 1.15)
-                        col = (0.30, 0.27, 0.10) if harvest else (0.13, 0.30, 0.07)
+                        fallow = (not harvest) and rng.random() < 0.3              # C17: 耕起した褐色の畑も混ぜる(一様な緑を崩す)
+                        col = (0.40, 0.33, 0.11) if harvest else ((0.24, 0.16, 0.08) if fallow else (0.10, 0.30, 0.06))
                         vv = []
                         nd = max(2, int(depth / 0.9) + 1)       # 畝(うね): 奥行き方向に0.9m刻みで高さと色を交互に
                         for j in range(i, i_end + 1, 2):
@@ -210,7 +211,7 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                         fts.append(loc_t)
                         fk.append(harvest)
                         fcol = np.array(col) * tone
-                        stripe = np.array([(1.0 if kd % 2 else 0.72) for _ in range(m) for kd in range(nd)])[:, None]
+                        stripe = np.array([(1.0 if kd % 2 else 0.58) for _ in range(m) for kd in range(nd)])[:, None]
                         fc = np.tile(np.append(fcol, 1.0), (len(arr), 1)) * np.concatenate([stripe * np.array([[1, 1, 1]]), np.ones((len(arr), 1))], 1) * nr_.uniform(0.9, 1.1, (len(arr), 1))
                         total["fields"] += 1
                         if verbose:
