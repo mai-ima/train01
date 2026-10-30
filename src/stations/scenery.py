@@ -195,9 +195,12 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                         vv = []
                         nd = max(2, int(depth / 0.9) + 1)       # 畝(うね): 奥行き方向に0.9m刻みで高さと色を交互に
                         for j in range(i, i_end + 1, 2):
+                            # 区画の縁を直線にしない: 列ごとに奥行き(±15%)と道側の位置(±0.35m)をゆらす
+                            dfac = 0.85 + 0.3 * (0.5 + 0.5 * mn.noise(Vector((Pr[j, 0] * 0.045, Pr[j, 1] * 0.045, 3.0 + i * 0.1))))
+                            jit = 0.35 * mn.noise(Vector((Pr[j, 0] * 0.12, Pr[j, 1] * 0.12, 7.0 + i * 0.1)))
                             for kd in range(nd):
-                                d = depth * kd / (nd - 1)
-                                x, y = Pr[j, 0] + nrm[j, 0] * side * (off0 + d), Pr[j, 1] + nrm[j, 1] * side * (off0 + d)
+                                d = depth * dfac * kd / (nd - 1)
+                                x, y = Pr[j, 0] + nrm[j, 0] * side * (off0 + jit + d), Pr[j, 1] + nrm[j, 1] * side * (off0 + jit + d)
                                 vv.append((x, y, 0.02 + (0.07 if kd % 2 else 0.0)))
                         m = (i_end - i) // 2 + 1
                         arr = np.array(vv)
