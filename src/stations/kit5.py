@@ -736,13 +736,15 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             keep = edge[ii] > 0.08
             ii, rr, cc = ii[keep], rr[keep], cc[keep]
             Mb = len(ii)
-            shift = np.where(rr % 2 == 1, 0.5, 0.0) / NX
-            wj = rgs.uniform(0.80, 0.97, Mb) / NX
+            rshift = rgs.uniform(0.0, 1.0 / NX, NZ)                                     # 段ごとの横ずれ(千鳥の規則性を崩す)
+            shift = rshift[rr]
+            wj = rgs.uniform(0.62, 0.97, Mb) / NX                                       # 石の幅を不揃いに(隙間の大小も出る)
             u0 = cc / NX + shift + rgs.uniform(0.0, 0.02, Mb)
             u1 = np.minimum(u0 + wj, 1.0)
-            hz = 1.0 / NZ
-            v0 = rr * hz + rgs.uniform(0.01, 0.03, Mb)
-            v1 = (rr + 1) * hz - rgs.uniform(0.01, 0.03, Mb)
+            rh = rgs.uniform(0.7, 1.35, NZ)
+            rE = np.concatenate([[0.0], np.cumsum(rh)]) / rh.sum()                      # 段の高さも不揃い(0.7〜1.35倍)
+            v0 = rE[rr] + rgs.uniform(0.008, 0.03, Mb)
+            v1 = rE[rr + 1] - rgs.uniform(0.008, 0.03, Mb)
             ok_b = u1 - u0 > 0.08
             ii, u0, u1, v0, v1 = ii[ok_b], u0[ok_b], u1[ok_b], v0[ok_b], v1[ok_b]
             Mb = len(ii)
@@ -758,8 +760,8 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             toward = np.stack([-sgn * nrm[ii, 0], -sgn * nrm[ii, 1], np.zeros(Mb)], 1)
             nn *= np.sign((nn * toward).sum(1, keepdims=True) + 1e-9)
             Cn = base.mean(1, keepdims=True)
-            dd = rgs.uniform(0.03, 0.11, Mb)[:, None, None]
-            front = Cn + (base - Cn) * rgs.uniform(0.84, 0.94, Mb)[:, None, None] + nn[:, None, :] * dd
+            dd = rgs.uniform(0.012, 0.05, Mb)[:, None, None]
+            front = Cn + (base - Cn) * rgs.uniform(0.93, 0.985, Mb)[:, None, None] + nn[:, None, :] * dd
             SV = np.concatenate([base, front], 1)                                        # (M,8,3)
             tri_loc = [(4, 5, 6), (4, 6, 7)]
             for k in range(4):
