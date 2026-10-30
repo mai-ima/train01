@@ -725,7 +725,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         np_mesh(f"{name}_{nm}_coping", CV.reshape(-1, 3), CT, M["k5_conc"], "Props", smooth=False)
         # C17: 石張り壁の水抜き孔(暗い小穴)。6 m 間隔・位置を少しずらして壁面に並べる
         tx, ty = np.cos(ang), np.sin(ang)
-        wq, wt = [], []
+        wq, wt, rq, rt = [], [], [], []
         for i in range(2, N - 2, 3):
             if edge[i] < 0.6:
                 continue
@@ -735,9 +735,16 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             cx = pos[i, 0] + nrm[i, 0] * sgn * oo
             cy = pos[i, 1] + nrm[i, 1] * sgn * oo
             b = len(wq)
-            for du, dz in ((-0.09, -0.09), (0.09, -0.09), (0.09, 0.09), (-0.09, 0.09)):
+            for du, dz in ((-0.065, -0.065), (0.065, -0.065), (0.065, 0.065), (-0.065, 0.065)):
                 wq.append((cx + tx[i] * du, cy + ty[i] * du, zc + dz))
             wt += [(b, b + 1, b + 2), (b, b + 2, b + 3), (b, b + 2, b + 1), (b, b + 3, b + 2)]
+            # 孔のまわりのコンクリート縁(壁面よりわずかに手前。黒い四角が壁に貼られた板に見えるのを避ける)
+            b = len(rq)
+            for du, dz in ((-0.17, -0.17), (0.17, -0.17), (0.17, 0.17), (-0.17, 0.17)):
+                rq.append((cx - nrm[i, 0] * sgn * 0.012 + tx[i] * du, cy - nrm[i, 1] * sgn * 0.012 + ty[i] * du, zc + dz))
+            rt += [(b, b + 1, b + 2), (b, b + 2, b + 3), (b, b + 2, b + 1), (b, b + 3, b + 2)]
+        if rq:
+            np_mesh(f"{name}_{nm}_weeprim", np.array(rq), np.array(rt), M["k5_conc"], "Props", smooth=False)
         if wq:
             np_mesh(f"{name}_{nm}_weep", np.array(wq), np.array(wt), M["k5_steel"], "Props", smooth=False)
         # C17: 法面の草の房・ススキ(独立監査: 滑らかなベタ面)。上段(行4〜7)に散布し、裸地(soil濃い所)には生やさない
