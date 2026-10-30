@@ -800,6 +800,17 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             np_mesh(f"{name}_{nm}_weeprim", np.array(rq), np.array(rt), M["k5_conc"], "Props", smooth=False)
         if wq:
             np_mesh(f"{name}_{nm}_weep", np.array(wq), np.array(wt), M["k5_steel"], "Props", smooth=False)
+        # C17(第1段階5回目監査: 擁壁が単調): 約12m間隔に縦の伸縮目地(暗く細い帯)。壁面の傾き(下 half → 上 half+0.4)に沿って下端から天端まで
+        jq, jt = [], []
+        for i in range(4, N - 4, 6):
+            if edge[i] < 0.6:
+                continue
+            b = len(jq)
+            for (o_, z_, du) in ((half - 0.025, -0.05, -0.022), (half - 0.025, -0.05, 0.022), (half + 0.4 - 0.025, zt0[i], 0.022), (half + 0.4 - 0.025, zt0[i], -0.022)):
+                jq.append((pos[i, 0] + nrm[i, 0] * sgn * o_ + tx[i] * du, pos[i, 1] + nrm[i, 1] * sgn * o_ + ty[i] * du, z_))
+            jt += [(b, b + 1, b + 2), (b, b + 2, b + 3), (b, b + 2, b + 1), (b, b + 3, b + 2)]
+        if jq:
+            np_mesh(f"{name}_{nm}_joint", np.array(jq), np.array(jt), M["k5_steel"], "Props", smooth=False)
         # C17: 法面の草の房・ススキ(独立監査: 滑らかなベタ面)。上段(行4〜7)に散布し、裸地(soil濃い所)には生やさない
         import veg as _veg
         rgt = np.random.default_rng(seed * 7 + int(abs(s0)) % 971 + (9 if sgn > 0 else 4))
