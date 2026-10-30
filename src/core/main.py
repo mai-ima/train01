@@ -1027,8 +1027,15 @@ def _fallback_cam(k):
     return [x0 - 30.0, cy - 14.0, 2.4, cx, cy + 12.0, zp + 5.0, 24]      # L
 
 
+if os.environ.get('PROBE_RAY'):                          # 検査用: "x,y,z,dx,dy,dz;..." の光線が最初に当たる物体と材質を表示(遠景の材質特定など)
+    from mathutils import Vector as _V
+    _dg = bpy.context.evaluated_depsgraph_get()
+    for _r in [x for x in os.environ['PROBE_RAY'].split(';') if x.strip()]:
+        _v = [float(t) for t in _r.split(',')]
+        _ok, _loc, _n, _ix, _ob, _ = bpy.context.scene.ray_cast(_dg, _V(_v[:3]), _V(_v[3:6]).normalized())
+        print("probe", _r, "->", (_ob.name, [m.name for m in _ob.data.materials if m], tuple(round(c, 1) for c in _loc)) if _ok else None, flush=True)
 if not args.no_render and os.environ.get('MULTICAM'):
-    _both = os.environ.get('PEOPLE_BOTH') == '1'      # 1回の構築で 人物表示/非表示 の両方を撮る(出力: <out>_<n>.png=表示, <out>_np_<n>.png=非表示)
+    _both =os.environ.get('PEOPLE_BOTH') == '1'      # 1回の構築で 人物表示/非表示 の両方を撮る(出力: <out>_<n>.png=表示, <out>_np_<n>.png=非表示)
     _pp = [o for o in bpy.data.objects if o.get("rig_kind") == "pax" or (o.parent is not None and o.parent.get("rig_kind") == "pax")]
     def _people(show):
         for _o in _pp:

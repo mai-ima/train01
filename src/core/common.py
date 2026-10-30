@@ -74,7 +74,7 @@ def make_materials():
     import os as _os_gg
     _gg = [float(t) for t in _os_gg.environ.get("GG_TEST", "1.6,0.8,0.6").split(",")]       # C17: 検証用(scale,tint_amt,patch)。既定は従来値
     M["grass_ground"] = P("grass_ground", "Grass004", scale=_gg[0], hsv=(0.49, 0.62, 0.78), tint=(0.98, 0.88, 0.48),
-                          tint_amt=_gg[1], bump=0.8, macro=0.3, spec=0.0, patch=_gg[2])
+                          tint_amt=_gg[1], bump=0.8, macro=0.3, spec=0.0, patch=_gg[2], far_col=(0.17, 0.20, 0.065))
     M["bark"] = P("bark", "Bark001", scale=0.9, hsv=(0.5, 0.65, 0.7), tint=(0.8, 0.72, 0.62), tint_amt=0.5,
                   bump=1.2, spec=0.15)
     M["tin"] = P("tin_roof", "CorrugatedSteel005", scale=1.2, hsv=(0.5, 0.9, 0.75), tint=(0.62, 0.34, 0.2),

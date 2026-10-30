@@ -810,7 +810,7 @@ def pbr_layer(m, tid, scale=1.0, rot=(0, 0, 0), vec=None):
 
 
 def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None, rough_add=0.0, bump=0.5,
-            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0, stain=0.0):
+            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0, stain=0.0, far_col=None, far0=40.0, far1=300.0):
     """Photo-based material. `patch` adds 数十m規模の斑(乾いた草・土の露出・濃い草むら: 地面が単色に見える問題の対策)。 `macro` breaks up tiling with large-scale value noise; `dirt` adds grime streaks."""
     m = Mat(name)
     L = pbr_layer(m, tid, scale, rot)
@@ -852,6 +852,11 @@ def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None,
                       [(0.50, (1, 1, 1)), (0.70, (0.66, 0.86, 0.50))])
         mossm = m.mix(low, (1, 1, 1), moss)
         col = m.mix(stain, col, m.mix(1.0, m.mix(1.0, col, wst, 'MULTIPLY'), mossm, 'MULTIPLY'))
+    if far_col is not None:      # 遠景: 近景の斑・草目が斜めに潰れて滲んだ流れ模様になるのを防ぐため、距離とともに平均色+非常に大きな緩い色むら(田畑の区画感)へ収束させる
+        cdn = m.node('ShaderNodeCameraData')
+        ff = m.maprange(cdn.outputs['View Distance'], far0, far1, 0.0, 0.9)
+        lv = m.ramp(m.noise(scale=0.0045, detail=2, rough=0.5), [(0.3, (0.82, 0.86, 0.80)), (0.7, (1.12, 1.08, 1.0))])
+        col = m.mix(ff, col, m.mix(1.0, far_col, lv, 'MULTIPLY'))
     r = L["rough"]
     if rough is not None:
         r = rough
