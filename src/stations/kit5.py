@@ -707,7 +707,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         GT = np.concatenate([np.stack([ga, gb, gc], -1).reshape(-1, 3), np.stack([ga, gc, gd], -1).reshape(-1, 3)])
         if sgn > 0:
             GT = GT[:, ::-1]
-        np_mesh(f"{name}_{nm}_gutter", GV.reshape(-1, 3), GT, M["k5_conc"], "Ground", smooth=False)
+        np_mesh(f"{name}_{nm}_gutter", GV.reshape(-1, 3), GT, M["k5_conc"], "Props", smooth=False)
         # C17: 石張り壁の天端に笠石(コンクリートの帽子)。壁の上端(off=half+0.4, z=h*0.42)に沿わせる
         zt0 = V[:, 1, 2]
         cp = [(-0.15, -0.12), (-0.15, 0.14), (0.45, 0.14), (0.45, -0.12)]
@@ -722,7 +722,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         CT = np.concatenate([np.stack([c0, c1, c2], -1).reshape(-1, 3), np.stack([c0, c2, c3], -1).reshape(-1, 3)])
         if sgn > 0:
             CT = CT[:, ::-1]
-        np_mesh(f"{name}_{nm}_coping", CV.reshape(-1, 3), CT, M["k5_conc"], "Ground", smooth=False)
+        np_mesh(f"{name}_{nm}_coping", CV.reshape(-1, 3), CT, M["k5_conc"], "Props", smooth=False)
         # C17: 石張り壁の水抜き孔(暗い小穴)。6 m 間隔・位置を少しずらして壁面に並べる
         tx, ty = np.cos(ang), np.sin(ang)
         wq, wt = [], []
@@ -739,7 +739,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
                 wq.append((cx + tx[i] * du, cy + ty[i] * du, zc + dz))
             wt += [(b, b + 1, b + 2), (b, b + 2, b + 3), (b, b + 2, b + 1), (b, b + 3, b + 2)]
         if wq:
-            np_mesh(f"{name}_{nm}_weep", np.array(wq), np.array(wt), M["k5_steel"], "Ground", smooth=False)
+            np_mesh(f"{name}_{nm}_weep", np.array(wq), np.array(wt), M["k5_steel"], "Props", smooth=False)
         # C17: 法面の草の房・ススキ(独立監査: 滑らかなベタ面)。上段(行4〜7)に散布し、裸地(soil濃い所)には生やさない
         import veg as _veg
         rgt = np.random.default_rng(seed * 7 + int(abs(s0)) % 971 + (9 if sgn > 0 else 4))
