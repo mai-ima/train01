@@ -71,8 +71,10 @@ def make_materials():
     M["dirt"] = P("dirt", "Ground081", scale=1.8, hsv=(0.5, 0.85, 0.85), tint=(0.85, 0.75, 0.6), tint_amt=0.4,
                   bump=0.9, bump_dist=0.04, macro=0.25, spec=0.0)
     M["soil"] = P("soil", "Ground110", scale=1.6, hsv=(0.5, 0.9, 0.7), bump=0.8, macro=0.2, spec=0.0)
-    M["grass_ground"] = P("grass_ground", "Grass004", scale=1.6, hsv=(0.49, 0.62, 0.78), tint=(0.98, 0.88, 0.48),
-                          tint_amt=0.8, bump=0.8, macro=0.3, spec=0.0, patch=0.6)
+    import os as _os_gg
+    _gg = [float(t) for t in _os_gg.environ.get("GG_TEST", "1.6,0.8,0.6").split(",")]       # C17: 検証用(scale,tint_amt,patch)。既定は従来値
+    M["grass_ground"] = P("grass_ground", "Grass004", scale=_gg[0], hsv=(0.49, 0.62, 0.78), tint=(0.98, 0.88, 0.48),
+                          tint_amt=_gg[1], bump=0.8, macro=0.3, spec=0.0, patch=_gg[2])
     M["bark"] = P("bark", "Bark001", scale=0.9, hsv=(0.5, 0.65, 0.7), tint=(0.8, 0.72, 0.62), tint_amt=0.5,
                   bump=1.2, spec=0.15)
     M["tin"] = P("tin_roof", "CorrugatedSteel005", scale=1.2, hsv=(0.5, 0.9, 0.75), tint=(0.62, 0.34, 0.2),
