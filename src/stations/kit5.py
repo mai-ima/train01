@@ -657,7 +657,20 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
         T = np.concatenate([np.stack([a, b, c], -1).reshape(-1, 3), np.stack([a, c, d], -1).reshape(-1, 3)])
         if sgn > 0:
             T = T[:, ::-1]
-        ob_c = np_mesh(f"{name}_{nm}", V.reshape(-1, 3), T, M.get("grass_ground", M["k5_earth"]), "Ground", smooth=True)
+        # C17: 上段の法面は築堤と同じ頂点カラー(草↔土)。侵食溝(上段ほど濃い)と裸地の斑を焼く
+        rgc = np.random.default_rng(seed * 17 + int(abs(s0)) % 991 + (5 if sgn > 0 else 1))
+        gul = (rgc.random(N) > 0.93).astype(float) * rgc.uniform(0.4, 0.95, N)
+        gul = np.convolve(gul, np.array([0.3, 1.0, 0.3]), mode="same").clip(0, 1)
+        patch = np.clip((np.sin(0.08 * ss + 0.7 * sgn) * np.sin(0.041 * ss + 1.9) - 0.2) * 3.0, 0, 1)
+        soil = np.zeros((N, K))
+        soil[:, 4] = np.maximum(0.5 * patch, 0.7 * gul)
+        soil[:, 5] = np.maximum(0.35 * patch, 0.95 * gul)
+        soil[:, 6] = np.maximum(0.3 * patch[::-1], 0.85 * gul)
+        soil[:, 7] = 0.5
+        cols_c = np.zeros((N * K, 4), dtype=np.float32)
+        cols_c[:, 0] = soil.reshape(-1)
+        cols_c[:, 3] = 1.0
+        ob_c = np_mesh(f"{name}_{nm}", V.reshape(-1, 3), T, M["k5_hillsoil"], "Ground", smooth=True, colors=cols_c)
         # 切土の法面を材質で分ける(C17監査: 草一色の斜面だった)。線路際の急な面=石張り、小段=土、上段=草
         ob_c.data.materials.append(M["k5_pitch"])
         ob_c.data.materials.append(M["k5_soil"])
