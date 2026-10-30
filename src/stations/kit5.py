@@ -753,7 +753,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
                 q = (V[i, k0] * (1 - u) + V[i, k0 + 1] * u) * (1 - t) + (V[i + 1, k0] * (1 - u) + V[i + 1, k0 + 1] * u) * t
                 if rgt.random() < soil[i, k0] * 0.9:
                     continue
-                gp.append(q); gh.append(rgt.uniform(0.14, 0.36)); gs.append(rgt.random() < 0.05)
+                gp.append(q); gh.append((0.07 + 0.45 * rgt.random() ** 1.8)); gs.append(rgt.random() < 0.05)
         if gp:
             gp = np.array(gp); gh = np.array(gh); gs = np.array(gs)
             for nm2, msk, kw in (("tuft", ~gs, dict(k=8, spread=0.14, wmean=0.045, cb=(0.06, 0.11, 0.022), ct=(0.24, 0.30, 0.08))),
@@ -843,7 +843,7 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
             q = (V[i, k0] * (1 - u) + V[i, k0 + 1] * u) * (1 - t) + (V[i + 1, k0] * (1 - u) + V[i + 1, k0 + 1] * u) * t
             if rg.random() < soil[i, k0] * 0.9:
                 continue
-            gp.append(q); gh.append(rg.uniform(0.14, 0.36)); gs.append(rg.random() < 0.05)
+            gp.append(q); gh.append((0.07 + 0.45 * rg.random() ** 1.8)); gs.append(rg.random() < 0.05)
     if gp:
         gp = np.array(gp); gh = np.array(gh); gs = np.array(gs)
         for nm2, msk, kw in (("tuft", ~gs, dict(k=8, spread=0.14, wmean=0.045, cb=(0.06, 0.11, 0.022), ct=(0.24, 0.30, 0.08))),
