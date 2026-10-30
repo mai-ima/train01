@@ -810,7 +810,7 @@ def pbr_layer(m, tid, scale=1.0, rot=(0, 0, 0), vec=None):
 
 
 def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None, rough_add=0.0, bump=0.5,
-            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0):
+            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0, stain=0.0):
     """Photo-based material. `patch` adds 数十m規模の斑(乾いた草・土の露出・濃い草むら: 地面が単色に見える問題の対策)。 `macro` breaks up tiling with large-scale value noise; `dirt` adds grime streaks."""
     m = Mat(name)
     L = pbr_layer(m, tid, scale, rot)
@@ -843,6 +843,15 @@ def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None,
                         [(0.35, (1, 1, 1)), (0.8, (0.62, 0.60, 0.55))])
         base = m.ramp(m.maprange(z, 0.0, 1.6, 1.0, 0.0), [(0.0, (1, 1, 1)), (1.0, (0.7, 0.67, 0.60))])
         col = m.mix(dirt, col, m.mix(1.0, m.mix(1.0, col, streak, 'MULTIPLY'), base, 'MULTIPLY'))
+    if stain > 0:      # 縦に流れる水垢の筋(暗い)と、壁の低い所に付く苔(緑)。実写の石積み擁壁の経年表現
+        x, y, z = m.sep(m.obj)
+        wst = m.ramp(m.noise(m.mapping(scale=(9, 9, 0.3)), scale=3.0, detail=3, rough=0.6),
+                     [(0.52, (1, 1, 1)), (0.74, (0.52, 0.52, 0.48))])
+        low = m.maprange(z, 0.0, 3.2, 1.0, 0.0)
+        moss = m.ramp(m.noise(m.mapping(scale=(4, 4, 1.4)), scale=2.4, detail=4, rough=0.6),
+                      [(0.50, (1, 1, 1)), (0.70, (0.66, 0.86, 0.50))])
+        mossm = m.mix(low, (1, 1, 1), moss)
+        col = m.mix(stain, col, m.mix(1.0, m.mix(1.0, col, wst, 'MULTIPLY'), mossm, 'MULTIPLY'))
     r = L["rough"]
     if rough is not None:
         r = rough
