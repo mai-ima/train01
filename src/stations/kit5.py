@@ -813,13 +813,13 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
                 q = (V[i, k0] * (1 - u) + V[i, k0 + 1] * u) * (1 - t) + (V[i + 1, k0] * (1 - u) + V[i + 1, k0 + 1] * u) * t
                 if rgt.random() < soil[i, k0] * 0.9:
                     continue
-                gp.append(q); gh.append((0.07 + 0.45 * rgt.random() ** 1.8)); gs.append(rgt.random() < 0.05)
+                gp.append(q); gh.append((0.06 + 0.28 * rgt.random() ** 1.8)); gs.append(rgt.random() < 0.05)
         if gp:
             gp = np.array(gp); gh = np.array(gh); gs = np.array(gs)
             for nm2, msk, kw in (("tuft", ~gs, dict(k=8, spread=0.14, wmean=0.026, cb=(0.06, 0.11, 0.022), ct=(0.24, 0.30, 0.08))),
                                  ("susuki", gs, dict(k=7, spread=0.2, wmean=0.017, cb=(0.10, 0.12, 0.04), ct=(0.55, 0.50, 0.30), lean=0.45, jit=0.4))):
                 if msk.any():
-                    hh = gh[msk] * (1.8 if nm2 == "susuki" else 1.0)
+                    hh = gh[msk] * (1.4 if nm2 == "susuki" else 1.0)
                     Vv, Tt, Cc = _veg.tufts(gp[msk][:, :2], gp[msk][:, 2], hh, seed=seed + 31, **kw)
                     _veg.emit(f"{name}_{nm}_{nm2}", Vv, Tt, Cc, M["blade"])
         # C17: 法面(小段〜上段)に疎な岩の群れ。草一色の壁を崩す
@@ -903,13 +903,13 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
             q = (V[i, k0] * (1 - u) + V[i, k0 + 1] * u) * (1 - t) + (V[i + 1, k0] * (1 - u) + V[i + 1, k0 + 1] * u) * t
             if rg.random() < soil[i, k0] * 0.9:
                 continue
-            gp.append(q); gh.append((0.07 + 0.45 * rg.random() ** 1.8)); gs.append(rg.random() < 0.05)
+            gp.append(q); gh.append((0.06 + 0.28 * rg.random() ** 1.8)); gs.append(rg.random() < 0.05)
     if gp:
         gp = np.array(gp); gh = np.array(gh); gs = np.array(gs)
         for nm2, msk, kw in (("tuft", ~gs, dict(k=8, spread=0.14, wmean=0.026, cb=(0.06, 0.11, 0.022), ct=(0.24, 0.30, 0.08))),
                              ("susuki", gs, dict(k=7, spread=0.2, wmean=0.017, cb=(0.10, 0.12, 0.04), ct=(0.55, 0.50, 0.30), lean=0.45, jit=0.4))):
             if msk.any():
-                hh = gh[msk] * (1.8 if nm2 == "susuki" else 1.0)
+                hh = gh[msk] * (1.4 if nm2 == "susuki" else 1.0)
                 Vv, Tt, Cc = _veg.tufts(gp[msk][:, :2], gp[msk][:, 2], hh, seed=int(abs(s0)) % 977 + 17, **kw)
                 _veg.emit(f"{name}_{nm2}", Vv, Tt, Cc, M["blade"])
     # C17: 法面の石(法尻〜中腹に疎な群れ)。盛土が低い所(zt<0.8)には置かない
