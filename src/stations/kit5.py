@@ -1260,6 +1260,9 @@ def _tetrapod(g, x, y, z, rz, sc=1.0, leg=0.95, r0=0.42, r1=0.26, mat="k5_conc")
         g.a(mat, bevel=0.0).cyl((x, y, z), tuple(p1), r0 * sc, r1 * sc, seg=8, caps=True)
 
 
+_SEA_N = [0]
+
+
 def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     """防波堤・護岸: 線路の海側にコンクリート壁と消波ブロック。"""
     mats5()
@@ -1311,7 +1314,8 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     pos_s, ang_s = frames_at(P, ss_sea)
     nrm_s = np.stack([-np.sin(ang_s), np.cos(ang_s)], 1)
     pts = [tuple(p + n * side * (5.0 + sea_w / 2)) for p, n in zip(pos_s, nrm_s)]
-    core.ribbon(name + "_sea", pts, sea_w, M["water"], z0=0.03, rut=False, col="Ground")
+    _SEA_N[0] += 1
+    core.ribbon(name + "_sea", pts, sea_w, M["water"], z0=0.030 + 0.003 * _SEA_N[0], rut=False, col="Ground")      # C17: 隣り合う護岸の海面帯が同一平面で重なり横縞(Zファイト)が出た(gt1)→呼び出しごとに高さを3mmずらす
 
 
 def gantry(x, y0, y1, z, hc=5.2, name="gantry", w=0.34):
