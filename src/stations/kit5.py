@@ -929,7 +929,8 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
     for i in range(2, N - 2):
         if zt[i] < 0.6:
             continue
-        for _ in range(110):
+        _cl = 0.2 + 1.6 * float(np.clip(math.sin(0.21 * i + 1.7) * math.sin(0.083 * i + 0.4) + 0.5, 0.0, 1.0))      # 草の房の密度に斑(群生と疎の区間: 等間隔感の解消)
+        for _ in range(int(110 * _cl)):
             k0 = int(rg.integers(0, K - 1)); u = rg.uniform(0, 1)
             if k0 == 2:
                 continue                      # 法肩の平場(バラスト直下)には生やさない
