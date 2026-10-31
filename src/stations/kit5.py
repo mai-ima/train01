@@ -1187,8 +1187,12 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
         a, b = pos[i] + nrm[i] * width / 2, pos[i] - nrm[i] * width / 2
         g.a("k5_wood").sbox((a[0], a[1], zs[i] - 0.4), (b[0], b[1], zs[i] - 0.4), 0.3, 0.3)
         # X字の筋交い(全ベント)と、水際の湿った帯・杭頭の笠木
-        g.a("k5_wood").sbox((a[0], a[1], zs[i] - 1.8), (b[0], b[1], zs[i] - 0.5), 0.1, 0.14)
-        g.a("k5_wood").sbox((a[0], a[1], zs[i] - 0.5), (b[0], b[1], zs[i] - 1.8), 0.1, 0.14)
+        _bt = 0.08 + 0.03 * ((i * 3) % 3)                                                       # C17: 筋交いの太さをベントごとに変える(同一反復の解消)
+        _lo = 1.5 + 0.35 * ((i * 5) % 3)
+        g.a("k5_wood_dk" if i % 4 == 1 else "k5_wood").sbox((a[0], a[1], zs[i] - _lo - 0.3), (b[0], b[1], zs[i] - 0.5), _bt, 0.14)
+        g.a("k5_wood_gr" if i % 3 == 2 else "k5_wood").sbox((a[0], a[1], zs[i] - 0.5), (b[0], b[1], zs[i] - _lo - 0.3), _bt, 0.14)
+        if i % 2 == 0:                                                                         # 横架材(水平のつなぎ)を1本おきに
+            g.a("k5_wood").sbox((a[0], a[1], zs[i] - 1.05), (b[0], b[1], zs[i] - 1.05), 0.08, 0.16)
         for sg in (-1, 1):
             q = pos[i] + nrm[i] * sg * width / 2
             g.a("k5_wood_wet").box(q[0] - 0.26, q[0] + 0.26, q[1] - 0.26, q[1] + 0.26, -0.5, 0.45)
