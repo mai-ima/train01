@@ -87,6 +87,12 @@ def river(P, s, width=40.0, length=700.0, name="river", wiggle=22.0, seed=0, flo
     # 岸: 外側に土の帯(湿った泥)、水際に砂利の帯。水面が地面に直線で刺さって見える問題の対策
     core.ribbon(name + "_bank", [tuple(np.array(p) + 0) for p in pts], width + 9.0, M["dirt"], z0=0.034, rut=False, col="Ground")
     core.ribbon(name + "_shore", [tuple(np.array(p) + 0) for p in pts], width + 3.4, M["ballast"], z0=0.042, rut=False, col="Ground")
+    # 水際の濡れ帯(暗い湿った土)と細い泡線: 水面と岸の境界が線で刺さって見える問題の対策
+    if "k5_wet" not in M:
+        M["k5_wet"] = lib.mat_plain("k5_wet", (0.055, 0.05, 0.04), rough=0.35)
+    core.ribbon(name + "_wet", pts, width + 1.3, M["k5_wet"], z0=0.046, rut=False, col="Ground")
+    core.ribbon(name + "_edgefoam", pts, width - 0.15, M["k5_foam"], z0=0.049, rut=False, col="Ground")
+    core.ribbon(name + "_w2", pts, width - 0.9, M["water"], z0=0.052, rut=False, col="Ground")
 
 
 def truss_bridge(P, s0, s1, name="truss", h=7.5, width=7.0, zfun=None):
