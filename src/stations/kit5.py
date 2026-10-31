@@ -1341,7 +1341,7 @@ def _tetrapod(g, x, y, z, rz, sc=1.0, leg=0.95, r0=0.42, r1=0.26, mat="k5_conc")
         d = np.array([dx, dy, dz], float) / math.sqrt(3.0)
         d = np.array([d[0] * c - d[1] * sn, d[0] * sn + d[1] * c, d[2]])
         p1 = np.array([x, y, z]) + d * leg * sc
-        g.a(mat, bevel=0.0).cyl((x, y, z), tuple(p1), r0 * sc, r1 * sc, seg=8, caps=True)
+        g.a(mat, bevel=0.0, smooth=True).cyl((x, y, z), tuple(p1), r0 * sc, r1 * sc, seg=12, caps=True)      # C17: 平坦シェーディングで脚が粗い多角形に見えた(sw18)→スムース+12分割
 
 
 _SEA_N = [0]
