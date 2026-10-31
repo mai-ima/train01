@@ -1166,6 +1166,9 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
     """木橋(トレッスル)。"""
     mats5()
     g = G(name, "Props")
+    if "k5_wood" not in M:      # 木橋の部材が無地の暗褐色(監査: 木造風に見えない・新品): 板目の実写PBRで風化させ、水際は暗く湿らせる
+        M["k5_wood"] = lib.mat_pbr("k5_wood", "Planks023A", scale=0.9, tint=(0.62, 0.56, 0.48), tint_amt=0.7, bump=1.2, macro=0.6, dirt=0.9, stain=0.9, spec=0.1)
+        M["k5_wood_wet"] = lib.mat_pbr("k5_wood_wet", "Planks023A", scale=0.9, tint=(0.25, 0.26, 0.22), tint_amt=0.9, bump=1.2, macro=0.4, dirt=0.9, stain=0.9, spec=0.3)
     ss = np.arange(s0, s1 + 0.5, 3.0)
     pos, ang = frames_at(P, ss)
     zs = np.zeros(len(ss)) if zfun is None else zfun(ss)
@@ -1173,23 +1176,33 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
     for i in range(len(ss)):
         for sg in (-1, 1):
             p = pos[i] + nrm[i] * sg * width / 2
-            g.a("k5_timber", bevel=0.01).box(p[0] - 0.22, p[0] + 0.22, p[1] - 0.22, p[1] + 0.22, -2.0, zs[i] - 0.3)
+            g.a("k5_wood", bevel=0.01).box(p[0] - 0.22, p[0] + 0.22, p[1] - 0.22, p[1] + 0.22, -2.0, zs[i] - 0.3)
         a, b = pos[i] + nrm[i] * width / 2, pos[i] - nrm[i] * width / 2
-        g.a("k5_timber").sbox((a[0], a[1], zs[i] - 0.4), (b[0], b[1], zs[i] - 0.4), 0.3, 0.3)
-        if i % 2 == 0:
-            g.a("k5_timber").sbox((a[0], a[1], zs[i] - 1.8), (b[0], b[1], zs[i] - 0.5), 0.1, 0.12)
+        g.a("k5_wood").sbox((a[0], a[1], zs[i] - 0.4), (b[0], b[1], zs[i] - 0.4), 0.3, 0.3)
+        # X字の筋交い(全ベント)と、水際の湿った帯・杭頭の笠木
+        g.a("k5_wood").sbox((a[0], a[1], zs[i] - 1.8), (b[0], b[1], zs[i] - 0.5), 0.1, 0.14)
+        g.a("k5_wood").sbox((a[0], a[1], zs[i] - 0.5), (b[0], b[1], zs[i] - 1.8), 0.1, 0.14)
+        for sg in (-1, 1):
+            q = pos[i] + nrm[i] * sg * width / 2
+            g.a("k5_wood_wet").box(q[0] - 0.26, q[0] + 0.26, q[1] - 0.26, q[1] + 0.26, -0.5, 0.45)
+            g.a("k5_wood").box(q[0] - 0.3, q[0] + 0.3, q[1] - 0.3, q[1] + 0.3, zs[i] - 0.34, zs[i] - 0.24)
         for sg in (-1, 1):      # Q25: 手すりに支柱が無く細い線だけが浮いて見えていた
             q = pos[i] + nrm[i] * sg * (width / 2 + 0.25)
-            g.a("k5_timber").box(q[0] - 0.06, q[0] + 0.06, q[1] - 0.06, q[1] + 0.06, zs[i] - 0.3, zs[i] + 0.78)
+            g.a("k5_wood").box(q[0] - 0.06, q[0] + 0.06, q[1] - 0.06, q[1] + 0.06, zs[i] - 0.3, zs[i] + 0.78)
     for i in range(len(ss) - 1):
         for sg in (-1, 0, 1):
             p0 = pos[i] + nrm[i] * sg * 1.0
             p1 = pos[i + 1] + nrm[i + 1] * sg * 1.0
-            g.a("k5_timber").sbox((p0[0], p0[1], zs[i] - 0.3), (p1[0], p1[1], zs[i + 1] - 0.3), 0.3, 0.3)
+            g.a("k5_wood").sbox((p0[0], p0[1], zs[i] - 0.3), (p1[0], p1[1], zs[i + 1] - 0.3), 0.3, 0.3)
         for sg in (-1, 1):
             p0 = pos[i] + nrm[i] * sg * (width / 2 + 0.25)
             p1 = pos[i + 1] + nrm[i + 1] * sg * (width / 2 + 0.25)
-            g.a("k5_timber").sbox((p0[0], p0[1], zs[i] + 0.7), (p1[0], p1[1], zs[i + 1] + 0.7), 0.08, 0.1)
+            g.a("k5_wood").sbox((p0[0], p0[1], zs[i] + 0.7), (p1[0], p1[1], zs[i + 1] + 0.7), 0.08, 0.1)
+        for sg in (-1, 1):                  # ベント間の斜材(橋軸方向の筋交い。向きは交互)
+            q0 = pos[i] + nrm[i] * sg * width / 2
+            q1 = pos[i + 1] + nrm[i + 1] * sg * width / 2
+            za, zb = (zs[i] - 1.8, zs[i + 1] - 0.6) if (i + (sg > 0)) % 2 == 0 else (zs[i] - 0.6, zs[i + 1] - 1.8)
+            g.a("k5_wood").sbox((q0[0], q0[1], za), (q1[0], q1[1], zb), 0.09, 0.13)
     g.build()
 
 
