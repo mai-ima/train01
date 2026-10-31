@@ -1196,6 +1196,12 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
         for sg in (-1, 1):      # Q25: 手すりに支柱が無く細い線だけが浮いて見えていた
             q = pos[i] + nrm[i] * sg * (width / 2 + 0.25)
             g.a("k5_wood").box(q[0] - 0.06, q[0] + 0.06, q[1] - 0.06, q[1] + 0.06, zs[i] - 0.3, zs[i] + 0.78)
+    for e, outw in ((0, -1.0), (len(ss) - 1, 1.0)):      # C17: 取付盛土の端が口を開けた黒い三日月に見えた(監査)→両端に石積みの橋台(盛土を抱く壁)を立てる
+        _t = np.array([math.cos(ang[e]), math.sin(ang[e])]) * outw
+        _c = pos[e] + _t * 0.4
+        _a, _b = _c + nrm[e] * (width / 2 + 1.0), _c - nrm[e] * (width / 2 + 1.0)
+        _hh = max(zs[e], 0.5) + 0.2
+        g.a("k5_wood_gr").sbox((_a[0], _a[1], _hh / 2 - 0.4), (_b[0], _b[1], _hh / 2 - 0.4), 1.4, _hh + 0.4)
     for i in range(len(ss) - 1):
         for sg in (-1, 0, 1):
             p0 = pos[i] + nrm[i] * sg * 1.0
