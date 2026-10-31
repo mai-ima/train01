@@ -1301,6 +1301,9 @@ def viaduct(P, s0, s1, name="viaduct", width=8.4, zfun=None, span=12.0):
             for sg in (-1, 1):
                 p = pos[i] + nrm[i] * sg * width * 0.27
                 g.a("k5_conc_v", bevel=0.05).boxc(p[0], p[1], top / 2 - 0.3, 1.1 + 0.25 * ((i * 7) % 3) / 2.0, 1.1 + 0.2 * ((i * 5) % 3) / 2.0, top + 0.6, rz=float(ang[i]))
+                _pw0, _pd0 = 1.1 + 0.25 * ((i * 7) % 3) / 2.0, 1.1 + 0.2 * ((i * 5) % 3) / 2.0
+                g.a("k5_conc_v", bevel=0.06).boxc(p[0], p[1], 0.05, _pw0 + 0.7, _pd0 + 0.7, 0.7, rz=float(ang[i]))                 # C17: 橋脚の根元のフーチング(水面に直接立っていた: 監査)
+                g.a("k5_conc_v", bevel=0.05).boxc(p[0], p[1], top - 0.15, _pw0 + 0.4, _pd0 + 0.4, 0.45, rz=float(ang[i]))          # 橋脚頭部の張り出し(沓座)
             a, b = pos[i] + nrm[i] * width * 0.5, pos[i] - nrm[i] * width * 0.5
             g.a("k5_conc_v", bevel=0.04).sbox((a[0], a[1], top + 0.1), (b[0], b[1], top + 0.1), 1.2, 0.7)
     for i in range(len(ss) - 1):
