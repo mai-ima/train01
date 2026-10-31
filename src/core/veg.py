@@ -326,6 +326,38 @@ def tree_canopy(name, centre, rad, col_a, col_b, rng, nblobs=6, cards=True, spre
     else:
         V, T, C = np.concatenate(Vs), np.array(Ts), np.concatenate(Cs)
     emit(name, V, T, C, M["leaf"], "Trees")
+    if cards and _os.path.exists(f"{lib.TEX}/broadleaf_spray.png") and not _os.environ.get("NO_LEAFCARDS"):
+        # C17/Q14: アルファ付きの葉房カード(葉が重なった房の画像)を樹冠の表面に置く。単純な三角片+球の塊に見える問題の根本対策
+        QV, QT, QC, QU = [], [], [], []
+        qo = 0
+        for (c, br) in pts:
+            m = max(10, int(26 * br * br * CARD_SCALE * LIGHT))
+            for _ in range(m):
+                d = nr.normal(size=3) * np.array([1, 1, 0.75])
+                d /= np.linalg.norm(d) + 1e-9
+                p = np.array(c) + d * br * nr.uniform(0.86, 1.12)
+                t1 = np.cross(d, [0, 0, 1.0])
+                if np.linalg.norm(t1) < 1e-3:
+                    t1 = np.array([1.0, 0, 0])
+                t1 /= np.linalg.norm(t1)
+                t2 = np.cross(d, t1)
+                a0 = nr.uniform(0, 6.28)
+                u = t1 * math.cos(a0) + t2 * math.sin(a0)
+                v = -t1 * math.sin(a0) + t2 * math.cos(a0)
+                hs = nr.uniform(0.55, 0.95) * min(1.6, 0.9 + 0.12 * br)
+                QV += [p - u * hs - v * hs, p + u * hs - v * hs, p + u * hs + v * hs, p - u * hs + v * hs]
+                k_at = int(nr.integers(0, 4))
+                u0, u1 = k_at / 4.0, (k_at + 1) / 4.0
+                QU += [(u0, 0), (u1, 0), (u1, 1), (u0, 1)]
+                sh = nr.uniform(0.0, 1.0) * (0.4 + 0.6 * (d[2] * 0.5 + 0.5))
+                cc = (np.array(col_a) * (1 - sh) + np.array(col_b) * sh) * nr.uniform(0.8, 1.25)
+                QC += [list(cc) + [1.0]] * 4
+                QT += [(qo, qo + 1, qo + 2), (qo, qo + 2, qo + 3), (qo, qo + 2, qo + 1), (qo, qo + 3, qo + 2)]
+                qo += 4
+        if QV:
+            if "broadleaf" not in M:
+                M["broadleaf"] = lib.mat_conifer_card("broadleaf", f"{lib.TEX}/broadleaf_spray.png", gain=2.6, rough=0.55, trans=0.35)
+            lib.np_mesh(name + "_lc", np.array(QV), np.array(QT), M["broadleaf"], "Trees", colors=np.array(QC), uvs=np.array(QU))
 
 
 def trunk(name, x, y, h, r0, r1, branches=(), mat=None):

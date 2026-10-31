@@ -525,6 +525,11 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None, rev=False):
     EDGES.append(dict(id=f"{ln}_{a}_{b}_{ka}_{kb}", line=ln, kind="link", a=a, b=b, ka=ka, kb=kb, junction=junction, pts=P))
     r = min_radius(P)
     nm = f"net_{ln}_{a}_{b}_{ka}_{kb}"
+    if os.environ.get("TRACK_NEAR"):                              # 検査用: 指定座標(x,y,半径)の近くを通る線路を表示
+        _tx, _ty, _tr = [float(v) for v in os.environ["TRACK_NEAR"].split(",")]
+        _d = np.hypot(np.asarray(P, float)[:, 0] - _tx, np.asarray(P, float)[:, 1] - _ty)
+        if _d.min() < _tr:
+            print(f"TRACKNEAR {nm} junction={junction} min={_d.min():.1f}", flush=True)
     tech = TECH[ln]
     Pr, s_ = trackkit.resample(np.asarray(P, float), 1.0)
     L_ = float(s_[-1])

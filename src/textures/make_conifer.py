@@ -61,6 +61,36 @@ def spray(seed, W=256, H=512, SS=3):
     return Image.fromarray(a.astype(np.uint8), "RGBA")
 
 
+def leafspray(seed, W=256, H=256, SS=3):
+    """広葉樹の葉房: 短い小枝から卵形の葉が重なって付く(アルファ付き)。葉ごとに色味と向きが違う。"""
+    rnd = random.Random(seed)
+    w, h = W * SS, H * SS
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    cx, cy = w * 0.5, h * 0.5
+    def leaf(px, py, ang, ln, wd, shade):
+        pts = []
+        for k in range(17):
+            t = k / 16.0
+            ww = wd * math.sin(math.pi * t) ** 0.8 * (1.0 - 0.35 * t)
+            pts.append((t * ln, ww))
+        poly = [(px + math.cos(ang) * a - math.sin(ang) * b, py + math.sin(ang) * a + math.cos(ang) * b) for a, b in pts]
+        poly += [(px + math.cos(ang) * a + math.sin(ang) * b, py + math.sin(ang) * a - math.cos(ang) * b) for a, b in reversed(pts)]
+        g = int(255 * shade)
+        d.polygon(poly, fill=(int(g * rnd.uniform(0.45, 0.7)), int(g * rnd.uniform(0.85, 1.0)), int(g * rnd.uniform(0.25, 0.45)), 255))
+        d.line([(px, py), (px + math.cos(ang) * ln * 0.92, py + math.sin(ang) * ln * 0.92)], fill=(int(g * 0.9), int(g * 1.0), int(g * 0.5), 255), width=max(1, SS))
+    for k in range(34):
+        ang = rnd.uniform(0, 2 * math.pi)
+        r0 = rnd.uniform(0.0, 0.30) * w
+        px, py = cx + math.cos(ang) * r0 * 0.55, cy + math.sin(ang) * r0 * 0.55
+        ln = rnd.uniform(0.17, 0.27) * w
+        leaf(px, py, ang + rnd.uniform(-0.5, 0.5), ln, ln * rnd.uniform(0.26, 0.38), rnd.uniform(0.5, 1.0))
+    im = im.resize((W, H), Image.LANCZOS)
+    a = np.asarray(im).astype(float)
+    a[..., 3] = np.clip((a[..., 3] - 30) * 1.3, 0, 255)
+    return Image.fromarray(a.astype(np.uint8), "RGBA")
+
+
 if __name__ == "__main__":
     out = _os.path.join(_R, "tex")
     _os.makedirs(out, exist_ok=True)
@@ -68,4 +98,8 @@ if __name__ == "__main__":
     for k in range(4):
         atlas.paste(spray(101 + k * 17), (256 * k, 0))
     atlas.save(_os.path.join(out, "conifer_spray.png"))
+    la = Image.new("RGBA", (256 * 4, 256), (0, 0, 0, 0))
+    for k in range(4):
+        la.paste(leafspray(201 + k * 13), (256 * k, 0))
+    la.save(_os.path.join(out, "broadleaf_spray.png"))
     print("saved", _os.path.join(out, "conifer_spray.png"))
