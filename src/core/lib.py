@@ -876,10 +876,10 @@ def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None,
     if stain > 0:      # 縦に流れる水垢の筋(暗い)と、壁の低い所に付く苔(緑)。実写の石積み擁壁の経年表現
         x, y, z = m.sep(m.obj)
         wst = m.ramp(m.noise(m.mapping(scale=(9, 9, 0.3)), scale=3.0, detail=3, rough=0.6),
-                     [(0.52, (1, 1, 1)), (0.74, (0.52, 0.52, 0.48))])
+                     [(0.5, (1, 1, 1)), (0.7, (0.34, 0.34, 0.31))])      # 縦の水垢筋をはっきり(経年が弱いとの監査)
         low = m.maprange(z, 0.0, 3.2, 1.0, 0.0)
         moss = m.ramp(m.noise(m.mapping(scale=(4, 4, 1.4)), scale=2.4, detail=4, rough=0.6),
-                      [(0.50, (1, 1, 1)), (0.70, (0.66, 0.86, 0.50))])
+                      [(0.46, (1, 1, 1)), (0.66, (0.50, 0.78, 0.36))])
         mossm = m.mix(low, (1, 1, 1), moss)
         col = m.mix(stain, col, m.mix(1.0, m.mix(1.0, col, wst, 'MULTIPLY'), mossm, 'MULTIPLY'))
     if far_col is not None:      # 遠景: 近景の斑・草目が斜めに潰れて滲んだ流れ模様になるのを防ぐため、距離とともに平均色+非常に大きな緩い色むら(田畑の区画感)へ収束させる
