@@ -840,7 +840,7 @@ def pbr_layer(m, tid, scale=1.0, rot=(0, 0, 0), vec=None):
 
 
 def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None, rough_add=0.0, bump=0.5,
-            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0, stain=0.0, far_col=None, far0=40.0, far1=300.0):
+            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0, stain=0.0, far_col=None, far0=40.0, far1=300.0, near_detail=None):
     """Photo-based material. `patch` adds 数十m規模の斑(乾いた草・土の露出・濃い草むら: 地面が単色に見える問題の対策)。 `macro` breaks up tiling with large-scale value noise; `dirt` adds grime streaks."""
     m = Mat(name)
     L = pbr_layer(m, tid, scale, rot)
@@ -882,6 +882,13 @@ def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None,
                       [(0.46, (1, 1, 1)), (0.66, (0.50, 0.78, 0.36))])
         mossm = m.mix(low, (1, 1, 1), moss)
         col = m.mix(stain, col, m.mix(1.0, m.mix(1.0, col, wst, 'MULTIPLY'), mossm, 'MULTIPLY'))
+    if near_detail is not None:      # C17: 近距離(約2m)で写真テクスチャが粗く滲み黄緑のベタ面に見える→細かいスケールの同じ種のテクスチャをOVERLAYで近距離だけ重ねる。near_detail=(tid, scale, 強さ, 消える距離m)
+        _tid, _sc, _amt, _fd = near_detail
+        _L2 = pbr_layer(m, _tid, _sc)
+        if _L2["col"] is not None:
+            _cd = m.node('ShaderNodeCameraData')
+            _nf = m.maprange(_cd.outputs['View Distance'], 1.0, _fd, _amt, 0.0)
+            col = m.mix(_nf, col, _L2["col"], 'OVERLAY')
     if far_col is not None:      # 遠景: 近景の斑・草目が斜めに潰れて滲んだ流れ模様になるのを防ぐため、距離とともに平均色+非常に大きな緩い色むら(田畑の区画感)へ収束させる
         cdn = m.node('ShaderNodeCameraData')
         ff = m.maprange(cdn.outputs['View Distance'], far0, far1, 0.0, 0.9)
