@@ -886,6 +886,11 @@ def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None,
         cdn = m.node('ShaderNodeCameraData')
         ff = m.maprange(cdn.outputs['View Distance'], far0, far1, 0.0, 0.9)
         lv = m.ramp(m.noise(scale=0.0045, detail=2, rough=0.5), [(0.3, (0.82, 0.86, 0.80)), (0.7, (1.12, 1.08, 1.0))])
+        vr = m.node('ShaderNodeTexVoronoi', voronoi_dimensions='3D', feature='F1')      # 約70〜110m角の区画ごとに色味を変える(田畑・草地・刈跡のパッチワーク。のっぺりした黄緑のにじみを避ける)
+        m.setall(vr, {'Vector': m.obj, 'Scale': 1.0 / 90.0, 'Randomness': 1.0})
+        vx, vy, vz = m.sep(vr.outputs['Color'])
+        parcel = m.ramp(vx, [(0.0, (0.70, 0.78, 0.62)), (0.35, (0.95, 1.0, 0.88)), (0.7, (1.12, 1.08, 0.80)), (1.0, (1.28, 1.15, 0.72))])
+        lv = m.mix(1.0, lv, parcel, 'MULTIPLY')
         col = m.mix(ff, col, m.mix(1.0, far_col, lv, 'MULTIPLY'))
     r = L["rough"]
     if rough is not None:
