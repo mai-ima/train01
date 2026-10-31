@@ -1167,7 +1167,7 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
     mats5()
     g = G(name, "Props")
     if "k5_wood" not in M:      # 木橋の部材が無地の暗褐色(監査: 木造風に見えない・新品): 板目の実写PBRで風化させ、水際は暗く湿らせる
-        M["k5_wood"] = lib.mat_pbr("k5_wood", "Planks023A", scale=0.9, tint=(0.62, 0.56, 0.48), tint_amt=0.7, bump=1.2, macro=0.6, dirt=0.9, stain=0.9, spec=0.1)
+        M["k5_wood"] = lib.mat_pbr("k5_wood", "Planks023A", scale=0.9, hsv=(0.5, 0.7, 1.9), tint=(0.92, 0.84, 0.70), tint_amt=0.5, bump=1.2, macro=0.7, dirt=0.6, stain=0.6, spec=0.1)
         M["k5_wood_wet"] = lib.mat_pbr("k5_wood_wet", "Planks023A", scale=0.9, tint=(0.25, 0.26, 0.22), tint_amt=0.9, bump=1.2, macro=0.4, dirt=0.9, stain=0.9, spec=0.3)
     ss = np.arange(s0, s1 + 0.5, 3.0)
     pos, ang = frames_at(P, ss)
@@ -1176,7 +1176,8 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
     for i in range(len(ss)):
         for sg in (-1, 1):
             p = pos[i] + nrm[i] * sg * width / 2
-            g.a("k5_wood", bevel=0.01).box(p[0] - 0.22, p[0] + 0.22, p[1] - 0.22, p[1] + 0.22, -2.0, zs[i] - 0.3)
+            _pw = 0.19 + 0.05 * ((i * 5 + (sg > 0) * 3) % 4) / 3.0
+            g.a("k5_wood", bevel=0.01).box(p[0] - _pw, p[0] + _pw, p[1] - _pw, p[1] + _pw, -2.0, zs[i] - 0.3)
         a, b = pos[i] + nrm[i] * width / 2, pos[i] - nrm[i] * width / 2
         g.a("k5_wood").sbox((a[0], a[1], zs[i] - 0.4), (b[0], b[1], zs[i] - 0.4), 0.3, 0.3)
         # X字の筋交い(全ベント)と、水際の湿った帯・杭頭の笠木
