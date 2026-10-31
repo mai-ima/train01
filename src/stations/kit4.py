@@ -529,6 +529,10 @@ def emit(ln, a, b, ka, kb, P, rep, poles, mainP, junction=None, rev=False):
     Pr, s_ = trackkit.resample(np.asarray(P, float), 1.0)
     L_ = float(s_[-1])
     prof, items = struct_plan(ln, a, b, L_) if ((not junction and ka == 0) or ln in ("KM", "KE", "TR", "BM")) else ([], [])
+    if not prof and not items and not junction and ka > 0 and TECH[ln] == "rail":
+        # 複線の2本目(ka>0)は構造物(橋・築堤)を作らないが、線路の高さ(橋の取付部の盛り上げ)は1本目と同じにする
+        # (従来は2本目だけ地面の高さ z=0 のまま川の上を通り、橋の脇の水面すれすれに第2の線路が浮いて見えた)
+        prof, _ = struct_plan(ln, a, b, L_)
     if rev and (prof or items):
         # 分岐リンクで分岐点が b 側のとき、曲線 P は b→a の向き。struct_plan は a→b 基準なので s を鏡像にする
         if callable(prof):
