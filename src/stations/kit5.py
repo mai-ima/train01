@@ -1216,6 +1216,10 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
             p0 = pos[i] + nrm[i] * sg * 1.0
             p1 = pos[i + 1] + nrm[i + 1] * sg * 1.0
             g.a("k5_wood").sbox((p0[0], p0[1], zs[i] - 0.3), (p1[0], p1[1], zs[i + 1] - 0.3), 0.3, 0.3)
+        for sg in (-1, 1):                                                                   # C17: 道床の側面が灰色の厚板(コンクリート)に見えた(監査・プローブでバラストと判明)→木の側板(道床止め)で覆う
+            f0 = pos[i] + nrm[i] * sg * 2.92
+            f1 = pos[i + 1] + nrm[i + 1] * sg * 2.92
+            g.a("k5_wood_gr" if (i + (sg > 0)) % 3 else "k5_wood_dk").sbox((f0[0], f0[1], zs[i] - 0.1), (f1[0], f1[1], zs[i + 1] - 0.1), 0.1, 0.75)
         for sg in (-1, 1):
             p0 = pos[i] + nrm[i] * sg * (width / 2 + 0.25)
             p1 = pos[i + 1] + nrm[i + 1] * sg * (width / 2 + 0.25)
