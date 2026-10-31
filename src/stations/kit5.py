@@ -879,7 +879,7 @@ def cutting(P, s0, s1, name="cutting", half=4.0, h=5.0, trees=0, seed=0):
             off = sgn * (half + rng.uniform(4, 16))
             p = pos[i] + nrm[i] * off
             try:
-                veg.sugi(float(p[0]), float(p[1]), rng.uniform(8, 17), r=rng.uniform(1.4, 2.5), seed=rng.randrange(10 ** 6))
+                veg.sugi(float(p[0]), float(p[1]), rng.uniform(8, 15), r=rng.uniform(2.3, 3.6), seed=rng.randrange(10 ** 6))
             except Exception as _e:
                 print("sugi failed", _e)
 
@@ -1167,7 +1167,7 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
     mats5()
     g = G(name, "Props")
     if "k5_wood" not in M:      # 木橋の部材が無地の暗褐色(監査: 木造風に見えない・新品): 板目の実写PBRで風化させ、水際は暗く湿らせる
-        M["k5_wood"] = lib.mat_pbr("k5_wood", "Planks023A", scale=0.9, hsv=(0.5, 0.7, 1.9), tint=(0.92, 0.84, 0.70), tint_amt=0.5, bump=1.2, macro=0.7, dirt=0.6, stain=0.6, spec=0.1)
+        M["k5_wood"] = lib.mat_pbr("k5_wood", "Planks023A", scale=0.9, hsv=(0.5, 1.1, 1.6), tint=(0.66, 0.42, 0.24), tint_amt=0.9, bump=1.2, macro=0.7, dirt=0.6, stain=0.6, spec=0.1)
         M["k5_wood_wet"] = lib.mat_pbr("k5_wood_wet", "Planks023A", scale=0.9, tint=(0.25, 0.26, 0.22), tint_amt=0.9, bump=1.2, macro=0.4, dirt=0.9, stain=0.9, spec=0.3)
     ss = np.arange(s0, s1 + 0.5, 3.0)
     pos, ang = frames_at(P, ss)
