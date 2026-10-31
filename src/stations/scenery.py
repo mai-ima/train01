@@ -45,14 +45,15 @@ def _near(g, x, y, r):
     return False
 
 
-def _blob(c, rad, rng, seg=9, rings=6, k=0.45, flat=0.85):
+def _blob(c, rad, rng, seg=12, rings=8, k=0.5, flat=0.85):
     V = []
     for r in range(rings + 1):
         th = math.pi * r / rings
         for s in range(seg):
             ph = 2 * math.pi * s / seg
             d = Vector((math.sin(th) * math.cos(ph), math.sin(th) * math.sin(ph), math.cos(th)))
-            n = mn.noise(d * 1.8 + Vector((c[0] * 0.3, c[1] * 0.3, c[2] * 0.3)))
+            _o = Vector((c[0] * 0.3, c[1] * 0.3, c[2] * 0.3))
+            n = mn.noise(d * 1.8 + _o) + 0.55 * mn.noise(d * 4.2 + _o * 1.7)      # C17/Q14: 球に近い団子状の輪郭(監査)→2段のノイズで凸凹・房状に
             rr = rad * (1 + k * n)
             V.append((c[0] + d.x * rr, c[1] + d.y * rr, c[2] + d.z * rr * flat))
     return np.array(V), seg, rings
@@ -74,7 +75,8 @@ def _cards(c, br, nr, bc, n, conif=False):
     for i in range(n):
         d = nr.normal(size=3) * np.array([1, 1, 1.6 if conif else 0.75])
         d /= np.linalg.norm(d) + 1e-9
-        p = np.array(c) + d * br * nr.uniform(0.68, 1.04)      # 内側〜表面に重ねる(外へ突き出すと黒い三角の破片に見える)
+        _lump = 1.0 + 0.42 * mn.noise(Vector((d[0] * 2.6 + c[0] * 0.3, d[1] * 2.6 + c[1] * 0.3, d[2] * 2.6 + c[2] * 0.3)))      # C17/Q14: カード雲も同じ凸凹に
+        p = np.array(c) + d * br * nr.uniform(0.68, 1.04) * _lump      # 内側〜表面に重ねる(外へ突き出すと黒い三角の破片に見える)
         t1 = np.cross(d, [0, 0, 1.0])
         if np.linalg.norm(t1) < 1e-3:
             t1 = np.array([1.0, 0, 0])
