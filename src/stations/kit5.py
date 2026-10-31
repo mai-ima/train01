@@ -191,6 +191,10 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
     span = L / na
     ss = np.linspace(s0, s1, int(L / 2.0) + 2)
     pos, ang = frames_at(P, ss)
+    # 石材の三面投影の軸を橋軸に合わせる(斜めに架かる橋で側面の投影が引き伸ばされ縦筋に見えた件: C17)
+    _sk = f"ug_stone_{name}"
+    if _sk not in M:
+        M[_sk] = lib.mat_pbr(_sk, "Bricks102", scale=1.8, tint=(0.66, 0.62, 0.54), tint_amt=0.6, bump=1.4, bump_dist=0.03, macro=0.5, dirt=0.8, stain=0.85, spec=0.12, rot=(0, 0, -float(ang[len(ang) // 2])))
     zs = np.zeros(len(ss)) if zfun is None else zfun(ss)
     nrm = np.stack([-np.sin(ang), np.cos(ang)], 1)
     zt = zs - 0.35                              # 床版上面
@@ -201,12 +205,12 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
         g.a("k5_conc").sbox((a0[0], a0[1], zt[i] - 0.45), (a1[0], a1[1], zt[i + 1] - 0.45), width - 0.5, 0.9)      # Q25/C17: 床版の側面が白い帯として見えていた(監査)。コンクリートは内側に引き、外面は石積みで覆う
         for sg in (-1, 1):
             p0, p1 = a0 + nrm[i] * sg * (width / 2 - 0.2), a1 + nrm[i + 1] * sg * (width / 2 - 0.2)
-            g.a("ug_stone").sbox((p0[0], p0[1], zt[i] - 0.45), (p1[0], p1[1], zt[i + 1] - 0.45), 0.45, 0.9)           # 床版の外面の石積み
-            g.a("ug_stone").sbox((p0[0], p0[1], zt[i] + 0.45), (p1[0], p1[1], zt[i + 1] + 0.45), 0.4, 0.9)
-            g.a("ug_stone").sbox((p0[0], p0[1], zt[i] + 0.95), (p1[0], p1[1], zt[i + 1] + 0.95), 0.55, 0.14)
-            g.a("ug_stone").sbox((p0[0], p0[1], zt[i] - 0.05), (p1[0], p1[1], zt[i + 1] - 0.05), 0.62, 0.16)   # 帯石(コーニス)
+            g.a(_sk).sbox((p0[0], p0[1], zt[i] - 0.45), (p1[0], p1[1], zt[i + 1] - 0.45), 0.45, 0.9)           # 床版の外面の石積み
+            g.a(_sk).sbox((p0[0], p0[1], zt[i] + 0.45), (p1[0], p1[1], zt[i + 1] + 0.45), 0.4, 0.9)
+            g.a(_sk).sbox((p0[0], p0[1], zt[i] + 0.95), (p1[0], p1[1], zt[i + 1] + 0.95), 0.55, 0.14)
+            g.a(_sk).sbox((p0[0], p0[1], zt[i] - 0.05), (p1[0], p1[1], zt[i + 1] - 0.05), 0.62, 0.16)   # 帯石(コーニス)
             if i % 4 == 0:                                                                                       # 親柱状の束石
-                g.a("ug_stone", bevel=0.03).box(p0[0] - 0.3, p0[0] + 0.3, p0[1] - 0.3, p0[1] + 0.3, zt[i] + 0.45, zt[i] + 1.18)
+                g.a(_sk, bevel=0.03).box(p0[0] - 0.3, p0[0] + 0.3, p0[1] - 0.3, p0[1] + 0.3, zt[i] + 0.45, zt[i] + 1.18)
     # アーチ
     for k in range(na):
         sa, sb = s0 + k * span, s0 + (k + 1) * span
@@ -221,7 +225,7 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
         nn = np.stack([-np.sin(aa), np.cos(aa)], 1)
         for i in range(120):
             # アーチ輪(石)
-            g.a("ug_stone").sbox((pp[i][0], pp[i][1], arc[i] + 0.4), (pp[i + 1][0], pp[i + 1][1], arc[i + 1] + 0.4), width - 0.1, 0.85)
+            g.a(_sk).sbox((pp[i][0], pp[i][1], arc[i] + 0.4), (pp[i + 1][0], pp[i + 1][1], arc[i + 1] + 0.4), width - 0.1, 0.85)
             # 拱上壁: アーチ輪の上〜床版下面を、両側の外面で埋める
             ztop_w = float((zsub[i] + zsub[i + 1]) / 2 - 0.35 - 0.9)
             for sg in (-1, 1):
@@ -229,7 +233,7 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
                 q1 = pp[i + 1] + nn[i + 1] * sg * (width / 2 - 0.3)
                 zlo = max(arc[i], arc[i + 1]) + 0.82
                 if ztop_w - zlo > 0.05:
-                    g.a("ug_stone").sbox((q0[0], q0[1], (zlo + ztop_w) / 2), (q1[0], q1[1], (zlo + ztop_w) / 2), 0.6, ztop_w - zlo)
+                    g.a(_sk).sbox((q0[0], q0[1], (zlo + ztop_w) / 2), (q1[0], q1[1], (zlo + ztop_w) / 2), 0.6, ztop_w - zlo)
             # 中詰め(内側の見えない部分は薄く)
         # Q25/C17: 迫石・要石が無く石積みが一様だった(監査)。頂部の要石と、起拱部(橋脚上)の迫り元石を両側の外面へ張り出す
         tgp = np.stack([np.cos(aa), np.sin(aa)], 1)
@@ -237,7 +241,7 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
             for iu, hh_, ll_ in ((60, 1.15, 1.0), (4, 0.9, 1.1), (116, 0.9, 1.1)):
                 qc = pp[iu] + nn[iu] * sg * (width / 2 + 0.06)
                 zc_ = arc[iu] + 0.4 + (0.0 if iu == 60 else 0.25)
-                g.a("ug_stone", bevel=0.03).sbox((qc[0] - tgp[iu][0] * ll_ / 2, qc[1] - tgp[iu][1] * ll_ / 2, zc_), (qc[0] + tgp[iu][0] * ll_ / 2, qc[1] + tgp[iu][1] * ll_ / 2, zc_), 0.34, hh_)
+                g.a(_sk, bevel=0.03).sbox((qc[0] - tgp[iu][0] * ll_ / 2, qc[1] - tgp[iu][1] * ll_ / 2, zc_), (qc[0] + tgp[iu][0] * ll_ / 2, qc[1] + tgp[iu][1] * ll_ / 2, zc_), 0.34, hh_)
         # 橋脚(スパン境界)・橋台
         for s_e, abut in ((sa, k == 0), (sb, k == na - 1)):
             pe, ae = frames_at(P, [s_e])
@@ -247,12 +251,12 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
             ztop_p = zr - 0.35 - 0.9
             wpier = 1.8 if abut else 1.6
             c0 = pe[0] + (tn * (0.9 if s_e == sa else -0.9)) * (1 if abut else 0)
-            g.a("ug_stone", bevel=0.05).sbox((c0[0], c0[1], -1.6), (c0[0], c0[1], ztop_p), wpier * (1.0 if abut else 1.0), width + 0.2) if False else None
+            g.a(_sk, bevel=0.05).sbox((c0[0], c0[1], -1.6), (c0[0], c0[1], ztop_p), wpier * (1.0 if abut else 1.0), width + 0.2) if False else None
             c = pe[0]
-            g.a("ug_stone", bevel=0.05).sbox((c[0] - nr[0] * 0, c[1] - nr[1] * 0, -1.6), (c[0], c[1], ztop_p), wpier + (0.6 if abut else 0.0), width + 0.2) if False else None
+            g.a(_sk, bevel=0.05).sbox((c[0] - nr[0] * 0, c[1] - nr[1] * 0, -1.6), (c[0], c[1], ztop_p), wpier + (0.6 if abut else 0.0), width + 0.2) if False else None
             # sbox は点間の線分に沿って押し出されるため、橋脚は線分(c-nr*w/2 → c+nr*w/2)の鉛直壁として作る
             a_, b_ = c - nr * (width / 2 + 0.1), c + nr * (width / 2 + 0.1)
-            g.a("ug_stone", bevel=0.04).sbox((a_[0], a_[1], (ztop_p - 1.6) / 2), (b_[0], b_[1], (ztop_p - 1.6) / 2), wpier + (0.8 if abut else 0.0), ztop_p + 1.6)
+            g.a(_sk, bevel=0.04).sbox((a_[0], a_[1], (ztop_p - 1.6) / 2), (b_[0], b_[1], (ztop_p - 1.6) / 2), wpier + (0.8 if abut else 0.0), ztop_p + 1.6)
     g.build()
 
 
