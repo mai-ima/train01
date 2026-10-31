@@ -258,7 +258,7 @@ class Acc:
         return ob
 
 
-def np_mesh(name, V, T, mat, col="Station", colors=None, smooth=False):
+def np_mesh(name, V, T, mat, col="Station", colors=None, smooth=False, uvs=None):
     """Triangle mesh from numpy arrays (fast path for scatter geometry)."""
     me = bpy.data.meshes.new(name)
     me.from_pydata(V.astype(np.float32).tolist(), [], T.astype(np.int32).tolist())
@@ -266,6 +266,11 @@ def np_mesh(name, V, T, mat, col="Station", colors=None, smooth=False):
     if colors is not None:
         ca = me.color_attributes.new("Col", 'FLOAT_COLOR', 'POINT')
         ca.data.foreach_set("color", colors.astype(np.float32).ravel())
+    if uvs is not None:                         # 頂点ごとのUV(n,2)。ループへは頂点番号で引く
+        uvl = me.uv_layers.new(name="UV")
+        li = np.zeros(len(me.loops), dtype=np.int32)
+        me.loops.foreach_get("vertex_index", li)
+        uvl.data.foreach_set("uv", np.asarray(uvs, dtype=np.float32)[li].ravel())
     if smooth:
         me.shade_smooth()
     if mat is not None:
@@ -675,6 +680,31 @@ def mat_image(name, path, rough=0.45, alpha=False, emit=0.0, spec=0.4):
     if alpha:
         d['Alpha'] = t.outputs['Alpha']
     m.principled(**d)
+    return m.m
+
+
+def mat_conifer_card(name, path, gain=2.0, rough=0.6, trans=0.25):
+    """針葉樹の枝カード: アルファ付きスプレー画像 × 頂点カラー'Col'(木ごとの色味)。縁はアルファで抜く(三角ポリゴンの板に見えない)。"""
+    m = Mat(name)
+    img = bpy.data.images.load(path, check_existing=True)
+    t = m.node('ShaderNodeTexImage', image=img, interpolation='Linear', extension='CLIP')
+    m.set(t.inputs['Vector'], m.node('ShaderNodeTexCoord').outputs['UV'])
+    col = m.mix(1.0, t.outputs['Color'], m.attr_color("Col"), 'MULTIPLY')
+    col = m.mix(1.0, col, (gain, gain, gain), 'MULTIPLY')
+    p = m.node('ShaderNodeBsdfPrincipled')
+    m.setall(p, {'Base Color': col, 'Roughness': rough, 'Specular IOR Level': 0.15})
+    tl = m.node('ShaderNodeBsdfTranslucent')
+    m.set(tl.inputs['Color'], col)
+    mx = m.node('ShaderNodeMixShader')
+    m.set(mx.inputs[0], trans)
+    m.set(mx.inputs[1], p.outputs['BSDF'])
+    m.set(mx.inputs[2], tl.outputs['BSDF'])
+    tr = m.node('ShaderNodeBsdfTransparent')
+    mx2 = m.node('ShaderNodeMixShader')
+    m.set(mx2.inputs[0], t.outputs['Alpha'])
+    m.set(mx2.inputs[1], tr.outputs['BSDF'])
+    m.set(mx2.inputs[2], mx.outputs['Shader'])
+    m.finish(mx2.outputs['Shader'])
     return m.m
 
 

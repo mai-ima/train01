@@ -387,6 +387,8 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
     g.cyl((x, y, -0.1), (x0 + lean[0] * h * 0.9, y0 + lean[1] * h * 0.9, h * 0.9), 0.28, 0.07, seg=8)
     g.build()
     Vs, Ts, Cs, off = [], [], [], 0
+    CV_, CU_, CC_, CT_ = [], [], [], []
+    USE_CARDS = _os.path.exists(f"{lib.TEX}/conifer_spray.png") and not _os.environ.get("NO_CARDS")
     tiers = 24
     for t in range(tiers):
         f = t / (tiers - 1)
@@ -414,49 +416,88 @@ def sugi(x, y, h=14.0, r=2.0, seed=0):
         Vs.append(V)
         Cs.append(np.concatenate([Cc, np.ones((n, 1))], 1))
         off += n
-        # Q14: 放射状に垂れる枝(円錐面の代わりに見せる)。枝1本=曲線上の小さな針葉カードの列
-        for s3 in range(seg):
-            a3 = 2 * math.pi * (s3 + rng.uniform(-0.3, 0.3)) / seg
-            blen = rad * rng.uniform(0.85, 1.35)
-            sag = rng.uniform(0.12, 0.32)
-            nseg = 8
-            for q in range(1, nseg + 1):
-                fq = q / nseg
-                bx, by = x + math.cos(a3) * blen * fq, y + math.sin(a3) * blen * fq
-                bz = z0 + 0.35 - sag * fq * fq - 0.35 * fq
-                for sd in (-1, 1):
-                    tx, ty = -math.sin(a3) * sd, math.cos(a3) * sd
-                    wq = 0.062 * (1.1 - 0.5 * fq)      # 針葉らしく細く(三角の葉片感を減らす)
-                    Vc = np.array([(bx, by, bz), (bx + tx * wq, by + ty * wq, bz - 0.08),
-                                   (bx + math.cos(a3) * 0.12 + tx * wq * 0.5, by + math.sin(a3) * 0.12 + ty * wq * 0.5, bz - 0.30 - 0.16 * fq)])
-                    Cd = np.tile(cl * rng.uniform(0.8, 1.5), (3, 1))
-                    Cd[2] *= 0.7
+        if USE_CARDS:
+            # アルファ付き針葉スプレーの枝カード(1枝=2区間のクワッド。三角ポリゴンの板に見える問題の根本対策)。UVでアトラスの4種から選ぶ
+            for s3 in range(seg):
+                a3 = 2 * math.pi * (s3 + rng.uniform(-0.3, 0.3)) / seg
+                blen = rad * rng.uniform(0.95, 1.5) + 0.25
+                sag = rng.uniform(0.35, 0.9) * (0.6 + 0.6 * (1 - f))
+                wd = blen * rng.uniform(0.42, 0.6)
+                ca_, sa_ = math.cos(a3), math.sin(a3)
+                tx, ty = -sa_, ca_
+                k_at = rng.integers(0, 4)
+                u0, u1 = k_at / 4.0, (k_at + 1) / 4.0
+                if rng.random() < 0.5:
+                    u0, u1 = u1, u0
+                pts = []
+                for fq, fw in ((0.0, 0.55), (0.5, 1.0), (1.0, 0.75)):
+                    px_, py_ = x + ca_ * (0.12 + blen * fq), y + sa_ * (0.12 + blen * fq)
+                    pz_ = z0 + 0.3 - sag * fq ** 1.6
+                    pts.append((px_, py_, pz_, wd * fw * 0.5))
+                base = sum(len(v) for v in CV_)
+                Vq = []
+                Uq = []
+                for i_, (px_, py_, pz_, hw) in enumerate(pts):
+                    Vq += [(px_ - tx * hw, py_ - ty * hw, pz_), (px_ + tx * hw, py_ + ty * hw, pz_)]
+                    vv = i_ / 2.0
+                    Uq += [(u0, vv), (u1, vv)]
+                tq = base
+                CT_ += [(tq, tq + 1, tq + 3), (tq, tq + 3, tq + 2), (tq + 2, tq + 3, tq + 5), (tq + 2, tq + 5, tq + 4)]
+                CV_.append(np.array(Vq))
+                CU_.append(np.array(Uq))
+                cc = cl * rng.uniform(0.75, 1.35) * (1.0 if f >= dead_h else 0.0)
+                if f < dead_h:
+                    cc = np.array([0.10, 0.065, 0.035]) * rng.uniform(0.7, 1.2)
+                CC_.append(np.tile(np.append(cc, 1.0), (6, 1)))
+        else:
+            # Q14: 放射状に垂れる枝(円錐面の代わりに見せる)。枝1本=曲線上の小さな針葉カードの列
+            for s3 in range(seg):
+                a3 = 2 * math.pi * (s3 + rng.uniform(-0.3, 0.3)) / seg
+                blen = rad * rng.uniform(0.85, 1.35)
+                sag = rng.uniform(0.12, 0.32)
+                nseg = 8
+                for q in range(1, nseg + 1):
+                    fq = q / nseg
+                    bx, by = x + math.cos(a3) * blen * fq, y + math.sin(a3) * blen * fq
+                    bz = z0 + 0.35 - sag * fq * fq - 0.35 * fq
+                    for sd in (-1, 1):
+                        tx, ty = -math.sin(a3) * sd, math.cos(a3) * sd
+                        wq = 0.062 * (1.1 - 0.5 * fq)      # 針葉らしく細く(三角の葉片感を減らす)
+                        Vc = np.array([(bx, by, bz), (bx + tx * wq, by + ty * wq, bz - 0.08),
+                                       (bx + math.cos(a3) * 0.12 + tx * wq * 0.5, by + math.sin(a3) * 0.12 + ty * wq * 0.5, bz - 0.30 - 0.16 * fq)])
+                        Cd = np.tile(cl * rng.uniform(0.8, 1.5), (3, 1))
+                        Cd[2] *= 0.7
+                        Vs.append(Vc)
+                        Cs.append(np.concatenate([Cd, np.ones((3, 1))], 1))
+                        Ts += [(off, off + 1, off + 2), (off, off + 2, off + 1)]
+                        off += 3
+            # C17/Q14: 段の縁から垂れる細い針葉カード(円錐の滑らかな輪郭を崩し、枝先の房を出す)。下の段ほど長く、個体差あり
+            for s2 in range(seg):
+                for _k in range(9):
+                    a = 2 * math.pi * (s2 + rng.uniform(0, 1)) / seg
+                    u = rng.uniform(0.7, 1.15) if _k < 5 else rng.uniform(0.3, 0.8)      # 後半の房は円錐面の内側にも付け、平らな面を覆う
+                    rr = rad * u
+                    bz0 = z0 - 0.45 + (1.0 - min(u, 1.0)) * (ap[2] - (z0 - 0.45)) * 0.9
+                    bx, by, bz = x + math.cos(a) * rr, y + math.sin(a) * rr, bz0 + rng.uniform(-0.2, 0.15)
+                    ln = rng.uniform(0.12, 0.36) * (1.0 + 0.5 * (1 - f))      # Q14: 小さな針葉の房を多数(大きな破片状を避ける)
+                    wd = rng.uniform(0.03, 0.075)
+                    tx, ty = -math.sin(a), math.cos(a)
+                    Vc = np.array([(bx - tx * wd, by - ty * wd, bz), (bx + tx * wd, by + ty * wd, bz),
+                                   (bx + math.cos(a) * 0.12, by + math.sin(a) * 0.12, bz - ln)])
+                    Cd = np.tile(cl * rng.uniform(0.7, 1.7), (3, 1))
+                    Cd[2] *= 1.35 * rng.uniform(0.9, 1.5)                     # 針葉の先は明るく(暗緑のベタ面を避け、新芽の色を出す)
                     Vs.append(Vc)
                     Cs.append(np.concatenate([Cd, np.ones((3, 1))], 1))
                     Ts += [(off, off + 1, off + 2), (off, off + 2, off + 1)]
                     off += 3
-        # C17/Q14: 段の縁から垂れる細い針葉カード(円錐の滑らかな輪郭を崩し、枝先の房を出す)。下の段ほど長く、個体差あり
-        for s2 in range(seg):
-            for _k in range(9):
-                a = 2 * math.pi * (s2 + rng.uniform(0, 1)) / seg
-                u = rng.uniform(0.7, 1.15) if _k < 5 else rng.uniform(0.3, 0.8)      # 後半の房は円錐面の内側にも付け、平らな面を覆う
-                rr = rad * u
-                bz0 = z0 - 0.45 + (1.0 - min(u, 1.0)) * (ap[2] - (z0 - 0.45)) * 0.9
-                bx, by, bz = x + math.cos(a) * rr, y + math.sin(a) * rr, bz0 + rng.uniform(-0.2, 0.15)
-                ln = rng.uniform(0.12, 0.36) * (1.0 + 0.5 * (1 - f))      # Q14: 小さな針葉の房を多数(大きな破片状を避ける)
-                wd = rng.uniform(0.03, 0.075)
-                tx, ty = -math.sin(a), math.cos(a)
-                Vc = np.array([(bx - tx * wd, by - ty * wd, bz), (bx + tx * wd, by + ty * wd, bz),
-                               (bx + math.cos(a) * 0.12, by + math.sin(a) * 0.12, bz - ln)])
-                Cd = np.tile(cl * rng.uniform(0.7, 1.7), (3, 1))
-                Cd[2] *= 1.35 * rng.uniform(0.9, 1.5)                     # 針葉の先は明るく(暗緑のベタ面を避け、新芽の色を出す)
-                Vs.append(Vc)
-                Cs.append(np.concatenate([Cd, np.ones((3, 1))], 1))
-                Ts += [(off, off + 1, off + 2), (off, off + 2, off + 1)]
-                off += 3
     o = emit(f"sugi_{seed}", np.concatenate(Vs), np.array(Ts), np.concatenate(Cs), M["leaf"], "Trees")
     if o is not None:
         o.data.shade_smooth()
+    if USE_CARDS and CV_:
+        if "conifer" not in M:
+            M["conifer"] = lib.mat_conifer_card("conifer", f"{lib.TEX}/conifer_spray.png")
+        oc = lib.np_mesh(f"sugi_{seed}_cards", np.concatenate(CV_), np.array(CT_), M["conifer"], "Trees",
+                         colors=np.concatenate(CC_), uvs=np.concatenate(CU_))
 
 
 def bamboo_grove(x0, x1, y0, y1, n=120, seed=1):
