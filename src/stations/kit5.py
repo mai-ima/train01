@@ -1250,14 +1250,14 @@ def viaduct(P, s0, s1, name="viaduct", width=8.4, zfun=None, span=12.0):
     g.build()
 
 
-def _tetrapod(g, x, y, z, rz, sc=1.0, leg=0.95, r0=0.42, r1=0.26):
+def _tetrapod(g, x, y, z, rz, sc=1.0, leg=0.95, r0=0.42, r1=0.26, mat="k5_conc"):
     """テトラポッド: 中心から正四面体の4方向へ円錐台の脚。rz は鉛直軸まわりの回転。"""
     c, sn = math.cos(rz), math.sin(rz)
     for (dx, dy, dz) in ((1, 1, 1), (1, -1, -1), (-1, 1, -1), (-1, -1, 1)):
         d = np.array([dx, dy, dz], float) / math.sqrt(3.0)
         d = np.array([d[0] * c - d[1] * sn, d[0] * sn + d[1] * c, d[2]])
         p1 = np.array([x, y, z]) + d * leg * sc
-        g.a("k5_conc", bevel=0.0).cyl((x, y, z), tuple(p1), r0 * sc, r1 * sc, seg=8, caps=True)
+        g.a(mat, bevel=0.0).cyl((x, y, z), tuple(p1), r0 * sc, r1 * sc, seg=8, caps=True)
 
 
 def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
@@ -1270,9 +1270,14 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     rng = random.Random(3)
     if "k5_swall" not in M:      # C17: 護岸壁が緑青がかった一枚の無地面に見えた(監査)→暖灰の風化コンクリート(汚れ・塩害の流れ)+目地
         M["k5_swall"] = lib.mat_pbr("k5_swall", "Concrete031", scale=1.5, hsv=(0.5, 0.25, 1.3), tint=(0.86, 0.82, 0.74), tint_amt=0.6, bump=1.0, macro=0.6, dirt=1.0, stain=1.0, spec=0.08)
+    if "k5_moss" not in M:       # C17: ブロックが同色・新品(監査: 個体差・藻・潮染みが無い)→苔・藻つき個体と暗い個体を混ぜる
+        M["k5_moss"] = lib.mat_pbr("k5_moss", "Concrete031", scale=1.3, hsv=(0.5, 0.5, 1.25), tint=(0.40, 0.48, 0.30), tint_amt=0.8, bump=1.0, macro=0.6, dirt=1.0, stain=1.0, spec=0.1)
+        M["k5_conc_dk"] = lib.mat_pbr("k5_conc_dk", "Concrete031", scale=1.7, hsv=(0.5, 0.5, 1.0), tint=(0.72, 0.70, 0.64), tint_amt=0.65, bump=1.0, macro=0.6, dirt=1.0, stain=1.0, spec=0.1)
     for i in range(len(ss) - 1):
         p0, p1 = pos[i] + nrm[i] * side * 7.0, pos[i + 1] + nrm[i + 1] * side * 7.0
         g.a("k5_swall").sbox((p0[0], p0[1], h / 2 - 0.2), (p1[0], p1[1], h / 2 - 0.2), 1.0, h + 0.4)
+        w0b, w1b = pos[i] + nrm[i] * side * 7.53, pos[i + 1] + nrm[i + 1] * side * 7.53
+        g.a("k5_moss").sbox((w0b[0], w0b[1], 0.35), (w1b[0], w1b[1], 0.35), 0.08, 0.8)         # 干満帯の藻(足元の緑の汚れ)
         if i % 3 == 0:                                                                       # 伸縮目地(9mごとの縦の暗い溝。海側の面)
             if "k5_jt" not in M:
                 M["k5_jt"] = lib.mat_plain("k5_jt", (0.03, 0.03, 0.032), rough=0.7)
@@ -1285,7 +1290,7 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
             off = 9.0 + 1.7 * j + rng.uniform(-0.5, 0.5)
             q = pos[i] + nrm[i] * side * off + (pos[i + 1] - pos[i]) * rng.uniform(-0.3, 0.3)
             zq = 0.62 + (0.55 if j == 0 and rng.random() < 0.6 else 0.0)       # 壁寄りは一段積む
-            _tetrapod(g, q[0], q[1], zq, rng.uniform(0, 6.28), rng.uniform(0.75, 1.55))        # C17: 大小混在
+            _tetrapod(g, q[0], q[1], zq, rng.uniform(0, 6.28), rng.uniform(0.75, 1.55), mat=rng.choice(("k5_conc", "k5_conc", "k5_conc_dk", "k5_moss")))        # C17: 大小混在
             if rng.random() < 0.35:                                                            # 上に1個載せて2〜3段の山にする(監査: 単層の一列)
                 _tetrapod(g, q[0] + rng.uniform(-0.5, 0.5), q[1] + rng.uniform(-0.5, 0.5), zq + 0.8, rng.uniform(0, 6.28), rng.uniform(0.7, 1.1))      # Q25: 消波ブロックが立方体だった。テトラポッド(4脚)にする
         for _ in range(3):
