@@ -808,7 +808,7 @@ def zone_grass(cam, x0=-110, x1=110, y0=-70, y1=95, step=0.5, light=None):
     # 縁取りのススキ・背の高い草
     E_ = Q[ne & (nzq > 0.0)]
     if len(E_):
-        Vv, Tt, Cc = tufts(E_[:, :2], E_[:, 2], rng.uniform(0.7, 1.3, len(E_)), k=7, spread=0.2, wmean=0.03, cb=(0.10, 0.12, 0.04),
+        Vv, Tt, Cc = tufts(E_[:, :2], E_[:, 2], rng.uniform(0.45, 0.95, len(E_)), k=7, spread=0.2, wmean=0.021, cb=(0.10, 0.12, 0.04),
                            ct=(0.55, 0.50, 0.30), lean=0.45, seed=33, jit=0.4)
         emit("zsusuki", Vv, Tt, Cc, M["blade"])
     return len(Q)
