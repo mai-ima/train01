@@ -250,14 +250,15 @@ def build_hasa(cam):
 
 
 # ------------------------------------------------------------------ trees
-def blob(c, rad, rng, seg=16, rings=10, k=0.18):
+def blob(c, rad, rng, seg=16, rings=10, k=0.30):
     V, C = [], []
     for r in range(rings + 1):
         th = math.pi * r / rings
         for s in range(seg):
             ph = 2 * math.pi * s / seg
             d = Vector((math.sin(th) * math.cos(ph), math.sin(th) * math.sin(ph), math.cos(th)))
-            n = mn.noise(d * 1.8 + Vector((c[0] * 0.3, c[1] * 0.3, c[2] * 0.3)))
+            _o = Vector((c[0] * 0.3, c[1] * 0.3, c[2] * 0.3))
+            n = mn.noise(d * 1.8 + _o) + 0.5 * mn.noise(d * 4.5 + _o * 1.9)      # C17/Q14: 2段ノイズで房状の凸凹
             rr = rad * (1 + k * n)
             V.append((c[0] + d.x * rr * 1.0, c[1] + d.y * rr * 1.0, c[2] + d.z * rr * 0.8))
     return np.array(V), seg, rings
@@ -378,7 +379,7 @@ def zelkova(x, y, h=11.0, rad=5.2, seed=0, col_a=(0.07, 0.15, 0.03), col_b=(0.22
         a = rng.uniform(0, 6.28)
         br.append((h * 0.5 + k * 0.5, math.cos(a) * rad * 0.5, math.sin(a) * rad * 0.5, h * 0.8 + k * 0.3, 0.17))
     trunk(f"zelkova_{seed}_trunk", x, y, h * 0.65, 0.42, 0.25, br)
-    tree_canopy(f"zelkova_{seed}", (x, y, h * 0.85), rad, col_a, col_b, rng, nblobs=9, spread=1.0)
+    tree_canopy(f"zelkova_{seed}", (x, y, h * 0.85), rad, col_a, col_b, rng, nblobs=15, spread=1.35)      # C17/Q14: 9塊・集中→15塊・広めに散らして球状(ロリポップ)の輪郭を崩す
 
 
 def persimmon(x, y, seed=0, h=5.2, rad=2.6):
