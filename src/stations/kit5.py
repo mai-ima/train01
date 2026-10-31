@@ -931,7 +931,14 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
     # C17: 築堤の法尻に排水側溝(コンクリートU字溝)。築堤の付帯物がなく単調との監査(築堤65点)。盛土が低い所(zt<0.9)は付けない
     _ok = zt > 0.9
     for _sd in (-1, 1):
-        for _w, _z, _nm in ((0.7, 0.07, "gutter"), (0.34, 0.035, "gutter_in")):
+        _gg = G(f"{name}_gut{_sd}", "Props")      # C17: 側溝の縁(U字溝の両側壁)。平らな帯で深さが無いとの監査
+        for _i in range(N - 1):
+            if _ok[_i] and _ok[_i + 1]:
+                for _e in (-0.31, 0.31):
+                    _q0 = pos[_i] + nrm[_i] * (_sd * (toe + 0.55) + _e)
+                    _q1 = pos[_i + 1] + nrm[_i + 1] * (_sd * (toe + 0.55) + _e)
+                    _gg.a("k5_conc").sbox((_q0[0], _q0[1], 0.1), (_q1[0], _q1[1], 0.1), 0.1, 0.2)
+        for _w, _z, _nm in ((0.52, 0.02, "gutter_in"),):
             _runs, _cur = [], []
             for _i in range(N):
                 if _ok[_i]:
@@ -952,7 +959,7 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
                     _P[:, _c, 2] = _z
                 _id = np.arange(len(_ix) * 2).reshape(len(_ix), 2)
                 _T = np.concatenate([np.stack([_id[:-1, 0], _id[1:, 0], _id[1:, 1]], -1), np.stack([_id[:-1, 0], _id[1:, 1], _id[:-1, 1]], -1)])
-                np_mesh(f"{name}_{_nm}{_sd}_{_r}", _P.reshape(-1, 3), _T, M["k5_conc"] if _nm == "gutter" else M["ballast"], "Ground", smooth=False)
+                np_mesh(f"{name}_{_nm}{_sd}_{_r}", _P.reshape(-1, 3), _T, M["ballast"], "Ground", smooth=False)
     # C17: 築堤の法面にも草の房・ススキ(切通しと同方式)。盛土が低い所(zt<0.6)と裸地は避ける
     import veg as _veg
     gp, gh, gs = [], [], []
