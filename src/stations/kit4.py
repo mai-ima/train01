@@ -468,6 +468,14 @@ def struct_plan(ln, a, b, L):
 def run_items(P, items, zfun, nm, shift_vec=None, ends=None):
     for (kind, kw) in items:
         n = f"{nm}_{kind}_{int(kw.get('s0', kw.get('s', 0)))}"
+        try:                                                          # 検査用: 構造物の中央の世界座標と進行方向を表示(撮影カメラの決定に使う)
+            _s_ = 0.5 * (kw.get('s0', kw.get('s', 0)) + kw.get('s1', kw.get('s', 0)))
+            _Q, _ss = trackkit.resample(np.asarray(P, float), 1.0)
+            _i = int(min(max(_s_, 0), len(_Q) - 2))
+            _t = _Q[_i + 1] - _Q[_i]
+            print(f"STRUCT {n} kind={kind} mid=({_Q[_i][0]:.1f},{_Q[_i][1]:.1f}) dir=({_t[0]:.2f},{_t[1]:.2f}) s={kw.get('s0', kw.get('s', 0)):.0f}-{kw.get('s1', kw.get('s', 0)):.0f}", flush=True)
+        except Exception as _e:
+            print("STRUCT print failed", _e)
         if kind == "truss":
             kit5.truss_bridge(P, name=n, zfun=zfun, **kw)
         elif kind == "arch":
