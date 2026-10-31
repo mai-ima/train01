@@ -703,7 +703,7 @@ def world_landscape(cam):
     """世界用の遠景: 世界の外周に山並み、外側に遠景の地面。"""
     import veg
     from mathutils import noise as mn, Vector
-    hill = lib.mat_hill("hill_far_w", cam, far_dist=5000.0)
+    hill = lib.mat_hill("hill_far_w", cam, far_dist=5000.0, fog_max=0.72)      # C17: 遠景の山が霞で単色の灰色一枚に見えた(監査)→霞の上限を下げ、尾根・谷の陰影を残す
     C = np.array([540.0, 930.0])
     nth, nr = 360, 18
     th = np.linspace(0, 2 * np.pi, nth, endpoint=False)
@@ -714,7 +714,8 @@ def world_landscape(cam):
             n1 = mn.noise(Vector((math.cos(t) * 1.7, math.sin(t) * 1.7, 0.3)))
             n2 = mn.noise(Vector((math.cos(t) * 5.0, math.sin(t) * 5.0, 2.0)))
             n3 = mn.noise(Vector((math.cos(t) * 14.0 + r * 0.001, math.sin(t) * 14.0, 5.0)))
-            Hpk = 160 + 220 * (0.5 + 0.5 * math.sin(t - 0.4)) + 140 * n1 + 70 * n2 + 20 * n3
+            n4 = mn.noise(Vector((math.cos(t) * 40.0, math.sin(t) * 40.0, 9.0 + r * 0.0004)))
+            Hpk = 160 + 220 * (0.5 + 0.5 * math.sin(t - 0.4)) + 140 * n1 + 70 * n2 + 60 * n3 + 35 * (1.0 - 2.0 * abs(n4))      # C17: 尾根の細かい凹凸(稜線をぎざぎざに)
             fr = np.clip((r - 3300) / 1500.0, 0, 1)
             fo = np.clip((9000 - r) / 2500.0, 0, 1)
             h = max(0.0, Hpk) * (fr * fr * (3 - 2 * fr)) * fo

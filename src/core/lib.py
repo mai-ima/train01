@@ -770,13 +770,13 @@ def mat_bark(name, color=(0.10, 0.075, 0.055)):
     return m.m
 
 
-def mat_hill(name, cam_pos, haze=(0.62, 0.72, 0.82), near=(0.07, 0.15, 0.07), far_dist=600.0):
+def mat_hill(name, cam_pos, haze=(0.62, 0.72, 0.82), near=(0.07, 0.15, 0.07), far_dist=600.0, fog_max=0.88):
     m = Mat(name)
     # 根本対策: 霞は「描画中のカメラからの距離」で決める(Camera Data の View Distance)。
     # 旧実装は代表カメラ1台の位置を固定で焼き込んでおり、MULTICAM の他視点では丘が真っ白に霞んでいた。
     cd = m.node('ShaderNodeCameraData')
     dist = cd.outputs['View Distance']
-    fog = m.maprange(dist, 250.0, far_dist, 0.0, 0.88)
+    fog = m.maprange(dist, 250.0, far_dist, 0.0, fog_max)
     mott = m.ramp(m.noise(scale=0.08, detail=6, rough=0.7), [(0.3, (0.7, 0.8, 0.7)), (0.7, (1.4, 1.35, 1.1))])
     forest = m.ramp(m.noise(scale=0.35, detail=5), [(0.3, (0.018, 0.04, 0.02)), (0.7, (0.04, 0.08, 0.03))])   # 実在の森の反射率(0.03〜0.08)に合わせて暗く
     col = m.mix(1.0, forest, mott, 'MULTIPLY')
