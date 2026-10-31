@@ -980,6 +980,24 @@ def overbridge(P, s, name="overbridge", span=15.0, road_w=6.0, zh=6.2):
     a0, a1 = c - n * L2, c + n * L2
     g.a("k5_conc").sbox((a0[0], a0[1], zh - 0.12), (a1[0], a1[1], zh - 0.12), road_w + 0.9, 0.24)          # RC床版
     g.a("ug_asph").sbox((a0[0], a0[1], zh + 0.02), (a1[0], a1[1], zh + 0.02), road_w, 0.1)   # 舗装(アスファルト)
+    # 路面表示と経年(監査: 舗装が白線もわだちもない新品の板): 外側線・センターライン(破線)・わだち帯
+    if "k5_line" not in M:
+        M["k5_line"] = lib.mat_plain("k5_line", (0.62, 0.60, 0.52), rough=0.7)
+        M["k5_wear"] = lib.mat_plain("k5_wear", (0.035, 0.035, 0.037), rough=0.45)
+    for sg in (-1, 1):
+        e0, e1 = a0 + t * sg * (road_w / 2 - 0.28), a1 + t * sg * (road_w / 2 - 0.28)
+        g.a("k5_line").sbox((e0[0], e0[1], zh + 0.075), (e1[0], e1[1], zh + 0.075), 0.12, 0.02)
+        for lane in (-1, 1):
+            w0, w1 = a0 + t * sg * (road_w / 4) * 1.0, a1 + t * sg * (road_w / 4) * 1.0
+            for off in (-0.85, 0.85):
+                v0, v1 = w0 + t * off * 0.4, w1 + t * off * 0.4
+                g.a("k5_wear").sbox((v0[0], v0[1], zh + 0.074), (v1[0], v1[1], zh + 0.074), 0.55, 0.02)
+            break
+    nd = int(2 * L2 / 3.0)
+    for k in range(nd):
+        d0 = a0 + (a1 - a0) * (k * 3.0 / (2 * L2))
+        d1 = a0 + (a1 - a0) * ((k * 3.0 + 1.5) / (2 * L2))
+        g.a("k5_line").sbox((d0[0], d0[1], zh + 0.076), (d1[0], d1[1], zh + 0.076), 0.12, 0.02)
     gx = road_w / 2 - 0.15
     for sg in (-1, 1):                                                                                      # 鋼板桁(腹板+上下フランジ)×2
         q0, q1 = a0 + t * sg * gx, a1 + t * sg * gx
