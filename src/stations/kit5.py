@@ -1370,6 +1370,15 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
                 M["k5_jt"] = lib.mat_plain("k5_jt", (0.03, 0.03, 0.032), rough=0.7)
             j0, j1 = pos[i] + nrm[i] * side * 7.42, pos[i] + nrm[i] * side * 7.53
             g.a("k5_jt").sbox((j0[0], j0[1], h / 2 - 0.2), (j1[0], j1[1], h / 2 - 0.2), 0.07, h + 0.3)
+        _c0, _c1 = pos[i] + nrm[i] * side * 7.0, pos[i + 1] + nrm[i + 1] * side * 7.0
+        g.a("k5_swall").sbox((_c0[0], _c0[1], h + 0.22), (_c1[0], _c1[1], h + 0.22), 1.3, 0.14)      # C17: 壁の天端に笠木(壁より両側に0.15m張り出す)。壁が単純な直方体との監査
+        if i % 3 == 0:                                                                       # 陸側の面にも伸縮目地と水抜き穴(監査: 陸側が一枚板)
+            if "k5_jt" not in M:
+                M["k5_jt"] = lib.mat_plain("k5_jt", (0.03, 0.03, 0.032), rough=0.7)
+            _l0, _l1 = pos[i] + nrm[i] * side * 6.47, pos[i] + nrm[i] * side * 6.55
+            g.a("k5_jt").sbox((_l0[0], _l0[1], h / 2 - 0.2), (_l1[0], _l1[1], h / 2 - 0.2), 0.07, h + 0.3)
+            _wp = pos[i] + (pos[i + 1] - pos[i]) * 0.5 + nrm[i] * side * 6.5
+            g.a("k5_jt").sbox((_wp[0], _wp[1], 0.45), (_wp[0] + 0.0, _wp[1] + 0.0, 0.45), 0.16, 0.16)      # 水抜き穴(小さな暗い角穴)
         w0, w1 = pos[i] + nrm[i] * side * 7.55, pos[i + 1] + nrm[i + 1] * side * 7.55
         g.a("k5_swall").sbox((w0[0], w0[1], h + 0.05), (w1[0], w1[1], h + 0.05), 0.3, 0.7)           # Q25/C17: 波返し(海側へ張り出す立ち上がり)。護岸が白い箱だった(監査)
         for j in range(5):
