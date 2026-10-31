@@ -83,7 +83,7 @@ def _cards(c, br, nr, bc, n, conif=False):
         a0 = nr.uniform(0, 6.28)
         u = t1 * math.cos(a0) + t2 * math.sin(a0)
         v = -t1 * math.sin(a0) + t2 * math.cos(a0)
-        sz = nr.uniform(0.28, 0.55)
+        sz = nr.uniform(0.16, 0.32)       # C17/Q14: 近景で大きな平らな三角片の寄せ集めに見えた(gt4)→小さくして数を増やす
         V += [p - u * sz * 0.5, p + u * sz * 0.5, p + v * sz + d * 0.04]
         sh = nr.uniform(0.0, 1.0) * (0.4 + 0.6 * (d[2] * 0.5 + 0.5))
         col = np.array(bc) * (0.95 + 1.6 * sh) * nr.uniform(0.85, 1.35)
@@ -274,7 +274,7 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                                 bc = np.array([0.100, 0.170, 0.045]) * rng.uniform(0.8, 1.3)
                             sh = np.clip((Vb[:, 2] - z) / (hc * 2.0 + 1e-3), 0, 1)[:, None]
                             tc.append(np.concatenate([bc[None, :] * (0.55 + 0.9 * sh) * nr_.uniform(0.7, 1.35, (len(Vb), 1)), np.ones((len(Vb), 1))], 1))
-                            cv, ct_, cc_ = _cards(c, rl, nr_, bc * 1.5, max(60, int(420 * rl * rl)), conif)
+                            cv, ct_, cc_ = _cards(c, rl, nr_, bc * 1.5, max(120, int(1100 * rl * rl)), conif)
                             base2 = sum(len(v) for v in tv)
                             tv.append(cv)
                             tt += [(base2 + a, base2 + b, base2 + c2) for (a, b, c2) in ct_]
