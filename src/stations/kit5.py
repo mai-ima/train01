@@ -1169,6 +1169,10 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
     if "k5_wood" not in M:      # 木橋の部材が無地の暗褐色(監査: 木造風に見えない・新品): 板目の実写PBRで風化させ、水際は暗く湿らせる
         M["k5_wood"] = lib.mat_pbr("k5_wood", "Planks023A", scale=0.9, hsv=(0.5, 1.1, 1.6), tint=(0.66, 0.42, 0.24), tint_amt=0.9, bump=1.2, macro=0.7, dirt=0.6, stain=0.6, spec=0.1)
         M["k5_wood_wet"] = lib.mat_pbr("k5_wood_wet", "Planks023A", scale=0.9, tint=(0.25, 0.26, 0.22), tint_amt=0.9, bump=1.2, macro=0.4, dirt=0.9, stain=0.9, spec=0.3)
+    if "k5_wood_gr" not in M:      # C17: 経年(監査: 木部が新品で均一)→日焼けして灰白化した古材・黒ずんだ古材・苔の付いた根元を混ぜる
+        M["k5_wood_gr"] = lib.mat_pbr("k5_wood_gr", "Planks023A", scale=0.9, hsv=(0.5, 0.5, 1.6), tint=(0.62, 0.58, 0.50), tint_amt=0.85, bump=1.2, macro=0.7, dirt=0.8, stain=0.8, spec=0.08)
+        M["k5_wood_dk"] = lib.mat_pbr("k5_wood_dk", "Planks023A", scale=0.9, hsv=(0.5, 0.9, 1.0), tint=(0.34, 0.24, 0.16), tint_amt=0.9, bump=1.2, macro=0.6, dirt=1.0, stain=1.0, spec=0.12)
+        M["k5_wood_moss"] = lib.mat_pbr("k5_wood_moss", "Planks023A", scale=0.9, hsv=(0.5, 0.6, 1.1), tint=(0.28, 0.36, 0.20), tint_amt=0.85, bump=1.2, macro=0.6, dirt=0.9, stain=0.9, spec=0.1)
     ss = np.arange(s0, s1 + 0.5, 3.0)
     pos, ang = frames_at(P, ss)
     zs = np.zeros(len(ss)) if zfun is None else zfun(ss)
@@ -1177,7 +1181,9 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
         for sg in (-1, 1):
             p = pos[i] + nrm[i] * sg * width / 2
             _pw = 0.19 + 0.05 * ((i * 5 + (sg > 0) * 3) % 4) / 3.0
-            g.a("k5_wood", bevel=0.01).box(p[0] - _pw, p[0] + _pw, p[1] - _pw, p[1] + _pw, -2.0, zs[i] - 0.3)
+            _pm = ("k5_wood", "k5_wood_gr", "k5_wood", "k5_wood_dk", "k5_wood_gr")[(i * 7 + (sg > 0) * 2) % 5]
+            g.a(_pm, bevel=0.01).box(p[0] - _pw, p[0] + _pw, p[1] - _pw, p[1] + _pw, -2.0, zs[i] - 0.3)
+            g.a("k5_wood_moss").box(p[0] - _pw - 0.01, p[0] + _pw + 0.01, p[1] - _pw - 0.01, p[1] + _pw + 0.01, -0.5, 0.15 + 0.2 * ((i * 3 + sg) % 3))      # 水際の苔
         a, b = pos[i] + nrm[i] * width / 2, pos[i] - nrm[i] * width / 2
         g.a("k5_wood").sbox((a[0], a[1], zs[i] - 0.4), (b[0], b[1], zs[i] - 0.4), 0.3, 0.3)
         # X字の筋交い(全ベント)と、水際の湿った帯・杭頭の笠木
