@@ -1289,7 +1289,9 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     # 500m帯は曲線の内側で自己交差して遠景に細い暗い筋が出るが、他案より破綻が少ない(未達: 筋の除去)。
     # 護岸の足元に泡の帯(不透明・水面より少し上。透過する水面と重ねない)。監査で「汀線・泡が無い」(水面系で最低点)
     fpts = [tuple(p + n * side * 8.6) for p, n in zip(pos[::3], nrm[::3])]
-    core.ribbon(name + "_foam", fpts, 1.6, M["k5_foam"], z0=0.045, rut=False, col="Ground")
+    if "k5_shore" not in M:      # C17: 泡帯が単色の白い平面に見えた(監査)→濡れた暗い砂利の汀(実写PBR)にする
+        M["k5_shore"] = lib.mat_pbr("k5_shore", "Ground110", scale=1.4, tint=(0.20, 0.21, 0.20), tint_amt=0.8, bump=1.2, macro=0.5, spec=0.35)
+    core.ribbon(name + "_foam", fpts, 2.4, M["k5_shore"], z0=0.045, rut=False, col="Ground")
     sea_w = 500.0
     ss_sea = np.arange(s0 - 120.0, s1 + 120.5, 9.0)
     pos_s, ang_s = frames_at(P, ss_sea)
