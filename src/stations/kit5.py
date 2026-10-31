@@ -1268,11 +1268,18 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     pos, ang = frames_at(P, ss)
     nrm = np.stack([-np.sin(ang), np.cos(ang)], 1)
     rng = random.Random(3)
+    if "k5_swall" not in M:      # C17: 護岸壁が緑青がかった一枚の無地面に見えた(監査)→暖灰の風化コンクリート(汚れ・塩害の流れ)+目地
+        M["k5_swall"] = lib.mat_pbr("k5_swall", "Concrete031", scale=1.5, hsv=(0.5, 0.25, 1.3), tint=(0.86, 0.82, 0.74), tint_amt=0.6, bump=1.0, macro=0.6, dirt=1.0, stain=1.0, spec=0.08)
     for i in range(len(ss) - 1):
         p0, p1 = pos[i] + nrm[i] * side * 7.0, pos[i + 1] + nrm[i + 1] * side * 7.0
-        g.a("k5_conc").sbox((p0[0], p0[1], h / 2 - 0.2), (p1[0], p1[1], h / 2 - 0.2), 1.0, h + 0.4)
+        g.a("k5_swall").sbox((p0[0], p0[1], h / 2 - 0.2), (p1[0], p1[1], h / 2 - 0.2), 1.0, h + 0.4)
+        if i % 3 == 0:                                                                       # 伸縮目地(9mごとの縦の暗い溝。海側の面)
+            if "k5_jt" not in M:
+                M["k5_jt"] = lib.mat_plain("k5_jt", (0.03, 0.03, 0.032), rough=0.7)
+            j0, j1 = pos[i] + nrm[i] * side * 7.42, pos[i] + nrm[i] * side * 7.53
+            g.a("k5_jt").sbox((j0[0], j0[1], h / 2 - 0.2), (j1[0], j1[1], h / 2 - 0.2), 0.07, h + 0.3)
         w0, w1 = pos[i] + nrm[i] * side * 7.55, pos[i + 1] + nrm[i + 1] * side * 7.55
-        g.a("k5_conc").sbox((w0[0], w0[1], h + 0.05), (w1[0], w1[1], h + 0.05), 0.3, 0.7)           # Q25/C17: 波返し(海側へ張り出す立ち上がり)。護岸が白い箱だった(監査)
+        g.a("k5_swall").sbox((w0[0], w0[1], h + 0.05), (w1[0], w1[1], h + 0.05), 0.3, 0.7)           # Q25/C17: 波返し(海側へ張り出す立ち上がり)。護岸が白い箱だった(監査)
         for j in range(4):
             # 乱積み: 沖側ほど低く、位置を散らして2〜3層(下層は広く、上層は壁寄り)。捨石を足元に敷く
             off = 9.0 + 1.7 * j + rng.uniform(-0.5, 0.5)
