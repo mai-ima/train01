@@ -1192,6 +1192,8 @@ def viaduct(P, s0, s1, name="viaduct", width=8.4, zfun=None, span=12.0):
     """RC高架橋(ラーメン高架): 橋脚+梁+床版+防音壁。新線用。"""
     mats5()
     g = G(name, "Props")
+    if "k5_conc_v" not in M:      # 桁・橋脚の側面が緑青の単色ベタ面との監査指摘: 彩度を落とし、打継ぎの汚れ・斑を強める
+        M["k5_conc_v"] = lib.mat_pbr("k5_conc_v", "Concrete031", scale=2.0, hsv=(0.5, 0.3, 1.45), tint=(0.94, 0.91, 0.85), tint_amt=0.5, bump=0.9, macro=0.55, dirt=0.9, stain=0.9, spec=0.1)
     ss = np.arange(s0, s1 + 0.5, span)
     if ss[-1] < s1 - 0.5:
         ss = np.r_[ss, s1]
@@ -1204,28 +1206,28 @@ def viaduct(P, s0, s1, name="viaduct", width=8.4, zfun=None, span=12.0):
         if top > 1.0:
             for sg in (-1, 1):
                 p = pos[i] + nrm[i] * sg * width * 0.27
-                g.a("k5_conc", bevel=0.05).boxc(p[0], p[1], top / 2 - 0.3, 1.1, 1.1, top + 0.6, rz=float(ang[i]))
+                g.a("k5_conc_v", bevel=0.05).boxc(p[0], p[1], top / 2 - 0.3, 1.1 + 0.25 * ((i * 7) % 3) / 2.0, 1.1 + 0.2 * ((i * 5) % 3) / 2.0, top + 0.6, rz=float(ang[i]))
             a, b = pos[i] + nrm[i] * width * 0.5, pos[i] - nrm[i] * width * 0.5
-            g.a("k5_conc", bevel=0.04).sbox((a[0], a[1], top + 0.1), (b[0], b[1], top + 0.1), 1.2, 0.7)
+            g.a("k5_conc_v", bevel=0.04).sbox((a[0], a[1], top + 0.1), (b[0], b[1], top + 0.1), 1.2, 0.7)
     for i in range(len(ss) - 1):
         a0, a1 = pos[i], pos[i + 1]
-        g.a("k5_conc").sbox((a0[0], a0[1], zs[i] - 0.55), (a1[0], a1[1], zs[i + 1] - 0.55), width, 0.5)
+        g.a("k5_conc_v").sbox((a0[0], a0[1], zs[i] - 0.55), (a1[0], a1[1], zs[i + 1] - 0.55), width, 0.5)
         for sg in (-1, 1):
             p0, p1 = a0 + nrm[i] * sg * width / 2, a1 + nrm[i + 1] * sg * width / 2
-            g.a("k5_conc").sbox((p0[0], p0[1], zs[i] + 0.1), (p1[0], p1[1], zs[i + 1] + 0.1), 0.3, 1.1)
+            g.a("k5_conc_v").sbox((p0[0], p0[1], zs[i] + 0.1), (p1[0], p1[1], zs[i + 1] + 0.1), 0.3, 1.1)
             g.a("k5_steel").sbox((p0[0], p0[1], zs[i] + 0.9), (p1[0], p1[1], zs[i + 1] + 0.9), 0.1, 0.5)      # 防音壁の板を高欄の上面(z+0.65)に接合(浮いて空が透けていた: 監査)
     # C17: 桁の両端が草地から板のように立ち上がっていた(高架桁橋7視点の目視)。橋台の背面壁と段状の翼壁を付ける
     for e, outward in ((0, -1.0), (len(ss) - 1, 1.0)):
         o = tng[e] * outward
         hb = max(zs[e], 0.0) + 0.5
         b0, b1 = pos[e] - nrm[e] * (width / 2 + 0.5), pos[e] + nrm[e] * (width / 2 + 0.5)
-        g.a("k5_conc").sbox((b0[0], b0[1], hb / 2 - 0.3), (b1[0], b1[1], hb / 2 - 0.3), 0.7, hb + 0.6)      # 橋台背面壁
+        g.a("k5_conc_v").sbox((b0[0], b0[1], hb / 2 - 0.3), (b1[0], b1[1], hb / 2 - 0.3), 0.7, hb + 0.6)      # 橋台背面壁
         for sg in (-1, 1):
             for k in range(4):                                                                              # 翼壁(沖へ段状に低くなる)
                 q0 = pos[e] + nrm[e] * sg * (width / 2 + 0.4) + o * (1.5 * k)
                 q1 = q0 + o * 1.5
                 hk = max(hb * (1.0 - 0.22 * k), 0.4)
-                g.a("k5_conc").sbox((q0[0], q0[1], hk / 2 - 0.3), (q1[0], q1[1], hk / 2 - 0.3), 0.35, hk + 0.6)
+                g.a("k5_conc_v").sbox((q0[0], q0[1], hk / 2 - 0.3), (q1[0], q1[1], hk / 2 - 0.3), 0.35, hk + 0.6)
     g.build()
 
 
