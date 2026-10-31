@@ -1207,6 +1207,16 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
         for sg in (-1, 1):      # Q25: 手すりに支柱が無く細い線だけが浮いて見えていた
             q = pos[i] + nrm[i] * sg * (width / 2 + 0.25)
             g.a("k5_wood").box(q[0] - 0.06, q[0] + 0.06, q[1] - 0.06, q[1] + 0.06, zs[i] - 0.3, zs[i] + 0.78)
+    for e, outw in ((0, -1.0), (len(ss) - 1, 1.0)):      # C17: 高欄が橋の端で唐突に始まっていた(監査)→盛土の上へ6m延長(親柱+手すり2段)
+        _t2 = np.array([math.cos(ang[e]), math.sin(ang[e])]) * outw
+        for sg in (-1, 1):
+            _a0 = pos[e] + nrm[e] * sg * (width / 2 + 0.25)
+            _a1 = _a0 + _t2 * 6.0
+            for _k in range(1, 4):
+                _q = _a0 + _t2 * (2.0 * _k)
+                g.a("k5_wood").box(_q[0] - 0.06, _q[0] + 0.06, _q[1] - 0.06, _q[1] + 0.06, zs[e] - 0.3, zs[e] + 0.78)
+            g.a("k5_wood").sbox((_a0[0], _a0[1], zs[e] + 0.7), (_a1[0], _a1[1], zs[e] + 0.7), 0.08, 0.1)
+            g.a("k5_wood").sbox((_a0[0], _a0[1], zs[e] + 0.35), (_a1[0], _a1[1], zs[e] + 0.35), 0.06, 0.08)
     for e, outw in ((0, -1.0), (len(ss) - 1, 1.0)):      # C17: 取付盛土の端が口を開けた黒い三日月に見えた(監査)→両端に石積みの橋台(盛土を抱く壁)を立てる
         _t = np.array([math.cos(ang[e]), math.sin(ang[e])]) * outw
         _c = pos[e] + _t * 0.4
