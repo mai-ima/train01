@@ -61,9 +61,14 @@ def mats5():
                                              tint_a=(0.98, 0.88, 0.48), tint_b=(0.29, 0.21, 0.12), bump=0.8, macro=0.3,
                                              hsv_a=(0.49, 0.62, 0.78), spec=0.0)
         # 築堤の法面は周囲の草地と同じ明るさに(周囲より暗い緑の板が地面に載って見えるとの監査指摘 C17)
+        def _emb_var(m):
+            big = m.ramp(m.noise(scale=0.05, detail=3, rough=0.55), [(0.30, (0.78, 0.84, 0.60)), (0.70, (1.14, 1.08, 0.86))])      # 数十m: 枯れ草の黄色↔濃い緑
+            mid = m.ramp(m.noise(scale=0.45, detail=4, rough=0.6), [(0.35, (0.86, 0.90, 0.78)), (0.65, (1.08, 1.05, 0.94))])      # 数m: 斑
+            return m.mix(1.0, big, mid, 'MULTIPLY')
         M["k5_embsoil"] = lib.mat_pbr_blend("k5_embsoil", "Grass004", "Ground110", scale_a=1.6, scale_b=2.4, mask=_hill_mask,
                                             tint_a=(1.0, 0.95, 0.52), tint_b=(0.29, 0.21, 0.12), bump=0.8, macro=0.3,
-                                            hsv_a=(0.5, 0.78, 1.0), spec=0.0)
+                                            hsv_a=(0.5, 0.78, 1.0), spec=0.0,
+                                            extra_dark=_emb_var)      # C17: 法面が単色のベタ面(監査: 築堤の質感66)→数m〜数十mの2スケールで枯れ草寄り/濃い草寄りの色むら
         M["k5_pitch"] = lib.mat_pbr("k5_pitch", "Bricks102", scale=2.3, tint=(0.5, 0.46, 0.4), tint_amt=0.7, bump=1.7, bump_dist=0.035, macro=0.75, dirt=0.95, stain=0.85, spec=0.12)      # 法面の石張り(C17: 経年を強める=水垢・色むら): 擁壁用より小粒で暗く、泥汚れ
         for _gk, _tn in enumerate(((0.62, 0.55, 0.44), (0.42, 0.40, 0.37), (0.55, 0.50, 0.46))):      # 石ブロックの色味違い(砂岩・安山岩・やや赤い石)
             M[f"k5_blk{_gk}"] = lib.mat_pbr(f"k5_blk{_gk}", "Bricks102", scale=1.3, tint=_tn, tint_amt=0.85, bump=1.2, macro=0.6, dirt=0.9, stain=0.8, spec=0.1)
