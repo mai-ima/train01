@@ -260,11 +260,12 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
             a_, b_ = c - nr * (width / 2 + 0.1), c + nr * (width / 2 + 0.1)
             g.a(_sk, bevel=0.04).sbox((a_[0], a_[1], (ztop_p - 1.6) / 2), (b_[0], b_[1], (ztop_p - 1.6) / 2), wpier + (0.8 if abut else 0.0), ztop_p + 1.6)
             # 根固めの張り出し(水面すれすれの基礎の段)と、水線の濡れ染み帯(C17: 橋脚が箱のまま水に刺さる/経年が一様との監査指摘)
-            if "k5_wet" not in M:
-                M["k5_wet"] = lib.mat_plain("k5_wet", (0.055, 0.05, 0.04), rough=0.35)
+            _wk = f"{_sk}_wet"     # 水線帯は無地の黒でなく、石目を残して暗く湿らせた石(黒い板に見えるとの監査指摘)
+            if _wk not in M:
+                M[_wk] = lib.mat_pbr(_wk, "Bricks102", scale=1.8, tint=(0.30, 0.34, 0.28), tint_amt=0.85, bump=1.4, bump_dist=0.03, macro=0.5, dirt=0.8, stain=0.85, spec=0.35, rot=(0, 0, -float(ang[len(ang) // 2])))
             _ae, _be = a_ - nr * 0.3, b_ + nr * 0.3
             g.a(_sk, bevel=0.04).sbox((_ae[0], _ae[1], -0.3), (_be[0], _be[1], -0.3), wpier + 0.7, 0.9)
-            g.a("k5_wet").sbox((a_[0], a_[1], 0.55), (b_[0], b_[1], 0.55), wpier + (0.8 if abut else 0.0) + 0.05, 0.8)
+            g.a(_wk).sbox((a_[0], a_[1], 0.55), (b_[0], b_[1], 0.55), wpier + (0.8 if abut else 0.0) + 0.03, 0.8)
     g.build()
 
 
@@ -1194,7 +1195,7 @@ def viaduct(P, s0, s1, name="viaduct", width=8.4, zfun=None, span=12.0):
         for sg in (-1, 1):
             p0, p1 = a0 + nrm[i] * sg * width / 2, a1 + nrm[i + 1] * sg * width / 2
             g.a("k5_conc").sbox((p0[0], p0[1], zs[i] + 0.1), (p1[0], p1[1], zs[i + 1] + 0.1), 0.3, 1.1)
-            g.a("k5_steel").sbox((p0[0], p0[1], zs[i] + 1.15), (p1[0], p1[1], zs[i + 1] + 1.15), 0.08, 0.5)
+            g.a("k5_steel").sbox((p0[0], p0[1], zs[i] + 0.9), (p1[0], p1[1], zs[i + 1] + 0.9), 0.1, 0.5)      # 防音壁の板を高欄の上面(z+0.65)に接合(浮いて空が透けていた: 監査)
     # C17: 桁の両端が草地から板のように立ち上がっていた(高架桁橋7視点の目視)。橋台の背面壁と段状の翼壁を付ける
     for e, outward in ((0, -1.0), (len(ss) - 1, 1.0)):
         o = tng[e] * outward
