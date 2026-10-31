@@ -259,6 +259,12 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
             # sbox は点間の線分に沿って押し出されるため、橋脚は線分(c-nr*w/2 → c+nr*w/2)の鉛直壁として作る
             a_, b_ = c - nr * (width / 2 + 0.1), c + nr * (width / 2 + 0.1)
             g.a(_sk, bevel=0.04).sbox((a_[0], a_[1], (ztop_p - 1.6) / 2), (b_[0], b_[1], (ztop_p - 1.6) / 2), wpier + (0.8 if abut else 0.0), ztop_p + 1.6)
+            # 根固めの張り出し(水面すれすれの基礎の段)と、水線の濡れ染み帯(C17: 橋脚が箱のまま水に刺さる/経年が一様との監査指摘)
+            if "k5_wet" not in M:
+                M["k5_wet"] = lib.mat_plain("k5_wet", (0.055, 0.05, 0.04), rough=0.35)
+            _ae, _be = a_ - nr * 0.3, b_ + nr * 0.3
+            g.a(_sk, bevel=0.04).sbox((_ae[0], _ae[1], -0.3), (_be[0], _be[1], -0.3), wpier + 0.7, 0.9)
+            g.a("k5_wet").sbox((a_[0], a_[1], 0.55), (b_[0], b_[1], 0.55), wpier + (0.8 if abut else 0.0) + 0.05, 0.8)
     g.build()
 
 
