@@ -99,6 +99,8 @@ def truss_bridge(P, s0, s1, name="truss", h=7.5, width=7.0, zfun=None):
     """鉄製ワーレントラス(下路式)。"""
     mats5()
     g = G(name, "Props")
+    if "ug_stone_trp" not in M:     # 橋脚の石目が細かすぎる(第1段階監査)ため大きめの石積みにする
+        M["ug_stone_trp"] = lib.mat_pbr("ug_stone_trp", "Bricks102", scale=3.2, tint=(0.66, 0.62, 0.54), tint_amt=0.6, bump=1.4, bump_dist=0.03, macro=0.5, dirt=0.8, stain=0.85, spec=0.12)
     L = s1 - s0
     nb = max(2, int(L / 14.0))
     ss = np.linspace(s0, s1, nb + 1)
@@ -166,7 +168,7 @@ def truss_bridge(P, s0, s1, name="truss", h=7.5, width=7.0, zfun=None):
         # 橋台(石積み)と支承
         for sgn in (-1, 1):
             p = pos[k] + nrm[k] * sgn * (width / 2)
-            g.a("ug_stone", bevel=0.05).box(p[0] - 1.4, p[0] + 1.4, p[1] - 1.4, p[1] + 1.4, -2.5, zb - 0.4)
+            g.a("ug_stone_trp", bevel=0.05).box(p[0] - 1.4, p[0] + 1.4, p[1] - 1.4, p[1] + 1.4, -2.5, zb - 0.4)
             g.a("iron_black").box(p[0] - 0.5, p[0] + 0.5, p[1] - 0.5, p[1] + 0.5, zb - 0.5, zb - 0.3)
     # 縦桁・床板
     for sgn in (-0.9, 0.9):
@@ -178,7 +180,7 @@ def truss_bridge(P, s0, s1, name="truss", h=7.5, width=7.0, zfun=None):
     for k in range(1, nb, 2):
         for sgn in (-1, 1):
             p = pos[k] + nrm[k] * sgn * (width / 2 - 0.3)
-            g.a("ug_stone", bevel=0.05).box(p[0] - 1.0, p[0] + 1.0, p[1] - 1.0, p[1] + 1.0, -2.5, zs[k] + zdeck - 0.5)
+            g.a("ug_stone_trp", bevel=0.05).box(p[0] - 1.0, p[0] + 1.0, p[1] - 1.0, p[1] + 1.0, -2.5, zs[k] + zdeck - 0.5)
     g.build()
 
 
