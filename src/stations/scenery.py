@@ -156,6 +156,7 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
         lv = []                  # 畦
         tv, tt, tc = [], [], []  # 樹木
         pv = []                  # 柵
+        gp_, gh_, gs_ = [], [], []   # 沿線の地面草(位置・高さ・ススキか)
 
         def ok(i, off, clear):
             x, y = Pr[i, 0] + nrm[i, 0] * off, Pr[i, 1] + nrm[i, 1] * off
@@ -290,6 +291,17 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
                         tc.append(np.tile(np.array([0.030, 0.020, 0.014, 1.0]), (8, 1)))
                         total["trees"] += 1
                 j += max(1, int(rng.uniform(2, 9)))
+            # C17: 沿線の地面草(草地が低周波のにじんだ塗りに見えた=近景の草ジオメトリが駅間に無かった)。線路際ほど密、離れるほど疎
+            if GROUND_TUFTS:
+                for j in range(22, n - 22, 2):
+                    for _ in range(int(rng.uniform(14.0, 28.0))):
+                        off = side * (3.6 + 26.0 * rng.random() ** 1.7)
+                        q = ok(j, off, 4.0)
+                        if q is None:
+                            continue
+                        gp_.append((q[0] + rng.uniform(-0.9, 0.9), q[1] + rng.uniform(-0.9, 0.9), 0.0))
+                        gh_.append(0.16 + 0.42 * rng.random() ** 1.5)
+                        gs_.append(rng.random() < 0.06)
             # 柵(線路際、区間でとぎれる)
             j = 22
             while j < n - 22:
@@ -317,6 +329,15 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
         if tv:
             import veg
             veg.np_mesh(f"scn_trees_{ln}_{a}_{b}", np.concatenate(tv), np.array(tt), M["leaf"], "Trees", colors=np.concatenate(tc), smooth=True)
+        if gp_:
+            import veg as _vg
+            _gp, _gh, _gs = np.array(gp_), np.array(gh_), np.array(gs_)
+            for _nm, _m, _kw in (("tuft", ~_gs, dict(k=6, spread=0.15, wmean=0.024, cb=(0.06, 0.11, 0.022), ct=(0.25, 0.30, 0.08))),
+                                 ("susuki", _gs, dict(k=7, spread=0.2, wmean=0.017, cb=(0.10, 0.12, 0.04), ct=(0.55, 0.50, 0.30), lean=0.45, jit=0.4))):
+                if _m.any():
+                    _Vv, _Tt, _Cc = _vg.tufts(_gp[_m][:, :2], _gp[_m][:, 2], _gh[_m] * (1.5 if _nm == "susuki" else 1.0), seed=sum(map(ord, f"{a}{b}")) % 977 + 5, **_kw)
+                    _vg.emit(f"scn_gtuft_{_nm}_{ln}_{a}_{b}", _Vv, _Tt, _Cc, M["blade"])
+            total["gtufts"] = total.get("gtufts", 0) + len(gp_)
         if pv or lv:
             g = G(f"scn_fence_{ln}_{a}_{b}", "Props")
             for (p0, p1) in pv:
@@ -332,6 +353,7 @@ def link_scenery(edges, struct_plan, station_origin, town_of, verbose=True):
     return total
 
 
+GROUND_TUFTS = __import__('os').environ.get('LINK_TUFTS', '1') != '0'      # C17: 沿線の地面草(LINK_TUFTS=0 で無効)
 _FC = []
 _REJ = __import__('collections').Counter()
 
