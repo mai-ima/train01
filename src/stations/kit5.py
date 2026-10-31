@@ -935,8 +935,8 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
         for _i in range(N - 1):
             if _ok[_i] and _ok[_i + 1]:
                 for _e in (-0.31, 0.31):
-                    _q0 = pos[_i] + nrm[_i] * (_sd * (toe + 0.55) + _e)
-                    _q1 = pos[_i + 1] + nrm[_i + 1] * (_sd * (toe + 0.55) + _e)
+                    _q0 = pos[_i] + nrm[_i] * (_sd * (toe + 0.55) + _e + 0.22 * math.sin(0.11 * _i + _sd))
+                    _q1 = pos[_i + 1] + nrm[_i + 1] * (_sd * (toe + 0.55) + _e + 0.22 * math.sin(0.11 * (_i + 1) + _sd))
                     _gg.a("k5_conc").sbox((_q0[0], _q0[1], 0.1), (_q1[0], _q1[1], 0.1), 0.1, 0.2)
         for _w, _z, _nm in ((0.52, 0.02, "gutter_in"),):
             _runs, _cur = [], []
@@ -951,7 +951,7 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
                 if len(_run) < 4:
                     continue
                 _ix = np.array(_run)
-                _o = _sd * (toe + 0.55)
+                _o = _sd * (toe + 0.55) + 0.22 * np.sin(0.11 * _ix + _sd)
                 _P = np.zeros((len(_ix), 2, 3))
                 for _c, _e in enumerate((-_w / 2, _w / 2)):
                     _P[:, _c, 0] = pos[_ix, 0] + nrm[_ix, 0] * (_o + _e)
@@ -986,7 +986,7 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
                 _veg.emit(f"{name}_{nm2}", Vv, Tt, Cc, M["blade"])
     # C17: 法面の石(法尻〜中腹に疎な群れ)。盛土が低い所(zt<0.8)には置かない
     rp = []
-    for i in np.where(rg.random(N) > 0.965)[0]:
+    for i in np.where(rg.random(N) > 0.93)[0]:      # C17: 石が1個だけで不自然との監査→密度を倍に(大小は r0..r1 で混在)
         if zt[i] < 0.8 or i < 3 or i > N - 4:
             continue
         sd = 1 if rg.random() < 0.5 else -1
