@@ -1347,7 +1347,7 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     nrm = np.stack([-np.sin(ang), np.cos(ang)], 1)
     rng = random.Random(3)
     if "k5_swall" not in M:      # C17: 護岸壁が緑青がかった一枚の無地面に見えた(監査)→暖灰の風化コンクリート(汚れ・塩害の流れ)+目地
-        M["k5_swall"] = lib.mat_pbr("k5_swall", "Concrete031", scale=1.5, hsv=(0.5, 0.25, 1.3), tint=(0.86, 0.82, 0.74), tint_amt=0.6, bump=1.0, macro=0.6, dirt=1.0, stain=1.0, spec=0.08)
+        M["k5_swall"] = lib.mat_pbr("k5_swall", "Concrete031", scale=1.5, hsv=(0.5, 0.10, 1.9), tint=(0.90, 0.86, 0.78), tint_amt=0.75, bump=1.0, macro=0.0, dirt=0.25, stain=0.0, spec=0.08)      # C17: 暗い青緑の壁→暖灰で明るく。stain の苔(緑を高さ3.2m未満に掛ける)が壁全体を青緑にしていた(sw12の画素平均 G>R+14)ため弱める
     if "k5_moss" not in M:       # C17: ブロックが同色・新品(監査: 個体差・藻・潮染みが無い)→苔・藻つき個体と暗い個体を混ぜる
         M["k5_moss"] = lib.mat_pbr("k5_moss", "Concrete031", scale=1.3, hsv=(0.5, 0.5, 1.25), tint=(0.40, 0.48, 0.30), tint_amt=0.8, bump=1.0, macro=0.6, dirt=1.0, stain=1.0, spec=0.1)
         M["k5_conc_dk"] = lib.mat_pbr("k5_conc_dk", "Concrete031", scale=1.7, hsv=(0.5, 0.5, 1.0), tint=(0.72, 0.70, 0.64), tint_amt=0.65, bump=1.0, macro=0.6, dirt=1.0, stain=1.0, spec=0.1)
