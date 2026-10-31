@@ -292,7 +292,17 @@ def best_junction(j, o, ln, mainP):
         Qr, s = trackkit.resample(Q, 1.0)
         t, _ = trackkit.frames(Qr)
         rng_i = range(len(Qr) - 9, len(Qr) - 3, 2) if key in ENDONLY else range(25, len(Qr) - 25, 7)
+        # 本線の橋・トンネル等の構造物の区間に分岐点を置かない(分岐リンクは構造物計画を持たず、橋の真下を地面高さで通ってしまう)
+        _ex = []
+        if key[0] != "own" and len(key) >= 3:
+            try:
+                _, _its = struct_plan(ln, key[0], key[1], float(s[-1]))
+                _ex = [(kw_["s0"] - 40.0, kw_["s1"] + 40.0) for k_, kw_ in _its if k_ != "lc" and "s0" in kw_ and "s1" in kw_]
+            except Exception as _e:
+                print("best_junction: struct_plan failed", key, _e, flush=True)
         for i in rng_i:
+            if any(a_ <= s[i] <= b_ for a_, b_ in _ex):
+                continue
             for sgn in (1, -1):
                 a0 = math.atan2(t[i, 1] * sgn, t[i, 0] * sgn)
                 for k, e in own_end_candidates(o, ln):
