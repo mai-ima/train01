@@ -898,7 +898,7 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
     else:
         zt = h * smooth01((ss - s0) / ramp) * smooth01((s1 - ss) / ramp)
     # 法面: 法尻→法面中腹(やや急)→法肩(バラスト肩のすぐ下)。旧: 法肩がバラスト面より0.3m下で、バラストの側面が垂直な灰色の壁に見えていた
-    toe = half + h * 1.6 + 1
+    toe = half + h * 2.3 + 1      # C17: 法面が急で地面に「置かれた板」に見えた(監査)→勾配をゆるく(1:1.6→1:2.3)
     prof = [(-toe, 0.0), (-(half + 2.3), 0.78), (-half - 0.6, 0.985), (half + 0.6, 0.985), (half + 2.3, 0.78), (toe, 0.0)]
     N, K = len(ss), 6
     V = np.zeros((N, K, 3))
