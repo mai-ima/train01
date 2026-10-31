@@ -51,7 +51,7 @@ def mats5():
         M["ug_asph"] = lib.mat_pbr("ug_asph", "Asphalt032", scale=2.2, hsv=(0.5, 1.0, 0.62), bump=0.7, macro=0.25, spec=0.25)
         M["k5_rock"] = lib.mat_pbr("k5_rock", "Ground110", scale=1.6, tint=(0.62, 0.60, 0.56), tint_amt=0.55, bump=1.0, macro=0.25, spec=0.05)
         M["k5_soil"] = lib.mat_pbr("k5_soil", "Ground110", scale=2.4, tint=(0.34, 0.22, 0.12), tint_amt=0.85, bump=1.2, macro=0.45, spec=0.05)
-        M["ug_stone"] = lib.mat_pbr("ug_stone", "Bricks102", scale=1.8, bump=0.9, macro=0.15, spec=0.2)
+        M["ug_stone"] = lib.mat_pbr("ug_stone", "Bricks102", scale=1.8, tint=(0.66, 0.62, 0.54), tint_amt=0.6, bump=1.4, bump_dist=0.03, macro=0.5, dirt=0.8, stain=0.85, spec=0.12)      # C17(アーチ橋の第1段階監査): 水垢・苔・色むらで経年を出す
         def _hill_mask(m):                                       # 頂点カラー(高さ帯)+ノイズで草↔土を滑らかに混ぜる(面ごとの割当だとタイル状にギザギザしていた)
             sx, sy, sz = m.sep(m.attr_color("Col"))
             nz = m.math('ADD', m.math('MULTIPLY', m.noise(scale=0.07, detail=5, rough=0.6), 0.65), m.math('MULTIPLY', m.noise(scale=0.35, detail=4, rough=0.65), 0.35))      # 大小2スケールのノイズで縁を不規則に
