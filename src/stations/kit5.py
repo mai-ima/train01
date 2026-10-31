@@ -47,7 +47,7 @@ def mats5():
         M["ug_conc"] = lib.mat_pbr("ug_conc", "Concrete031", scale=2.6, tint=(0.95, 0.93, 0.88), tint_amt=0.3, bump=0.5, macro=0.2, dirt=0.0, spec=0.2)
         M["ug_conc2"] = lib.mat_pbr("ug_conc2", "Concrete048", scale=2.8, bump=0.6, macro=0.2, dirt=0.0, spec=0.2)
         M["k5_conc"] = lib.mat_pbr("k5_conc", "Concrete031", scale=2.2, hsv=(0.5, 0.6, 1.5), tint=(0.95, 0.94, 0.90), tint_amt=0.4, bump=0.7, macro=0.4, dirt=0.5, spec=0.12)   # C17: 無地の漆喰(mat_plaster)だった桁・橋脚を実写PBR+汚れ・斑に
-        M["k5_shedwall"] = lib.mat_pbr("k5_shedwall", "Concrete048", scale=1.6, hsv=(0.5, 0.8, 0.8), tint=(0.9, 0.88, 0.82), tint_amt=0.35, bump=0.8, macro=0.4, dirt=0.7, spec=0.1)   # C17: 雪覆い側壁の長大な無地面に汚れ・斑を載せる
+        M["k5_shedwall"] = lib.mat_pbr("k5_shedwall", "Concrete031", scale=1.8, hsv=(0.5, 0.3, 1.35), tint=(0.94, 0.91, 0.85), tint_amt=0.5, bump=0.9, macro=0.6, dirt=0.9, stain=0.9, spec=0.1)   # C17: 雪覆い側壁の長大な無地面に汚れ・斑を載せる
         M["ug_asph"] = lib.mat_pbr("ug_asph", "Asphalt032", scale=2.2, hsv=(0.5, 1.0, 0.62), bump=0.7, macro=0.25, spec=0.25)
         M["k5_rock"] = lib.mat_pbr("k5_rock", "Ground110", scale=1.6, tint=(0.62, 0.60, 0.56), tint_amt=0.55, bump=1.0, macro=0.25, spec=0.05)
         M["k5_soil"] = lib.mat_pbr("k5_soil", "Ground110", scale=2.4, tint=(0.34, 0.22, 0.12), tint_amt=0.85, bump=1.2, macro=0.45, spec=0.05)
