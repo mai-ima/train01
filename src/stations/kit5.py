@@ -1287,7 +1287,7 @@ def viaduct(P, s0, s1, name="viaduct", width=8.4, zfun=None, span=12.0):
     mats5()
     g = G(name, "Props")
     if "k5_conc_v" not in M:      # 桁・橋脚の側面が緑青の単色ベタ面との監査指摘: 彩度を落とし、打継ぎの汚れ・斑を強める
-        M["k5_conc_v"] = lib.mat_pbr("k5_conc_v", "Concrete031", scale=2.0, hsv=(0.5, 0.3, 1.45), tint=(0.94, 0.91, 0.85), tint_amt=0.5, bump=0.9, macro=0.55, dirt=0.9, stain=0.9, spec=0.1)
+        M["k5_conc_v"] = lib.mat_pbr("k5_conc_v", "Concrete031", scale=2.0, hsv=(0.5, 0.15, 1.7), tint=(0.94, 0.91, 0.85), tint_amt=0.6, bump=0.9, macro=0.1, dirt=0.4, stain=0.0, spec=0.1)      # C17: 護岸壁と同じ原因(stainの苔+macroの黄緑シフト+日陰の青)で青緑に濁っていた→外す
     ss = np.arange(s0, s1 + 0.5, span)
     if ss[-1] < s1 - 0.5:
         ss = np.r_[ss, s1]
