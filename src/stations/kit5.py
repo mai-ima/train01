@@ -1260,7 +1260,9 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
         _c = pos[e] + _t * 0.4
         _a, _b = _c + nrm[e] * (width / 2 + 1.0), _c - nrm[e] * (width / 2 + 1.0)
         _hh = max(zs[e], 0.5) + 0.2
-        g.a("k5_wood_gr").sbox((_a[0], _a[1], _hh / 2 - 0.4), (_b[0], _b[1], _hh / 2 - 0.4), 1.4, _hh + 0.4)
+        g.a("k5_conc", bevel=0.03).sbox((_a[0], _a[1], _hh / 2 - 0.4), (_b[0], _b[1], _hh / 2 - 0.4), 1.4, _hh + 0.4)      # C17: 橋台が木材の箱で盛土に刺さって見えた(監査)→コンクリ造の橋台に
+        _cp0, _cp1 = _a + _t * 0.0, _b + _t * 0.0
+        g.a("k5_conc", bevel=0.02).sbox((_cp0[0], _cp0[1], _hh - 0.15), (_cp1[0], _cp1[1], _hh - 0.15), 1.6, 0.18)      # 天端の笠
     for i in range(len(ss) - 1):
         for sg in (-1, 0, 1):
             p0 = pos[i] + nrm[i] * sg * 1.0
