@@ -276,6 +276,11 @@ def arch_bridge(P, s0, s1, name="arch", rise=4.0, width=8.0, zfun=None, deck=Non
             _ae, _be = a_ - nr * 0.3, b_ + nr * 0.3
             g.a(_sk, bevel=0.04).sbox((_ae[0], _ae[1], -0.3), (_be[0], _be[1], -0.3), wpier + 0.7, 0.9)
             g.a(_wk).sbox((a_[0], a_[1], 0.55), (b_[0], b_[1], 0.55), wpier + (0.8 if abut else 0.0) + 0.03, 0.8)
+            if abut:      # C17(築堤監査: 橋台の目地・汚れが単純): 橋台の天端に張り出した笠木と打継ぎの帯を入れて、壁面を分節する
+                _wa = wpier + 0.8
+                g.a("k5_conc", bevel=0.02).sbox((a_[0], a_[1], ztop_p + 0.08), (b_[0], b_[1], ztop_p + 0.08), _wa + 0.3, 0.2)
+                g.a("k5_conc", bevel=0.01).sbox((a_[0], a_[1], ztop_p - 0.6), (b_[0], b_[1], ztop_p - 0.6), _wa + 0.06, 0.07)
+                g.a("k5_conc", bevel=0.01).sbox((a_[0], a_[1], ztop_p - 1.1), (b_[0], b_[1], ztop_p - 1.1), _wa + 0.06, 0.07)
     g.build()
 
 

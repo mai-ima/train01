@@ -1055,6 +1055,21 @@ if os.environ.get('PROBE_RAY'):                          # 検査用: "x,y,z,dx,
         _v = [float(t) for t in _r.split(',')]
         _ok, _loc, _n, _ix, _ob, _ = bpy.context.scene.ray_cast(_dg, _V(_v[:3]), _V(_v[3:6]).normalized())
         print("probe", _r, "->", (_ob.name, [m.name for m in _ob.data.materials if m], tuple(round(c, 1) for c in _loc)) if _ok else None, flush=True)
+if os.environ.get('PROBE_LIST'):                         # 検査用: "x0,y0,x1,y1[,zmin]" の矩形と重なる物体の名前・材質・境界ボックスを列挙(光線を当てずに実物体名を特定する)
+    from mathutils import Vector as _V2
+    _q = [float(t) for t in os.environ['PROBE_LIST'].split(',')]
+    for _o in bpy.data.objects:
+        if _o.type != 'MESH' or _o.hide_render:
+            continue
+        _bb = [_o.matrix_world @ _V2(c) for c in _o.bound_box]
+        _xs, _ys, _zs = [c.x for c in _bb], [c.y for c in _bb], [c.z for c in _bb]
+        if max(_xs) < _q[0] or min(_xs) > _q[2] or max(_ys) < _q[1] or min(_ys) > _q[3]:
+            continue
+        if len(_q) > 4 and max(_zs) < _q[4]:
+            continue
+        if max(_xs) - min(_xs) > 400 or max(_ys) - min(_ys) > 400:
+            continue                                     # 地面・遠景など巨大物体は除外
+        print("plist", _o.name, [m.name for m in _o.data.materials if m][:3], "x", round(min(_xs), 1), round(max(_xs), 1), "y", round(min(_ys), 1), round(max(_ys), 1), "z", round(min(_zs), 1), round(max(_zs), 1), flush=True)
 if not args.no_render and os.environ.get('MULTICAM'):
     _both =os.environ.get('PEOPLE_BOTH') == '1'      # 1回の構築で 人物表示/非表示 の両方を撮る(出力: <out>_<n>.png=表示, <out>_np_<n>.png=非表示)
     _pp = [o for o in bpy.data.objects if o.get("rig_kind") == "pax" or (o.parent is not None and o.parent.get("rig_kind") == "pax")]
