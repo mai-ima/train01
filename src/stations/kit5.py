@@ -1318,6 +1318,11 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
                 _q = _fo + (_fe - _fo) * 0.0
                 _ln = 0.5 + 0.35 * ((i * 7 + (sg > 0)) % 3)
                 g.a("k5_wood_wet").box(_q[0] - 0.018, _q[0] + 0.018, _q[1] - 0.018, _q[1] + 0.018, zs[i] - 0.46 - _ln, zs[i] - 0.46)
+            for _kk, _mm in ((0.34, "iron_rust"), (0.67, "k5_wood_wet")):      # C17(築堤監査A/B: 経年が最弱): 中間のボルト柱からも下へ錆汁・雨だれを長く流す(幅を持たせて視認できる筋に)
+                _q = _fo + (_fe - _fo) * _kk
+                _zq = zs[i] + (zs[i + 1] - zs[i]) * _kk
+                _ln2 = 0.7 + 0.45 * ((i * 5 + int(_kk * 10) + (sg > 0)) % 3)
+                g.a(_mm).box(_q[0] - 0.05, _q[0] + 0.05, _q[1] - 0.05, _q[1] + 0.05, _zq - 0.46 - _ln2, _zq - 0.46)
         for sg in (-1, 1):
             p0 = pos[i] + nrm[i] * sg * (width / 2 + 0.25)
             p1 = pos[i + 1] + nrm[i + 1] * sg * (width / 2 + 0.25)
