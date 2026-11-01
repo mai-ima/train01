@@ -1417,9 +1417,9 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
             off = 9.0 + 1.7 * j + rng.uniform(-0.5, 0.5)
             q = pos[i] + nrm[i] * side * off + (pos[i + 1] - pos[i]) * rng.uniform(-0.3, 0.3)
             zq = 0.62 + (0.55 if j == 0 and rng.random() < 0.6 else 0.0)       # 壁寄りは一段積む
-            _tetrapod(g, q[0], q[1], zq, rng.uniform(0, 6.28), rng.uniform(0.55, 1.05), mat=rng.choice(("k5_conc", "k5_conc", "k5_conc_dk", "k5_moss")))        # C17: 大小混在
+            _tetrapod(g, q[0], q[1], zq, rng.uniform(0, 6.28), rng.uniform(0.38, 0.75), mat=rng.choice(("k5_conc", "k5_conc", "k5_conc_dk", "k5_moss")))        # C17: 大小混在
             if rng.random() < 0.35:                                                            # 上に1個載せて2〜3段の山にする(監査: 単層の一列)
-                _tetrapod(g, q[0] + rng.uniform(-0.5, 0.5), q[1] + rng.uniform(-0.5, 0.5), zq + 0.8, rng.uniform(0, 6.28), rng.uniform(0.5, 0.85))      # Q25: 消波ブロックが立方体だった。テトラポッド(4脚)にする
+                _tetrapod(g, q[0] + rng.uniform(-0.5, 0.5), q[1] + rng.uniform(-0.5, 0.5), zq + 0.8, rng.uniform(0, 6.28), rng.uniform(0.34, 0.6))      # Q25: 消波ブロックが立方体だった。テトラポッド(4脚)にする
         for _ in range(3):
             q = pos[i] + nrm[i] * side * rng.uniform(7.9, 14.5) + (pos[i + 1] - pos[i]) * rng.uniform(-0.4, 0.4)
             g.a("k5_swall", bevel=0.12).boxc(q[0], q[1], 0.08, rng.uniform(0.4, 1.0), rng.uniform(0.4, 1.0), rng.uniform(0.25, 0.5), rz=rng.uniform(0, 3.0))   # 捨石(監査: 桃色の箱に見えた→風化灰色・面取り大)
