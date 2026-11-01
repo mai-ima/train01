@@ -440,7 +440,7 @@ sun.color = (1.0, 0.92, 0.80)
 sob = bpy.data.objects.new("Sun", sun)
 sob.rotation_euler = (-d).to_track_quat('-Z', 'Y').to_euler()
 link(sob, "Lighting")
-_fw = float(os.environ.get("FILL_WARM", "0"))      # C17/Q25: 日陰の面が空の青だけで照らされ青緑に転ぶ(雪覆い壁 R48 G64 B72)。太陽と反対側の低い位置から影なしの暖色フィルを足し、地面の照り返しを模す(既定0=無効。検証用)
+_fw = float(os.environ.get("FILL_WARM", "1.2"))      # C17/Q25: 日陰の面が空の青だけで照らされ青緑に転ぶ(雪覆い壁 R48 G64 B72)。太陽と反対側の低い位置から影なしの暖色フィルを足し、地面の照り返しを模す(既定1.2。FILL_WARM=0 で無効。SH04 駅の全景で平均 +3% の差=悪影響なし、日陰の壁は R49→63 で青緑かぶりが減る)
 if _fw > 0:
     _fd = Vector((-d.x, -d.y, 0.0)).normalized() * 0.96 + Vector((0, 0, 0.28))
     _fl = bpy.data.lights.new("FillWarm", 'SUN')
