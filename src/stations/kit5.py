@@ -62,9 +62,10 @@ def mats5():
                                              hsv_a=(0.49, 0.62, 0.78), spec=0.0)
         # 築堤の法面は周囲の草地と同じ明るさに(周囲より暗い緑の板が地面に載って見えるとの監査指摘 C17)
         def _emb_var(m):
-            big = m.ramp(m.noise(scale=0.05, detail=3, rough=0.55), [(0.30, (0.78, 0.84, 0.60)), (0.70, (1.14, 1.08, 0.86))])      # 数十m: 枯れ草の黄色↔濃い緑
+            big = m.ramp(m.noise(scale=0.05, detail=3, rough=0.55), [(0.30, (0.70, 0.80, 0.52)), (0.70, (1.20, 1.10, 0.88))])      # 数十m: 枯れ草の黄色↔濃い緑
             mid = m.ramp(m.noise(scale=0.45, detail=4, rough=0.6), [(0.35, (0.86, 0.90, 0.78)), (0.65, (1.08, 1.05, 0.94))])      # 数m: 斑
-            return m.mix(1.0, big, mid, 'MULTIPLY')
+            fine = m.ramp(m.noise(scale=2.6, detail=5, rough=0.65), [(0.38, (0.80, 0.82, 0.70)), (0.62, (1.10, 1.07, 0.98))])      # C17: 数十cm〜1mの草むら(密/疎・枯れ)。緑のベタ面の細かい濃淡を足す
+            return m.mix(1.0, m.mix(1.0, big, mid, 'MULTIPLY'), fine, 'MULTIPLY')
         M["k5_embsoil"] = lib.mat_pbr_blend("k5_embsoil", "Grass004", "Ground110", scale_a=1.6, scale_b=2.4, mask=_hill_mask,
                                             tint_a=(1.0, 0.95, 0.52), tint_b=(0.29, 0.21, 0.12), bump=0.8, macro=0.3,
                                             hsv_a=(0.5, 0.78, 1.0), spec=0.0,
