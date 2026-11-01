@@ -72,7 +72,7 @@ def make_materials():
                   bump=0.9, bump_dist=0.04, macro=0.25, spec=0.0)
     M["soil"] = P("soil", "Ground110", scale=1.6, hsv=(0.5, 0.9, 0.7), bump=0.8, macro=0.2, spec=0.0)
     import os as _os_gg
-    _gg = [float(t) for t in _os_gg.environ.get("GG_TEST", "1.6,0.8,1.0").split(",")]       # C17: 検証用(scale,tint_amt,patch)。既定は従来値
+    _gg = [float(t) for t in _os_gg.environ.get("GG_TEST", "1.6,0.8,0.35").split(",")]       # C17: (scale,tint_amt,patch)。patch 1.0→0.35: 乾草パッチが強すぎて草地全体が彩度過多の黄色(平均 R104 G100 B10)=複数構造物の監査で共通の指摘。0.35で自然な緑(R92 G92 B23)
     _gf = [float(t) for t in _os_gg.environ.get("GG_FAR", "40,300").split(",")]       # C17: 近景の草テクスチャが距離で平均色へ収束し始める距離(検証用。既定は従来値)
     _gt = tuple(float(t) for t in _os_gg.environ.get("GG_TINT", "0.98,0.88,0.48").split(","))      # C17: 草地の黄緑が彩度過多との指摘が複数構造物で共通→検証用に tint を環境変数化(既定は従来値)
     M["grass_ground"] = P("grass_ground", "Grass004", scale=_gg[0], hsv=(0.49, 0.62, 0.78), tint=_gt,
