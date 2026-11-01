@@ -468,6 +468,8 @@ def mat_water(name, deep=(0.03, 0.10, 0.13), shallow=(0.10, 0.22, 0.24)):
     h = m.mix(1.0, (0.5, 0.5, 0.5), rip, 'ADD') if hasattr(m, 'mix') else rip
     nrm = m.bump(rip, strength=0.35, dist=0.25)
     col = m.ramp(big, [(0.30, deep), (0.75, shallow)])
+    mid = m.ramp(m.noise(scale=0.35, detail=4, rough=0.6), [(0.35, (0.80, 0.84, 0.82)), (0.65, (1.18, 1.14, 1.08))])      # C17/T4: 水面が単色の青に見える(監査A/B)→中スケール(約3m)の明暗むらを重ねる
+    col = m.mix(1.0, col, mid, 'MULTIPLY')
     # C17/T4: 空を映すだけの平板に見えた(独立監査で水面系が最低点)。波頭の白濁(細かい2層のノイズの上位だけ)と、反射の弱め・波長の異なる法線を足す
     crest = m.ramp(m.noise(scale=0.22, detail=6, rough=0.6), [(0.76, (0.0, 0.0, 0.0)), (0.84, (1.0, 1.0, 1.0))])
     col = m.mix(crest, col, (0.78, 0.84, 0.86))
