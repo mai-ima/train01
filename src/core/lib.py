@@ -840,7 +840,7 @@ def pbr_layer(m, tid, scale=1.0, rot=(0, 0, 0), vec=None):
 
 
 def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None, rough_add=0.0, bump=0.5,
-            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0, stain=0.0, far_col=None, far0=40.0, far1=300.0, near_detail=None):
+            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0, stain=0.0, far_col=None, far0=40.0, far1=300.0, near_detail=None, moss_amt=1.0):
     """Photo-based material. `patch` adds 数十m規模の斑(乾いた草・土の露出・濃い草むら: 地面が単色に見える問題の対策)。 `macro` breaks up tiling with large-scale value noise; `dirt` adds grime streaks."""
     m = Mat(name)
     L = pbr_layer(m, tid, scale, rot)
@@ -881,6 +881,8 @@ def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None,
         moss = m.ramp(m.noise(m.mapping(scale=(4, 4, 1.4)), scale=2.4, detail=4, rough=0.6),
                       [(0.46, (1, 1, 1)), (0.66, (0.50, 0.78, 0.36))])
         mossm = m.mix(low, (1, 1, 1), moss)
+        if moss_amt < 1.0:      # C17: 苔の緑が日陰の空色と重なって青緑に転ぶ→苔を弱めて縦の水垢筋だけ残せる
+            mossm = m.mix(moss_amt, (1, 1, 1), mossm)
         col = m.mix(stain, col, m.mix(1.0, m.mix(1.0, col, wst, 'MULTIPLY'), mossm, 'MULTIPLY'))
     if near_detail is not None:      # C17: 近距離(約2m)で写真テクスチャが粗く滲み黄緑のベタ面に見える→細かいスケールの同じ種のテクスチャをOVERLAYで近距離だけ重ねる。near_detail=(tid, scale, 強さ, 消える距離m)
         _tid, _sc, _amt, _fd = near_detail
