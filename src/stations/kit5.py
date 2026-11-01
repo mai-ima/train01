@@ -559,7 +559,7 @@ def snowshed(P, s0, s1, name="snowshed", zfun=None, half=4.2, h=6.0, steel=False
         g.a(("k5_conc_v", "k5_conc_v", "k5_conc", "k5_conc_v", "k5_conc_v")[(i * 3) % 5]).sbox((a[0], a[1], za + hm + 0.15), (b[0], b[1], za + hv + 0.1), step + 0.05, 0.4)      # C17: 屋根スラブが全て同じ白帯(監査)→経年の違うコンクリ材を径間ごとに混ぜる
         # 屋根の目地(伸縮目地の立ち上がり)と雪止めフェンス(鋼管の支柱+2段の横桟)
         ja, jb = c - tan[i] * step / 2 + nrm[i] * (half + 0.2), c - tan[i] * step / 2 - nrm[i] * (half + 1.4)
-        g.a("ug_conc2").sbox((ja[0], ja[1], za + hm + 0.4), (jb[0], jb[1], za + hv + 0.35), 0.18, 0.12)
+        g.a("k5_jt").sbox((ja[0], ja[1], za + hm + 0.36), (jb[0], jb[1], za + hv + 0.31), 0.10, 0.06)      # C17(雪覆い監査A/B: 屋根の砂色の帯が貼り物): 明るい帯をやめ、細い暗色の伸縮目地に
         fe_ = c - nrm[i] * (half + 1.2)
         for tt in (-1.2, 0.0, 1.2):
             fp = fe_ + tan[i] * tt
