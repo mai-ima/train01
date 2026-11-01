@@ -101,8 +101,8 @@ def river(P, s, width=40.0, length=700.0, name="river", wiggle=22.0, seed=0, flo
     if "k5_wet" not in M:
         M["k5_wet"] = lib.mat_plain("k5_wet", (0.055, 0.05, 0.04), rough=0.35)
     core.ribbon(name + "_wet", pts, width + 1.3, M["k5_wet"], z0=0.046, rut=False, col="Ground")
-    core.ribbon(name + "_edgefoam", pts, width - 0.15, M["k5_foam"], z0=0.049, rut=False, col="Ground")
-    core.ribbon(name + "_w2", pts, width - 0.9, M["water"], z0=0.052, rut=False, col="Ground")
+    core.ribbon(name + "_edgefoam", pts, width - 0.15, M["k5_foam"], z0=0.062, rut=False, col="Ground")
+    core.ribbon(name + "_w2", pts, width - 0.9, M["water"], z0=0.074, rut=False, col="Ground")
 
 
 def truss_bridge(P, s0, s1, name="truss", h=7.5, width=7.0, zfun=None):
