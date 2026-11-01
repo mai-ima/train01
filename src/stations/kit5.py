@@ -528,6 +528,13 @@ def snowshed(P, s0, s1, name="snowshed", zfun=None, half=4.2, h=6.0, steel=False
         p0, p1 = pos[i] + nrm[i] * half, pos[i + 1] + nrm[i + 1] * half
         g.a("k5_shedwall").sbox((p0[0], p0[1], z0 + hm / 2), (p1[0], p1[1], z1 + hm / 2), 0.45, hm)      # 山側壁(写真ベースの打放し。Q25/C17: 屋根も壁も無地の白板だった)
         g.a("k5_conc").sbox((p0[0], p0[1], z0 + 0.45), (p1[0], p1[1], z1 + 0.45), 0.85, 0.9)        # 壁の根固め
+        if "k5_jt" not in M:
+            M["k5_jt"] = lib.mat_plain("k5_jt", (0.03, 0.03, 0.032), rough=0.7)
+        for _fo in (-0.24, 0.24):      # C17: 壁の両面(軌道側・山側)に目地を入れる(片面だけでは見る向きで効果が出なかった=tun9)
+            _in0, _in1 = pos[i] + nrm[i] * (half + _fo), pos[i + 1] + nrm[i + 1] * (half + _fo)      # 打設リフト(約2.4m)の水平目地+3mごとの縦目地で面を分節(監査: 雪覆い壁が約8m角の単色ベタ面)
+            for _lz in (2.4, 4.8):
+                g.a("k5_jt").sbox((_in0[0], _in0[1], z0 + _lz), (_in1[0], _in1[1], z1 + _lz), 0.03, 0.05)
+            g.a("k5_jt").sbox((_in0[0], _in0[1], z0 + 0.1), (_in0[0], _in0[1], z0 + hm - 0.1), 0.05, 0.04)      # 縦の目地(3m間隔)
         # 屋根スラブ(横断勾配: 山側高く谷側低く)。 1区間ごとに傾斜させて並べる
         c = (pos[i] + pos[i + 1]) / 2
         za = (z0 + z1) / 2
