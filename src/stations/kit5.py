@@ -1235,6 +1235,15 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
             _pm = ("k5_pile", "k5_wood_gr", "k5_pile", "k5_wood_dk", "k5_wood_gr")[(i * 7 + (sg > 0) * 2) % 5]
             g.a(_pm, bevel=0.01).box(p[0] - _pw, p[0] + _pw, p[1] - _pw, p[1] + _pw, -2.0, zs[i] - 0.3)
             g.a("k5_wood_moss").box(p[0] - _pw - 0.01, p[0] + _pw + 0.01, p[1] - _pw - 0.01, p[1] + _pw + 0.01, -0.5, 0.15 + 0.2 * ((i * 3 + sg) % 3))      # 水際の苔
+            if "k5_swall" not in M:
+                M["k5_swall"] = lib.mat_pbr("k5_swall", "Concrete031", scale=1.5, hsv=(0.5, 0.10, 1.9), tint=(0.90, 0.86, 0.78), tint_amt=0.75, bump=1.0, macro=0.0, dirt=0.25, stain=0.7, moss_amt=0.0, spec=0.08)
+            _rr = random.Random(i * 31 + (sg > 0) * 7 + 5)
+            for _k in range(3 + (i + (sg > 0)) % 2):      # C17: 橋脚の根元が地面に刺さっただけとの監査(2名が指摘)→根固めの捨石を杭の足元に散らす
+                _th = _rr.uniform(0, 6.28)
+                _dd = _pw + _rr.uniform(0.12, 0.32)
+                _qx, _qy = p[0] + math.cos(_th) * _dd, p[1] + math.sin(_th) * _dd
+                _hs = _rr.uniform(0.12, 0.2)
+                g.a("k5_swall", bevel=0.07).boxc(_qx, _qy, 0.04, _hs * 2, _hs * 2 * _rr.uniform(0.7, 1.2), _rr.uniform(0.18, 0.34), rz=_rr.uniform(0, 3.0))
         a, b = pos[i] + nrm[i] * width / 2, pos[i] - nrm[i] * width / 2
         g.a("k5_wood").sbox((a[0], a[1], zs[i] - 0.4), (b[0], b[1], zs[i] - 0.4), 0.3, 0.3)
         # X字の筋交い(全ベント)と、水際の湿った帯・杭頭の笠木
