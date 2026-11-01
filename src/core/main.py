@@ -324,7 +324,10 @@ if args.world:
     import kit7 as _k7w; print('CUTS', _k7w.apply_cuts())
     kit4.export_graph()
     kit4.world_landscape(cam_loc)
-    if os.environ.get('WORLD_GRASS'):      # C17: 世界合成(bare)では近景の草の房が無く、地面が平坦な単色の面になる(全構造物の監査で『馴染み』が共通して低い根本原因)。WORLD_GRASS="x,y,半径" でその周囲に zone_grass を散布
+    if os.environ.get('WORLD_GRASS', 'auto') == 'auto' and os.environ.get('MULTICAM'):      # C17: 既定で、MULTICAM の最初の視点の注視点まわりに草を散布(WORLD_GRASS=0 で無効)
+        _mc = [float(t) for t in os.environ['MULTICAM'].split(';')[0].split(',')]
+        os.environ['WORLD_GRASS'] = f"{_mc[3]},{_mc[4]},60"
+    if os.environ.get('WORLD_GRASS') not in (None, '', '0', 'auto'):      # C17: 世界合成(bare)では近景の草の房が無く、地面が平坦な単色の面になる(全構造物の監査で『馴染み』が共通して低い根本原因)。WORLD_GRASS="x,y,半径" でその周囲に zone_grass を散布
         import veg as _vg
         _wg = [float(t) for t in os.environ['WORLD_GRASS'].split(',')]
         print('WORLD_GRASS', _vg.zone_grass((_wg[0], _wg[1], 1.6), x0=_wg[0] - _wg[2], x1=_wg[0] + _wg[2], y0=_wg[1] - _wg[2], y1=_wg[1] + _wg[2]))
