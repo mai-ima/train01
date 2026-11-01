@@ -1270,6 +1270,18 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
             f0 = pos[i] + nrm[i] * sg * 2.92
             f1 = pos[i + 1] + nrm[i + 1] * sg * 2.92
             g.a("k5_fascia" if (i + (sg > 0)) % 3 else "k5_fascia_dk").sbox((f0[0], f0[1], zs[i] - 0.1), (f1[0], f1[1], zs[i + 1] - 0.1), 0.1, 0.75)
+            _fo = pos[i] + nrm[i] * sg * 3.0                       # C17: 側板が一枚板との監査→縦の目地材(3分割)・ボルト頭・端部の木口
+            _fe = pos[i + 1] + nrm[i + 1] * sg * 3.0
+            for _k in (0.0, 0.34, 0.67, 1.0):
+                _q = _fo + (_fe - _fo) * _k
+                _zq = zs[i] + (zs[i + 1] - zs[i]) * _k
+                g.a("k5_wood_dk" if _k in (0.0, 1.0) else "k5_wood_gr").box(_q[0] - 0.045, _q[0] + 0.045, _q[1] - 0.045, _q[1] + 0.045, _zq - 0.46, _zq + 0.26)
+                for _zb in (_zq - 0.32, _zq + 0.08):
+                    g.a("iron_rust").box(_q[0] - 0.055, _q[0] + 0.055, _q[1] - 0.055, _q[1] + 0.055, _zb - 0.03, _zb + 0.03)
+            if (i * 5 + (sg > 0) * 2) % 3 != 1:                       # 錆汁・雨だれ(ボルトから下へ流れる暗い筋。ベントごとに長さを変える)
+                _q = _fo + (_fe - _fo) * 0.0
+                _ln = 0.5 + 0.35 * ((i * 7 + (sg > 0)) % 3)
+                g.a("k5_wood_wet").box(_q[0] - 0.018, _q[0] + 0.018, _q[1] - 0.018, _q[1] + 0.018, zs[i] - 0.46 - _ln, zs[i] - 0.46)
         for sg in (-1, 1):
             p0 = pos[i] + nrm[i] * sg * (width / 2 + 0.25)
             p1 = pos[i + 1] + nrm[i + 1] * sg * (width / 2 + 0.25)
