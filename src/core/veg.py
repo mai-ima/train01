@@ -763,7 +763,7 @@ def zone_grass(cam, x0=-110, x1=110, y0=-70, y1=95, step=0.5, light=None):
     import bpy
     global GROUND_RE
     if GROUND_RE is None:
-        GROUND_RE = re.compile(r"^(kit_ground|k2_ground|hills|knoll|far_ground|k2_hill)", re.I)
+        GROUND_RE = re.compile(r"^(kit_ground|k2_ground|world_ground|hills|knoll|far_ground|k2_hill)", re.I)
     light = LIGHT if light is None else light
     dg = bpy.context.evaluated_depsgraph_get()
     sc = bpy.context.scene

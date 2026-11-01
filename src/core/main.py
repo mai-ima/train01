@@ -324,6 +324,10 @@ if args.world:
     import kit7 as _k7w; print('CUTS', _k7w.apply_cuts())
     kit4.export_graph()
     kit4.world_landscape(cam_loc)
+    if os.environ.get('WORLD_GRASS'):      # C17: 世界合成(bare)では近景の草の房が無く、地面が平坦な単色の面になる(全構造物の監査で『馴染み』が共通して低い根本原因)。WORLD_GRASS="x,y,半径" でその周囲に zone_grass を散布
+        import veg as _vg
+        _wg = [float(t) for t in os.environ['WORLD_GRASS'].split(',')]
+        print('WORLD_GRASS', _vg.zone_grass((_wg[0], _wg[1], 1.6), x0=_wg[0] - _wg[2], x1=_wg[0] + _wg[2], y0=_wg[1] - _wg[2], y1=_wg[1] + _wg[2]))
     import zone_stock as _zs2
     _zs2.set_stock(True if args.stock == "on" else (False if args.stock == "off" else set(args.stock.split(","))))
 if "hq" in parts:
