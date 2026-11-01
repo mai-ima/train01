@@ -542,12 +542,21 @@ def snowshed(P, s0, s1, name="snowshed", zfun=None, half=4.2, h=6.0, steel=False
             for _lz in (2.4, 4.8):
                 g.a("k5_jt").sbox((_in0[0], _in0[1], z0 + _lz), (_in1[0], _in1[1], z1 + _lz), 0.02, 0.03)
             g.a("k5_jt").sbox((_in0[0], _in0[1], z0 + 0.1), (_in0[0], _in0[1], z0 + hm - 0.1), 0.03, 0.025)      # 縦の目地(3m間隔)
+            if i % 2 == 1:      # C17(雪覆い監査A/B: 壁が一枚の箱・経年が乏しい): 目地下の水垢の暗い筋(幅0.3m・長さ1.6〜3.4m)と水抜き管を壁の両面に
+                if "k5_stain" not in M:
+                    M["k5_stain"] = lib.mat_plain("k5_stain", (0.10, 0.115, 0.105), rough=0.9)
+                _sl = 1.6 + 1.8 * (((i * 7 + int(_fo * 10)) % 5) / 4.0)
+                _sp = pos[i] + nrm[i] * (half + _fo * 1.06)
+                _zc = z0 + hm - 0.15 - _sl / 2
+                g.a("k5_stain").sbox((_sp[0] - tan[i][0] * 0.15, _sp[1] - tan[i][1] * 0.15, _zc), (_sp[0] + tan[i][0] * 0.15, _sp[1] + tan[i][1] * 0.15, _zc), 0.03, _sl)
+                if i % 4 == 1:
+                    g.a("iron_rust").cyl((_sp[0], _sp[1], z0 + 0.15), (_sp[0], _sp[1], z0 + 1.2), 0.05, seg=8)
         # 屋根スラブ(横断勾配: 山側高く谷側低く)。 1区間ごとに傾斜させて並べる
         c = (pos[i] + pos[i + 1]) / 2
         za = (z0 + z1) / 2
         a = c + nrm[i] * (half + 0.2)
         b = c - nrm[i] * (half + 1.4)
-        g.a(("k5_conc", "k5_conc_v", "k5_conc", "k5_conc_v", "k5_conc_v")[(i * 3) % 5]).sbox((a[0], a[1], za + hm + 0.15), (b[0], b[1], za + hv + 0.1), step + 0.05, 0.4)      # C17: 屋根スラブが全て同じ白帯(監査)→経年の違うコンクリ材を径間ごとに混ぜる
+        g.a(("k5_conc_v", "k5_conc_v", "k5_conc", "k5_conc_v", "k5_conc_v")[(i * 3) % 5]).sbox((a[0], a[1], za + hm + 0.15), (b[0], b[1], za + hv + 0.1), step + 0.05, 0.4)      # C17: 屋根スラブが全て同じ白帯(監査)→経年の違うコンクリ材を径間ごとに混ぜる
         # 屋根の目地(伸縮目地の立ち上がり)と雪止めフェンス(鋼管の支柱+2段の横桟)
         ja, jb = c - tan[i] * step / 2 + nrm[i] * (half + 0.2), c - tan[i] * step / 2 - nrm[i] * (half + 1.4)
         g.a("ug_conc2").sbox((ja[0], ja[1], za + hm + 0.4), (jb[0], jb[1], za + hv + 0.35), 0.18, 0.12)
