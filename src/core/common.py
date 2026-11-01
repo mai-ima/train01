@@ -76,7 +76,7 @@ def make_materials():
     _gf = [float(t) for t in _os_gg.environ.get("GG_FAR", "40,300").split(",")]       # C17: 近景の草テクスチャが距離で平均色へ収束し始める距離(検証用。既定は従来値)
     _gt = tuple(float(t) for t in _os_gg.environ.get("GG_TINT", "0.98,0.88,0.48").split(","))      # C17: 草地の黄緑が彩度過多との指摘が複数構造物で共通→検証用に tint を環境変数化(既定は従来値)
     M["grass_ground"] = P("grass_ground", "Grass004", scale=_gg[0], hsv=(0.49, 0.62, 0.78), tint=_gt,
-                          tint_amt=_gg[1], bump=0.8, macro=0.3, spec=0.0, patch=_gg[2], far_col=(0.17, 0.20, 0.065),
+                          tint_amt=_gg[1], bump=0.8, macro=float(_os_gg.environ.get("GG_MACRO", "0.3")), spec=0.0, patch=_gg[2], far_col=(0.17, 0.20, 0.065),
                           far0=_gf[0], far1=_gf[1])
     M["bark"] = P("bark", "Bark001", scale=0.9, hsv=(0.5, 0.65, 0.7), tint=(0.8, 0.72, 0.62), tint_amt=0.5,
                   bump=1.2, spec=0.15)
