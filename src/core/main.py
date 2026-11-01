@@ -440,6 +440,20 @@ sun.color = (1.0, 0.92, 0.80)
 sob = bpy.data.objects.new("Sun", sun)
 sob.rotation_euler = (-d).to_track_quat('-Z', 'Y').to_euler()
 link(sob, "Lighting")
+_fw = float(os.environ.get("FILL_WARM", "0"))      # C17/Q25: 日陰の面が空の青だけで照らされ青緑に転ぶ(雪覆い壁 R48 G64 B72)。太陽と反対側の低い位置から影なしの暖色フィルを足し、地面の照り返しを模す(既定0=無効。検証用)
+if _fw > 0:
+    _fd = Vector((-d.x, -d.y, 0.0)).normalized() * 0.96 + Vector((0, 0, 0.28))
+    _fl = bpy.data.lights.new("FillWarm", 'SUN')
+    _fl.energy = _fw
+    _fl.angle = math.radians(25)
+    _fl.color = (1.0, 0.84, 0.64)
+    try:
+        _fl.use_shadow = False
+    except Exception:
+        print("FILL failed: use_shadow")
+    _fo = bpy.data.objects.new("FillWarm", _fl)
+    _fo.rotation_euler = (-_fd).to_track_quat('-Z', 'Y').to_euler()
+    link(_fo, "Lighting")
 
 world = bpy.data.worlds.new("World")
 scene.world = world
