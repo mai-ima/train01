@@ -523,6 +523,8 @@ def snowshed(P, s0, s1, name="snowshed", zfun=None, half=4.2, h=6.0, steel=False
     nrm = np.stack([-np.sin(ang), np.cos(ang)], 1)
     tan = np.stack([np.cos(ang), np.sin(ang)], 1)
     hm, hv = h + 1.3, h - 0.2           # 山側/谷側の屋根高さ
+    if "k5_conc_v" not in M:
+        M["k5_conc_v"] = lib.mat_pbr("k5_conc_v", "Concrete031", scale=2.0, hsv=(0.5, 0.15, 1.7), tint=(0.94, 0.91, 0.85), tint_amt=0.6, bump=0.9, macro=0.1, dirt=0.4, stain=0.6, moss_amt=0.0, spec=0.1)
     for i in range(len(ss) - 1):
         z0, z1 = zs[i], zs[i + 1]
         p0, p1 = pos[i] + nrm[i] * half, pos[i + 1] + nrm[i + 1] * half
@@ -540,7 +542,7 @@ def snowshed(P, s0, s1, name="snowshed", zfun=None, half=4.2, h=6.0, steel=False
         za = (z0 + z1) / 2
         a = c + nrm[i] * (half + 0.2)
         b = c - nrm[i] * (half + 1.4)
-        g.a("k5_conc").sbox((a[0], a[1], za + hm + 0.15), (b[0], b[1], za + hv + 0.1), step + 0.05, 0.4)
+        g.a(("k5_conc", "k5_conc_v", "k5_conc", "k5_conc_v", "k5_conc_v")[(i * 3) % 5]).sbox((a[0], a[1], za + hm + 0.15), (b[0], b[1], za + hv + 0.1), step + 0.05, 0.4)      # C17: 屋根スラブが全て同じ白帯(監査)→経年の違うコンクリ材を径間ごとに混ぜる
         # 屋根の目地(伸縮目地の立ち上がり)と雪止めフェンス(鋼管の支柱+2段の横桟)
         ja, jb = c - tan[i] * step / 2 + nrm[i] * (half + 0.2), c - tan[i] * step / 2 - nrm[i] * (half + 1.4)
         g.a("ug_conc2").sbox((ja[0], ja[1], za + hm + 0.4), (jb[0], jb[1], za + hv + 0.35), 0.18, 0.12)
