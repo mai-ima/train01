@@ -929,6 +929,7 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
     gul = (rg.random(N) > 0.95).astype(float) * rg.uniform(0.4, 0.9, N)      # 溝はまばらに・濃さも不揃いに
     gul = np.convolve(gul, np.array([0.3, 1.0, 0.3]), mode="same").clip(0, 1)                    # 溝は2〜3列にまたがる
     patch = np.clip((np.sin(0.09 * ss + 1.1) * np.sin(0.037 * ss + 2.3) - 0.02) * 3.0, 0, 1)      # 裸地の斑
+    patch = np.maximum(patch, np.clip((np.sin(0.31 * ss + 0.7) * np.sin(0.113 * ss + 4.1) - 0.12) * 3.5, 0, 1) * 0.9)      # C17: 短周期の裸地斑を追加(法面の土の露出が見えない、との監査)
     soil = np.zeros((N, K))
     soil[:, 0] = soil[:, K - 1] = 0.5 * (0.6 + 0.4 * patch)                                         # 法尻(濃淡あり)
     soil[:, 1] = np.maximum(0.8 * patch, 0.9 * gul)
