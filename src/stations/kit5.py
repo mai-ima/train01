@@ -1280,7 +1280,9 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
         _c = pos[e] + _t * 0.4
         _a, _b = _c + nrm[e] * (width / 2 + 1.0), _c - nrm[e] * (width / 2 + 1.0)
         _hh = max(zs[e], 0.5) + 0.2
-        g.a("k5_conc", bevel=0.03).sbox((_a[0], _a[1], _hh / 2 - 0.4), (_b[0], _b[1], _hh / 2 - 0.4), 1.4, _hh + 0.4)      # C17: 橋台が木材の箱で盛土に刺さって見えた(監査)→コンクリ造の橋台に
+        if "k5_conc_v" not in M:
+            M["k5_conc_v"] = lib.mat_pbr("k5_conc_v", "Concrete031", scale=2.0, hsv=(0.5, 0.15, 1.7), tint=(0.94, 0.91, 0.85), tint_amt=0.6, bump=0.9, macro=0.1, dirt=0.4, stain=0.6, moss_amt=0.0, spec=0.1)
+        g.a("k5_conc_v", bevel=0.03).sbox((_a[0], _a[1], _hh / 2 - 0.4), (_b[0], _b[1], _hh / 2 - 0.4), 1.4, _hh + 0.4)      # C17: 橋台が木材の箱で盛土に刺さって見えた(監査)→コンクリ造の橋台に
         _cp0, _cp1 = _a + _t * 0.0, _b + _t * 0.0
         g.a("k5_conc", bevel=0.02).sbox((_cp0[0], _cp0[1], _hh - 0.15), (_cp1[0], _cp1[1], _hh - 0.15), 1.6, 0.18)      # 天端の笠
     for i in range(len(ss) - 1):
@@ -1303,7 +1305,7 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
             for _k in (0.0, 0.34, 0.67, 1.0):
                 _q = _fo + (_fe - _fo) * _k
                 _zq = zs[i] + (zs[i + 1] - zs[i]) * _k
-                g.a("k5_wood_dk" if _k in (0.0, 1.0) else "k5_wood_gr").box(_q[0] - 0.045, _q[0] + 0.045, _q[1] - 0.045, _q[1] + 0.045, _zq - 0.46, _zq + 0.26)
+                g.a("k5_wood_dk" if _k in (0.0, 1.0) else ("k5_wood" if (int(_k * 3) + i) % 2 else "k5_wood_dk")).box(_q[0] - 0.045, _q[0] + 0.045, _q[1] - 0.045, _q[1] + 0.045, _zq - 0.46, _zq + 0.26)
                 for _zb in (_zq - 0.32, _zq + 0.08):
                     g.a("iron_rust").box(_q[0] - 0.055, _q[0] + 0.055, _q[1] - 0.055, _q[1] + 0.055, _zb - 0.03, _zb + 0.03)
             if (i * 5 + (sg > 0) * 2) % 3 != 1:                       # 錆汁・雨だれ(ボルトから下へ流れる暗い筋。ベントごとに長さを変える)
