@@ -1291,8 +1291,8 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
             p1 = pos[i + 1] + nrm[i + 1] * sg * 1.0
             g.a("k5_wood").sbox((p0[0], p0[1], zs[i] - 0.3), (p1[0], p1[1], zs[i + 1] - 0.3), 0.3, 0.3)
         for sg in (-1, 1):                                                                   # C17: 道床の側面が灰色の厚板(コンクリート)に見えた(監査・プローブでバラストと判明)→木の側板(道床止め)で覆う
-            f0 = pos[i] + nrm[i] * sg * 2.92
-            f1 = pos[i + 1] + nrm[i + 1] * sg * 2.92
+            f0 = pos[i] + nrm[i] * sg * 3.1
+            f1 = pos[i + 1] + nrm[i + 1] * sg * 3.1
             for _pl in range(3):      # C17: 側板が1枚の大板(監査: 板の継ぎ目が弱く貼り紙状)→高さ方向に3段の板へ分割し、段ごとに材と出入りを変える
                 _pm = (("k5_fascia", "k5_fascia_dk", "k5_fascia"), ("k5_fascia_dk", "k5_fascia", "k5_fascia"), ("k5_fascia", "k5_fascia", "k5_fascia_dk"))[(i + (sg > 0)) % 3][_pl]
                 _po = 0.012 * (((i * 5 + _pl * 3 + (sg > 0)) % 3) - 1) * sg
@@ -1300,8 +1300,8 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
                 _fz1 = zs[i + 1] - 0.1 + (_pl - 1) * 0.25
                 _g0, _g1 = f0 + nrm[i] * _po, f1 + nrm[i + 1] * _po
                 g.a(_pm).sbox((_g0[0], _g0[1], _fz), (_g1[0], _g1[1], _fz1), 0.1, 0.245)
-            _fo = pos[i] + nrm[i] * sg * 3.0                       # C17: 側板が一枚板との監査→縦の目地材(3分割)・ボルト頭・端部の木口
-            _fe = pos[i + 1] + nrm[i + 1] * sg * 3.0
+            _fo = pos[i] + nrm[i] * sg * 3.18                       # C17: 側板が一枚板との監査→縦の目地材(3分割)・ボルト頭・端部の木口
+            _fe = pos[i + 1] + nrm[i + 1] * sg * 3.18
             for _k in (0.0, 0.34, 0.67, 1.0):
                 _q = _fo + (_fe - _fo) * _k
                 _zq = zs[i] + (zs[i + 1] - zs[i]) * _k
