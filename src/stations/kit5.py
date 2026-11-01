@@ -1214,7 +1214,7 @@ def trestle(P, s0, s1, name="trestle", width=3.4, zfun=None):
     g = G(name, "Props")
     if "k5_wood" not in M:      # 木橋の部材が無地の暗褐色(監査: 木造風に見えない・新品): 板目の実写PBRで風化させ、水際は暗く湿らせる
         M["k5_wood"] = lib.mat_pbr("k5_wood", "Planks023A", scale=0.9, hsv=(0.5, 1.1, 1.6), tint=(0.66, 0.42, 0.24), tint_amt=0.9, bump=1.2, macro=0.7, dirt=0.6, stain=0.6, spec=0.1)
-        M["k5_wood_wet"] = lib.mat_pbr("k5_wood_wet", "WoodSiding011", scale=3.2, tint=(0.25, 0.26, 0.22), tint_amt=0.9, bump=1.2, macro=0.4, dirt=0.9, stain=0.9, spec=0.3)
+        M["k5_wood_wet"] = lib.mat_pbr("k5_wood_wet", "WoodSiding011", scale=3.2, tint=(0.32, 0.23, 0.15), tint_amt=0.9, bump=1.2, macro=0.1, dirt=0.9, stain=0.9, spec=0.3)
     if "k5_wood_gr" not in M:      # C17: 経年(監査: 木部が新品で均一)→日焼けして灰白化した古材・黒ずんだ古材・苔の付いた根元を混ぜる
         M["k5_fascia"] = lib.mat_pbr("k5_fascia", "WoodSiding011", scale=2.4, hsv=(0.5, 0.9, 1.6), tint=(0.66, 0.46, 0.30), tint_amt=0.95, bump=1.0, macro=0.7, dirt=0.8, stain=0.8, spec=0.08)      # C17: 製材の側板(退色した板目)
         M["k5_fascia_dk"] = lib.mat_pbr("k5_fascia_dk", "WoodSiding011", scale=2.4, hsv=(0.5, 0.9, 1.2), tint=(0.40, 0.26, 0.16), tint_amt=0.95, bump=1.0, macro=0.6, dirt=1.0, stain=1.0, spec=0.1)
