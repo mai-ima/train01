@@ -18,3 +18,10 @@ cd /home/claude/station && WORLD_GRASS="2745,855,60" MULTICAM="…" python3 main
 ```
 注意: 古い日の同名画像を誤って見ないよう、撮影後は更新時刻(`ls -l --time-style`)を確認する。
 `PROBE_RAY="x,y,z,dx,dy,dz;…" python3 main.py --world bare --no-render --w 100 --out junk` で、指定の光線が当たる物体名・材質を確認できる(約4分)。
+
+## 物体の名前を特定する(PROBE_LIST・2026-11-01 追加)
+光線を当てる PROBE_RAY は推測が外れると1回約4分を無駄にする。矩形と重なる物体を一覧にする方が速い:
+```
+cd /home/claude/station && PROBE_LIST="x0,y0,x1,y1[,zmin]" python3 main.py --world bare --no-render --w 100 --out junk | grep "^plist"
+```
+出力: `plist <物体名> [材質] x 最小 最大 y 最小 最大 z 最小 最大`(400m超の巨大物体は除外)。例: 木橋の橋台 = `…trestle_130_k5_conc_v`(x2218.8〜2251.1)。
