@@ -1340,6 +1340,11 @@ def viaduct(P, s0, s1, name="viaduct", width=8.4, zfun=None, span=12.0):
     for i in range(len(ss) - 1):
         a0, a1 = pos[i], pos[i + 1]
         g.a("k5_conc_v").sbox((a0[0], a0[1], zs[i] - 0.55), (a1[0], a1[1], zs[i + 1] - 0.55), width, 0.5)
+        for sg in (-1, 1):      # C17: 桁側面が平坦な1枚壁との監査→桁下端の水切り(出っ張り)と上端の張り出しを付け、水平の影の線を作る
+            _d0, _d1 = a0 + nrm[i] * sg * (width / 2 + 0.07), a1 + nrm[i + 1] * sg * (width / 2 + 0.07)
+            g.a("k5_conc_v", bevel=0.02).sbox((_d0[0], _d0[1], zs[i] - 0.74), (_d1[0], _d1[1], zs[i + 1] - 0.74), 0.14, 0.1)
+            _u0, _u1 = a0 + nrm[i] * sg * (width / 2 + 0.05), a1 + nrm[i + 1] * sg * (width / 2 + 0.05)
+            g.a("k5_conc_v", bevel=0.02).sbox((_u0[0], _u0[1], zs[i] - 0.36), (_u1[0], _u1[1], zs[i + 1] - 0.36), 0.1, 0.1)
         for sg in (-1, 1):
             p0, p1 = a0 + nrm[i] * sg * width / 2, a1 + nrm[i + 1] * sg * width / 2
             g.a("k5_conc_v").sbox((p0[0], p0[1], zs[i] + 0.1), (p1[0], p1[1], zs[i + 1] + 0.1), 0.3, 1.1)
