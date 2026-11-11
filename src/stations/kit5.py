@@ -1468,7 +1468,7 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
             # 乱積み: 沖側ほど低く、位置を散らして2〜3層(下層は広く、上層は壁寄り)。捨石を足元に敷く
             off = 9.0 + 1.7 * j + rng.uniform(-0.5, 0.5)
             q = pos[i] + nrm[i] * side * off + (pos[i + 1] - pos[i]) * rng.uniform(-0.3, 0.3)
-            zq = 0.48 + (0.42 if j == 0 and rng.random() < 0.6 else 0.0)       # 壁寄りは一段積む
+            zq = 0.28 + (0.40 if j == 0 and rng.random() < 0.6 else 0.0)       # 壁寄りは一段積む
             # C17(護岸監査A/B: 消波ブロックが無秩序で大きさも不統一・ジャックス型に見える): 実物は同一寸法を整列して積む → 寸法をほぼ統一(±6%)・向きは60°刻みの規則+わずかな揺らぎ・列は千鳥
             q = q + (pos[i + 1] - pos[i]) * (0.25 if j % 2 else -0.05)
             _tetrapod(g, q[0], q[1], zq, ((i + j) % 2) * math.pi / 3 + rng.uniform(-0.12, 0.12), 0.40 * rng.uniform(0.94, 1.06), mat=rng.choice(("k5_conc", "k5_conc", "k5_conc", "k5_conc_dk", "k5_swall")))
