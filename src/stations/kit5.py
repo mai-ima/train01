@@ -1483,10 +1483,10 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     # 試行の記録: ①70m帯+大水面を重ねる/別高さで重ねる→透過水面が二重になり真っ黒 ②扇状メッシュ→区間外に黒い穴 ③70m帯と大水面を隣接→曲線で楔形の隙間。
     # 500m帯は曲線の内側で自己交差して遠景に細い暗い筋が出るが、他案より破綻が少ない(未達: 筋の除去)。
     # 護岸の足元に泡の帯(不透明・水面より少し上。透過する水面と重ねない)。監査で「汀線・泡が無い」(水面系で最低点)
-    fpts = [tuple(p + n * side * 8.6) for p, n in zip(pos[::3], nrm[::3])]
+    fpts = [tuple(p + n * side * 7.95) for p, n in zip(pos[::3], nrm[::3])]      # C17(護岸再監査E/F: 壁の足元に砂利帯が挟まり水が壁に接しない): 壁際(7.5m)へ寄せて細く(幅0.9m)する
     if "k5_shore" not in M:      # C17: 泡帯が単色の白い平面に見えた(監査)→濡れた暗い砂利の汀(実写PBR)にする
         M["k5_shore"] = lib.mat_pbr("k5_shore", "Ground110", scale=1.4, tint=(0.50, 0.50, 0.47), tint_amt=0.85, bump=1.4, macro=0.5, spec=0.35)
-    core.ribbon(name + "_foam", fpts, 2.4, M["k5_shore"], z0=0.045, rut=False, col="Ground")
+    core.ribbon(name + "_foam", fpts, 0.9, M["k5_shore"], z0=0.045, rut=False, col="Ground")
     sea_w = 500.0
     ss_sea = np.arange(s0 - 120.0, s1 + 120.5, 9.0)
     pos_s, ang_s = frames_at(P, ss_sea)
