@@ -447,6 +447,20 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
             if flipc:
                 T = T[:, ::-1]
             np_mesh(f"{name}_face{i}", np.array(verts), T, M.get("grass_ground", M["k5_earth"]), "Ground", smooth=False)   # 丘の端面は土の斜面(石積みは坑口の門だけ)
+    try:      # C17(雪覆い監査A/B: 丘の端面が単色オリーブのベタ面): 材質では崩れなかったので、端面の斜面に岩を実体メッシュで散らして形状で崩す
+        rng_f = random.Random(int(s0) + 23)
+        fp = []
+        for _i in (0, len(ss) - 1):
+            for _ in range(16):
+                _k = rng_f.randrange(1, Vh.shape[1] - 1)
+                if abs(prof_o[_k][0]) < inner_w + 3.5:
+                    continue            # 坑口の開口まわりは空ける
+                _pk = Vh[_i, _k]
+                _fz = rng_f.uniform(0.15, 0.85)
+                fp.append((float(_pk[0]), float(_pk[1]), float(-0.3 + (_pk[2] + 0.3) * _fz)))
+        _boulders(name + "_frock", fp, seed=int(s0) + 29, r0=0.6, r1=1.9)
+    except Exception as e:
+        print("face rocks failed (skipped)", e)
     sweep(prof_i, M["k5_conc"], name + "_lining", True)
     # 坑内灯: 両側の側壁の高さ3.0mに10m間隔で発光する灯具(監査指摘「内部が真っ黒で照明が無い」)
     if "tun_lamp" not in M:
