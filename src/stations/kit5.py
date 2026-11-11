@@ -1444,7 +1444,7 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
         p0, p1 = pos[i] + nrm[i] * side * 7.0, pos[i + 1] + nrm[i + 1] * side * 7.0
         g.a("k5_swall").sbox((p0[0], p0[1], h / 2 - 0.2), (p1[0], p1[1], h / 2 - 0.2), 1.0, h + 0.4)
         w0b, w1b = pos[i] + nrm[i] * side * 7.53, pos[i + 1] + nrm[i + 1] * side * 7.53
-        g.a("k5_moss").sbox((w0b[0], w0b[1], 0.35), (w1b[0], w1b[1], 0.35), 0.08, 0.8)         # 干満帯の藻(足元の緑の汚れ)
+        g.a("k5_moss").sbox((w0b[0], w0b[1], 0.2), (w1b[0], w1b[1], 0.2), 0.08, 0.4)         # 干満帯の藻(足元の緑の汚れ)
         if i % 3 == 0:                                                                       # 伸縮目地(9mごとの縦の暗い溝。海側の面)
             if "k5_jt" not in M:
                 M["k5_jt"] = lib.mat_plain("k5_jt", (0.03, 0.03, 0.032), rough=0.7)
@@ -1464,14 +1464,14 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
             g.a("k5_jt").sbox((_wp[0], _wp[1], 0.45), (_wp[0] + 0.0, _wp[1] + 0.0, 0.45), 0.16, 0.16)      # 水抜き穴(小さな暗い角穴)
         w0, w1 = pos[i] + nrm[i] * side * 7.55, pos[i + 1] + nrm[i + 1] * side * 7.55
         g.a("k5_swall").sbox((w0[0], w0[1], h + 0.05), (w1[0], w1[1], h + 0.05), 0.3, 0.7)           # Q25/C17: 波返し(海側へ張り出す立ち上がり)。護岸が白い箱だった(監査)
-        for j in range(5):
+        for j in range(4):
             # 乱積み: 沖側ほど低く、位置を散らして2〜3層(下層は広く、上層は壁寄り)。捨石を足元に敷く
             off = 9.0 + 1.7 * j + rng.uniform(-0.5, 0.5)
             q = pos[i] + nrm[i] * side * off + (pos[i + 1] - pos[i]) * rng.uniform(-0.3, 0.3)
             zq = 0.62 + (0.55 if j == 0 and rng.random() < 0.6 else 0.0)       # 壁寄りは一段積む
             # C17(護岸監査A/B: 消波ブロックが無秩序で大きさも不統一・ジャックス型に見える): 実物は同一寸法を整列して積む → 寸法をほぼ統一(±6%)・向きは60°刻みの規則+わずかな揺らぎ・列は千鳥
             q = q + (pos[i + 1] - pos[i]) * (0.25 if j % 2 else -0.05)
-            _tetrapod(g, q[0], q[1], zq, ((i + j) % 2) * math.pi / 3 + rng.uniform(-0.12, 0.12), 0.52 * rng.uniform(0.94, 1.06), mat=rng.choice(("k5_conc", "k5_conc", "k5_conc_dk", "k5_moss")))
+            _tetrapod(g, q[0], q[1], zq, ((i + j) % 2) * math.pi / 3 + rng.uniform(-0.12, 0.12), 0.52 * rng.uniform(0.94, 1.06), mat=rng.choice(("k5_conc", "k5_conc", "k5_conc", "k5_conc_dk", "k5_swall")))
             if rng.random() < 0.12:                                                            # 上に1個載せて2〜3段の山にする(監査: 単層の一列)
                 _tetrapod(g, q[0] + rng.uniform(-0.5, 0.5), q[1] + rng.uniform(-0.5, 0.5), zq + 0.7, rng.uniform(0, 6.28), 0.52)      # Q25: 消波ブロックが立方体だった。テトラポッド(4脚)にする
         for _ in range(3):
@@ -1485,7 +1485,7 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     # 護岸の足元に泡の帯(不透明・水面より少し上。透過する水面と重ねない)。監査で「汀線・泡が無い」(水面系で最低点)
     fpts = [tuple(p + n * side * 8.6) for p, n in zip(pos[::3], nrm[::3])]
     if "k5_shore" not in M:      # C17: 泡帯が単色の白い平面に見えた(監査)→濡れた暗い砂利の汀(実写PBR)にする
-        M["k5_shore"] = lib.mat_pbr("k5_shore", "Ground110", scale=1.4, tint=(0.20, 0.21, 0.20), tint_amt=0.8, bump=1.2, macro=0.5, spec=0.35)
+        M["k5_shore"] = lib.mat_pbr("k5_shore", "Ground110", scale=1.4, tint=(0.50, 0.50, 0.47), tint_amt=0.85, bump=1.4, macro=0.5, spec=0.35)
     core.ribbon(name + "_foam", fpts, 2.4, M["k5_shore"], z0=0.045, rut=False, col="Ground")
     sea_w = 500.0
     ss_sea = np.arange(s0 - 120.0, s1 + 120.5, 9.0)
