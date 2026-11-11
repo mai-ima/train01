@@ -101,7 +101,7 @@ def river(P, s, width=40.0, length=700.0, name="river", wiggle=22.0, seed=0, flo
     if "k5_wet" not in M:
         M["k5_wet"] = lib.mat_plain("k5_wet", (0.055, 0.05, 0.04), rough=0.35)
     core.ribbon(name + "_wet", pts, width + 1.3, M["k5_wet"], z0=0.046, rut=False, col="Ground")
-    core.ribbon(name + "_edgefoam", pts, width - 0.15, M["k5_foam"], z0=0.062, rut=False, col="Ground")
+    # C17(高架桁監査A/B: 川岸が白い直線の縁取りに見える): 泡帯(edgefoam)は水面w2の下で幅±0.375mの白帯として見えていた→外した(vd32の4視点で白縁が消え岸との境界が自然になった。幅を細めるだけ(w2 -0.4)では変化しなかった)
     core.ribbon(name + "_w2", pts, width - 0.9, M["water"], z0=0.074, rut=False, col="Ground")
 
 
