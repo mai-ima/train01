@@ -842,7 +842,7 @@ def pbr_layer(m, tid, scale=1.0, rot=(0, 0, 0), vec=None):
 
 
 def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None, rough_add=0.0, bump=0.5,
-            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0, stain=0.0, far_col=None, far0=40.0, far1=300.0, near_detail=None, moss_amt=1.0):
+            bump_dist=0.02, ao_amt=0.6, macro=0.18, metal=0.0, rot=(0, 0, 0), spec=0.4, dirt=0.0, patch=0.0, stain=0.0, far_col=None, far0=40.0, far1=300.0, near_detail=None, moss_amt=1.0, stain_lo=0.5, stain_hi=0.7):
     """Photo-based material. `patch` adds 数十m規模の斑(乾いた草・土の露出・濃い草むら: 地面が単色に見える問題の対策)。 `macro` breaks up tiling with large-scale value noise; `dirt` adds grime streaks."""
     m = Mat(name)
     L = pbr_layer(m, tid, scale, rot)
@@ -878,7 +878,7 @@ def mat_pbr(name, tid, scale=1.0, tint=None, tint_amt=0.0, hsv=None, rough=None,
     if stain > 0:      # 縦に流れる水垢の筋(暗い)と、壁の低い所に付く苔(緑)。実写の石積み擁壁の経年表現
         x, y, z = m.sep(m.obj)
         wst = m.ramp(m.noise(m.mapping(scale=(9, 9, 0.3)), scale=3.0, detail=3, rough=0.6),
-                     [(0.5, (1, 1, 1)), (0.7, (0.34, 0.34, 0.31))])      # 縦の水垢筋をはっきり(経年が弱いとの監査)
+                     [(stain_lo, (1, 1, 1)), (stain_hi, (0.34, 0.34, 0.31))])      # 縦の水垢筋をはっきり(経年が弱いとの監査)
         low = m.maprange(z, 0.0, 3.2, 1.0, 0.0)
         moss = m.ramp(m.noise(m.mapping(scale=(4, 4, 1.4)), scale=2.4, detail=4, rough=0.6),
                       [(0.46, (1, 1, 1)), (0.66, (0.50, 0.78, 0.36))])
