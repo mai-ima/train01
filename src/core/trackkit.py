@@ -195,9 +195,14 @@ def scatter_pebbles(name, P, s, cam, radius, density=75.0):
     x, y, z, ang = x[keep], y[keep], z[keep], ang[keep]
     n = len(x)
     size = rng.uniform(0.020, 0.044, n)
-    tmpl = np.array([[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 0.38], [0, 0, -0.3]], dtype=np.float32)
-    faces = np.array([[0, 2, 4], [2, 1, 4], [1, 3, 4], [3, 0, 4], [2, 0, 5], [1, 2, 5], [3, 1, 5], [0, 3, 5]])
-    jit = 1.0 + rng.uniform(-0.4, 0.4, (n, 6, 3)).astype(np.float32)
+    # X13k/X13j(監査員2名: バラストが『同一の尖った三角錐の反復』): 八面体(6頂点・8面)→二十面体(12頂点・20面)で丸みのある砕石にする
+    _t = (1.0 + 5 ** 0.5) / 2.0
+    tmpl = np.array([[-1, _t, 0], [1, _t, 0], [-1, -_t, 0], [1, -_t, 0], [0, -1, _t], [0, 1, _t], [0, -1, -_t], [0, 1, -_t], [_t, 0, -1], [_t, 0, 1], [-_t, 0, -1], [-_t, 0, 1]], dtype=np.float32)
+    tmpl /= np.linalg.norm(tmpl, axis=1, keepdims=True)
+    tmpl *= np.array([1.0, 1.0, 0.55], dtype=np.float32)
+    faces = np.array([[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11], [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+                      [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9], [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]])
+    jit = 1.0 + rng.uniform(-0.25, 0.25, (n, 12, 3)).astype(np.float32)
     squash = rng.uniform(0.6, 1.2, (n, 1, 3)).astype(np.float32)
     squash[:, 0, 2] *= rng.uniform(0.45, 0.8, n).astype(np.float32)          # 砕石は扁平(尖った三角錐に見せない)
     local = tmpl[None] * jit * squash * size[:, None, None]
@@ -207,11 +212,11 @@ def scatter_pebbles(name, P, s, cam, radius, density=75.0):
     R[:, 0, 0], R[:, 0, 1], R[:, 1, 0], R[:, 1, 1], R[:, 2, 2] = c, -sn, sn, c, 1
     local = np.einsum('nij,nvj->nvi', R, local)
     V = (local + np.stack([x, y, z + size * 0.12], -1)[:, None, :]).reshape(-1, 3)
-    T = (faces[None] + (np.arange(n) * 6)[:, None, None]).reshape(-1, 3)
+    T = (faces[None] + (np.arange(n) * 12)[:, None, None]).reshape(-1, 3)
     g = rng.uniform(0.045, 0.15, n)
     warm = rng.uniform(0.0, 0.035, n)
     cols = np.stack([g + warm, g + warm * 0.6, g, np.ones(n)], -1)
-    cols = np.repeat(cols[:, None, :], 6, axis=1).reshape(-1, 4)
+    cols = np.repeat(cols[:, None, :], 12, axis=1).reshape(-1, 4)
     np_mesh(name + "_stones", V, T, M["pebble"], "Track", colors=cols, smooth=False)
 
 
