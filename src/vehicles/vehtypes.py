@@ -1047,6 +1047,12 @@ def _roof(v, S):
     v.A("t_grey", 0.004).box(-xr + 0.3, xr - 0.3, -0.26, 0.26, zr + 0.002, zr + 0.022)                  # 歩み板(中央の通路)
     for xk in range(int(-xr + 0.6), int(xr - 0.5), 1):
         v.A("black").box(xk - 0.02, xk + 0.02, -0.27, 0.27, zr + 0.021, zr + 0.026)                    # 歩み板の桟
+    _sm = v.A("black")                                                                                  # X13i(全形式の監査: 屋根が灰青の単色ベタ面): 屋根板の継ぎ目(2mごとの横線+縦の通し目地)を細い暗線で入れる
+    for _i in range(int(max(0.0, (2 * xr - 1.8)) // 2.0) + 1):
+        xk = -xr + 1.0 + 2.0 * _i
+        _sm.box(xk - 0.008, xk + 0.008, -0.62, 0.62, zr + 0.002, zr + 0.007)
+    for yk in (-0.62, 0.62):
+        _sm.box(-xr + 0.4, xr - 0.4, yk - 0.008, yk + 0.008, zr + 0.002, zr + 0.007)
     for it in rn:
         if it == "pant":
             _pant_diamond(v, px, zr)
