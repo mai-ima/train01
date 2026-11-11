@@ -1487,6 +1487,16 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     if "k5_shore" not in M:      # C17: 泡帯が単色の白い平面に見えた(監査)→濡れた暗い砂利の汀(実写PBR)にする
         M["k5_shore"] = lib.mat_pbr("k5_shore", "Ground110", scale=1.4, tint=(0.50, 0.50, 0.47), tint_amt=0.85, bump=1.4, macro=0.5, spec=0.35)
     core.ribbon(name + "_foam", fpts, 0.9, M["k5_shore"], z0=0.045, rut=False, col="Ground")
+    if "k5_surf" not in M:      # T7/C17: 波打ち際の泡(護岸再監査: 壁と水の境に泡・白波がない)。ノイズで透明度を切って縁が崩れた不規則な白い帯にする(不透明な円盤は皿に見えて失敗=sea14)
+        _ms = lib.Mat("k5_surf")
+        _n1 = _ms.noise(scale=3.2, detail=5, rough=0.6)
+        _n2 = _ms.noise(scale=11.0, detail=3, rough=0.5)
+        _al = _ms.ramp(_ms.math('MULTIPLY', _n1, _n2), [(0.10, (0, 0, 0)), (0.26, (1, 1, 1))])
+        _al = _ms.math('MULTIPLY', _ms.sep(_al)[0], 0.85)
+        _ms.principled(**{'Base Color': (0.92, 0.95, 0.96), 'Roughness': 0.6, 'Alpha': _al})
+        _ms.m.surface_render_method = 'DITHERED' if hasattr(_ms.m, 'surface_render_method') else None
+        M["k5_surf"] = _ms.m
+    core.ribbon(name + "_surf", [tuple(p + n * side * 8.05) for p, n in zip(pos[::3], nrm[::3])], 0.9, M["k5_surf"], z0=0.075, rut=False, col="Ground")
     sea_w = 500.0
     ss_sea = np.arange(s0 - 120.0, s1 + 120.5, 9.0)
     pos_s, ang_s = frames_at(P, ss_sea)
