@@ -89,8 +89,8 @@ def free_mask(P):
     try:
         import newdepot as _nd
         _nd.register_grass_exclusion()                                # 構築順に依存せず登録する(冪等)
-    except ImportError:
-        pass
+    except ImportError as _e:      # Q25/W4: newdepot 内部の ImportError も隠さない
+        print("newdepot grass exclusion failed (skipped):", _e)
     for (a, b, c, d) in EXTRA_EXCL:                                   # 新総合車両基地など、他モジュールが登録した除外矩形(D4/D5)
         bad |= inside_rect(P, a, b, c, d)
     bad |= (y < -125) | (y > 24.8)

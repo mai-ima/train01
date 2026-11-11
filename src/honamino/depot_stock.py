@@ -267,10 +267,10 @@ def build_depot_stock():
     try:
         import depot_in
         depot_in.build_depot_interiors()
-    except ImportError:
-        pass
+    except ImportError as _e:      # Q25/W4: 内部の ImportError も隠さない(failed を出して healthscan の対象にする)
+        print("depot_in import failed (skipped):", _e)
     try:
         import props
         props.build_depot_props()
-    except (ImportError, AttributeError):
-        pass
+    except (ImportError, AttributeError) as _e:      # Q25/W4
+        print("props.build_depot_props failed (skipped):", _e)
