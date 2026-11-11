@@ -463,7 +463,7 @@ def mat_plain(name, color, rough=0.6, metal=0.0, spec=0.5):
 def mat_water(name, deep=(0.03, 0.10, 0.13), shallow=(0.10, 0.22, 0.24)):
     """海・池の水面: 大きなうねり+細かな波紋の法線(Bump)+深さ方向の色むら+強い映り込み(低ラフネス)。単色の板に見えないようにする(T4)。"""
     m = Mat(name)
-    big = m.noise(scale=0.05, detail=3, rough=0.5)
+    big = m.noise(scale=0.25, detail=3, rough=0.5)      # C17(護岸sea9/10: 水面が単色の水色): 深浅の色むらの周期を約20m→約4mにし、画面内(約10m)でも色が変わるようにする
     rip = m.noise(scale=0.9, detail=5, rough=0.55)
     h = m.mix(1.0, (0.5, 0.5, 0.5), rip, 'ADD') if hasattr(m, 'mix') else rip
     nrm = m.bump(rip, strength=0.35, dist=0.25)
