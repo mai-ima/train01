@@ -457,8 +457,8 @@ def tunnel(P, s0, s1, name="tunnel", zfun=None, mound=15.0, half=46.0, inner_w=2
                     continue            # 坑口の開口まわりは空ける
                 _pk = Vh[_i, _k]
                 _fz = rng_f.uniform(0.15, 0.85)
-                fp.append((float(_pk[0]), float(_pk[1]), float(-0.3 + (_pk[2] + 0.3) * _fz)))
-        _boulders(name + "_frock", fp, seed=int(s0) + 29, r0=0.6, r1=1.9)
+                fp.append((float(_pk[0]), float(_pk[1]), float(-0.6 + (_pk[2] + 0.3) * _fz * 0.9)))
+        _boulders(name + "_frock", fp, seed=int(s0) + 29, r0=0.4, r1=1.0)
     except Exception as e:
         print("face rocks failed (skipped)", e)
     sweep(prof_i, M["k5_conc"], name + "_lining", True)
@@ -556,13 +556,8 @@ def snowshed(P, s0, s1, name="snowshed", zfun=None, half=4.2, h=6.0, steel=False
             for _lz in (2.4, 4.8):
                 g.a("k5_jt").sbox((_in0[0], _in0[1], z0 + _lz), (_in1[0], _in1[1], z1 + _lz), 0.02, 0.03)
             g.a("k5_jt").sbox((_in0[0], _in0[1], z0 + 0.1), (_in0[0], _in0[1], z0 + hm - 0.1), 0.03, 0.025)      # 縦の目地(3m間隔)
-            if i % 2 == 1:      # C17(雪覆い監査A/B: 壁が一枚の箱・経年が乏しい): 目地下の水垢の暗い筋(幅0.3m・長さ1.6〜3.4m)と水抜き管を壁の両面に
-                if "k5_stain" not in M:
-                    M["k5_stain"] = lib.mat_plain("k5_stain", (0.10, 0.115, 0.105), rough=0.9)
-                _sl = 1.6 + 1.8 * (((i * 7 + int(_fo * 10)) % 5) / 4.0)
+            if i % 2 == 1:      # 水抜き管のみ残す(水垢の縦板は監査で『貼り紙の縦パネル』と指摘されたため削除)
                 _sp = pos[i] + nrm[i] * (half + _fo * 1.06)
-                _zc = z0 + hm - 0.15 - _sl / 2
-                g.a("k5_stain").sbox((_sp[0] - tan[i][0] * 0.15, _sp[1] - tan[i][1] * 0.15, _zc), (_sp[0] + tan[i][0] * 0.15, _sp[1] + tan[i][1] * 0.15, _zc), 0.03, _sl)
                 if i % 4 == 1:
                     g.a("iron_rust").cyl((_sp[0], _sp[1], z0 + 0.15), (_sp[0], _sp[1], z0 + 1.2), 0.05, seg=8)
         # 屋根スラブ(横断勾配: 山側高く谷側低く)。 1区間ごとに傾斜させて並べる
