@@ -460,7 +460,7 @@ def mat_plain(name, color, rough=0.6, metal=0.0, spec=0.5):
     return m.m
 
 
-def mat_water(name, deep=(0.008, 0.040, 0.065), shallow=(0.030, 0.110, 0.135)):      # C17/T7: 既定を暗く彩度の高い青緑へ(旧 (0.03,0.10,0.13)/(0.10,0.22,0.24) は空の反射と合わさって淡い水色のベタ面に見えた)
+def mat_water(name, deep=(0.03, 0.10, 0.13), shallow=(0.10, 0.22, 0.24)):
     """海・池の水面: 大きなうねり+細かな波紋の法線(Bump)+深さ方向の色むら+強い映り込み(低ラフネス)。単色の板に見えないようにする(T4)。"""
     m = Mat(name)
     big = m.noise(scale=0.05, detail=3, rough=0.5)
