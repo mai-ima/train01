@@ -8,6 +8,7 @@ _VM = {}
 
 def vpaint(name, color, rough=0.5, rust=0.25, grime=0.8, seams=True, metal=0.0, panel=(1.15, 0.80), flat=False):
     """Weathered rolling-stock paint: panel seams (bump), rain streaks, lower-body grime, sun fade, rust blooms."""
+    rust, grime = rust * 0.6, grime * 0.6      # 2026-11-11 ユーザー補足『最近建設/清掃された設定で経年は気にしない』+X13監査『ぼやけた汚れ模様が低解像度に見える』: 汚れ・錆を約6割に抑える(表現は残す)
     m = lib.Mat(name)
     x, y, z = m.sep(m.obj)
     n_r = m.noise(scale=3.0, detail=6, rough=0.65)
