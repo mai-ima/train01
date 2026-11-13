@@ -6,7 +6,7 @@ from common import *
 _VM = {}
 
 
-def vpaint(name, color, rough=0.5, rust=0.25, grime=0.8, seams=True, metal=0.0, panel=(1.7, 1.9), flat=False):      # X13m(監査員2名: 側面の縦横の格子線が過剰で貼り付けに見える): 継ぎ目の間隔を粗く(1.15×0.80m→1.7×1.9m。実車の板継ぎ・窓下の帯に近づける)
+def vpaint(name, color, rough=0.5, rust=0.25, grime=0.8, seams=True, metal=0.0, panel=(1.15, 0.80), flat=False):
     """Weathered rolling-stock paint: panel seams (bump), rain streaks, lower-body grime, sun fade, rust blooms."""
     rust, grime = rust * 0.6, grime * 0.6      # 2026-11-11 ユーザー補足『最近建設/清掃された設定で経年は気にしない』+X13監査『ぼやけた汚れ模様が低解像度に見える』: 汚れ・錆を約6割に抑える(表現は残す)
     m = lib.Mat(name)
@@ -33,7 +33,6 @@ def vpaint(name, color, rough=0.5, rust=0.25, grime=0.8, seams=True, metal=0.0, 
     soot = m.math('MULTIPLY', soot, m.ramp(sk, [(0.38, (0.25, 0.25, 0.25)), (0.62, (1.6, 1.6, 1.6))]), clamp=True)
     col = m.mix(soot, col, (0.035, 0.032, 0.03))
     h = m.math('ADD', m.math('MULTIPLY', rmask, n_f), m.math('MULTIPLY', n_f, 0.12))
-    h = m.math('ADD', h, m.math('MULTIPLY', m.noise(scale=170.0, detail=2, rough=0.6), 0.05))      # X13m(屋根・側面の質感がぼやけて見える): 微細な塗膜の砂目を凹凸に足す
     if seams:
         br = m.node('ShaderNodeTexBrick')
         m.setall(br, {'Vector': m.combine(x, y, 0.0) if flat else m.combine(m.math('ADD', x, y), z, 0.0), 'Scale': 1.0, 'Mortar Size': 0.006, 'Mortar Smooth': 0.3,
