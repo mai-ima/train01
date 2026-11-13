@@ -88,12 +88,12 @@ def mat_veh_window(name, tint=(0.80, 0.90, 0.88)):
     """Clear glass: transparent with Fresnel reflection and a little dust, so the saloon shows through."""
     m = lib.Mat(name)
     tr = m.node('ShaderNodeBsdfTransparent')
-    m.set(tr.inputs['Color'], tint)
+    m.set(tr.inputs['Color'], tuple(c * 0.84 for c in tint))
     gl = m.node('ShaderNodeBsdfGlossy')
-    m.setall(gl, {'Color': (0.9, 0.95, 1.0), 'Roughness': 0.04})
+    m.setall(gl, {'Color': (0.62, 0.70, 0.76), 'Roughness': 0.05})      # X13m(前面ガラスが空の反射だけで白く潰れる/青の単色): 反射色を落ち着かせ(白潰れの抑制)、透過側にわずかな色付きを加えて奥行き(運転台の内部)が見えるようにする
     fr = m.node('ShaderNodeFresnel')
     m.set(fr.inputs['IOR'], 1.5)
-    dust = m.ramp(m.noise(scale=6, detail=4), [(0.30, (0.05, 0.05, 0.05)), (0.75, (0.16, 0.16, 0.16))])      # 埃のむらと弱い基底反射(窓が真っ黒/単色の板に見えない)
+    dust = m.ramp(m.noise(scale=6, detail=4), [(0.30, (0.02, 0.02, 0.02)), (0.75, (0.09, 0.09, 0.09))])      # 埃のむらと弱い基底反射(窓が真っ黒/単色の板に見えない)
     fac = m.math('ADD', fr.outputs['Fac'], dust)
     mx = m.node('ShaderNodeMixShader')
     m.set(mx.inputs[0], fac)
