@@ -967,7 +967,7 @@
   "id": 207,
   "subject": "【S-M1】モデリング調査(最優先): Blender公式・高速高品質モデリング・AIモデリング → 全文を読み AI関連と改善点を報告",
   "status": "in_progress",
-  "description": "migration/research_modeling.md に調査済み。残: ユーザーへAI関連と『どれをどう直すか』を報告し反映"
+  "description": "migration/research_modeling.md に調査済み(§5 に2026-11-14の実測の裏付けを追記)。残: ユーザーへAI関連と『どれをどう直すか』を報告(docs/REQUESTS_TO_USER.md §H に選択肢を掲載済み・回答待ち)し反映"
  },
  {
   "id": 208,
