@@ -215,16 +215,6 @@ def _sec(w, zb, zt, rc):
             (-(w - rc), zt), (-(w - rc * 0.3), zt - rc * 0.3), (-w, zt - rc)]
 
 
-def _sec_belt(w, zb, zt, rc, zbelt, dw=0.05):
-    """腰の絞り(ベルトライン)つきの断面(16点)。zbelt の高さで幅を dw だけ絞り、窓まわりと下部カウルの間に段差を作る(X13: 前面の大きなベタ面を面で割る)。"""
-    rc = min(rc, (zt - zb) * 0.45, w * 0.9)
-    zbelt = min(max(zbelt, zb + 0.15), zt - rc - 0.10)
-    wb = max(w - dw, w * 0.85)
-    return [(-w, zb), (w, zb), (w, zbelt - 0.03), (wb, zbelt), (wb, zbelt + 0.04), (w, zbelt + 0.07), (w, zt - rc),
-            (w - rc * 0.3, zt - rc * 0.3), (w - rc, zt), (-(w - rc), zt), (-(w - rc * 0.3), zt - rc * 0.3), (-w, zt - rc),
-            (-w, zbelt + 0.07), (-wb, zbelt + 0.04), (-wb, zbelt), (-w, zbelt - 0.03)]
-
-
 def _pane(v, x0, y0, z0, x1, y1, z1, key="glass", t=0.018):
     """平面ガラス(底辺中心(x0,y0,z0) → 上辺中心(x1,y1,z1)、幅は別指定)は使わず、4点を直接張る薄板。"""
     pass
@@ -702,7 +692,7 @@ def _front0(v, S, e, nose):
             xx = xe - 0.02 + nl * t
             ztop = zt0(t) if t >= ta else min(zt0(t), zg(xx) - 0.26)
             zb = 0.94 + 0.12 * t ** 2
-            secs.append((X(xx), _sec_belt(w, zb, ztop, 0.16 + 0.1 * t, za_ - 0.55, 0.045 * (1 - t))))      # X13v: 腰(風防下のカウルの下)で幅を絞り、前面のベタ面を段差で割る
+            secs.append((X(xx), _sec(w, zb, ztop, 0.16 + 0.1 * t)))
         v.A(mask, 0.01, True).loft_x(secs)
         hw = h - 0.10
         if sty == "pano":
@@ -929,7 +919,7 @@ def _front0(v, S, e, nose):
             t = i / 8.0
             w = (h - 0.02) * math.sqrt(max(0.02, 1 - t ** 2.2))
             ztop = zws + 0.02 - 0.08 * t
-            secs.append((X(xe - 0.02 + nl * t), _sec_belt(w, 0.94 + 0.12 * t, ztop, 0.18, 1.42, 0.05 * (1 - t))))
+            secs.append((X(xe - 0.02 + nl * t), _sec(w, 0.94 + 0.12 * t, ztop, 0.18)))
         v.A(mask, 0.01, True).loft_x(secs)
         # 3枚窓: 中央は正面、左右は折れて回り込む
         xc = xe + nl * 0.84
