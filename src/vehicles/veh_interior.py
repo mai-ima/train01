@@ -15,7 +15,9 @@ common.make_materials()
 v = vehtypes.make(kind, "vint", seed=3, ends=("cab", "cab"), people=(ppl == "on")) if "people" in vehtypes.make.__code__.co_varnames else vehtypes.make(kind, "vint", seed=3, ends=("cab", "cab"))
 v.place(0, 0, 0, z=0.274)
 # 屋根と屋根上機器を隠さずに、天井の外側だけ薄い外光(窓から入る昼光)を与える
-w = bpy.data.worlds.new("W"); sc.world = w; w.use_nodes = True
+w = bpy.data.worlds.new("W"); sc.world = w
+if w.node_tree is None:
+    w.use_nodes = True
 bg = w.node_tree.nodes["Background"]; bg.inputs[0].default_value = (0.55, 0.65, 0.8, 1.0); bg.inputs[1].default_value = 1.2
 sun = bpy.data.lights.new("Sun", 'SUN'); sun.energy = 4.0
 so = bpy.data.objects.new("Sun", sun); sc.collection.objects.link(so); so.rotation_euler = (math.radians(55), 0, math.radians(35))

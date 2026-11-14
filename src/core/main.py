@@ -464,10 +464,11 @@ if _fw > 0:
 
 world = bpy.data.worlds.new("World")
 scene.world = world
-try:
-    world.use_nodes = True
-except Exception:
-    pass
+if world.node_tree is None:          # Blender 5.x の World は既定でノードツリーを持つ。use_nodes は 6.0 で削除予定のため必要な時だけ使う
+    try:
+        world.use_nodes = True
+    except Exception as _e:
+        print("world.use_nodes failed (skipped):", _e)
 nt = world.node_tree
 nt.nodes.clear()
 W = lib.wrap_tree(nt)

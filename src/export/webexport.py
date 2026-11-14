@@ -95,7 +95,8 @@ def _grid_render(mats, mode):
     sc.view_settings.view_transform = 'Standard'
     sc.view_settings.look = 'None'
     w = bpy.data.worlds.new("black")
-    w.use_nodes = True
+    if w.node_tree is None:
+        w.use_nodes = True
     w.node_tree.nodes['Background'].inputs['Color'].default_value = (0, 0, 0, 1)
     sc.world = w
     n = len(mats)
