@@ -44,6 +44,11 @@ def run(sid):
                 gaps.append(float(zmin - loc.z)); break
         if gaps and min(gaps) > GAP:
             d = dict(zmin=round(zmin, 2), gap=round(min(gaps), 2), n=len(lst))
+            if os.environ.get("DBG_FLOAT") and re.search(os.environ["DBG_FLOAT"], g):     # 調査用: 最下点を作っているオブジェクトの名前と座標
+                for n_, w_ in lst:
+                    if float(w_[:, 2].min()) < zmin + 0.05:
+                        q_ = w_[int(np.argmin(w_[:, 2]))]
+                        print("[DBGFLOAT]", g, n_, [round(float(v), 2) for v in q_])
             kn = next((k for k in _known() if re.search(k["re"], g)), None)
             if kn:      # 目視で浮きでないと確認済み(根拠の画像つき)。件数には数えず別に出す
                 KNOWN_HITS[g] = dict(d, evidence=kn["evidence"])

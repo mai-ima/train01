@@ -346,7 +346,7 @@ def build_blocks():
                 ev = dict(x0=w - 9.0, x1=w, y0=d, y1=d + 11.0, nfl=max(1, nfl - 1), roof="gable", wall=wall, door="S", ridge="y")
                 kit2.volume(g, ev, rng, {"id": "M06"}, interior=False)
             elif extra == "tee":                                   # T字: 奥に細長い棟(階段室+廊下棟)
-                tv = dict(x0=w / 2 - 3.5, x1=w / 2 + 3.5, y0=d, y1=d + 9.0, nfl=nfl, roof="hip", wall="pl_cream", door="S")
+                tv = dict(x0=w / 2 - 3.5, x1=w / 2 + 3.5, y0=d, y1=d + 9.0, nfl=nfl, roof="hip", wall="pl_cream", door="N")      # K2: door="S" だと開口が本館の奥壁(y=d)へ向いて0.59m先で塞がれていた(穂波野 --interf のドア検査)→外側の北面(奥)へ
                 kit2.volume(g, tv, rng, {"id": "M06"}, interior=False)
             elif extra == "tank":                                  # 屋上の高架水槽と階段室の塔屋
                 g.a("iron_black", bevel=0.02).cyl((w * 0.75, d * 0.5, zh + 0.2), (w * 0.75, d * 0.5, zh + 2.6), 1.2, 1.2, seg=14)
