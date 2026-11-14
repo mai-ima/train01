@@ -1,5 +1,6 @@
 #!/bin/bash
 cd /home/claude/station
+source /home/user/train01/scripts/render_guard.sh
 export PYTHONHASHSEED=0
 cp /home/user/train01/net/stock_cfg.json /tmp/stock_cfg.bakd      # 退避元は常に repo の内容(連続起動・中断で汚染されない)
 CAMS="41,-10,2.4,30,-4.6,2.6,36;41,-4.6,2.3,30,-4.6,2.6,40;-41,-10,2.4,-30,-4.6,2.6,36;15,-14,7,0,-2,2.5,30;38,-9,0.9,25,-4.6,1.0,32;0,-12,2.2,0,-2,2.4,28;10,-4.6,7.5,2,-4.6,3.4,34;36,-6.4,0.6,27,-4.6,0.6,40"
