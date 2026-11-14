@@ -9,7 +9,30 @@ LAT = 1.6
 ZMIN, ZMAX = 0.55, 4.0
 
 
+def honamino_tracks_xy(step=1.5):
+    """穂波野(本体データ・--zone なし): T1〜T6 の railL/railR の実頂点から各線の中心線を作る(T5/T6 は T4 から斜めに分岐する曲線のため直線近似しない)。"""
+    out = []
+    for k in range(1, 7):
+        ol, orr = bpy.data.objects.get(f"T{k}_railL"), bpy.data.objects.get(f"T{k}_railR")
+        if ol is None or orr is None or not len(ol.data.vertices) or not len(orr.data.vertices):
+            continue
+        def _w(ob):
+            return np.array([(ob.matrix_world @ v.co)[:2] for v in ob.data.vertices])
+        L, R = _w(ol), _w(orr)
+        xs = np.arange(max(L[:, 0].min(), R[:, 0].min()), min(L[:, 0].max(), R[:, 0].max()), step)
+        pts = []
+        for x in xs:
+            yl = L[np.argsort(np.abs(L[:, 0] - x))[:4], 1].mean()
+            yr = R[np.argsort(np.abs(R[:, 0] - x))[:4], 1].mean()
+            pts.append((x, (yl + yr) / 2.0))
+        if pts:
+            out.append(np.array(pts))
+    return out
+
+
 def tracks_xy(sid, xr=(-160, 160), step=1.5):
+    if sid == "M06":
+        return honamino_tracks_xy(step)
     import zone_stock, kit4, kit2
     n = len(kit4.local_tracks(sid)) if sid not in kit2.DESIGN else kit2.DESIGN[sid]["ntr"]
     out = []
