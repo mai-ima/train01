@@ -189,7 +189,7 @@ def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", strip
         platform(xa + 2, xb - 2, ys[-1] - 3.6, ys[-1] - 1.7, name=f"k6_{sid}_platB")
         pcs = [2.7, ys[-1] - 2.7]
     for (yc, sg) in stairs:
-        _solid_stair(g, sg, yc)
+        _solid_stair(g, sg, yc, width=(2.4 if island else 1.6))      # K2: 両側ホーム(K02)は階段の腰壁が線路の限界(1.6m)へ1.25mまで入っていた→幅を1.6mにして腰壁の外縁を線路中心から1.65mに
     _tunnel_ext(g, sid, xa, xb, ylo, yhi, zt)
     # 柱・照明・ベンチ・案内
     gp = G(f"k6_{sid}_fit", "Props")
