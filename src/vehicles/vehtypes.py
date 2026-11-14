@@ -702,7 +702,7 @@ def _front0(v, S, e, nose):
             xx = xe - 0.02 + nl * t
             ztop = zt0(t) if t >= ta else min(zt0(t), zg(xx) - 0.26)
             zb = 0.94 + 0.12 * t ** 2
-            secs.append((X(xx), _sec(w, zb, ztop, 0.16 + 0.1 * t)))
+            secs.append((X(xx), _sec_belt(w, zb, ztop, 0.16 + 0.1 * t, za_ - 0.55, 0.045 * (1 - t))))      # X13v: 腰(風防下のカウルの下)で幅を絞り、前面のベタ面を段差で割る
         v.A(mask, 0.01, True).loft_x(secs)
         hw = h - 0.10
         if sty == "pano":
