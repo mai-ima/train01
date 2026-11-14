@@ -1,7 +1,7 @@
 """K5: 停車車両と構造物の干渉。車両メッシュの占有格子(0.4m)に、構造物(建物・ホーム上屋・柱・小物)の頂点が入っていれば報告。"""
 import re, numpy as np, bpy
 CELL = 0.4
-OKS = re.compile(r"trk|track|ballast|rail|sleeper|fit$|ground|terrain|sky|^cam|cat[_0-9]|catenary|buffer|stk_|veh|plat|_isl|k6_.*(plat|via)|signal|sig_|room_|floor", re.I)
+OKS = re.compile(r"trk|track|ballast|rail|sleeper|fit$|ground|terrain|sky|^cam|cat[_0-9]|catenary|buffer|stk_|veh|plat|_isl|k6_.*(plat|via)|signal|sig_|room_|floor|m19_mono_iron_black", re.I)      # m19_mono_iron_black = モノレールの走行面(車両は設計どおり z=8.2 の走行面に載る=接触は衝突でない。屋根・柱は除外せず検査を続ける)
 def _verts(ob):
     nv = len(ob.data.vertices)
     if not nv: return None
