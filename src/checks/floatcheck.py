@@ -35,7 +35,10 @@ def run(sid):
         gaps = []
         names = {n for n, _ in lst}
         for p in pts:
-            o = Vector((float(p[0]), float(p[1]), zmin + 0.02))
+            o = Vector((float(p[0]), float(p[1]), zmin + 0.15))      # K2: 始点が zmin+0.02 だと、最下点が厚み0.1mの面(ホーム上面 z1.0〜1.1)の内側に入り、その面に当たらず地面(z=0)まで抜けて隙間が1.0m過大に出た(穂波野 dark_wood)。面の厚みを超える 0.15m 上から飛ばす
+            # K2: 壁に貼る板(face_plane 系=名前に _panel/_map/_notice/_poster/_ad の付くもの)は壁面に取り付く部品で、最下点が高いのは当然。レイを真下へ飛ばしても床や地面までの距離が出るだけなので判定から外す
+            if all(re.search(r"(_panel[0-9]*|_map|_notice|_poster|_ad[0-9]*)$", n_) for n_, w_ in lst if float(w_[:, 2].min()) < zmin + 0.05):
+                gaps.append(0.0); break
             for _ in range(4):
                 ok, loc, nrm, idx, hob, mat = sc.ray_cast(dg, o, Vector((0, 0, -1)), distance=60.0)
                 if not ok: gaps.append(99.0 if zmin > 0.0 else 0.0); break      # Q25: 最下点が地面より下(基礎・橋台の根入れ)で下に何も無いのは浮きではない(Y03 の橋台 zmin=-4 の偽陽性)
