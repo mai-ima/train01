@@ -453,7 +453,9 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
 
 def build_site():
     """敷地づくり: 管理棟前の舗装広場・構内道路・柵・植栽・街灯。箱だけが芝生に建つ状態を解消する。"""
-    plaza = Acc("nd_plaza", M["concrete"], "Roads")
+    if "nd_plaza_mat" not in M:      # D7c(監査『舗装が濡れ床のように反射する』): 低い角度から見ると地面はフレネル反射で光る(物理的には正しいが実際の古いコンクリートは反射が弱い)→広場専用に粗さを上げた材質(他の concrete には影響しない)
+        M["nd_plaza_mat"] = lib.mat_pbr("nd_plaza_mat", "Concrete036", scale=1.4, hsv=(0.5, 0.7, 1.0), tint=(0.95, 0.88, 0.76), tint_amt=0.7, dirt=0.35, bump=0.5, spec=0.12, rough_add=0.3)
+    plaza = Acc("nd_plaza", M["nd_plaza_mat"], "Roads")
     plaza.boxc(283.0, -103.0, 0.035, 110.0, 24.0, 0.07)            # 管理棟前の広場
     plaza.boxc(172.0, -118.0, 0.035, 90.0, 52.0, 0.07)             # 技術開発棟前
     plaza.build()
