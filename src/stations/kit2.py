@@ -186,11 +186,13 @@ def make_ops(v, rng, zf, door_side='S'):
                 w = rng.choice([1.0, 1.2, 1.4]) if side in "SN" else 1.0
                 wh = 1.1 + rng.choice([0, 0.2, 0.4])
                 if _ws == "band" and side in "SN":
-                    w, wh = 2.3, 1.0
+                    w, wh = 2.3 * rng.uniform(0.88, 1.06), 1.0 * rng.uniform(0.92, 1.08)      # D7c(監査『窓が全て同寸・等間隔』): 寸法に±10%程度のばらつき
                 elif _ws == "tall" and side in "SN":
-                    w, wh = 0.9, 1.8
+                    w, wh = 0.9 * rng.uniform(0.9, 1.1), 1.8 * rng.uniform(0.94, 1.06)
+                    if i == n - 1:       # 端の区画は階段室の窓(細く縦に長い)
+                        w, wh = 0.7, 2.3 if f < nfl - 1 else 1.8
                 elif _ws == "square" and side in "SN":
-                    w, wh = 0.9, 0.9
+                    w, wh = 0.9 * rng.uniform(0.9, 1.1), 0.9 * rng.uniform(0.9, 1.15)
                 if f == 0 and ((side == door_side and i == n // 2) or (side == v.get("door2") and i == i_d2)):
                     ops[side].append((c - 0.7, c + 0.7, zf, zf + 2.05, 'door' if side == 'N' else 'open'))
                 else:
