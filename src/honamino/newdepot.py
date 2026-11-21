@@ -421,6 +421,11 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
     _fk.box(w / 2 - 0.82, w / 2 - 0.72, -0.12, 0.02, zf, zf + 2.1)        # ドア枠(左)
     _fk.box(w / 2 + 0.72, w / 2 + 0.82, -0.12, 0.02, zf, zf + 2.1)        # ドア枠(右)
     _fk.box(w / 2 - 0.82, w / 2 + 0.82, -0.12, 0.02, zf + 2.04, zf + 2.14)   # ドア枠(上)
+    for _sx in (-1, 1):                                                          # D7c(監査『玄関が小さな扉と薄い庇だけ』): 扉の両脇に壁付けの灯具(金具+乳白グローブ)と、扉に縦長の取っ手
+        _lx = w / 2 + _sx * 1.25
+        g.a("iron_black", bevel=0.005).box(_lx - 0.05, _lx + 0.05, -0.16, 0.0, zf + 1.85, zf + 1.92)
+        g.a("lamp_glow" if "lamp_glow" in M else "iron_black").sphere((_lx, -0.22, zf + 1.98), (0.11, 0.11, 0.13), seg=8, rings=6)
+        g.a("iron_black", bevel=0.005).box(w / 2 + _sx * 0.12 - 0.015, w / 2 + _sx * 0.12 + 0.015, 0.0, 0.05, zf + 0.95, zf + 1.45)
     # D7c(第1段階監査: 足元に基礎・犬走り・縁石・植栽帯が無く舗装へそのまま置いたよう): 棟ごとに足元の作りを変える
     _foot = r.choice(["apron", "planter", "curb"])
     if _foot == "apron":        # 犬走り(建物の周囲に幅0.9mの砂利/コンクリートの帯)
