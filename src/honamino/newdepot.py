@@ -321,12 +321,27 @@ def build_blocks():
     import kit2
     from kit2 import SubZone
     kit2.mats2()
+    # D7c(第1段階監査: 全棟が同じ石目調の漆喰で貼り紙感): 棟ごとに壁の素材そのものを変える(塗装漆喰/レンガ/タイル/打放しコンクリート/金属パネル)
+    _wm = {
+        "nd_w_paint": ("PaintedPlaster006", dict(scale=0.45, tint=(0.88, 0.86, 0.80), tint_amt=0.55, bump=0.35, macro=0.25, dirt=0.15)),
+        "nd_w_brick": ("Bricks097", dict(scale=0.55, tint=(0.62, 0.34, 0.24), tint_amt=0.35, bump=0.9, macro=0.3, dirt=0.2)),
+        "nd_w_tile": ("Tiles052", dict(scale=0.5, tint=(0.82, 0.84, 0.80), tint_amt=0.3, bump=0.5, macro=0.2, dirt=0.1)),
+        "nd_w_conc": ("Concrete044D", dict(scale=0.5, tint=(0.66, 0.65, 0.62), tint_amt=0.25, bump=0.6, macro=0.4, dirt=0.2)),
+        "nd_w_metal": ("CorrugatedSteel005", dict(scale=0.7, tint=(0.55, 0.62, 0.66), tint_amt=0.35, bump=0.9, macro=0.2, dirt=0.1)),
+    }
+    for _k, (_tid, _kw) in _wm.items():
+        if _k not in M:
+            try:
+                M[_k] = lib.mat_pbr(_k, _tid, **_kw)
+            except Exception as _e:
+                print("nd wall material failed (fallback plaster):", _k, _e)
+                M[_k] = M["pl_grey"]
     rng = random.Random(77)
     # (名前, 前面中心x, 前面y, 幅, 奥行, 階数, 壁, 備品) — 前面(local y=0)が北(はしご線側)を向くよう yaw=π
     # D7b: 3棟を別設計に(屋根形状・階数・平面・外構を変える。以前は同一の箱を色と寸法だけ変えていた)
-    specs = [("nd_adm1", 245.0, -100.0, 24.0, 14.0, 3, "pl_grey", office_fit, "gable", "ell"), ("nd_adm2", 285.0, -100.0, 20.0, 12.0, 3, "plasterw", office_fit, "hip", "tee"),
-             ("nd_adm3", 322.0, -100.0, 22.0, 13.0, 2, "pl_cream", office_fit, "saw", "tank"),
-             ("nd_rd1", 150.0, -108.0, 30.0, 18.0, 4, "pl_grey", lab_fit("ticket"), "flat", "porch"), ("nd_rd2", 195.0, -108.0, 28.0, 16.0, 3, "pl_blue", lab_fit("gate"), "hip", "wing"),
+    specs = [("nd_adm1", 245.0, -100.0, 24.0, 14.0, 3, "nd_w_paint", office_fit, "gable", "ell"), ("nd_adm2", 285.0, -100.0, 20.0, 12.0, 3, "nd_w_brick", office_fit, "hip", "tee"),
+             ("nd_adm3", 322.0, -100.0, 22.0, 13.0, 2, "nd_w_tile", office_fit, "saw", "tank"),
+             ("nd_rd1", 150.0, -108.0, 30.0, 18.0, 4, "nd_w_conc", lab_fit("ticket"), "flat", "porch"), ("nd_rd2", 195.0, -108.0, 28.0, 16.0, 3, "nd_w_metal", lab_fit("gate"), "hip", "wing"),
              ("nd_rd3", 150.0, -140.0, 36.0, 20.0, 2, "concrete", lab_fit("display"), "saw", "tank")]
     for nm, xc, yf, w, d, nfl, wall, fit, roof, extra in specs:
         with SubZone((xc + w / 2, yf, -1.3), math.pi):
