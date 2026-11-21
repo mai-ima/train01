@@ -198,6 +198,8 @@ def make_ops(v, rng, zf, door_side='S'):
                         c = (a0 + a1) / 2.0
                     ops[side].append((c - 0.7, c + 0.7, zf, zf + 2.05, 'door' if side == 'N' else 'open'))
                 else:
+                    if v.get("win_style") and f == 0 and side == door_side and side in "SN" and abs(c - (a0 + a1) / 2.0) < w / 2 + 1.1:
+                        continue      # D7c: 玄関(建物中央)を中央へ揃えたため、玄関の横に張り付いた1階の窓は除く(玄関幅±0.7m+余白0.4m)
                     ops[side].append((c - w / 2, c + w / 2, z0, z0 + wh, 'glass'))
     return ops
 
