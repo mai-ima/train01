@@ -439,7 +439,7 @@ def build_site():
     for k in range(26):                                             # 敷地の周りの並木(D7c: 全て同形のケヤキを14.5m等間隔に並べていた→樹種(ケヤキ/桜/杉)と間隔・大きさ・空きをばらつかせる)
         _x += rng.uniform(9.5, 19.5)
         x = _x
-        y = (-160.0 if x < 350.0 else -250.0) + rng.uniform(-3.5, 3.0)
+        y = (-174.0 if x < 350.0 else -250.0) + rng.uniform(-3.0, 2.5)      # D7c: nd_rd3(y-140〜-160)の南壁に樹冠がかかっていた→建物の南端から約12m離す
         _p = rng.random()
         if _p < 0.10:
             continue                                                # 所々に空き
