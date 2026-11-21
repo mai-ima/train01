@@ -379,7 +379,7 @@ def build_blocks():
                     _lv.box(_tx + 0.5, _tx + 1.9, _ty - 0.06, _ty + 0.02, zh + 1.4 + _k * 0.14, zh + 1.46 + _k * 0.14)
                 _lv.box(_tx + 2.1, _tx + 2.9, _ty - 0.06, _ty + 0.02, zh, zh + 1.95)                                          # 扉(黒い鉄扉)
                 _wx, _wy = w * 0.75, d * 0.5
-                g.a("iron_black", bevel=0.02).cyl((_wx, _wy, zh + 1.2), (_wx, _wy, zh + 2.9), 1.2, 1.2, seg=18)                 # 水槽の胴(台座の上に載せる)
+                g.a("tin", bevel=0.02).cyl((_wx, _wy, zh + 1.2), (_wx, _wy, zh + 2.9), 1.2, 1.2, seg=18)                 # 水槽の胴(台座の上に載せる)
                 for _a in (0.0, 1.57, 3.14, 4.71):                                                                           # 4本の脚
                     _lx, _ly = _wx + 0.95 * math.cos(_a), _wy + 0.95 * math.sin(_a)
                     g.a("iron_black", bevel=0.01).box(_lx - 0.07, _lx + 0.07, _ly - 0.07, _ly + 0.07, zh, zh + 1.25)
@@ -398,6 +398,8 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
     g.a("concrete", bevel=0.01).box(-0.08, w + 0.08, -0.08, d + 0.08, zf - 0.05, zf + r.choice([0.45, 0.6, 0.9]))      # 基礎帯(棟ごとに高さを変える)
     for px in ((0.12, w - 0.12) if r.random() < 0.6 else (0.12, w * 0.28, w * 0.72, w - 0.12)):                       # 雨樋の縦樋(D7c: 中央 w/2 の縦樋が玄関と名板の真上を貫いて見えた=監査『壁中央の縦線』→玄関の幅(中央±1.4m)を避けた位置へ)
         g.a("iron_black").cyl((px, -0.1, zf), (px, -0.1, zh), 0.05, 0.05, seg=8)
+        for _bz in np.arange(zf + 0.6, zh - 0.3, 1.4):                                              # D7c(監査『縦樋が壁に貼り付いた線で固定金具がない』): 縦樋の固定金具(帯金)
+            g.a("iron_black", bevel=0.005).box(px - 0.075, px + 0.075, -0.15, 0.0, float(_bz), float(_bz) + 0.05)
     for _ in range(r.choice([1, 1, 2, 3])):                                                                          # 煙突(煉瓦)・笠木つき
         cx_, cy_ = r.uniform(w * 0.15, w * 0.85), r.uniform(d * 0.25, d * 0.8)
         hh = r.uniform(1.8, 3.6)
@@ -412,6 +414,9 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
     if _ent == "porch":
         for _sx in (-1, 1):
             g.a("concrete", bevel=0.01).box(w / 2 + _sx * (sw - 0.15) - 0.25, w / 2 + _sx * (sw - 0.15) + 0.25, -2.12, -1.62, zf - 0.30, zf + 2.45)
+            _pcx = w / 2 + _sx * (sw - 0.15)                                                       # D7c(監査『ポーチ柱が無装飾の角柱』): 柱頭(張り出した頭)と柱脚(台座)を付ける
+            g.a("concrete", bevel=0.015).box(_pcx - 0.34, _pcx + 0.34, -2.20, -1.54, zf + 2.25, zf + 2.45)
+            g.a("concrete", bevel=0.015).box(_pcx - 0.33, _pcx + 0.33, -2.19, -1.55, zf - 0.30, zf - 0.05)
     # D7c(第1段階監査『玄関開口が真っ白な白飛びのベタ面』): 室内の白い壁が強い室内灯で発光して見えていた→開口に扉(下半分は木の板・上半分は桟つきガラス)を実体として入れて塞ぐ
     g.a("wood_dark", bevel=0.005).box(w / 2 - 0.70, w / 2 + 0.70, 0.04, 0.10, zf, zf + 0.95)
     g.a("glass").box(w / 2 - 0.66, w / 2 + 0.66, 0.06, 0.08, zf + 0.95, zf + 2.02)
