@@ -269,13 +269,14 @@ def volume(g, v, rng, st, interior=False):
         for i in range(n):
             xa, xb = x0 + i * (x1 - x0) / n, x0 + (i + 1) * (x1 - x0) / n
             gr.extrude_x([(y0 - 0.3, zh), (y1 + 0.3, zh + 1.6), (y1 + 0.3, zh + 0.02), (y0 - 0.3, zh - 0.1)], xa, xb)
-            g.a("glass").box(xa, xa + 0.05, y0, y1, zh, zh + 1.5)
-            # D7c(監査: のこぎり屋根の採光窓が半透明の水色の薄板に見える): 窓に枠(上下の框・方立)と庇を付けて『ガラス戸』に見せる
+            # D7c(根本修正): 旧コードはガラスを歯の側面(x=xa の薄板・y0〜y1 全面)に立てており、屋根の上の手すりのような板に見えた。のこぎり屋根の採光窓は、くさびの高い側(y=y1+0.3)の垂直面(x が xa〜xb)に付けるのが正しい
+            yw = y1 + 0.3
+            g.a("glass").box(xa + 0.15, xb - 0.15, yw - 0.04, yw, zh + 0.08, zh + 1.55)
             _sk = g.a("iron_black", bevel=0.005)
-            _sk.box(xa - 0.02, xa + 0.09, y0, y1, zh - 0.02, zh + 0.07)        # 下框
-            _sk.box(xa - 0.02, xa + 0.09, y0, y1, zh + 1.43, zh + 1.52)        # 上框
-            for _yy in np.linspace(y0 + 0.05, y1 - 0.05, max(2, int((y1 - y0) // 1.6) + 1)):
-                _sk.box(xa - 0.02, xa + 0.09, _yy - 0.04, _yy + 0.04, zh, zh + 1.5)      # 方立
+            _sk.box(xa + 0.1, xb - 0.1, yw - 0.07, yw + 0.02, zh + 0.02, zh + 0.1)       # 下框
+            _sk.box(xa + 0.1, xb - 0.1, yw - 0.07, yw + 0.02, zh + 1.53, zh + 1.62)      # 上框
+            for _xx in np.linspace(xa + 0.12, xb - 0.12, max(2, int((xb - xa) // 1.2) + 1)):
+                _sk.box(_xx - 0.035, _xx + 0.035, yw - 0.07, yw + 0.02, zh + 0.05, zh + 1.6)      # 方立
     else:   # flat parapet
         g.a("concrete", bevel=0.01).box(x0 - 0.25, x1 + 0.25, y0 - 0.25, y1 + 0.25, zh, zh + 0.25)
         g.a("concrete").box(x0 - 0.25, x1 + 0.25, y0 - 0.25, y0 - 0.12, zh + 0.25, zh + 0.8)
