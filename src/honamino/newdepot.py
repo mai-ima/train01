@@ -453,6 +453,14 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
         _fp(f"{nm}_plate", _img, 'S', w / 2, -0.17, zf + 2.66, 3.2, h=0.8, off=0.0)      # D7c(監査『名板の文字が小さく読めない』): 2.4×0.24m→3.2×0.8m(画像の縦横比4:1に合わせる)
     else:
         g.a("pl_cream" if "pl_cream" in M else "concrete", bevel=0.005).box(w / 2 - 1.2, w / 2 + 1.2, -0.17, -0.16, zf + 2.72, zf + 2.96)       # 名板の白い面
+    if nm in ("nd_adm1", "nd_adm3"):      # D7c(監査『第一棟の壁が単色ベタ面・平板』): 隅の柱型(隅石)と軒蛇腹(上端の張り出し)で壁面を割り、影の線を作る
+        _cq = g.a("concrete", bevel=0.01)
+        for _qx in (-0.08, w - 0.52):
+            _cq.box(_qx, _qx + 0.60, -0.14, 0.0, zf, zh)
+            _cq.box(_qx, _qx + 0.60, d, d + 0.14, zf, zh)
+        _cq.box(-0.18, w + 0.18, -0.30, 0.0, zh - 0.32, zh)         # 軒蛇腹(前面)
+        _cq.box(-0.18, 0.0, 0.0, d, zh - 0.32, zh)
+        _cq.box(w, w + 0.18, 0.0, d, zh - 0.32, zh)
     for _ux in r.sample([w * 0.14, w * 0.3, w * 0.7, w * 0.86], 2):                                                    # D7c(監査『外壁に付属物がなく単調な箱』): 室外機(本体+ファン格子)と、壁を這う冷媒配管
         g.a("tin", bevel=0.02).box(_ux - 0.45, _ux + 0.45, -0.75, -0.30, zf, zf + 0.72)
         g.a("iron_black").cyl((_ux, -0.76, zf + 0.38), (_ux, -0.80, zf + 0.38), 0.27, 0.27, seg=14)
