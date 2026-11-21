@@ -235,6 +235,11 @@ def _upper_floors(g, v, rng, st, zf, hole):
         rooms.shelf(g, hb + 0.6, min(x1 - 0.6, hb + 3.6), y1 - 0.45, zz, face='S', goods="jars", seed=5 + f)
         rooms.lamp_point((hb + x1) / 2.0, (y0 + y1) / 2.0 + 0.5, zz + 2.4, 140, size=0.1)      # D7c: 半径0.25mの点光源が窓ガラスの鏡面反射に白い円盤で映った(監査2名『窓内の白い球』)→0.1m(光量は同じ)
         rooms.lamp_point(x0 + 2.5, (y0 + y1) / 2.0 + 1.0, zz + 2.4, 90, size=0.1)
+        if v.get("win_style"):      # D7c(監査『窓が黒つぶれ・内部が見えない』): 上階の室内灯が2灯だけで窓が真っ暗だった→管理棟(win_style 指定)だけ、6m 間隔の格子で照明を足す
+            _nx, _ny = max(1, int((x1 - x0) // 6.0)), max(1, int((y1 - y0) // 6.0))
+            for _i in range(_nx):
+                for _j in range(_ny):
+                    rooms.lamp_point(x0 + (_i + 0.5) * (x1 - x0) / _nx, y0 + (_j + 0.5) * (y1 - y0) / _ny, zz + 2.4, 110, size=0.04, name="k2_up_light")
 
 
 def volume(g, v, rng, st, interior=False):
