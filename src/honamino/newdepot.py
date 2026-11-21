@@ -460,6 +460,13 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
         _fp(f"{nm}_plate", _img, 'S', w / 2, -0.17, zf + 2.66, 3.2, h=0.8, off=0.0)      # D7c(監査『名板の文字が小さく読めない』): 2.4×0.24m→3.2×0.8m(画像の縦横比4:1に合わせる)
     else:
         g.a("pl_cream" if "pl_cream" in M else "concrete", bevel=0.005).box(w / 2 - 1.2, w / 2 + 1.2, -0.17, -0.16, zf + 2.72, zf + 2.96)       # 名板の白い面
+    if nm == "nd_adm1":      # D7c(監査『壁が3階分の単色ベタ面』): 窓の区画の境目(3m間隔・玄関の脇は除く)に細い縦の柱型を通して壁面を縦に割る
+        _pl = g.a("concrete", bevel=0.01)
+        for _k in range(1, 8):
+            _px = _k * w / 8.0
+            if abs(_px - w / 2) < 1.8:
+                continue
+            _pl.box(_px - 0.07, _px + 0.07, -0.07, 0.0, zf, zh)
     if nm in ("nd_adm1", "nd_adm3"):      # D7c(監査『第一棟の壁が単色ベタ面・平板』): 隅の柱型(隅石)と軒蛇腹(上端の張り出し)で壁面を割り、影の線を作る
         _cq = g.a("concrete", bevel=0.01)
         for _qx in (-0.08, w - 0.52):
