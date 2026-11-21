@@ -378,7 +378,7 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
     """D7c: 棟ごとに異なる外装ディテール。基礎帯・縦樋・煙突・玄関ステップ/庇・看板・屋上機器を、棟名から決めた乱数で組み合わせる。"""
     r = random.Random(sum(ord(c) * (i + 3) for i, c in enumerate(nm)) + 11)   # 棟名から決まる固定の乱数(hash() は実行ごとに変わるので使わない)
     g.a("concrete", bevel=0.01).box(-0.08, w + 0.08, -0.08, d + 0.08, zf - 0.05, zf + r.choice([0.45, 0.6, 0.9]))      # 基礎帯(棟ごとに高さを変える)
-    for px in ((0.12, w - 0.12) if r.random() < 0.6 else (0.12, w / 2, w - 0.12)):                                       # 雨樋の縦樋
+    for px in ((0.12, w - 0.12) if r.random() < 0.6 else (0.12, w * 0.28, w * 0.72, w - 0.12)):                       # 雨樋の縦樋(D7c: 中央 w/2 の縦樋が玄関と名板の真上を貫いて見えた=監査『壁中央の縦線』→玄関の幅(中央±1.4m)を避けた位置へ)
         g.a("iron_black").cyl((px, -0.1, zf), (px, -0.1, zh), 0.05, 0.05, seg=8)
     for _ in range(r.choice([1, 1, 2, 3])):                                                                          # 煙突(煉瓦)・笠木つき
         cx_, cy_ = r.uniform(w * 0.15, w * 0.85), r.uniform(d * 0.25, d * 0.8)
