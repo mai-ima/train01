@@ -368,8 +368,24 @@ def build_blocks():
                 tv = dict(x0=w / 2 - 3.5, x1=w / 2 + 3.5, y0=d, y1=d + 9.0, nfl=nfl, roof="hip", wall="pl_cream", door="N")      # K2: door="S" だと開口が本館の奥壁(y=d)へ向いて0.59m先で塞がれていた(穂波野 --interf のドア検査)→外側の北面(奥)へ
                 kit2.volume(g, tv, rng, {"id": "M06"}, interior=False)
             elif extra == "tank":                                  # 屋上の高架水槽と階段室の塔屋
-                g.a("iron_black", bevel=0.02).cyl((w * 0.75, d * 0.5, zh + 0.2), (w * 0.75, d * 0.5, zh + 2.6), 1.2, 1.2, seg=14)
-                g.a("pl_grey", bevel=0.02).box(w * 0.2, w * 0.2 + 3.2, d * 0.35, d * 0.35 + 3.0, zh, zh + 2.9)
+                # D7c(第1段階監査『屋上の箱とタンクが無装飾の単色プリミティブ』): 塔屋に笠木・ルーバー窓・扉、水槽に脚・帯・配管・はしごを付ける
+                _tx, _ty = w * 0.2, d * 0.35
+                g.a("pl_grey", bevel=0.02).box(_tx, _tx + 3.2, _ty, _ty + 3.0, zh, zh + 2.9)
+                g.a("concrete", bevel=0.015).box(_tx - 0.15, _tx + 3.35, _ty - 0.15, _ty + 3.15, zh + 2.9, zh + 3.05)               # 笠木
+                _lv = g.a("iron_black", bevel=0.004)
+                for _k in range(7):                                                                                           # ルーバー窓(北面=前面側)
+                    _lv.box(_tx + 0.5, _tx + 1.9, _ty - 0.06, _ty + 0.02, zh + 1.4 + _k * 0.14, zh + 1.46 + _k * 0.14)
+                _lv.box(_tx + 2.1, _tx + 2.9, _ty - 0.06, _ty + 0.02, zh, zh + 1.95)                                          # 扉(黒い鉄扉)
+                _wx, _wy = w * 0.75, d * 0.5
+                g.a("iron_black", bevel=0.02).cyl((_wx, _wy, zh + 1.2), (_wx, _wy, zh + 2.9), 1.2, 1.2, seg=18)                 # 水槽の胴(台座の上に載せる)
+                for _a in (0.0, 1.57, 3.14, 4.71):                                                                           # 4本の脚
+                    _lx, _ly = _wx + 0.95 * math.cos(_a), _wy + 0.95 * math.sin(_a)
+                    g.a("iron_black", bevel=0.01).box(_lx - 0.07, _lx + 0.07, _ly - 0.07, _ly + 0.07, zh, zh + 1.25)
+                for _zz in (1.7, 2.4):                                                                                       # 鉄の帯(リング)
+                    g.a("steel" if "steel" in M else "iron_black").cyl((_wx, _wy, zh + _zz), (_wx, _wy, zh + _zz + 0.06), 1.26, 1.26, seg=18)
+                g.a("iron_black", bevel=0.01).cyl((_wx - 1.0, _wy, zh + 0.1), (_wx - 1.0, _wy, zh + 1.3), 0.06, 0.06, seg=8)    # 配管
+                g.a("iron_black", bevel=0.005).box(_wx + 1.22, _wx + 1.28, _wy - 0.25, _wy - 0.2, zh, zh + 2.9)               # はしご(縦桟)
+                g.a("iron_black", bevel=0.005).box(_wx + 1.22, _wx + 1.28, _wy + 0.2, _wy + 0.25, zh, zh + 2.9)
             _block_details(g, nm, w, d, nfl, zf, zh, rng)
             g.build()
 
@@ -394,6 +410,13 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
     if _ent == "porch":
         for _sx in (-1, 1):
             g.a("concrete", bevel=0.01).box(w / 2 + _sx * (sw - 0.15) - 0.13, w / 2 + _sx * (sw - 0.15) + 0.13, -2.1, -1.84, zf - 0.30, zf + 2.55)
+    # D7c(第1段階監査『玄関開口が真っ白な白飛びのベタ面』): 室内の白い壁が強い室内灯で発光して見えていた→開口に扉(下半分は木の板・上半分は桟つきガラス)を実体として入れて塞ぐ
+    g.a("wood_dark", bevel=0.005).box(w / 2 - 0.70, w / 2 + 0.70, 0.04, 0.10, zf, zf + 0.95)
+    g.a("glass").box(w / 2 - 0.66, w / 2 + 0.66, 0.06, 0.08, zf + 0.95, zf + 2.02)
+    _dk = g.a("iron_black", bevel=0.004)
+    _dk.box(w / 2 - 0.02, w / 2 + 0.02, 0.04, 0.10, zf + 0.95, zf + 2.04)          # 中桟(縦)
+    _dk.box(w / 2 - 0.70, w / 2 + 0.70, 0.04, 0.10, zf + 1.45, zf + 1.50)          # 中桟(横)
+    _dk.box(w / 2 - 0.70, w / 2 + 0.70, 0.04, 0.10, zf + 0.93, zf + 0.97)          # 腰桟
     _fk = g.a("iron_black", bevel=0.004)
     _fk.box(w / 2 - 0.82, w / 2 - 0.72, -0.12, 0.02, zf, zf + 2.1)        # ドア枠(左)
     _fk.box(w / 2 + 0.72, w / 2 + 0.82, -0.12, 0.02, zf, zf + 2.1)        # ドア枠(右)
