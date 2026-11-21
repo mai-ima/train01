@@ -187,6 +187,8 @@ def make_ops(v, rng, zf, door_side='S'):
                 wh = 1.1 + rng.choice([0, 0.2, 0.4])
                 if _ws == "band" and side in "SN":
                     w, wh = 2.3 * rng.uniform(0.88, 1.06), 1.0 * rng.uniform(0.92, 1.08)      # D7c(監査『窓が全て同寸・等間隔』): 寸法に±10%程度のばらつき
+                    if i % 3 == 1:       # D7c(監査『窓が全て同寸の反復』): 3区画に1つは幅の狭い縦長窓にしてリズムを作る(広・狭・広)
+                        w, wh = 1.5 * rng.uniform(0.92, 1.06), 1.35 * rng.uniform(0.95, 1.05)
                 elif _ws == "tall" and side in "SN":
                     w, wh = 0.9 * rng.uniform(0.9, 1.1), 1.8 * rng.uniform(0.94, 1.06)
                     if i == n - 1:       # 端の区画は階段室の窓(細い窓。階ごとにずれて帯にかかっていた→通常の窓と同じ高さ(1.5m)で幅だけ細くする)
