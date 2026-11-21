@@ -225,8 +225,8 @@ def _upper_floors(g, v, rng, st, zf, hole):
         rooms.desk(g, mid, y1 - 1.0, zz, face='N', papers=True)
         rooms.desk(g, mid + 1.8, y1 - 1.0, zz, face='N', papers=True)
         rooms.shelf(g, hb + 0.6, min(x1 - 0.6, hb + 3.6), y1 - 0.45, zz, face='S', goods="jars", seed=5 + f)
-        rooms.lamp_point((hb + x1) / 2.0, (y0 + y1) / 2.0 + 0.5, zz + 2.4, 140)
-        rooms.lamp_point(x0 + 2.5, (y0 + y1) / 2.0 + 1.0, zz + 2.4, 90)
+        rooms.lamp_point((hb + x1) / 2.0, (y0 + y1) / 2.0 + 0.5, zz + 2.4, 140, size=0.1)      # D7c: 半径0.25mの点光源が窓ガラスの鏡面反射に白い円盤で映った(監査2名『窓内の白い球』)→0.1m(光量は同じ)
+        rooms.lamp_point(x0 + 2.5, (y0 + y1) / 2.0 + 1.0, zz + 2.4, 90, size=0.1)
 
 
 def volume(g, v, rng, st, interior=False):
