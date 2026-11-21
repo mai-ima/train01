@@ -406,10 +406,10 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
     sw = r.uniform(1.6, 2.4)
     for _k in range(3 if _ent == "steps" else 1):
         g.a("concrete", bevel=0.01).box(w / 2 - sw - _k * 0.25, w / 2 + sw + _k * 0.25, -1.4 + _k * 0.45, 0.0, zf - 0.45 + _k * 0.15, zf - 0.30 + _k * 0.15 + (0.0 if _k else 0.30))
-    g.a("iron_black", bevel=0.01).box(w / 2 - sw, w / 2 + sw, -(2.2 if _ent == "porch" else 1.2), 0.0, zf + 2.55, zf + 2.62)
+    g.a("iron_black", bevel=0.02).box(w / 2 - sw, w / 2 + sw, -(2.2 if _ent == "porch" else 1.2), 0.0, zf + 2.45, zf + 2.67)   # 庇(厚み22cm)
     if _ent == "porch":
         for _sx in (-1, 1):
-            g.a("concrete", bevel=0.01).box(w / 2 + _sx * (sw - 0.15) - 0.13, w / 2 + _sx * (sw - 0.15) + 0.13, -2.1, -1.84, zf - 0.30, zf + 2.55)
+            g.a("concrete", bevel=0.01).box(w / 2 + _sx * (sw - 0.15) - 0.25, w / 2 + _sx * (sw - 0.15) + 0.25, -2.12, -1.62, zf - 0.30, zf + 2.45)
     # D7c(第1段階監査『玄関開口が真っ白な白飛びのベタ面』): 室内の白い壁が強い室内灯で発光して見えていた→開口に扉(下半分は木の板・上半分は桟つきガラス)を実体として入れて塞ぐ
     g.a("wood_dark", bevel=0.005).box(w / 2 - 0.70, w / 2 + 0.70, 0.04, 0.10, zf, zf + 0.95)
     g.a("glass").box(w / 2 - 0.66, w / 2 + 0.66, 0.06, 0.08, zf + 0.95, zf + 2.02)
