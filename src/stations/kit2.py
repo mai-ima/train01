@@ -238,6 +238,22 @@ def volume(g, v, rng, st, interior=False):
     g.a("stone", bevel=0.015).box(x0 - 0.08, x1 + 0.08, y0 - 0.08, y1 + 0.08, (-0.25 if v.get("ground", True) else zf - 0.7), zf - 0.02)   # 橋上通路は床版のみ(旧: 地面まで中実の石ブロックで線路を塞いでいた)
     ops = make_ops(v, rng, zf, v.get("door", 'S'))
     rooms.shell(g, x0, x1, y0, y1, zf - 0.02, zh, t=0.14, ops=ops, wall=wall)
+    if v.get("win_trim"):      # D7c(監査: 窓が壁に貼った黒い四角で窓台・庇・まぐさの奥行きがない): 窓の下に窓台(出幅0.12m)、上にまぐさ(出幅0.07m)を足す。指定した建物だけ(他の駅へは影響しない)
+        _tw = g.a("concrete", bevel=0.01)
+        for _side, _lst in ops.items():
+            for (_a0, _a1, _za, _zb, _k) in _lst:
+                if _k != 'glass':
+                    continue
+                if _side in "SN":
+                    _yy = y0 if _side == "S" else y1
+                    _o = -1 if _side == "S" else 1
+                    _tw.box(_a0 - 0.12, _a1 + 0.12, min(_yy, _yy + _o * 0.14), max(_yy, _yy + _o * 0.14), _za - 0.07, _za)
+                    _tw.box(_a0 - 0.09, _a1 + 0.09, min(_yy, _yy + _o * 0.10), max(_yy, _yy + _o * 0.10), _zb, _zb + 0.12)
+                else:
+                    _xx = x0 if _side == "W" else x1
+                    _o = -1 if _side == "W" else 1
+                    _tw.box(min(_xx, _xx + _o * 0.14), max(_xx, _xx + _o * 0.14), _a0 - 0.12, _a1 + 0.12, _za - 0.07, _za)
+                    _tw.box(min(_xx, _xx + _o * 0.10), max(_xx, _xx + _o * 0.10), _a0 - 0.09, _a1 + 0.09, _zb, _zb + 0.12)
     for cx, cy in ((x0, y0), (x1, y0), (x0, y1), (x1, y1)):
         g.a("wood_dark", bevel=0.004).box(cx - 0.09, cx + 0.09, cy - 0.09, cy + 0.09, zf - 0.02, zh + 0.1)
     _hole = None

@@ -350,6 +350,7 @@ def build_blocks():
             _wsty = {"nd_adm1": "band", "nd_adm2": "tall", "nd_adm3": "square", "nd_rd1": "band", "nd_rd2": "tall"}.get(nm)      # D7c: 棟ごとに窓割りを変える(横長の連窓/縦長/小窓)
             if _wsty:
                 v["win_style"] = _wsty
+            v["win_trim"] = True      # D7c: 窓台とまぐさ
             kit2.volume(g, v, rng, {"id": "M06"}, interior=True)
             zf = Z_PLAT + 0.30
             zh = zf + 2.9 + (nfl - 1) * 3.0
