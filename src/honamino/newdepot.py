@@ -443,7 +443,7 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
     _root = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
     _img = f"nd/{nm}_plate.png"
     if _os.path.exists(f"{_root}/tex/{_img}"):      # D7c(監査: 名板が無地の白い長方形で文字がない): 棟名の文字画像(原作オリジナルの機能名)を貼る
-        _fp(f"{nm}_plate", _img, 'S', w / 2, -0.17, zf + 2.72, 2.4, h=0.24, off=0.0)
+        _fp(f"{nm}_plate", _img, 'S', w / 2, -0.17, zf + 2.66, 3.2, h=0.8, off=0.0)      # D7c(監査『名板の文字が小さく読めない』): 2.4×0.24m→3.2×0.8m(画像の縦横比4:1に合わせる)
     else:
         g.a("pl_cream" if "pl_cream" in M else "concrete", bevel=0.005).box(w / 2 - 1.2, w / 2 + 1.2, -0.17, -0.16, zf + 2.72, zf + 2.96)       # 名板の白い面
     for _ in range(r.randint(2, 5)):                                                                                 # 屋上の換気筒・機器
