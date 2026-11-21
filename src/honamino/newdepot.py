@@ -453,6 +453,11 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
         _fp(f"{nm}_plate", _img, 'S', w / 2, -0.17, zf + 2.66, 3.2, h=0.8, off=0.0)      # D7c(監査『名板の文字が小さく読めない』): 2.4×0.24m→3.2×0.8m(画像の縦横比4:1に合わせる)
     else:
         g.a("pl_cream" if "pl_cream" in M else "concrete", bevel=0.005).box(w / 2 - 1.2, w / 2 + 1.2, -0.17, -0.16, zf + 2.72, zf + 2.96)       # 名板の白い面
+    for _ux in r.sample([w * 0.14, w * 0.3, w * 0.7, w * 0.86], 2):                                                    # D7c(監査『外壁に付属物がなく単調な箱』): 室外機(本体+ファン格子)と、壁を這う冷媒配管
+        g.a("tin", bevel=0.02).box(_ux - 0.45, _ux + 0.45, -0.75, -0.30, zf, zf + 0.72)
+        g.a("iron_black").cyl((_ux, -0.76, zf + 0.38), (_ux, -0.80, zf + 0.38), 0.27, 0.27, seg=14)
+        g.a("iron_black", bevel=0.005).box(_ux - 0.30, _ux + 0.30, -0.805, -0.76, zf + 0.37, zf + 0.39)
+        g.a("iron_black").cyl((_ux + 0.35, -0.12, zf + 0.3), (_ux + 0.35, -0.12, zf + 0.85), 0.025, 0.025, seg=6)
     for _ in range(r.randint(2, 5)):                                                                                 # 屋上の換気筒・機器
         vx, vy = r.uniform(1.0, w - 1.0), r.uniform(1.0, d - 1.0)
         g.a("iron_black", bevel=0.02).cyl((vx, vy, zh), (vx, vy, zh + r.uniform(0.5, 1.1)), 0.18, 0.12, seg=8)
