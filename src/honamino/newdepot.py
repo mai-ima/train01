@@ -264,7 +264,7 @@ def _grid_lights(g, v, zf, step=6.0, watt=150.0):
     nx, ny = max(1, int((x1 - x0) // step)), max(1, int((y1 - y0) // step))
     for i in range(nx):
         for j in range(ny):
-            rooms.lamp_point(x0 + (i + 0.5) * (x1 - x0) / nx, y0 + (j + 0.5) * (y1 - y0) / ny, zf + 2.55, watt, color=(0.95, 0.97, 1.0), size=0.4, name="nd_in_light")
+            rooms.lamp_point(x0 + (i + 0.5) * (x1 - x0) / nx, y0 + (j + 0.5) * (y1 - y0) / ny, zf + 2.55, watt, color=(0.95, 0.97, 1.0), size=0.12, name="nd_in_light")      # D7c: 半径0.4mだと窓ガラスの鏡面反射に白い円盤が映った(監査2名『窓内の白い球』)→0.12m(光量は同じ)
 
 
 def office_fit(g, v, rng, zf):
@@ -385,10 +385,19 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
         hh = r.uniform(1.8, 3.6)
         g.a("brick", bevel=0.01).box(cx_ - 0.4, cx_ + 0.4, cy_ - 0.4, cy_ + 0.4, zh - 0.3, zh + hh)
         g.a("concrete", bevel=0.01).box(cx_ - 0.5, cx_ + 0.5, cy_ - 0.5, cy_ + 0.5, zh + hh, zh + hh + 0.12)
-    if r.random() < 0.7:                                                                                             # 玄関ステップと小さな庇
-        sw = r.uniform(1.6, 2.8)
-        g.a("concrete", bevel=0.01).box(w / 2 - sw, w / 2 + sw, -1.4, 0.0, zf - 0.45, zf)
-        g.a("iron_black", bevel=0.01).box(w / 2 - sw, w / 2 + sw, -1.2, 0.0, zf + 2.55, zf + 2.62)
+    # D7c(監査: 玄関が枠・庇・段のない白い穴): 全棟に玄関まわりを作り、棟ごとに形を変える(ポーチ=柱2本+深い庇 / 庇=持ち出し庇 / 段=広い3段の階段)。ドア枠(黒い縁)も付ける
+    _ent = r.choice(["porch", "canopy", "steps"])
+    sw = r.uniform(1.6, 2.4)
+    for _k in range(3 if _ent == "steps" else 1):
+        g.a("concrete", bevel=0.01).box(w / 2 - sw - _k * 0.25, w / 2 + sw + _k * 0.25, -1.4 + _k * 0.45, 0.0, zf - 0.45 + _k * 0.15, zf - 0.30 + _k * 0.15 + (0.0 if _k else 0.30))
+    g.a("iron_black", bevel=0.01).box(w / 2 - sw, w / 2 + sw, -(2.2 if _ent == "porch" else 1.2), 0.0, zf + 2.55, zf + 2.62)
+    if _ent == "porch":
+        for _sx in (-1, 1):
+            g.a("concrete", bevel=0.01).box(w / 2 + _sx * (sw - 0.15) - 0.13, w / 2 + _sx * (sw - 0.15) + 0.13, -2.1, -1.84, zf - 0.30, zf + 2.55)
+    _fk = g.a("iron_black", bevel=0.004)
+    _fk.box(w / 2 - 0.82, w / 2 - 0.72, -0.12, 0.02, zf, zf + 2.1)        # ドア枠(左)
+    _fk.box(w / 2 + 0.72, w / 2 + 0.82, -0.12, 0.02, zf, zf + 2.1)        # ドア枠(右)
+    _fk.box(w / 2 - 0.82, w / 2 + 0.82, -0.12, 0.02, zf + 2.04, zf + 2.14)   # ドア枠(上)
     # D7c(第1段階監査: 足元に基礎・犬走り・縁石・植栽帯が無く舗装へそのまま置いたよう): 棟ごとに足元の作りを変える
     _foot = r.choice(["apron", "planter", "curb"])
     if _foot == "apron":        # 犬走り(建物の周囲に幅0.9mの砂利/コンクリートの帯)
@@ -404,7 +413,9 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
         g.a("concrete", bevel=0.01).box(-0.5, w + 0.5, -3.2, -2.9, 0.0, 0.14)
         for k in range(int(w // 3.0) + 1):
             g.a("iron_black", bevel=0.01).box(0.6 + k * 3.0 - 0.06, 0.6 + k * 3.0 + 0.06, -3.1, -2.95, 0.0, 0.6)
-    g.a("iron_black", bevel=0.01).box(w / 2 - 2.2, w / 2 + 2.2, -0.14, -0.04, zh - 1.2, zh - 0.5)                     # 棟名板
+    # D7c(監査: 文字のない黒い板が最上階の窓に重なって浮く): 棟名板は玄関の上(庇のすぐ上)に、玄関幅に合わせて小さく。窓列と重ならない
+    g.a("iron_black", bevel=0.01).box(w / 2 - 1.3, w / 2 + 1.3, -0.16, -0.04, zf + 2.68, zf + 3.0)
+    g.a("pl_cream" if "pl_cream" in M else "concrete", bevel=0.005).box(w / 2 - 1.2, w / 2 + 1.2, -0.17, -0.16, zf + 2.72, zf + 2.96)       # 名板の白い面
     for _ in range(r.randint(2, 5)):                                                                                 # 屋上の換気筒・機器
         vx, vy = r.uniform(1.0, w - 1.0), r.uniform(1.0, d - 1.0)
         g.a("iron_black", bevel=0.02).cyl((vx, vy, zh), (vx, vy, zh + r.uniform(0.5, 1.1)), 0.18, 0.12, seg=8)
