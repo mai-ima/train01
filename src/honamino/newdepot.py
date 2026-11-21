@@ -348,8 +348,6 @@ def build_blocks():
             g = kit2.G(nm, "Buildings")
             v = dict(x0=0.0, x1=w, y0=0.0, y1=d, nfl=nfl, roof=roof, wall=wall, door="S", custom_fit=fit)
             _wsty = {"nd_adm1": "band", "nd_adm2": "tall", "nd_adm3": "square", "nd_rd1": "band", "nd_rd2": "tall"}.get(nm)      # D7c: 棟ごとに窓割りを変える(横長の連窓/縦長/小窓)
-            if nm == "nd_adm1":
-                v["roofmat"] = "kawara"      # D7c(監査『屋根が単色』): 第一棟は瓦屋根
             if _wsty:
                 v["win_style"] = _wsty
             v["win_trim"] = True      # D7c: 窓台とまぐさ

@@ -253,13 +253,17 @@ def volume(g, v, rng, st, interior=False):
                 if _side in "SN":
                     _yy = y0 if _side == "S" else y1
                     _o = -1 if _side == "S" else 1
-                    _tw.box(_a0 - 0.12, _a1 + 0.12, min(_yy, _yy + _o * 0.14), max(_yy, _yy + _o * 0.14), _za - 0.07, _za)
-                    _tw.box(_a0 - 0.09, _a1 + 0.09, min(_yy, _yy + _o * 0.10), max(_yy, _yy + _o * 0.10), _zb, _zb + 0.12)
+                    _tw.box(_a0 - 0.14, _a1 + 0.14, min(_yy, _yy + _o * 0.22), max(_yy, _yy + _o * 0.22), _za - 0.12, _za)        # 窓台(厚12cm・出22cm)
+                    _tw.box(_a0 - 0.11, _a1 + 0.11, min(_yy, _yy + _o * 0.16), max(_yy, _yy + _o * 0.16), _zb, _zb + 0.20)      # まぐさ(厚20cm・出16cm)
+                    for _jx in (_a0 - 0.11, _a1 + 0.01):                                                                         # 額縁(縦枠・幅10cm・出10cm)
+                        _tw.box(_jx, _jx + 0.10, min(_yy, _yy + _o * 0.10), max(_yy, _yy + _o * 0.10), _za, _zb)
                 else:
                     _xx = x0 if _side == "W" else x1
                     _o = -1 if _side == "W" else 1
-                    _tw.box(min(_xx, _xx + _o * 0.14), max(_xx, _xx + _o * 0.14), _a0 - 0.12, _a1 + 0.12, _za - 0.07, _za)
-                    _tw.box(min(_xx, _xx + _o * 0.10), max(_xx, _xx + _o * 0.10), _a0 - 0.09, _a1 + 0.09, _zb, _zb + 0.12)
+                    _tw.box(min(_xx, _xx + _o * 0.22), max(_xx, _xx + _o * 0.22), _a0 - 0.14, _a1 + 0.14, _za - 0.12, _za)
+                    _tw.box(min(_xx, _xx + _o * 0.16), max(_xx, _xx + _o * 0.16), _a0 - 0.11, _a1 + 0.11, _zb, _zb + 0.20)
+                    for _jx in (_a0 - 0.11, _a1 + 0.01):
+                        _tw.box(min(_xx, _xx + _o * 0.10), max(_xx, _xx + _o * 0.10), _jx, _jx + 0.10, _za, _zb)
     for cx, cy in ((x0, y0), (x1, y0), (x0, y1), (x1, y1)):
         g.a("wood_dark", bevel=0.004).box(cx - 0.09, cx + 0.09, cy - 0.09, cy + 0.09, zf - 0.02, zh + 0.1)
     _hole = None
