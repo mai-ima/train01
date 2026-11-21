@@ -250,6 +250,17 @@ def volume(g, v, rng, st, interior=False):
             for (_a0, _a1, _za, _zb, _k) in _lst:
                 if _k != 'glass':
                     continue
+                _h = (int(_a0 * 7.3 + _za * 3.1 + (1 if _side in "SN" else 5)) * 2654435761) % 997 / 997.0      # 窓ごとに決まる擬似乱数(実行ごとに変わらない)
+                if _h < 0.55:                                                  # D7c(監査『窓内が同じ絵の繰り返し』): 窓の内側にブラインド/カーテンを窓ごとに違う降ろし量・色で入れる
+                    _bm = g.a(("pl_cream", "white_paint", "wood_dark", "plaster")[int(_h * 40) % 4])
+                    _drop = 0.25 + 0.7 * ((_h * 13.0) % 1.0)
+                    _zt = _zb - (_zb - _za) * _drop
+                    if _side in "SN":
+                        _yi = (y0 + 0.12) if _side == "S" else (y1 - 0.12)
+                        _bm.box(_a0 + 0.04, _a1 - 0.04, min(_yi, _yi + (0.02 if _side == "S" else -0.02)), max(_yi, _yi + (0.02 if _side == "S" else -0.02)), _zt, _zb - 0.03)
+                    else:
+                        _xi = (x0 + 0.12) if _side == "W" else (x1 - 0.12)
+                        _bm.box(min(_xi, _xi + (0.02 if _side == "W" else -0.02)), max(_xi, _xi + (0.02 if _side == "W" else -0.02)), _a0 + 0.04, _a1 - 0.04, _zt, _zb - 0.03)
                 if _side in "SN":
                     _yy = y0 if _side == "S" else y1
                     _o = -1 if _side == "S" else 1
