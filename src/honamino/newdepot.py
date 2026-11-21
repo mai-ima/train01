@@ -323,7 +323,7 @@ def build_blocks():
     kit2.mats2()
     # D7c(第1段階監査: 全棟が同じ石目調の漆喰で貼り紙感): 棟ごとに壁の素材そのものを変える(塗装漆喰/レンガ/タイル/打放しコンクリート/金属パネル)
     _wm = {
-        "nd_w_paint": ("Concrete046", dict(scale=1.3, tint=(0.90, 0.88, 0.80), tint_amt=0.35, bump=0.9, bump_dist=0.03, macro=0.3, dirt=0.15)),      # D7c: PaintedPlaster006 は粗くすると迷彩状の斑点(監査2名)・細かくするとドット→均質な淡色の打放し系 Concrete046 へ
+        "nd_w_paint": ("Concrete036", dict(scale=1.0, tint=(0.93, 0.88, 0.76), tint_amt=0.45, bump=0.9, bump_dist=0.03, macro=0.3, dirt=0.15)),      # D7c: PaintedPlaster006 は粗くすると迷彩状の斑点(監査2名)・細かくするとドット→均質な淡色の打放し系 Concrete046 へ
         "nd_w_brick": ("Bricks097", dict(scale=0.55, tint=(0.62, 0.34, 0.24), tint_amt=0.35, bump=1.7, bump_dist=0.045, macro=0.3, dirt=0.2)),      # D7c: 目地の陰影を強める(監査『目地の立体感がない』)
         "nd_w_tile": ("Tiles141", dict(scale=0.6, tint=(0.84, 0.80, 0.70), tint_amt=0.25, bump=1.2, bump_dist=0.03, macro=0.2, dirt=0.1)),      # Tiles052 は元の色が黒(平均RGB26)で壁が黒鉄色になった→明るいベージュ(平均RGB211/202/194)へ
         "nd_w_conc": ("Concrete044D", dict(scale=0.5, tint=(0.66, 0.65, 0.62), tint_amt=0.25, bump=0.6, macro=0.4, dirt=0.2)),
@@ -431,7 +431,9 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
         for sx in (-1, 1):
             px0 = w / 2 + sx * 3.4
             g.a("brick", bevel=0.01).box(px0 - 1.3, px0 + 1.3, -1.9, -0.2, zf - 0.05, zf + 0.35)
-            g.a("grass_ground", bevel=0.02).box(px0 - 1.2, px0 + 1.2, -1.8, -0.3, zf + 0.35, zf + 0.62)
+            g.a("grass_ground", bevel=0.02).box(px0 - 1.2, px0 + 1.2, -1.8, -0.3, zf + 0.35, zf + 0.50)
+            for _bx in (-0.7, 0.0, 0.7):       # D7c(監査『花壇が土の箱に緑の面を載せただけ』): 低木の植え込み(丸い茂み)を並べる
+                g.a("grass_ground").sphere((px0 + _bx, -1.05 + 0.25 * _bx, zf + 0.62), (0.46, 0.46, 0.38), seg=10, rings=6)
     else:                       # 建物正面の縁石(連続した低い縁+車止めの杭)
         g.a("concrete", bevel=0.01).box(-0.5, w + 0.5, -3.2, -2.9, 0.0, 0.14)
         for k in range(int(w // 3.0) + 1):
