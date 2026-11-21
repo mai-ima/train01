@@ -461,6 +461,13 @@ def build_site():
     plaza.boxc(283.0, -103.0, 0.035, 110.0, 24.0, 0.07)            # 管理棟前の広場
     plaza.boxc(172.0, -118.0, 0.035, 90.0, 52.0, 0.07)             # 技術開発棟前
     plaza.build()
+    jt = Acc("nd_plaza_joint", M["iron_black"], "Roads")            # D7c(監査『舗装が一面ベタ・反復』): 伸縮目地(5m角の割り付け)と縁石で単調さを壊す
+    for (cx, cy, ww, dd) in ((283.0, -103.0, 110.0, 24.0), (172.0, -118.0, 90.0, 52.0)):
+        for x in np.arange(cx - ww / 2 + 5.0, cx + ww / 2 - 0.1, 5.0):
+            jt.boxc(float(x), cy, 0.072, 0.05, dd, 0.006)
+        for y in np.arange(cy - dd / 2 + 4.0, cy + dd / 2 - 0.1, 4.0):
+            jt.boxc(cx, float(y), 0.072, ww, 0.05, 0.006)
+    jt.build()
     road = Acc("nd_road", M["road"], "Roads")
     road.boxc(228.0, -88.0, 0.045, 190.0, 7.0, 0.09)                # 構内道路(はしご線の南側)
     road.boxc(110.0, -150.0, 0.045, 8.0, 140.0, 0.09)               # 本社側へ南下する道
