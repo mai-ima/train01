@@ -420,9 +420,20 @@ def build_site():
     glow.build()
     import veg
     rng = random.Random(5)
-    for k in range(26):                                             # 敷地の周りの並木
-        x = 105.0 + k * 14.5 + rng.uniform(-2, 2)
-        veg.zelkova(x, (-160.0 if x < 350.0 else -250.0) + rng.uniform(-2.5, 2.0), h=rng.uniform(8, 12), rad=rng.uniform(3.6, 5.0), seed=k)
+    _x = 105.0
+    for k in range(26):                                             # 敷地の周りの並木(D7c: 全て同形のケヤキを14.5m等間隔に並べていた→樹種(ケヤキ/桜/杉)と間隔・大きさ・空きをばらつかせる)
+        _x += rng.uniform(9.5, 19.5)
+        x = _x
+        y = (-160.0 if x < 350.0 else -250.0) + rng.uniform(-3.5, 3.0)
+        _p = rng.random()
+        if _p < 0.10:
+            continue                                                # 所々に空き
+        elif _p < 0.30:
+            veg.sakura(x, y, seed=k, h=rng.uniform(5.5, 7.5), rad=rng.uniform(2.8, 3.8))
+        elif _p < 0.42:
+            veg.sugi(x, y, h=rng.uniform(11.0, 15.0), r=rng.uniform(1.8, 2.4), seed=k)
+        else:
+            veg.zelkova(x, y, h=rng.uniform(7, 13), rad=rng.uniform(3.2, 5.4), seed=k)
 
 
 def build_stock():
