@@ -373,6 +373,21 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
         sw = r.uniform(1.6, 2.8)
         g.a("concrete", bevel=0.01).box(w / 2 - sw, w / 2 + sw, -1.4, 0.0, zf - 0.45, zf)
         g.a("iron_black", bevel=0.01).box(w / 2 - sw, w / 2 + sw, -1.2, 0.0, zf + 2.55, zf + 2.62)
+    # D7c(第1段階監査: 足元に基礎・犬走り・縁石・植栽帯が無く舗装へそのまま置いたよう): 棟ごとに足元の作りを変える
+    _foot = r.choice(["apron", "planter", "curb"])
+    if _foot == "apron":        # 犬走り(建物の周囲に幅0.9mの砂利/コンクリートの帯)
+        g.a("concrete", bevel=0.01).box(-0.95, w + 0.95, -0.95, 0.0, 0.0, 0.07)
+        g.a("concrete", bevel=0.01).box(-0.95, 0.0, 0.0, d + 0.95, 0.0, 0.07)
+        g.a("concrete", bevel=0.01).box(w, w + 0.95, 0.0, d + 0.95, 0.0, 0.07)
+    elif _foot == "planter":    # 玄関の両脇に低い植栽帯(レンガ縁+低木)
+        for sx in (-1, 1):
+            px0 = w / 2 + sx * 3.4
+            g.a("brick", bevel=0.01).box(px0 - 1.3, px0 + 1.3, -1.9, -0.2, zf - 0.05, zf + 0.35)
+            g.a("grass_ground", bevel=0.02).box(px0 - 1.2, px0 + 1.2, -1.8, -0.3, zf + 0.35, zf + 0.62)
+    else:                       # 建物正面の縁石(連続した低い縁+車止めの杭)
+        g.a("concrete", bevel=0.01).box(-0.5, w + 0.5, -3.2, -2.9, 0.0, 0.14)
+        for k in range(int(w // 3.0) + 1):
+            g.a("iron_black", bevel=0.01).box(0.6 + k * 3.0 - 0.06, 0.6 + k * 3.0 + 0.06, -3.1, -2.95, 0.0, 0.6)
     g.a("iron_black", bevel=0.01).box(w / 2 - 2.2, w / 2 + 2.2, -0.14, -0.04, zh - 1.2, zh - 0.5)                     # 棟名板
     for _ in range(r.randint(2, 5)):                                                                                 # 屋上の換気筒・機器
         vx, vy = r.uniform(1.0, w - 1.0), r.uniform(1.0, d - 1.0)
