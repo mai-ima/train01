@@ -165,7 +165,14 @@ def make_ops(v, rng, zf, door_side='S'):
         if side in v.get("skip", ()):
             continue
         L = a1 - a0
+        _ws = v.get("win_style")      # D7c: 窓割りを棟ごとに変える(band=横長の連窓 / tall=縦長 / square=小窓)。未指定は従来どおり(他の駅へは影響しない)
         step = rng.choice([2.2, 2.6, 3.0]) if side in "SN" else 3.2
+        if _ws == "band" and side in "SN":
+            step = 2.8
+        elif _ws == "tall" and side in "SN":
+            step = 2.0
+        elif _ws == "square" and side in "SN":
+            step = 1.8
         n = max(1, int((L - 1.2) // step))
         i_d2 = n // 2                                                   # door2 の区画: 北側に接続する翼棟(L/T/U 型)の前を避ける(K2: 扉の目の前が隣の棟の壁だった)
         _avoid = v.get("door2_avoid") if side == v.get("door2") else None
@@ -177,10 +184,17 @@ def make_ops(v, rng, zf, door_side='S'):
             for i in range(n):
                 c = a0 + (i + 0.5) * L / n
                 w = rng.choice([1.0, 1.2, 1.4]) if side in "SN" else 1.0
+                wh = 1.1 + rng.choice([0, 0.2, 0.4])
+                if _ws == "band" and side in "SN":
+                    w, wh = 2.3, 1.0
+                elif _ws == "tall" and side in "SN":
+                    w, wh = 0.9, 1.8
+                elif _ws == "square" and side in "SN":
+                    w, wh = 0.9, 0.9
                 if f == 0 and ((side == door_side and i == n // 2) or (side == v.get("door2") and i == i_d2)):
                     ops[side].append((c - 0.7, c + 0.7, zf, zf + 2.05, 'door' if side == 'N' else 'open'))
                 else:
-                    ops[side].append((c - w / 2, c + w / 2, z0, z0 + 1.1 + rng.choice([0, 0.2, 0.4]), 'glass'))
+                    ops[side].append((c - w / 2, c + w / 2, z0, z0 + wh, 'glass'))
     return ops
 
 
