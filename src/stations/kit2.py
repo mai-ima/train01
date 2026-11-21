@@ -189,11 +189,13 @@ def make_ops(v, rng, zf, door_side='S'):
                     w, wh = 2.3 * rng.uniform(0.88, 1.06), 1.0 * rng.uniform(0.92, 1.08)      # D7c(監査『窓が全て同寸・等間隔』): 寸法に±10%程度のばらつき
                 elif _ws == "tall" and side in "SN":
                     w, wh = 0.9 * rng.uniform(0.9, 1.1), 1.8 * rng.uniform(0.94, 1.06)
-                    if i == n - 1:       # 端の区画は階段室の窓(細く縦に長い)
-                        w, wh = 0.7, 2.3 if f < nfl - 1 else 1.8
+                    if i == n - 1:       # 端の区画は階段室の窓(細い窓。階ごとにずれて帯にかかっていた→通常の窓と同じ高さ(1.5m)で幅だけ細くする)
+                        w, wh = 0.6, 1.5
                 elif _ws == "square" and side in "SN":
                     w, wh = 0.9 * rng.uniform(0.9, 1.1), 0.9 * rng.uniform(0.9, 1.15)
                 if f == 0 and ((side == door_side and i == n // 2) or (side == v.get("door2") and i == i_d2)):
+                    if v.get("win_style") and side == door_side and side in "SN":      # D7c: 区画数が偶数だと区画の中央が建物の中央と一致せず、玄関の扉(建物中央)の脇に開口が残って室内の白壁が見えた(nd_adm1 で1.5mずれ)→開口を建物の中央に置く
+                        c = (a0 + a1) / 2.0
                     ops[side].append((c - 0.7, c + 0.7, zf, zf + 2.05, 'door' if side == 'N' else 'open'))
                 else:
                     ops[side].append((c - w / 2, c + w / 2, z0, z0 + wh, 'glass'))
