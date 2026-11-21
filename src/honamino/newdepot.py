@@ -323,9 +323,9 @@ def build_blocks():
     kit2.mats2()
     # D7c(第1段階監査: 全棟が同じ石目調の漆喰で貼り紙感): 棟ごとに壁の素材そのものを変える(塗装漆喰/レンガ/タイル/打放しコンクリート/金属パネル)
     _wm = {
-        "nd_w_paint": ("PaintedPlaster006", dict(scale=0.45, tint=(0.88, 0.86, 0.80), tint_amt=0.55, bump=0.35, macro=0.25, dirt=0.15)),
+        "nd_w_paint": ("PaintedPlaster006", dict(scale=1.7, tint=(0.88, 0.86, 0.80), tint_amt=0.55, bump=0.35, macro=0.25, dirt=0.15)),
         "nd_w_brick": ("Bricks097", dict(scale=0.55, tint=(0.62, 0.34, 0.24), tint_amt=0.35, bump=0.9, macro=0.3, dirt=0.2)),
-        "nd_w_tile": ("Tiles141", dict(scale=0.5, tint=(0.84, 0.80, 0.70), tint_amt=0.25, bump=0.5, macro=0.2, dirt=0.1)),      # Tiles052 は元の色が黒(平均RGB26)で壁が黒鉄色になった→明るいベージュ(平均RGB211/202/194)へ
+        "nd_w_tile": ("Tiles141", dict(scale=1.0, tint=(0.84, 0.80, 0.70), tint_amt=0.25, bump=0.5, macro=0.2, dirt=0.1)),      # Tiles052 は元の色が黒(平均RGB26)で壁が黒鉄色になった→明るいベージュ(平均RGB211/202/194)へ
         "nd_w_conc": ("Concrete044D", dict(scale=0.5, tint=(0.66, 0.65, 0.62), tint_amt=0.25, bump=0.6, macro=0.4, dirt=0.2)),
         "nd_w_metal": ("CorrugatedSteel005", dict(scale=0.7, tint=(0.55, 0.62, 0.66), tint_amt=0.35, bump=0.9, macro=0.2, dirt=0.1)),
     }
@@ -415,7 +415,14 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
             g.a("iron_black", bevel=0.01).box(0.6 + k * 3.0 - 0.06, 0.6 + k * 3.0 + 0.06, -3.1, -2.95, 0.0, 0.6)
     # D7c(監査: 文字のない黒い板が最上階の窓に重なって浮く): 棟名板は玄関の上(庇のすぐ上)に、玄関幅に合わせて小さく。窓列と重ならない
     g.a("iron_black", bevel=0.01).box(w / 2 - 1.3, w / 2 + 1.3, -0.16, -0.04, zf + 2.68, zf + 3.0)
-    g.a("pl_cream" if "pl_cream" in M else "concrete", bevel=0.005).box(w / 2 - 1.2, w / 2 + 1.2, -0.17, -0.16, zf + 2.72, zf + 2.96)       # 名板の白い面
+    from props import face_plane as _fp
+    import os as _os
+    _root = _os.environ.get("STATION_ROOT") or _os.path.dirname(_os.path.abspath(__file__))
+    _img = f"nd/{nm}_plate.png"
+    if _os.path.exists(f"{_root}/tex/{_img}"):      # D7c(監査: 名板が無地の白い長方形で文字がない): 棟名の文字画像(原作オリジナルの機能名)を貼る
+        _fp(f"{nm}_plate", _img, 'S', w / 2, -0.17, zf + 2.72, 2.4, h=0.24, off=0.0)
+    else:
+        g.a("pl_cream" if "pl_cream" in M else "concrete", bevel=0.005).box(w / 2 - 1.2, w / 2 + 1.2, -0.17, -0.16, zf + 2.72, zf + 2.96)       # 名板の白い面
     for _ in range(r.randint(2, 5)):                                                                                 # 屋上の換気筒・機器
         vx, vy = r.uniform(1.0, w - 1.0), r.uniform(1.0, d - 1.0)
         g.a("iron_black", bevel=0.02).cyl((vx, vy, zh), (vx, vy, zh + r.uniform(0.5, 1.1)), 0.18, 0.12, seg=8)
