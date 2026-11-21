@@ -486,7 +486,13 @@ def build_site():
         for y in np.arange(cy - dd / 2 + 4.0, cy + dd / 2 - 0.1, 4.0):
             jt.boxc(cx, float(y), 0.072, ww, 0.05, 0.006)
     jt.build()
-    road = Acc("nd_road", M["road"], "Roads")
+    if "nd_road_mat" not in M:      # D7c(監査『茶色の帯が不自然に鮮やかな単色』): 構内道路を落ち着いた灰色のアスファルトに(艶を抑える=広場材と同じ rough_add)。他の道路には影響しない
+        try:
+            M["nd_road_mat"] = lib.mat_pbr("nd_road_mat", "Asphalt031", scale=1.2, tint=(0.55, 0.54, 0.52), tint_amt=0.5, dirt=0.3, bump=0.5, spec=0.12, rough_add=0.35)
+        except Exception as _e:
+            print("nd road material failed (fallback road):", _e)
+            M["nd_road_mat"] = M["road"]
+    road = Acc("nd_road", M["nd_road_mat"], "Roads")
     road.boxc(228.0, -88.0, 0.045, 190.0, 7.0, 0.09)                # 構内道路(はしご線の南側)
     road.boxc(110.0, -150.0, 0.045, 8.0, 140.0, 0.09)               # 本社側へ南下する道
     road.build()
