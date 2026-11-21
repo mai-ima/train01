@@ -4,7 +4,7 @@ import json, math, re
 import numpy as np
 import bpy
 
-OK_PAT = re.compile(r"trk|track|ballast|rail|sleeper|tie|cat[_0-9]|_cat|catenary|buffer|bufstop|_pt|turnout|switch|stk_|veh|kiha|emu|loco|wam|tora|coach|bogie|ground|terrain|sky|sun|cam|^Plane|k6_.*_via|rails|fittings|signal|sig_|pole|mast|crossing|kikyo|sleep|roadbed|embank|ditch|bed|cut|tunnel|portal|shed|k2_snow|B02_beam|stop_iron|bufstop", re.I)
+OK_PAT = re.compile(r"trk|track|ballast|rail|sleeper|tie|cat[_0-9]|_cat|catenary|buffer|bufstop|_pt|turnout|switch|stk_|veh|kiha|emu|loco|wam|tora|coach|bogie|ground|terrain|sky|sun|cam|^Plane|k6_.*_via|rails|fittings|signal|sig_|pole|mast|crossing|kikyo|sleep|roadbed|embank|ditch|bed|cut|tunnel|portal|shed|k2_snow|B02_beam|stop_iron|bufstop|fumikiri_post|^links_", re.I)      # K2(2026-11-14): fumikiri_post=構内踏切の標識柱・links_=構内の転轍機標識/踏切標識/案内柱。どれも線路脇に立つのが正しい設備で、穂波野の近接撮影3視点で線路内に入っていないことを目視確認(renders/work/k2/m06_switch_stand_a/b.jpg・m06_yard_crossing.jpg)
 LAT = 1.6
 ZMIN, ZMAX = 0.55, 4.0
 
