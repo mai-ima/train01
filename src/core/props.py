@@ -835,7 +835,7 @@ def build_props():
     houses.farmhouse2(-100.0, 17.7, 12.0, 7.2, name="house_C", variant=0, seed=3)
     houses.farmhouse2(-86.0, 17.8, 9.0, 6.5, name="house_D", variant=1, seed=4)
     houses.farmhouse2(44.5, 17.8, 10.5, 7.0, name="house_E", variant=0, seed=5)
-    houses.farmhouse2(46.0, -33.0, 9.5, 6.5, name="house_F", variant=1, seed=6)
+    houses.farmhouse2(46.0, -40.0, 9.5, 6.5, name="house_F", variant=1, seed=6)      # K2/D10: 第6線 T6(y≈-27.5)が家の北側(y -33〜-26.5)を貫いていた(穂波野 --interf の干渉・瓶/金物が線路中心から0.75m)→南へ7m(y=-40)
 
 
 def rail_stack(g, x, y, yaw, n=5, length=6.0):
