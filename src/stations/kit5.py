@@ -941,8 +941,10 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
     N, K = len(ss), 6
     V = np.zeros((N, K, 3))
     for k, (off, f) in enumerate(prof):
-        V[:, k, 0] = pos[:, 0] + nrm[:, 0] * (off if f == 0 else off)
-        V[:, k, 1] = pos[:, 1] + nrm[:, 1] * (off if f == 0 else off)
+        _wob = (0.9 * np.sin(0.21 * ss + 0.7 * k) + 0.55 * np.sin(0.57 * ss + 2.1) + 0.3 * np.sin(1.3 * ss)) * (1.0 if f == 0 else 0.0)      # T7(監査『水際が定規切りの直線』): 法尻の縁(f==0)の位置を±1.5mほど流れ方向にうねらせる(波打ち際の不整形)
+        _o = off + (np.sign(off) * _wob)
+        V[:, k, 0] = pos[:, 0] + nrm[:, 0] * _o
+        V[:, k, 1] = pos[:, 1] + nrm[:, 1] * _o
         V[:, k, 2] = -0.05 + (zt - 0.08) * f
     idx = np.arange(N * K).reshape(N, K)
     a, b, c, d = idx[:-1, :-1], idx[1:, :-1], idx[1:, 1:], idx[:-1, 1:]
