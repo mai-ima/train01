@@ -1466,14 +1466,14 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
             g.a("k5_jt").sbox((_wp[0], _wp[1], 0.45), (_wp[0] + 0.0, _wp[1] + 0.0, 0.45), 0.16, 0.16)      # 水抜き穴(小さな暗い角穴)
         w0, w1 = pos[i] + nrm[i] * side * 7.55, pos[i + 1] + nrm[i + 1] * side * 7.55
         g.a("k5_swall").sbox((w0[0], w0[1], h + 0.05), (w1[0], w1[1], h + 0.05), 0.3, 0.7)           # Q25/C17: 波返し(海側へ張り出す立ち上がり)。護岸が白い箱だった(監査)
-        for j in range(4):
+        for j in range(5):      # T7(監査『消波ブロックが疎で同形』): 列を4→5、列間隔を1.7→1.4m、大きさを±18%に
             # 乱積み: 沖側ほど低く、位置を散らして2〜3層(下層は広く、上層は壁寄り)。捨石を足元に敷く
-            off = 9.0 + 1.7 * j + rng.uniform(-0.5, 0.5)
+            off = 9.6 + 1.4 * j + rng.uniform(-0.4, 0.4)      # 護岸側の列が陸(草の法面)に載らないよう起点を0.6m沖へ(列を増やした影響で陸側にはみ出した)
             q = pos[i] + nrm[i] * side * off + (pos[i + 1] - pos[i]) * rng.uniform(-0.3, 0.3)
             zq = 0.28 + (0.40 if j == 0 and rng.random() < 0.6 else 0.0)       # 壁寄りは一段積む
             # C17(護岸監査A/B: 消波ブロックが無秩序で大きさも不統一・ジャックス型に見える): 実物は同一寸法を整列して積む → 寸法をほぼ統一(±6%)・向きは60°刻みの規則+わずかな揺らぎ・列は千鳥
             q = q + (pos[i + 1] - pos[i]) * (0.25 if j % 2 else -0.05)
-            _tetrapod(g, q[0], q[1], zq, ((i + j) % 2) * math.pi / 3 + rng.uniform(-0.12, 0.12), 0.40 * rng.uniform(0.94, 1.06), mat=rng.choice(("k5_conc", "k5_conc", "k5_conc", "k5_conc_dk", "k5_swall")))
+            _tetrapod(g, q[0], q[1], zq, ((i + j) % 2) * math.pi / 3 + rng.uniform(-0.12, 0.12), 0.40 * rng.uniform(0.82, 1.18), mat=rng.choice(("k5_conc", "k5_conc", "k5_conc", "k5_conc_dk", "k5_swall")))
             if rng.random() < 0.12:                                                            # 上に1個載せて2〜3段の山にする(監査: 単層の一列)
                 _tetrapod(g, q[0] + rng.uniform(-0.5, 0.5), q[1] + rng.uniform(-0.5, 0.5), zq + 0.55, rng.uniform(0, 6.28), 0.40)      # Q25: 消波ブロックが立方体だった。テトラポッド(4脚)にする
         for _ in range(3):
