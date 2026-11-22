@@ -44,6 +44,13 @@ def mats2():
         M["tin_blue"] = lib.mat_paint("kit_tinblue", (0.20, 0.30, 0.42), rough=0.5, rust=0.5)
         M["tin_green"] = lib.mat_paint("kit_tingreen", (0.18, 0.34, 0.24), rough=0.5, rust=0.5)
         M["snow"] = lib.mat_plain("kit_snow", (0.86, 0.90, 0.96), rough=0.9, spec=0.25)
+        M["tin_red"] = lib.mat_paint("kit_tinred", (0.42, 0.13, 0.09), rough=0.5, rust=0.45)      # B3: 赤い波板屋根(小駅の屋根材を増やす)
+        try:
+            M["slate"] = lib.mat_pbr("k2_slate", "RoofingTiles013B", scale=1.4, tint=(0.30, 0.34, 0.40), tint_amt=0.7, bump=1.4, macro=0.3, dirt=0.3)      # スレート(濃い青灰)
+            M["thatch"] = lib.mat_pbr("k2_thatch", "Grass006", scale=0.8, tint=(0.72, 0.62, 0.36), tint_amt=0.75, bump=1.6, macro=0.35, dirt=0.3)          # 茅葺き調(麦わら色)
+        except Exception as _e:
+            print("k2 roof material failed (fallback tin):", _e)
+            M["slate"] = M["thatch"] = M["tin"]
         # B3(監査: 壁・屋根テクスチャの使い回しで素材が最低軸): 小駅用に壁材を4種増やす(下見板・タイル張り・淡い煉瓦・野面石)
         for _k, (_tid, _kw) in {
             "clapboard": ("WoodSiding011", dict(scale=1.0, tint=(0.80, 0.82, 0.66), tint_amt=0.55, bump=1.2, macro=0.25, dirt=0.25)),
@@ -1085,6 +1092,9 @@ def build_design(sid):
         else:
             vols = plan_volumes(plan, w, dep, d["nfl"], d["roof"], d["wall"], rng)
             _zh0 = 0.0
+            _rmat = {"M07": "slate", "M17": "tin_red", "M18": "thatch", "S03": "tin_green", "M15": "tin_blue", "SH03": "kawara", "L01": "tin_red"}.get(sid)      # B3: 小駅の屋根材を駅ごとに変える(監査『屋根テクスチャの使い回し』)
+            if _rmat and _rmat in M:
+                vols[0]["roofmat"] = _rmat
             _wsty = {"SH04": "tall", "SH08": "band", "S03": "tall", "M07": "band", "M09": "square", "M18": "square", "SH03": "band", "SH07": "tall", "M13": "band", "M17": "tall", "M12": "square"}.get(sid)       # B3: 似て見えた SH04(3階建て)と SH08(2階建て長方形)の窓割りを分ける(SH04=縦長+窓枠 / SH08=横長の連窓+窓枠)
             if _wsty:
                 vols[0]["win_style"], vols[0]["win_trim"] = _wsty, True
