@@ -573,12 +573,33 @@ def bamboo_grove(x0, x1, y0, y1, n=120, seed=1):
 SNOW_KNOLL = [False]      # T6: 雪駅では丘の樹林を針葉樹(円錐形)主体にする(main.py が設定)
 
 
+SNOW_KNOLL = [False]      # T6: 雪駅では丘の樹林を実際の針葉樹(sugi)にする(main.py が設定)
+
+
 def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
     """T6: 近景の里山の樹林。実在の里山林に近づけるため、(1)樹冠をノイズで群落化して林冠の切れ間・疎密を作る、
     (2)樹冠の大きさを対数正規で散らし、1本を2〜3個の葉塊(主塊+側塊)で作って輪郭を崩す、(3)広葉(明るい/黄緑/褐色がかり)と
     針葉(暗緑)を群落ごとに偏らせる、(4)下層の暗い低木を谷側へ。丘ごとに1メッシュへ統合して軽量化する。"""
     rng = random.Random(500 + k)
     nr_ = np.random.default_rng(900 + k)
+    if SNOW_KNOLL[0]:      # T6: 雪駅の丘は球ブロブをやめ、実際の針葉樹(sugi: 段+針葉カード)を疎に植える。雪面が見えて樹林らしくなる
+        placed = 0
+        for gx in np.arange(-rx * 0.9, rx * 0.9, 7.5):
+            for gy in np.arange(-ry * 0.9, ry * 0.9, 7.5):
+                x = cx + gx + rng.uniform(-2.5, 2.5); y = cy + gy + rng.uniform(-2.5, 2.5)
+                u, v = (x - cx) / rx, (y - cy) / ry
+                if math.hypot(u, v) > 0.92 or rng.random() < 0.25 + 0.3 * math.hypot(u, v) ** 3:
+                    continue
+                z = Zf(u, v) - 0.25
+                if z < 0.2:
+                    continue
+                before = set(bpy.data.objects.keys())
+                sugi(x, y, h=rng.uniform(9, 16), r=rng.uniform(1.6, 2.3), seed=rng.randint(0, 99999))
+                for nm in set(bpy.data.objects.keys()) - before:
+                    bpy.data.objects[nm].location.z += z
+                placed += 1
+        print("[knoll] snow conifers", k, placed)
+        return
     Vs, Ts, Cs, off = [], [], [], 0
     step = 3.3
     edge_blobs = []      # T6(監査『球状ブロブの敷き詰め』): 丘の縁(輪郭になる樹)だけ、塊の表面に小さな葉片を足して輪郭を崩す
