@@ -604,6 +604,9 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
                 hc = rl * (1.55 if conif else 1.0) + (0 if li == 0 else rng.uniform(-0.3, 0.6) * rad)
                 c = (x + ox, y + oy, z + hc)
                 Vb, seg, rings = blob(c, rl, rng, seg=10, rings=7, k=0.55)
+                if not conif:      # T6: 広葉樹の樹冠を 扁平(傘形)/丸/縦長 に散らす(全部が同じ丸い塊で『球の敷き詰め』に見えた)
+                    _sy = rng.choice((0.62, 1.0, 1.0, 1.45))
+                    Vb[:, 2] = c[2] + (Vb[:, 2] - c[2]) * _sy
                 if rho > 0.72 and not conif:
                     edge_blobs.append((c, rl, warm, 36))      # 縁だけ36枚(内側にも12枚足す案は見た目の差が出ず構築時間が+15%になったため撤回)
                 if conif:
