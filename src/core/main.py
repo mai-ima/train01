@@ -278,6 +278,34 @@ if args.zone:
                     _top = _top * 0.6
                 _a[:, :3] = _a[:, :3] * (1 - _top) + np.array(_snow, dtype=np.float32) * _top
                 _ca.data.foreach_set("color", _a.ravel())
+    if args.zone in ("M12", "M13", "L01"):      # 雪駅: 電柱・柱・看板の足元(地面近くの頂点の塊ごと)に雪の盛りを置いて接地させる(監査: 足元に雪が絡まず浮く)
+        import bmesh as _bm
+        _foot = {}
+        for _o in bpy.data.objects:
+            if _o.type != "MESH" or not _re.search(r"(poles_(pole|iron_black)|sign|board|post|pole|k2_lm|bb_)", _o.name) or _o.name.startswith("k2_snow"):
+                continue
+            _mw = _o.matrix_world
+            for _v in _o.data.vertices:
+                _w = _mw @ _v.co
+                if -0.1 < _w.z < 0.25:
+                    _foot.setdefault((round(_w.x / 0.8), round(_w.y / 0.8)), []).append((_w.x, _w.y))
+        _bmm = _bm.new()
+        _nm = 0
+        for _k, _pts in _foot.items():
+            if len(_pts) < 3 or _nm > 400:
+                continue
+            _cx = sum(p[0] for p in _pts) / len(_pts); _cy = sum(p[1] for p in _pts) / len(_pts)
+            _ext = max(max(p[0] for p in _pts) - min(p[0] for p in _pts), max(p[1] for p in _pts) - min(p[1] for p in _pts))
+            if _ext > 3.0:
+                continue      # 長い物(柵・線路際の板など)は盛りの対象外
+            _r = 0.45 + 0.5 * min(_ext, 1.2)
+            _res = _bm.ops.create_icosphere(_bmm, subdivisions=2, radius=_r, matrix=__import__("mathutils").Matrix.Translation((_cx, _cy, 0.0)) @ __import__("mathutils").Matrix.Diagonal((1.0, 1.0, 0.38, 1.0)))
+            _nm += 1
+        if _nm:
+            _me = bpy.data.meshes.new("snow_foot_mounds"); _bmm.to_mesh(_me); _bmm.free()
+            _ob = bpy.data.objects.new("snow_foot_mounds", _me); bpy.context.scene.collection.objects.link(_ob)
+            _me.materials.append(M["snow"]); [setattr(f, "use_smooth", True) for f in _me.polygons]
+        print("[snow_foot] mounds:", _nm)
     if os.environ.get('WEATHER','1')=='1':
         import weather as _w
         print('WEATHER', _w.apply(float(os.environ.get('WEATHER_K','0.5'))))
