@@ -593,8 +593,12 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
                 z = Zf(u, v) - 0.25
                 if z < 0.2:
                     continue
+                _cl = mn.noise(Vector((x * 0.04, y * 0.04, 7.0 + k)))      # 群落: 密な所/疎な所(規則的な点並びを崩す)
+                if _cl < -0.25 and rng.random() < 0.6:
+                    continue
+                _h = rng.choice((rng.uniform(5.5, 9.0), rng.uniform(8.0, 14.0), rng.uniform(8.0, 14.0), rng.uniform(13.0, 20.0)))      # 若木/中木/高木
                 before = set(bpy.data.objects.keys())
-                sugi(x, y, h=rng.uniform(9, 16), r=rng.uniform(1.6, 2.3), seed=rng.randint(0, 99999))
+                sugi(x, y, h=_h, r=_h * 0.14 * rng.uniform(0.8, 1.3), seed=rng.randint(0, 99999))
                 for nm in set(bpy.data.objects.keys()) - before:
                     bpy.data.objects[nm].location.z += z
                 placed += 1
