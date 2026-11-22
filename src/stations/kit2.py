@@ -624,6 +624,7 @@ ROOFS = {}
 for _i, _s in enumerate(["M05","M07","M09","M10","M11","M12","M13","L01","M15","M17","M18","Y02","Y03","Y04","S02","S03","S04","M04","M08"]):
     _r = random.Random(zlib.crc32(_s.encode()))
     ROOFS[_s] = _r.sample(["kawara", "tin", "tin_blue", "tin_green", "kawara", "tin"], 3)
+ROOFS["Y04"] = ["kawara", "kawara", "kawara"]      # B3: Y04(温泉街の駅)は白漆喰+瓦の和風駅舎にして、板張りの山小屋 Y02 と別の型にする
 STYLES = {"rural": [("farm", 6), ("kura", 1), ("shop", 1)], "suburb": [("sf", 5), ("farm", 3), ("shop", 1)], "urban": [("sf", 9), ("shop", 1)],
           "port": [("ware", 3), ("sf", 3), ("farm", 2), ("shop", 1)], "onsen": [("inn", 2), ("sf", 4), ("farm", 2)], "forest": [("farm", 5), ("kura", 1)],
           "alpine": [("farm", 3), ("inn", 1), ("sf", 2)], "freight": [("ware", 6), ("sf", 1)],
@@ -827,7 +828,7 @@ DESIGN = {
  "M18": D(yaw=-175, curve=("arc", 350), plan="I", w=6, d=4, nfl=1, roof="shed", wall="brick", plat="side", ntr=1, canopy="none", cross="steps", terrain=["sea"], road="bend", town="rural", dens=0.12, lm=[("lighthouse", 30, 24)], bx=-3),
  "Y02": D(yaw=15, curve=("arc", 300), plan="I", w=5, d=4, nfl=1, roof="gable", wall="wood", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="diag", town="forest", dens=0.1, lm=[("deck", 22, 12)], bx=-3),
  "Y03": D(yaw=75, curve=("arc", -300), plan="I", w=5, d=3.5, nfl=1, roof="shed", wall="pl_grey", plat="side_short", ntr=1, canopy="none", cross="stairs", terrain=["hill_s"], road="bend", town="forest", dens=0.1, lm=[("bridge", 0, 0)], bx=-3),
- "Y04": D(yaw=-60, curve=("arc", 350), plan="L", w=7, d=4.5, nfl=1, roof="hip", wall="wall", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="curve", town="onsen", dens=0.2, lm=[("onsen", 24, 22), ("footbath", -14, 14)], bx=-4),
+ "Y04": D(yaw=-60, curve=("arc", 350), plan="L", w=7, d=4.5, nfl=1, roof="hip", wall="plasterw", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="curve", town="onsen", dens=0.2, lm=[("onsen", 24, 22), ("footbath", -14, 14)], bx=-4),
  "S02": D(yaw=-20, curve=("arc", 450), plan="I", w=6, d=4.5, nfl=1, roof="gable", wall="pl_ochre", plat="side_short", ntr=1, canopy="none", cross="level", terrain=["orchard"], road="straight", town="rural", dens=0.2, lm=[('torii', 26, 22)], bx=-3),
  "S03": D(yaw=110, curve=("S", 8), plan="I", w=7, d=5, nfl=1, roof="gable", wall="wood", plat="side_short", ntr=1, canopy="shed", cross="level", terrain=["forest"], road="diag", town="forest", dens=0.14, lm=[('logstack', 24, -22)], bx=-4),
  "S04": D(yaw=180, curve=("arc", -350), plan="L", w=9, d=5.5, nfl=1, roof="gable", wall="pl_green", plat="side", ntr=2, canopy="wood", cross="level", terrain=["hill_n", "forest"], road="bend", town="alpine", dens=0.28, lm=[('firetower', 30, 28), ('water', -24, 18)], bx=-5),
