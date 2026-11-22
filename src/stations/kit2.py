@@ -838,7 +838,7 @@ DESIGN = {
  "M09": D(yaw=-40, curve=("arc", 500), plan="L", w=8, d=5, nfl=1, roof="gable", wall="brick", plat="side", ntr=2, canopy="shed", cross="level", terrain=["forest"], road="diag", town="forest", dens=0.14, lm=[("deck", 24, 13), ("monument", -24, 16)], bx=-4),
  "M10": D(yaw=60, curve=("S", 10), plan="U", w=15, d=8, nfl=2, roof="hip", wall="wall", plat="island", ntr=4, canopy="curve", cross="underpass", terrain=["hill_s", "pond"], road="curve", town="onsen", dens=0.6, lm=[("onsen", 28, 44), ("footbath", -24, 22)], bx=-9),
  "M11": D(yaw=50, curve=("arc", 450), plan="A", w=9, d=6, nfl=1, roof="hip", wall="stone", plat="side", ntr=3, canopy="shed", cross="level", terrain=["hill_n"], road="diag", town="alpine", dens=0.22, lm=[("water", 22, -14), ("snowhut", -30, 14)], bx=-6),
- "M12": D(yaw=-70, curve=("arc", -500), plan="I", w=10, d=6, nfl=1, roof="shed", wall="concrete", plat="island", ntr=3, canopy="snow", cross="fb_steel", terrain=["snow", "hill_n", "hill_s"], road="bend", town="alpine", dens=0.15, lm=[("deck", 26, 14), ("snowhut", -26, 8)], bx=-5),
+ "M12": D(yaw=-70, curve=("arc", -500), plan="I", w=10, d=6, nfl=1, roof="hip", wall="brick_pale", plat="island", ntr=3, canopy="snow", cross="fb_steel", terrain=["snow", "hill_n", "hill_s"], road="bend", town="alpine", dens=0.15, lm=[("deck", 26, 14), ("snowhut", -26, 8)], bx=-5),
  "M13": D(yaw=80, curve=("arc", 600), plan="I", w=11, d=6, nfl=1, roof="shed", wall="wood", plat="side", ntr=2, canopy="snowfull", cross="level", terrain=["snow", "hill_n"], road="diag", town="alpine", dens=0.25, lm=[("snowhut", 30, 10)], bx=-5),
  "L01": D(yaw=95, curve=("arc", -400), plan="I", w=4, d=3, nfl=1, roof="gable", wall="wood", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["snow", "hill_n"], road="straight", town="alpine", dens=0.08, lm=[('skilift', 20, 26)], bx=-2),
  "M14": D(yaw=-110, curve=("S", 8), plan="L", w=17, d=8, nfl=2, roof="flat", wall="brick", plat="island", ntr=5, canopy="steel", cross="fb_steel", terrain=["sea"], road="straight", town="port", dens=0.55, lm=[("crane", 34, 36), ("chimney", -32, 40)], bx=-8),
@@ -846,7 +846,7 @@ DESIGN = {
  "M16": D(yaw=-150, curve=("arc", -800), plan="TW", w=15, d=9, nfl=2, roof="hip", wall="pl_cream", plat="island", ntr=4, canopy="shed", cross="overshops", terrain=["sea"], road="plaza", town="port", dens=0.65, lm=[("clock", 8, 30), ("crane", 44, 36)], bx=-7),
  "M17": D(yaw=170, curve=("S", 9), plan="A", w=8, d=5.5, nfl=1, roof="gable", wall="clapboard", plat="side", ntr=2, canopy="shed", cross="level", terrain=["pond", "forest"], road="curve", town="rural", dens=0.25, lm=[("sigtower", 16, 8)], bx=-5),
  "M18": D(yaw=-175, curve=("arc", 350), plan="I", w=6, d=4, nfl=1, roof="shed", wall="pl_blue", plat="side", ntr=1, canopy="none", cross="steps", terrain=["sea"], road="bend", town="rural", dens=0.12, lm=[("lighthouse", 30, 24)], bx=-3),
- "Y02": D(yaw=15, curve=("arc", 300), plan="I", w=5, d=4, nfl=1, roof="gable", wall="wood", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="diag", town="forest", dens=0.1, lm=[("deck", 22, 12)], bx=-3),
+ "Y02": D(yaw=15, curve=("arc", 300), plan="I", w=5, d=4, nfl=1, roof="gable", wall="clapboard", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="diag", town="forest", dens=0.1, lm=[("deck", 22, 12)], bx=-3),
  "Y03": D(yaw=75, curve=("arc", -300), plan="I", w=5, d=3.5, nfl=1, roof="shed", wall="pl_grey", plat="side_short", ntr=1, canopy="none", cross="stairs", terrain=["hill_s"], road="bend", town="forest", dens=0.1, lm=[("bridge", 0, 0)], bx=-3),
  "Y04": D(yaw=-60, curve=("arc", 350), plan="L", w=7, d=4.5, nfl=1, roof="hip", wall="tile_cream", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="curve", town="onsen", dens=0.2, lm=[("onsen", 24, 22), ("footbath", -14, 14)], bx=-4),
  "S02": D(yaw=-20, curve=("arc", 450), plan="I", w=6, d=4.5, nfl=1, roof="shed", wall="pl_ochre", plat="side_short", ntr=1, canopy="none", cross="level", terrain=["orchard"], road="straight", town="rural", dens=0.2, lm=[('torii', 26, 22)], bx=-3),
@@ -1092,7 +1092,7 @@ def build_design(sid):
         else:
             vols = plan_volumes(plan, w, dep, d["nfl"], d["roof"], d["wall"], rng)
             _zh0 = 0.0
-            _rmat = {"M07": "slate", "M17": "tin_red", "M18": "thatch", "S03": "tin_green", "M15": "tin_blue", "SH03": "kawara", "L01": "tin_red"}.get(sid)      # B3: 小駅の屋根材を駅ごとに変える(監査『屋根テクスチャの使い回し』)
+            _rmat = {"Y02": "kawara", "M13": "slate", "M12": "tin_green", "M07": "slate", "M17": "tin_red", "M18": "thatch", "S03": "tin_green", "M15": "tin_blue", "SH03": "kawara", "L01": "tin_red"}.get(sid)      # B3: 小駅の屋根材を駅ごとに変える(監査『屋根テクスチャの使い回し』)
             if _rmat and _rmat in M:
                 vols[0]["roofmat"] = _rmat
             if sid in ("M09", "SH03"):
