@@ -44,6 +44,18 @@ def mats2():
         M["tin_blue"] = lib.mat_paint("kit_tinblue", (0.20, 0.30, 0.42), rough=0.5, rust=0.5)
         M["tin_green"] = lib.mat_paint("kit_tingreen", (0.18, 0.34, 0.24), rough=0.5, rust=0.5)
         M["snow"] = lib.mat_plain("kit_snow", (0.86, 0.90, 0.96), rough=0.9, spec=0.25)
+        # B3(監査: 壁・屋根テクスチャの使い回しで素材が最低軸): 小駅用に壁材を4種増やす(下見板・タイル張り・淡い煉瓦・野面石)
+        for _k, (_tid, _kw) in {
+            "clapboard": ("WoodSiding011", dict(scale=1.0, tint=(0.80, 0.82, 0.66), tint_amt=0.55, bump=1.2, macro=0.25, dirt=0.25)),
+            "tile_cream": ("Tiles141", dict(scale=0.9, tint=(0.90, 0.84, 0.66), tint_amt=0.35, bump=1.0, macro=0.2, dirt=0.15)),
+            "brick_pale": ("Bricks105", dict(scale=0.8, tint=(0.80, 0.66, 0.46), tint_amt=0.45, bump=1.4, macro=0.3, dirt=0.25)),
+            "rubble": ("PavingStones070", dict(scale=1.2, tint=(0.62, 0.58, 0.50), tint_amt=0.4, bump=1.6, macro=0.3, dirt=0.3)),
+        }.items():
+            try:
+                M[_k] = lib.mat_pbr("k2_" + _k, _tid, **_kw)
+            except Exception as _e:
+                print("k2 wall material failed (fallback plaster):", _k, _e)
+                M[_k] = M["pl_cream"]
 
 
 # ----------------------------------------------------------------- alignment
@@ -814,7 +826,7 @@ DESIGN = {
  "M03": D(yaw=-6, curve=("arc", 900), plan="OVER", w=18, d=9, nfl=2, roof="flat", wall="concrete", plat="dual", ntr=4, canopy="none", cross="over", terrain=[], road="plaza", town="shotengai", dens=0.9, lm=[("clock", 10, 30)], bx=-8),
  "M04": D(yaw=-12, curve=("arc", 900), plan="AA", w=11, d=7.5, nfl=1, roof="hip", wall="pl_cream", plat="dual", ntr=3, canopy="wood", cross="fb_wood", terrain=["paddies"], road="curve", town="suburb", dens=0.55, lm=[("deck", 30, 30)], bx=-6),
  "M05": D(yaw=20, curve=("arc", -700), plan="L", w=12, d=7, nfl=2, roof="hip", wall="brick", plat="dual", ntr=4, canopy="curve", cross="fb_steel", terrain=["pond", "orchard"], road="bend", town="suburb", dens=0.5, lm=[("sigtower", 16, 10)], bx=-8),
- "M07": D(yaw=-25, curve=("arc", 700), plan="A", w=8, d=6, nfl=1, roof="gable", wall="wall", plat="island", ntr=3, canopy="none", cross="fb_wood", terrain=["orchard"], road="bend", town="rural", dens=0.3, lm=[('farm_silo', 36, 30), ('deck', -34, 18)], bx=-5),
+ "M07": D(yaw=-25, curve=("arc", 700), plan="A", w=8, d=6, nfl=1, roof="gable", wall="rubble", plat="island", ntr=3, canopy="none", cross="fb_wood", terrain=["orchard"], road="bend", town="rural", dens=0.3, lm=[('farm_silo', 36, 30), ('deck', -34, 18)], bx=-5),
  "M08": D(yaw=35, curve=("S", 14), plan="T", w=16, d=8, nfl=2, roof="gable", wall="pl_ochre", plat="island", ntr=4, canopy="saw", cross="fb_wood", terrain=["hill_n"], road="straight", town="rural", dens=0.5, lm=[("sigtower", 22, -18), ("chimney", -34, 34)], bx=-9),
  "M09": D(yaw=-40, curve=("arc", 500), plan="L", w=8, d=5, nfl=1, roof="hip", wall="brick", plat="side", ntr=2, canopy="shed", cross="level", terrain=["forest"], road="diag", town="forest", dens=0.14, lm=[("deck", 24, 13), ("monument", -24, 16)], bx=-4),
  "M10": D(yaw=60, curve=("S", 10), plan="U", w=15, d=8, nfl=2, roof="hip", wall="wall", plat="island", ntr=4, canopy="curve", cross="underpass", terrain=["hill_s", "pond"], road="curve", town="onsen", dens=0.6, lm=[("onsen", 28, 44), ("footbath", -24, 22)], bx=-9),
@@ -825,11 +837,11 @@ DESIGN = {
  "M14": D(yaw=-110, curve=("S", 8), plan="L", w=17, d=8, nfl=2, roof="flat", wall="brick", plat="island", ntr=5, canopy="steel", cross="fb_steel", terrain=["sea"], road="straight", town="port", dens=0.55, lm=[("crane", 34, 36), ("chimney", -32, 40)], bx=-8),
  "M15": D(yaw=130, curve=("arc", 400), plan="I", w=5, d=3.5, nfl=1, roof="gable", wall="pl_cream", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["sea"], road="bend", town="rural", dens=0.1, lm=[("deck", 20, 12)], bx=-3),
  "M16": D(yaw=-150, curve=("arc", -800), plan="TW", w=15, d=9, nfl=2, roof="hip", wall="pl_cream", plat="island", ntr=4, canopy="shed", cross="overshops", terrain=["sea"], road="plaza", town="port", dens=0.65, lm=[("clock", 8, 30), ("crane", 44, 36)], bx=-7),
- "M17": D(yaw=170, curve=("S", 9), plan="A", w=8, d=5.5, nfl=1, roof="gable", wall="pl_green", plat="side", ntr=2, canopy="shed", cross="level", terrain=["pond", "forest"], road="curve", town="rural", dens=0.25, lm=[("sigtower", 16, 8)], bx=-5),
+ "M17": D(yaw=170, curve=("S", 9), plan="A", w=8, d=5.5, nfl=1, roof="gable", wall="clapboard", plat="side", ntr=2, canopy="shed", cross="level", terrain=["pond", "forest"], road="curve", town="rural", dens=0.25, lm=[("sigtower", 16, 8)], bx=-5),
  "M18": D(yaw=-175, curve=("arc", 350), plan="I", w=6, d=4, nfl=1, roof="shed", wall="pl_blue", plat="side", ntr=1, canopy="none", cross="steps", terrain=["sea"], road="bend", town="rural", dens=0.12, lm=[("lighthouse", 30, 24)], bx=-3),
  "Y02": D(yaw=15, curve=("arc", 300), plan="I", w=5, d=4, nfl=1, roof="gable", wall="wood", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="diag", town="forest", dens=0.1, lm=[("deck", 22, 12)], bx=-3),
  "Y03": D(yaw=75, curve=("arc", -300), plan="I", w=5, d=3.5, nfl=1, roof="shed", wall="pl_grey", plat="side_short", ntr=1, canopy="none", cross="stairs", terrain=["hill_s"], road="bend", town="forest", dens=0.1, lm=[("bridge", 0, 0)], bx=-3),
- "Y04": D(yaw=-60, curve=("arc", 350), plan="L", w=7, d=4.5, nfl=1, roof="hip", wall="plasterw", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="curve", town="onsen", dens=0.2, lm=[("onsen", 24, 22), ("footbath", -14, 14)], bx=-4),
+ "Y04": D(yaw=-60, curve=("arc", 350), plan="L", w=7, d=4.5, nfl=1, roof="hip", wall="tile_cream", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="curve", town="onsen", dens=0.2, lm=[("onsen", 24, 22), ("footbath", -14, 14)], bx=-4),
  "S02": D(yaw=-20, curve=("arc", 450), plan="I", w=6, d=4.5, nfl=1, roof="gable", wall="pl_ochre", plat="side_short", ntr=1, canopy="none", cross="level", terrain=["orchard"], road="straight", town="rural", dens=0.2, lm=[('torii', 26, 22)], bx=-3),
  "S03": D(yaw=110, curve=("S", 8), plan="I", w=7, d=5, nfl=1, roof="gable", wall="plasterw", plat="side_short", ntr=1, canopy="shed", cross="level", terrain=["forest"], road="diag", town="forest", dens=0.14, lm=[('logstack', 24, -22)], bx=-4),
  "S04": D(yaw=180, curve=("arc", -350), plan="L", w=9, d=5.5, nfl=1, roof="gable", wall="pl_green", plat="side", ntr=2, canopy="wood", cross="level", terrain=["hill_n", "forest"], road="bend", town="alpine", dens=0.28, lm=[('firetower', 30, 28), ('water', -24, 18)], bx=-5),
@@ -838,7 +850,7 @@ DESIGN = {
  "SH04": D(yaw=0, curve=("straight", 0), plan="TW", w=22, d=10, nfl=3, roof="flat", wall="concrete", plat="dual", ntr=4, canopy="steel", cross="overshops", terrain=[], road="plaza", town="urban", dens=0.92, lm=[("clock", 14, 36), ("apt", -34, 58)], bx=-10),
  "SH05": D(yaw=0, curve=("S", 10), plan="U", w=14, d=8, nfl=2, roof="shed", wall="pl_green", plat="island", ntr=3, canopy="curve", cross="fb_steel", terrain=["hill_n"], road="straight", town="campus", dens=0.5, lm=[("gate", -44, 24), ("field", -78, 34)], bx=-7),      # K9: SH05 の門が駅舎の出入口(x≈-24.6,y≈32)の0.8m先に立って塞いでいた→西へ14m離す
  "SH06": D(yaw=0, curve=("arc", 1500), plan="AA", w=12, d=7, nfl=1, roof="saw", wall="tin", plat="island", ntr=5, canopy="shed", cross="fb_steel", terrain=[], road="straight", town="freight", dens=0.65, lm=[("crane", 36, 30), ("chimney", -30, 36)], bx=-6),
- "SH07": D(yaw=0, curve=("arc", -800), plan="I", w=7, d=5, nfl=1, roof="flat", wall="pl_grey", plat="dual", ntr=3, canopy="none", cross="fb_steel", terrain=["paddies"], road="diag", town="airport", dens=0.35, lm=[("windsock", 30, 28), ("silo", 40, 52)], bx=-4),
+ "SH07": D(yaw=0, curve=("arc", -800), plan="I", w=7, d=5, nfl=1, roof="flat", wall="brick_pale", plat="dual", ntr=3, canopy="none", cross="fb_steel", terrain=["paddies"], road="diag", town="airport", dens=0.35, lm=[("windsock", 30, 28), ("silo", 40, 52)], bx=-4),
  "SH08": D(yaw=0, curve=("straight", 0), plan="L", w=24, d=11, nfl=2, roof="flat", wall="pl_cream", plat="island2", ntr=4, canopy="steel", cross="fb_steel", terrain=["paddies"], road="plaza", town="airport", dens=0.4, lm=[("atc", 52, 44), ("radar", -48, 40), ("windsock", 20, -26)], bx=-10, endbuf=True),
  "F01": D(yaw=0, curve=("straight", 0), plan="AA", w=30, d=12, nfl=1, roof="saw", wall="tin", plat="none", ntr=8, canopy="none", cross="level", terrain=[], road="straight", town="freight", dens=0.7, lm=[("chimney", -40, 40), ("crane", 40, 36)], bx=-15),
 }
