@@ -79,6 +79,10 @@ def quay_crane(x, y, name="sig_crane", arm=1, swap=False):
     """岸壁の門型ジブクレーン(ポータルフレーム+旋回する機械室+トラス状ジブ+フック・ケーブル+カウンターウェイト)。arm=+1/-1 でジブを出す向き(y方向)。"""
     g0 = G(name, "Props")
     ir, ib, yel = "iron_rust", "iron_black", "post_red"
+    import random as _r
+    _c = _r.Random(int(abs(x) * 3.7 + abs(y) * 1.9) * 11 + 1).choice(["post_red", "tin_green", "white_paint", "tin_blue"])      # B1: 3駅のクレーンが同じ赤だった→位置から決まる色(赤/緑/白/青。M にある塗装系のキーだけを使う)
+    if _c in M:
+        yel = _c
     if swap:                       # swap=True: 岸壁が y 方向に走る場合(ジブを x 方向へ出す)。x と y を入れ替えて描く
         x, y = y, x
         class _S:
