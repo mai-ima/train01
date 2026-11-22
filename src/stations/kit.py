@@ -302,6 +302,10 @@ def snowshed(g, x0, x1, y0, y1, h=3.6):
         g.a("wood_dark", bevel=0.01).box(x - 0.12, x + 0.12, y1 - 0.12, y1 + 0.12, Z_PLAT, Z_PLAT + h)
         g.a("wood_dark", bevel=0.01).box(x - 0.1, x + 0.1, y0 - 0.1, y0 + 0.1, Z_PLAT, Z_PLAT + h - 0.8)
         g.a("wood_dark").sbox((x, y0, Z_PLAT + h - 0.8), (x, y1, Z_PLAT + h), 0.14, 0.2, up=(1, 0, 0))
+        g.a("wood_dark").sbox((x, y1 - 0.12, Z_PLAT + h - 1.3), (x, y1 - 1.1, Z_PLAT + h - 0.15), 0.07, 0.12, up=(1, 0, 0))      # 柱頭の方杖(筋交い): 柱と梁のつなぎ
+        g.a("wood_dark").sbox((x, y0 + 0.1, Z_PLAT + h - 1.9), (x, y0 + 1.0, Z_PLAT + h - 0.85), 0.06, 0.1, up=(1, 0, 0))
+    g.a("wood_dark", bevel=0.01).box(x0 - 0.2, x1 + 0.2, y1 - 0.16, y1 + 0.16, Z_PLAT + h - 0.32, Z_PLAT + h)                      # 桁(屋根を受ける水平材。薄い板の屋根に厚みを出す)
+    g.a("wood_dark", bevel=0.01).box(x0 - 0.2, x1 + 0.2, y0 - 0.14, y0 + 0.14, Z_PLAT + h - 1.12, Z_PLAT + h - 0.8)
     g.a("tin").extrude_x([(y0 - 0.4, Z_PLAT + h - 0.85), (y1 + 0.3, Z_PLAT + h + 0.05), (y1 + 0.3, Z_PLAT + h - 0.05), (y0 - 0.4, Z_PLAT + h - 0.95)], x0 - 0.3, x1 + 0.3)
 
 
