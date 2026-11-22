@@ -605,7 +605,7 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
                 c = (x + ox, y + oy, z + hc)
                 Vb, seg, rings = blob(c, rl, rng, seg=10, rings=7, k=0.55)
                 if rho > 0.72 and not conif:
-                    edge_blobs.append((c, rl, warm))
+                    edge_blobs.append((c, rl, warm, 36))      # 縁だけ36枚(内側にも12枚足す案は見た目の差が出ず構築時間が+15%になったため撤回)
                 if conif:
                     Vb[:, 2] = c[2] + (Vb[:, 2] - c[2]) * 1.9
                 n = len(Vb)
@@ -627,8 +627,8 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
                 off += n
     if edge_blobs:      # 縁の塊に葉片(三角)を 1塊あたり 36枚: 球の滑らかな輪郭が葉の凹凸のある輪郭になる
         CV, CT, CC, o2 = [], [], [], 0
-        for (c, rl, warm) in edge_blobs:
-            for _ in range(36):
+        for (c, rl, warm, nleaf) in edge_blobs:
+            for _ in range(nleaf):
                 d = nr_.normal(size=3) * np.array([1, 1, 0.75])
                 d /= np.linalg.norm(d) + 1e-9
                 p_ = np.array(c) + d * rl * nr_.uniform(0.85, 1.22)
