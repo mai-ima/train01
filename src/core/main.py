@@ -250,6 +250,10 @@ if args.zone:
         for _o in bpy.data.objects:
             if _o.type == "MESH" and _re.match(r"(hills|knoll|far_ground|kit_ground|k2_hill|k2_sand)", _o.name) and not _o.name.endswith("_forest"):   # T6: 里山の樹林(knoll_*_forest)まで雪面材にすると白い玉の山になる
                 _o.data.materials.clear(); _o.data.materials.append(M["snow"])
+            elif _o.type == "MESH" and _re.match(r"k2_(fc|road)(\.\d+)?$", _o.name):      # 雪駅: 駅前広場・道路の土色が雪面に浮くため、踏み固めた雪(灰青がかった白)にする
+                if "snow_packed" not in M:
+                    M["snow_packed"] = lib.mat_plain("kit_snow_packed", (0.66, 0.70, 0.76), rough=0.85, spec=0.2)
+                _o.data.materials.clear(); _o.data.materials.append(M["snow_packed"])
             elif _o.type == "MESH" and _re.match(r"k2_(platA|platB|isl\d?)_top", _o.name):
                 _o.data.materials.clear(); _o.data.materials.append(M["snow"])        # ホーム面に積雪
         _snow = (0.88, 0.92, 0.97)                                                   # 樹冠・草を雪化粧(約6割白)
