@@ -717,6 +717,32 @@ def hits_track(sid, ox, oy, yaw, w, d, clear=5.5):
     return bool((dd.min(1) < clear).any())
 
 
+def _blocks_door(ox, oy, yaw, w, d, reach=3.0):
+    """K9: 建物(原点 (ox,oy)・向き yaw・幅 w×奥行 d の矩形)が、登録済みの出入口(rooms.DOORS)の外側 reach m 以内に入るか。"""
+    import rooms as _rm
+    c, s_ = math.cos(yaw), math.sin(yaw)
+    for dr in _rm.DOORS:
+        try:
+            pc = (dr["p0"] + dr["p1"]) / 2
+            am = (dr["a0"] + dr["a1"]) / 2
+            pts_ = []
+            for _sg in (1.5, -0.5):      # 出入口の外側1.5mの点と、内側0.5mの点の両方(出入口の向きの符号を取り違えても取りこぼさない)
+                ptl = (am, pc + dr["out"] * _sg) if dr["axis"] == 'x' else (pc + dr["out"] * _sg, am)
+                x_, y_ = ptl[0], ptl[1]
+                for (o_, yw_) in reversed(dr["stack"]):
+                    cc, ss = math.cos(yw_), math.sin(yw_)
+                    x_, y_ = cc * x_ - ss * y_ + o_[0], ss * x_ + cc * y_ + o_[1]
+                pts_.append((x_, y_))
+        except Exception as _e:
+            print("blocks_door failed (skip):", _e)
+            continue
+        for (x_, y_) in pts_:
+            lx, ly = (x_ - ox) * c + (y_ - oy) * s_, -(x_ - ox) * s_ + (y_ - oy) * c      # 世界→建物ローカル
+            if -reach <= lx <= w + reach and -reach <= ly <= d + reach:
+                return True
+    return False
+
+
 def town_along(pts, sid, st, rng, style, dens, xskip, sides=("L", "R"), off=2.6, xr=(-135, 135), rows=1):
     kinds = [k for k, wgt in STYLES[style] for _ in range(wgt)]
     t, n = trackkit.frames(pts)
@@ -750,7 +776,7 @@ def town_along(pts, sid, st, rng, style, dens, xskip, sides=("L", "R"), off=2.6,
                 tt = t[i0] * (1 - fr) + t[i0 + 1] * fr; tt = tt / (np.linalg.norm(tt) + 1e-9)
                 nn = np.array([-tt[1], tt[0]])
                 ang = math.atan2(tt[1], tt[0])
-                dd = off + 1.0 + row * (d + 6.5) + rng.uniform(0, 2.5 if dens < 0.6 else 0.8)
+                dd = off + 1.0 + row * (max(d, 11.5) + 6.5) + rng.uniform(0, 2.5 if dens < 0.6 else 0.8)      # K9: 列の間隔を、その建物の奥行きでなく11.5m以上に(奥行きの大きい団地(d≈10〜11)の背後に次の列の店が0.6mで迫り、店の出入口が団地の壁に塞がれた: SH02)
                 if side == "L":
                     o = p + nn * dd - tt * (w / 2)
                     yaw = ang
@@ -763,6 +789,9 @@ def town_along(pts, sid, st, rng, style, dens, xskip, sides=("L", "R"), off=2.6,
                     x += w + 1.0
                     continue
                 if hits_track(sid, float(o[0]), float(o[1]), yaw, w, d):
+                    x += w + 1.0
+                    continue
+                if _blocks_door(float(o[0]), float(o[1]), yaw, w, d):      # K9: 町の建物が駅舎の出入口の目の前(SH02: 0.12m先に団地)に建って塞いでいた→出入口の外側3m内に入る建物は置かない
                     x += w + 1.0
                     continue
                 if _tree_hit_bld(sid, (float(o[0]), float(o[1])), yaw, w, d):
@@ -805,7 +834,7 @@ DESIGN = {
  "SH02": D(yaw=0, curve=("arc", -1100), plan="OVER", w=17, d=9, nfl=2, roof="flat", wall="pl_cream", plat="dual", ntr=3, canopy="none", cross="over", terrain=["paddies"], road="plaza", town="newtown", dens=0.85, lm=[("water", 44, -28)], bx=-8),
  "SH03": D(yaw=0, curve=("arc", 900), plan="I", w=9, d=6, nfl=1, roof="flat", wall="pl_grey", plat="island", ntr=3, canopy="curve", cross="stairs", terrain=["pond"], road="curve", town="newtown", dens=0.6, lm=[("deck", 30, 26)], bx=-5),
  "SH04": D(yaw=0, curve=("straight", 0), plan="TW", w=22, d=10, nfl=3, roof="flat", wall="concrete", plat="dual", ntr=4, canopy="steel", cross="overshops", terrain=[], road="plaza", town="urban", dens=0.92, lm=[("clock", 14, 36), ("apt", -34, 58)], bx=-10),
- "SH05": D(yaw=0, curve=("S", 10), plan="U", w=14, d=8, nfl=2, roof="shed", wall="pl_green", plat="island", ntr=3, canopy="curve", cross="fb_steel", terrain=["hill_n"], road="straight", town="campus", dens=0.5, lm=[("gate", -30, 24), ("field", -78, 34)], bx=-7),
+ "SH05": D(yaw=0, curve=("S", 10), plan="U", w=14, d=8, nfl=2, roof="shed", wall="pl_green", plat="island", ntr=3, canopy="curve", cross="fb_steel", terrain=["hill_n"], road="straight", town="campus", dens=0.5, lm=[("gate", -44, 24), ("field", -78, 34)], bx=-7),      # K9: SH05 の門が駅舎の出入口(x≈-24.6,y≈32)の0.8m先に立って塞いでいた→西へ14m離す
  "SH06": D(yaw=0, curve=("arc", 1500), plan="AA", w=12, d=7, nfl=1, roof="saw", wall="tin", plat="island", ntr=5, canopy="shed", cross="fb_steel", terrain=[], road="straight", town="freight", dens=0.65, lm=[("crane", 36, 30), ("chimney", -30, 36)], bx=-6),
  "SH07": D(yaw=0, curve=("arc", -800), plan="I", w=7, d=5, nfl=1, roof="flat", wall="pl_grey", plat="dual", ntr=3, canopy="none", cross="fb_steel", terrain=["paddies"], road="diag", town="airport", dens=0.35, lm=[("windsock", 30, 28), ("silo", 40, 52)], bx=-4),
  "SH08": D(yaw=0, curve=("straight", 0), plan="L", w=24, d=11, nfl=2, roof="flat", wall="pl_cream", plat="island2", ntr=4, canopy="steel", cross="fb_steel", terrain=["paddies"], road="plaza", town="airport", dens=0.4, lm=[("atc", 52, 44), ("radar", -48, 40), ("windsock", 20, -26)], bx=-10, endbuf=True),
