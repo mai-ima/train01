@@ -492,7 +492,8 @@ d = Vector((math.sin(math.radians(sun_az)) * math.cos(math.radians(sun_el)),
             math.sin(math.radians(sun_el))))
 sun = bpy.data.lights.new("Sun", 'SUN')
 sun.energy = args.sun
-sun.angle = math.radians(float(os.environ.get("SUN_ANGLE", "0.55")))      # C17(築堤監査A/B: 橋桁の影が角張った暗い矩形に見える): 太陽の角径(度)。実物の0.55度は影の縁が硬い→検証用に環境変数化
+sun.angle = math.radians(float(os.environ.get("SUN_ANGLE", "4.0" if args.zone in ("M12", "M13", "L01") else "0.55")))      # 雪駅: 曇り空に合う柔らかい影(監査F: 空は曇りなのに影が硬い)
+# C17(築堤監査A/B: 橋桁の影が角張った暗い矩形に見える): 太陽の角径(度)。実物の0.55度は影の縁が硬い→検証用に環境変数化
 sun.color = (1.0, 0.92, 0.80)
 sob = bpy.data.objects.new("Sun", sun)
 sob.rotation_euler = (-d).to_track_quat('-Z', 'Y').to_euler()
