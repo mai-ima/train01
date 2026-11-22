@@ -131,12 +131,38 @@ def truss_bridge(x, y, span=24.0, name="sig_bridge"):
 
 
 def obs_deck(x, y, name="sig_deck"):
+    """展望台。B1: 7駅が同じ形(柱4本+板+手すり1面)だった→位置(x,y)から決まる乱数で、高さ・床の寸法・手すり・屋根・階段・斜材を変える(駅ごとに別の展望台に見える)。"""
+    import random as _r
+    rr = _r.Random(int(abs(x) * 7.3 + abs(y) * 3.1) * 31 + 5)
     g = G(name, "Props")
-    g.a("wood").box(x - 3, x + 3, y - 2, y + 2, 2.4, 2.6)
-    for dx in (-2.8, 2.8):
-        for dy in (-1.8, 1.8):
-            g.a("wood_dark").box(x + dx - 0.1, x + dx + 0.1, y + dy - 0.1, y + dy + 0.1, 0.0, 2.4)
-    g.a("wood_dark").box(x - 3, x + 3, y - 2, y - 1.9, 2.6, 3.5)
+    hz = rr.choice([2.4, 3.2, 4.0, 5.0])                     # 床の高さ
+    hw, hd = rr.choice([(3.0, 2.0), (2.4, 2.4), (3.6, 1.8), (2.0, 3.0)])      # 床の半幅・半奥行
+    g.a("wood").box(x - hw, x + hw, y - hd, y + hd, hz, hz + 0.2)
+    for dx in (-hw + 0.2, hw - 0.2):
+        for dy in (-hd + 0.2, hd - 0.2):
+            g.a("wood_dark").box(x + dx - 0.1, x + dx + 0.1, y + dy - 0.1, y + dy + 0.1, 0.0, hz)
+    if hz >= 3.2:                                            # 高い展望台は斜材(筋交い)を付ける
+        for dy in (-hd + 0.2, hd - 0.2):
+            g.a("wood_dark").sbox((x - hw + 0.2, y + dy, 0.2), (x + hw - 0.2, y + dy, hz - 0.2), 0.06, 0.06)
+    rail = rr.choice(["front", "three", "four"])             # 手すりの面数
+    zr0, zr1 = hz + 0.2, hz + 1.2
+    g.a("wood_dark").box(x - hw, x + hw, y - hd, y - hd + 0.1, zr0, zr1)
+    if rail in ("three", "four"):
+        g.a("wood_dark").box(x - hw, x - hw + 0.1, y - hd, y + hd, zr0, zr1)
+        g.a("wood_dark").box(x + hw - 0.1, x + hw, y - hd, y + hd, zr0, zr1)
+    if rail == "four":
+        g.a("wood_dark").box(x - hw, x + hw, y + hd - 0.1, y + hd, zr0, zr1)
+    roof = rr.choice(["none", "gable", "shed"])              # 屋根
+    if roof != "none":
+        for dx in (-hw + 0.2, hw - 0.2):
+            g.a("wood_dark").box(x + dx - 0.07, x + dx + 0.07, y - hd + 0.1, y - hd + 0.24, zr1, zr1 + 1.3)
+        if roof == "gable":
+            g.a("tin").extrude_x([(y - hd - 0.3, zr1 + 1.2), (y, zr1 + 1.9), (y + hd + 0.3, zr1 + 1.2)], x - hw - 0.3, x + hw + 0.3)
+        else:
+            g.a("tin").extrude_x([(y - hd - 0.3, zr1 + 1.4), (y + hd + 0.3, zr1 + 1.0)], x - hw - 0.3, x + hw + 0.3)
+    nst = max(4, int(hz / 0.3))                              # 階段(床の高さに合わせた段数)
+    for k in range(nst):
+        g.a("wood").box(x - 0.5, x + 0.5, y - hd - 0.3 - (nst - k) * 0.28, y - hd - 0.3 - (nst - k - 1) * 0.28, 0.0, 0.3 * (k + 1))
     g.build()
 
 
