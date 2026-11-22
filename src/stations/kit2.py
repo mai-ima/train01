@@ -1180,7 +1180,7 @@ def build_design(sid):
             gx = G("k2_cross", "Station")
             yb_ = -12.0 if plat == "dual" else (-21.6 if plat == "island2" else -8.6)
             if cr != "underpass":
-                footbridge(gx, 0.0, -0.9, yb_, covered=(cr != "fb_steel"), kind="wood" if cr == "fb_wood" else "steel", z=5.2,
+                footbridge(gx, 0.0, -0.9, yb_, covered=(cr != "fb_steel" or SNOW_ZONE[0]), kind="wood" if cr == "fb_wood" else "steel", z=5.2,
                            piers=([-0.9, -8.6, -21.6] if plat == "island2" else None), mid=([-8.6] if plat == "island2" else None))
             else:
                 for yy in (-1.2, yb_):
