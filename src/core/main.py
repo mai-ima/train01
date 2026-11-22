@@ -840,6 +840,17 @@ for _o in bpy.data.objects:
             _dupn += 1
 if _dupn > 200:
     print("[dup] failed: 二重生成の疑い(同位置・同頂点数の X/X.001 が %d 組)。--zone では --parts が無視される設計か確認" % _dupn)
+if os.environ.get("HIDE_ABOVE"):      # 撮影用: 最下点が指定高さ以上の物体(屋根・庇・架線など)を隠して、建物の内側や足元を俯瞰で撮る
+    _hz = float(os.environ["HIDE_ABOVE"])
+    from mathutils import Vector as _VH
+    _nh = 0
+    for _o in bpy.data.objects:
+        if _o.type == "MESH" and not _o.hide_render:
+            _zs_ = [(_o.matrix_world @ _VH(c)).z for c in _o.bound_box]
+            _zz = min(_zs_)
+            if _zz >= _hz or (max(_zs_) >= _hz and max(_zs_) - _zz < 1.0):      # 浮いた物体、または基準高さにまたがる薄い板(屋根・庇)
+                _o.hide_render = True; _o.hide_viewport = True; _nh += 1
+    print("[hide_above] %d objects hidden (zmin >= %.1f)" % (_nh, _hz))
 if os.environ.get("HIDE_GROUND"):      # 断面確認用: 地面・丘・遠景を非表示にして埋没を見る
     import re as _rg
     for _o in bpy.data.objects:
