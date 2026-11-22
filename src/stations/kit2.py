@@ -1050,7 +1050,7 @@ def build_design(sid):
             _of = track_offsets(d["plat"], d["ntr"])
             _ye = -4.4 + min(_of) - 3.2
             _pb = (-4.6 - (1.7 + 4.4) / 2) - 4.4         # B面ホーム(線1の南 1.7〜4.4)の中央。建物枠は世界y+4.4 なので -4.4(K8: 旧式は線1の車体内=-5.35 に橋脚が立っていた)
-            volume(gb, dict(x0=xc - 4.0, x1=xc + 4.0, y0=_ye - 0.4, y1=-0.4, nfl=1, roof="flat", wall="pl_grey", ground=False, zf=7.4, skip=(), door="S"), rng, st)   # 橋上通路: 長辺(E/W)にも窓を開ける(旧: skip=E,W で無窓の壁だった)
+            volume(gb, dict(x0=xc - 4.0, x1=xc + 4.0, y0=_ye - 0.4, y1=-0.4, nfl=1, roof="flat", wall="pl_grey", ground=False, zf=7.4, skip=(), door="S", win_trim=True), rng, st)   # 橋上通路: 長辺(E/W)にも窓を開ける(旧: skip=E,W で無窓の壁だった)
             # B8: 橋上通路の外観ディテール(桁下の梁・駅名板)
             _ym = (_ye - 0.4 + (-0.4)) / 2
             gb.a("concrete", bevel=0.02).box(xc - 4.18, xc + 4.18, _ye - 0.58, -0.22, 6.85, 7.4)             # 床の大梁(せり出し)
