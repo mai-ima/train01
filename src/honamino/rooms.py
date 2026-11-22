@@ -119,9 +119,17 @@ def fill_opening(g, axis, p0, p1, a0, a1, z0, z1, kind, out):
                 fr(sa, a1, ps - 0.012, ps + 0.012, zz - 0.01, zz + 0.01)
     elif kind == 'door':      # wooden sliding door, half open
         pp = pc + out * 0.03
-        pb(g, "wood_dark", axis, a0 + w * 0.45, a1, pp - 0.03, pp + 0.03, z0, z1, bevel=0.004)
-        for i in range(5):
-            pb(g, "iron_black", axis, a0 + w * 0.45 + i * w * 0.11, a0 + w * 0.45 + i * w * 0.11 + 0.012, pp - 0.035, pp + 0.035, z0, z1)
+        la, lb = a0 + w * 0.45, a1                       # 引き戸の戸板: 下は板、上は桟付きのガラス(奥の室内が見える。旧: 全面が黒い一枚板で扉内が黒つぶれ)
+        zb = z0 + min(0.95, (z1 - z0) * 0.42)
+        pb(g, "wood_dark", axis, la, lb, pp - 0.03, pp + 0.03, z0, zb, bevel=0.004)                 # 下の腰板
+        pb(g, "wood_dark", axis, la, la + 0.07, pp - 0.03, pp + 0.03, zb, z1, bevel=0.004)         # 縦框
+        pb(g, "wood_dark", axis, lb - 0.07, lb, pp - 0.03, pp + 0.03, zb, z1, bevel=0.004)
+        pb(g, "wood_dark", axis, la, lb, pp - 0.03, pp + 0.03, z1 - 0.07, z1, bevel=0.004)         # 上桟
+        pb(g, "glass", axis, la + 0.07, lb - 0.07, pp - 0.004, pp + 0.004, zb, z1 - 0.07)
+        for i in range(1, 3):                              # 格子桟
+            xx = la + (lb - la) * i / 3
+            pb(g, "wood_dark", axis, xx - 0.012, xx + 0.012, pp - 0.02, pp + 0.02, zb, z1 - 0.07)
+        pb(g, "wood_dark", axis, la + 0.07, lb - 0.07, pp - 0.02, pp + 0.02, (zb + z1) / 2 - 0.012, (zb + z1) / 2 + 0.012)
     elif kind == 'shutter':   # tin rolling shutter half raised
         pb(g, "tin", axis, a0, a1, pc - 0.02, pc + 0.02, z0, z0 + (z1 - z0) * 0.35)
 
