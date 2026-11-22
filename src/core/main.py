@@ -258,7 +258,8 @@ if args.zone:
                 if _ca is None: continue
                 _n = len(_ca.data); _a = np.zeros(_n * 4, dtype=np.float32); _ca.data.foreach_get("color", _a)
                 _a = _a.reshape(-1, 4)
-                _top = np.random.default_rng(abs(hash(_o.name)) % 99999).uniform(0.45, 0.8, (_n, 1)).astype(np.float32)
+                _lo, _hi = (0.12, 0.38) if _o.name.endswith("_forest") else (0.45, 0.8)      # T6: 里山の樹林は雪を被る割合を下げ、暗い樹冠+部分的な雪にして白い塊の山に見せない
+                _top = np.random.default_rng(abs(hash(_o.name)) % 99999).uniform(_lo, _hi, (_n, 1)).astype(np.float32)
                 _a[:, :3] = _a[:, :3] * (1 - _top) + np.array(_snow, dtype=np.float32) * _top
                 _ca.data.foreach_set("color", _a.ravel())
     if os.environ.get('WEATHER','1')=='1':
