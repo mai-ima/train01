@@ -6,14 +6,33 @@ from props import G
 
 
 def clock_tower(x, y, h=14.0, w=3.2, wall="plasterw", name="sig_clock"):
+    """時計塔。B1: 4駅が同じ形(高さ14m・幅3.2m・切妻)だった→位置(x,y)から決まる乱数で、高さ・幅・基壇・屋根(切妻/寄棟/ドーム)・盤の大きさ・塔身の絞りを変える。"""
+    import random as _r
+    rr = _r.Random(int(abs(x) * 5.7 + abs(y) * 2.3) * 17 + 3)
+    h = h * rr.choice([0.85, 1.0, 1.2, 1.45])
+    w = w * rr.choice([0.9, 1.0, 1.15])
+    base = rr.choice([0.0, 0.0, 1.2])                          # 基壇(低い張り出し)の高さ
+    dial = rr.choice([0.8, 1.0, 1.25])                         # 時計盤の半径
+    roof = rr.choice(["gable", "hip", "dome"])
     g = G(name, "Buildings")
-    g.a(wall if wall in M else "concrete", bevel=0.02).box(x - w / 2, x + w / 2, y - w / 2, y + w / 2, 0.0, h)
+    if base:
+        g.a("concrete", bevel=0.02).box(x - w / 2 - 0.5, x + w / 2 + 0.5, y - w / 2 - 0.5, y + w / 2 + 0.5, 0.0, base)
+    g.a(wall if wall in M else "concrete", bevel=0.02).box(x - w / 2, x + w / 2, y - w / 2, y + w / 2, base, h)
+    if rr.random() < 0.5:                                      # 塔身の上半分を一段絞る
+        g.a(wall if wall in M else "concrete", bevel=0.02).box(x - w * 0.42, x + w * 0.42, y - w * 0.42, y + w * 0.42, h, h + 1.6)
+        h += 1.6
     g.a("concrete", bevel=0.02).box(x - w / 2 - 0.3, x + w / 2 + 0.3, y - w / 2 - 0.3, y + w / 2 + 0.3, h, h + 0.4)
-    g.a("roof").extrude_x([(y - w / 2 - 0.3, h + 0.4), (y, h + 2.6), (y + w / 2 + 0.3, h + 0.4)], x - w / 2 - 0.3, x + w / 2 + 0.3)
+    if roof == "gable":
+        g.a("roof").extrude_x([(y - w / 2 - 0.3, h + 0.4), (y, h + 2.6), (y + w / 2 + 0.3, h + 0.4)], x - w / 2 - 0.3, x + w / 2 + 0.3)
+    elif roof == "hip":
+        g.a("roof").cyl((x, y, h + 0.4), (x, y, h + 3.0), w * 0.78, 0.05, seg=4)
+    else:
+        g.a("roof").sphere((x, y, h + 0.4), (w * 0.62, w * 0.62, w * 0.9), seg=16, rings=8)
+    zc = h - 2.2 if h > 8 else h - 1.6
     for fx, fy, nx, ny in ((x, y - w / 2, 0, -1), (x, y + w / 2, 0, 1), (x - w / 2, y, -1, 0), (x + w / 2, y, 1, 0)):
-        g.a("white_paint").cyl((fx, fy, h - 2.2), (fx + nx * 0.08, fy + ny * 0.08, h - 2.2), 1.0, seg=24)
-        g.a("iron_black").cyl((fx + nx * 0.08, fy + ny * 0.08, h - 2.2), (fx + nx * 0.1, fy + ny * 0.1, h - 2.2 + 0.7), 0.04, seg=6)
-        g.a("iron_black").cyl((fx + nx * 0.08, fy + ny * 0.08, h - 2.2), (fx + nx * 0.1 + 0.6 * (ny != 0), fy + ny * 0.1 + 0.6 * (nx != 0), h - 2.2), 0.04, seg=6)
+        g.a("white_paint").cyl((fx, fy, zc), (fx + nx * 0.08, fy + ny * 0.08, zc), dial, seg=24)
+        g.a("iron_black").cyl((fx + nx * 0.08, fy + ny * 0.08, zc), (fx + nx * 0.1, fy + ny * 0.1, zc + 0.7 * dial), 0.04, seg=6)
+        g.a("iron_black").cyl((fx + nx * 0.08, fy + ny * 0.08, zc), (fx + nx * 0.1 + 0.6 * dial * (ny != 0), fy + ny * 0.1 + 0.6 * dial * (nx != 0), zc), 0.04, seg=6)
     g.build()
 
 
