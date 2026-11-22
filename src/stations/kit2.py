@@ -900,7 +900,13 @@ def add_feats(g, v, feats, zh, tx, sid):
                 zz = zf + 3.0
                 g.a("concrete").box(x0 - 0.1, x1 + 0.1, y1, y1 + 0.2, zz - 0.14, zz + 0.1)
         elif f == "stonebase":                        # 腰石積み(前面・両側面)
-            g.a("stone", bevel=0.01).box(x0 - 0.06, x1 + 0.06, y1 - 0.02, y1 + 0.1, zf - 0.1, zf + 1.0)
+            import rooms as _rm
+            _gaps = sorted((d_["a0"], d_["a1"]) for d_ in _rm.DOORS if d_["axis"] == 'x' and abs(d_["p1"] - y1) < 0.6 and d_["z0"] < zf + 0.6 and x0 - 0.1 <= d_["a0"] and d_["a1"] <= x1 + 0.1)      # K9: 全幅の腰石積みが前面の扉(出入口)を足元から塞いでいた(新しい足元検査で M11/M12 に検出)→登録済みの出入口(rooms.DOORS)の幅(+0.15m)を抜く
+            _xs = [x0 - 0.06]
+            for (_a, _b) in _gaps:
+                g.a("stone", bevel=0.01).box(_xs[-1], _a - 0.15, y1 - 0.02, y1 + 0.1, zf - 0.1, zf + 1.0)
+                _xs.append(_b + 0.15)
+            g.a("stone", bevel=0.01).box(_xs[-1], x1 + 0.06, y1 - 0.02, y1 + 0.1, zf - 0.1, zf + 1.0)
             g.a("stone", bevel=0.01).box(x0 - 0.1, x0 + 0.02, y0, y1, zf - 0.1, zf + 1.0)
             g.a("stone", bevel=0.01).box(x1 - 0.02, x1 + 0.1, y0, y1, zf - 0.1, zf + 1.0)
         elif f == "chimney" and roof != "flat":      # 煉瓦煙突
