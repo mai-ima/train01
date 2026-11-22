@@ -226,6 +226,10 @@ def _cam_clear(v):
 
 
 cam_loc, cam_tgt, cam_lens, sun_az, sun_el = CAMS[args.cam]
+if args.zone in ('M12', 'M13', 'L01') and not os.environ.get('SUN_EL'):      # 雪駅: 太陽を低く(22度)して雪面に長い影・凹凸の陰影を出す(高い太陽だと雪面が白い平板に見えた)
+    sun_el = min(sun_el, 22.0)
+if os.environ.get('SUN_EL'):      # 検証用: 太陽の高度(度)を上書き(雪面に長い影を落とす検証)
+    sun_el = float(os.environ['SUN_EL'])
 if os.environ.get('SUN_AZ'):      # 検証用: 太陽の方位(度)を上書き
     sun_az = float(os.environ['SUN_AZ'])
 
