@@ -479,6 +479,19 @@ def mat_water(name, deep=(0.03, 0.10, 0.13), shallow=(0.10, 0.22, 0.24)):
     return m.m
 
 
+def mat_snow(name, color=(0.86, 0.90, 0.96)):
+    """雪面: 単色のベタ面に見えた(監査)ため、(1)吹き溜まりの大きなうねり(2)風紋・粒状の細かな凹凸(3)淡い青白の明暗むらを重ねる。"""
+    m = Mat(name)
+    drift = m.noise(scale=0.15, detail=4, rough=0.6)
+    fine = m.noise(scale=3.0, detail=5, rough=0.6)
+    h = m.mix(0.35, drift, fine, 'ADD') if hasattr(m, 'mix') else drift
+    nrm = m.bump(m.mix(0.5, drift, fine), strength=1.6, dist=0.5)
+    tint = m.ramp(m.noise(scale=0.12, detail=3, rough=0.5), [(0.30, (0.90, 0.95, 1.04)), (0.70, (1.02, 1.0, 0.98))])
+    col = m.mix(1.0, color, tint, 'MULTIPLY')
+    m.principled(**{'Base Color': col, 'Roughness': 0.9, 'Specular IOR Level': 0.3, 'Normal': nrm})
+    return m.m
+
+
 def mat_water_gradient(name, near=(0.20, 0.42, 0.40), far=(0.02, 0.07, 0.12)):
     """T7: 海の水面に、岸(頂点カラー R=1)から沖(R=0)への色の勾配を付ける。mat_water と同じ波・白濁・映り込みに、浅瀬の淡い青緑→沖の濃い藍を重ねる。"""
     m = Mat(name)

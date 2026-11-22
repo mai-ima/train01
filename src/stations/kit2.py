@@ -43,7 +43,7 @@ def mats2():
         M["sand"] = lib.mat_plain("kit_sand", (0.60, 0.53, 0.37), rough=0.97)
         M["tin_blue"] = lib.mat_paint("kit_tinblue", (0.20, 0.30, 0.42), rough=0.5, rust=0.5)
         M["tin_green"] = lib.mat_paint("kit_tingreen", (0.18, 0.34, 0.24), rough=0.5, rust=0.5)
-        M["snow"] = lib.mat_plain("kit_snow", (0.86, 0.90, 0.96), rough=0.9, spec=0.25)
+        M["snow"] = lib.mat_snow("kit_snow", (0.86, 0.90, 0.96))
         M["tin_red"] = lib.mat_paint("kit_tinred", (0.42, 0.13, 0.09), rough=0.5, rust=0.45)      # B3: 赤い波板屋根(小駅の屋根材を増やす)
         try:
             M["slate"] = lib.mat_pbr("k2_slate", "RoofingTiles013B", scale=1.4, tint=(0.30, 0.34, 0.40), tint_amt=0.7, bump=1.4, macro=0.3, dirt=0.3)      # スレート(濃い青灰)
