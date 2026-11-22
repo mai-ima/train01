@@ -1010,6 +1010,10 @@ def build_design(sid):
     kc, kv = d["curve"]
     P = centerline(kc, R=kv if kc == "arc" else 0, amp=kv if kc == "S" else 0) if sid not in CURVE_OVERRIDE else centerline("arc", R=CURVE_OVERRIDE[sid], flat=False)
     kit.ground(600, 600)
+    if "stone_default" not in M:
+        M["stone_default"] = M["stone"]
+    _stv = {"M12": (0.80, 0.90, 0.84), "M13": (1.00, 0.84, 0.66), "L01": (0.74, 0.80, 0.94)}.get(sid)      # B3: 基礎・ホーム縁の石材の色相を駅ごとに変える(同一PBRのまま。3駅が同じ円形エンボス石材で使い回しに見えた)
+    M["stone"] = lib.mat_pbr(f"stone_{sid}", "Concrete044D", scale=1.3, hsv=(0.5, 0.65, 0.85), tint=_stv, tint_amt=0.6, dirt=0.35, bump=0.9, spec=0.2) if _stv else M["stone_default"]
     SNOW_ZONE[0] = "snow" in d["terrain"]
     if "snow" in d["terrain"]:                    # 雪景色: 地面に薄い積雪(線路・ホームはその上に出る)
         _sn = lib.Acc("kit_snowcover", M["snow"], "Ground")
