@@ -245,6 +245,13 @@ def underground_hall(sid, rng, island=True, theme="tile", wall="plasterw", strip
         gs.a("dark_glass").box(-3.0, 3.0, yhi + 1.38, yhi + 1.42, 0.0, 3.4)
         gs.a("stone", bevel=0.02).box(-31, 31, yhi + 1.5, yhi + 19.0, zt + 12.0, zt + 12.8)
         gs.a("copper" if "copper" in M else "tin").extrude_x([(yhi + 3.0, zt + 12.8), (yhi + 10.5, zt + 17.0), (yhi + 18.0, zt + 12.8)], -22, 22)
+        for k_ in range(5):                                                                                     # B3(K02≒T03): 市民会館の正面に広い階段(5段)と、左右の旗柱・中央の噴水池で『大広場』にする
+            gs.a("stone", bevel=0.01).box(-14 + k_ * 0.6, 14 - k_ * 0.6, yhi - 3.4 - (4 - k_) * 0.9, yhi - 2.5 - (4 - k_) * 0.9, 0.0, 0.18 * (k_ + 1))
+        for sx_ in (-12.0, 12.0):
+            gs.a("iron_black").cyl((sx_, yhi - 2.0, 0.0), (sx_, yhi - 2.0, 11.0), 0.12, seg=8)
+            gs.a("post_red" if "post_red" in M else "iron_rust").box(sx_ + 0.1, sx_ + 2.1, yhi - 2.03, yhi - 1.97, 8.2, 10.6)      # 旗
+        gs.a("stone", bevel=0.02).cyl((0.0, yhi - 12.0, 0.0), (0.0, yhi - 12.0, 0.7), 4.2, seg=24)                               # 噴水の池(縁)
+        gs.a("water" if "water" in M else "glass").cyl((0.0, yhi - 12.0, 0.55), (0.0, yhi - 12.0, 0.72), 3.7, seg=24)      # 水面は縁(0.7m)よりわずかに上に出す(池が石の円盤に見えた)
     else:                                         # office
         for k, (sx, h) in enumerate(((-30, 28), (6, 38), (38, 22))):
             gs.a("concrete", bevel=0.02).box(sx - 12, sx + 12, yhi + 3.0, yhi + 17.0, 0.0, zt + h)
