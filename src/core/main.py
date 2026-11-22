@@ -254,6 +254,7 @@ if args.zone:
                 if "snow_roof" not in M:      # 雪駅: 屋根に積雪(厚みの造形は未対応。色で雪を被った屋根に)。軒先の見え方を残すため完全な白にはしない
                     M["snow_roof"] = lib.mat_plain("kit_snow_roof", (0.78, 0.82, 0.89), rough=0.9, spec=0.25)
                 _o.data.materials.clear(); _o.data.materials.append(M["snow_roof"])
+                _sm = _o.modifiers.new("snow_thick", "SOLIDIFY"); _sm.thickness = 0.32; _sm.offset = 0.0      # 屋根雪に厚み(縁が板でなく雪の塊に見える)
             elif _o.type == "MESH" and _o.name.endswith("_ballast"):      # 雪駅: バラストを雪を被った砂利(灰白)に。枕木・レールは上に出たまま
                 if "snow_ballast" not in M:
                     M["snow_ballast"] = lib.mat_plain("kit_snow_ballast", (0.50, 0.53, 0.58), rough=0.95, spec=0.1)
