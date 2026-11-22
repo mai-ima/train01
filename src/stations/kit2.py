@@ -1073,6 +1073,9 @@ def build_design(sid):
         else:
             vols = plan_volumes(plan, w, dep, d["nfl"], d["roof"], d["wall"], rng)
             _zh0 = 0.0
+            _wsty = {"SH04": "tall", "SH08": "band"}.get(sid)       # B3: 似て見えた SH04(3階建て)と SH08(2階建て長方形)の窓割りを分ける(SH04=縦長+窓枠 / SH08=横長の連窓+窓枠)
+            if _wsty:
+                vols[0]["win_style"], vols[0]["win_trim"] = _wsty, True
             vols[0].setdefault("door2", "N")           # B6e/E5所見: 駅前(N側)に出入口が無い駅舎があった → 主棟の駅前側にも出入口を設ける
             vols[0]["door2_avoid"] = [(_v["x0"], _v["x1"]) for _v in vols[1:] if _v.get("y0", 0) >= dep - 0.01]   # 北側に接続する翼棟の x 範囲
             for k_, v in enumerate(vols):
