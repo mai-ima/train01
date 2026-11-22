@@ -1037,6 +1037,7 @@ def build_design(sid):
         if plan == "OVER":
             vols = plan_volumes("I", w, dep, 1, "flat", d["wall"], rng)
             vols[0]["door2"] = "N"                                    # 橋上駅舎は駅前(N側)にも出入口を設ける(旧: 駅前に扉が無かった)
+            vols[0]["win_style"] = {"M03": "tall", "SH02": "band"}.get(sid, "square")      # B3/B8: 橋上駅舎の窓割りを駅ごとに変える(M03=縦長 / SH02=横長の連窓。同じ型の色違いに見えた)
             vols[0]["win_trim"] = True                                # B8: 窓台(厚12cm・出22cm)・まぐさ・額縁で窓の見込みを出す(管理棟D7cで有効だった手法を橋上駅舎へ展開)
             for v in vols:
                 volume(g, v, rng, st, interior=True)
