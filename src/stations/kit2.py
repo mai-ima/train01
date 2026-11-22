@@ -628,7 +628,8 @@ ROOFS["Y04"] = ["kawara", "kawara", "kawara"]      # B3: Y04(温泉街の駅)は
 STYLES = {"rural": [("farm", 6), ("kura", 1), ("shop", 1)], "suburb": [("sf", 5), ("farm", 3), ("shop", 1)], "urban": [("sf", 9), ("shop", 1)],
           "port": [("ware", 3), ("sf", 3), ("farm", 2), ("shop", 1)], "onsen": [("inn", 2), ("sf", 4), ("farm", 2)], "forest": [("farm", 5), ("kura", 1)],
           "alpine": [("farm", 3), ("inn", 1), ("sf", 2)], "freight": [("ware", 6), ("sf", 1)],
-          "newtown": [("danchi", 4), ("pre", 5), ("shop", 1)], "campus": [("pre", 4), ("danchi", 2), ("shop", 1)], "airport": [("ware", 5), ("pre", 2)]}
+          "shotengai": [("shop", 6), ("sf", 3), ("kura", 1)], "newtown": [("danchi", 4), ("pre", 5), ("shop", 1)],      # B3: 商店街(店6:一戸建て3:蔵1)。M03 を M02(urban=住宅の高密度)と別の街並みにする
+           "campus": [("pre", 4), ("danchi", 2), ("shop", 1)], "airport": [("ware", 5), ("pre", 2)]}
 
 
 _EXC = {}
@@ -810,7 +811,7 @@ ELEC_STN = {"M02", "M03", "M04", "M05", "SH04", "SH05", "SH06", "SH07", "SH08", 
 D = lambda **k: k
 DESIGN = {
  "M02": D(yaw=8, curve=("S", 12), plan="I", w=15, d=8, nfl=2, roof="flat", wall="pl_grey", plat="island", ntr=3, canopy="steel", cross="fb_steel", terrain=["pond"], road="straight", town="urban", dens=0.85, lm=[("monument", -40, 26)], bx=-4),
- "M03": D(yaw=-6, curve=("arc", 900), plan="OVER", w=18, d=9, nfl=2, roof="flat", wall="concrete", plat="dual", ntr=4, canopy="none", cross="over", terrain=[], road="plaza", town="urban", dens=0.9, lm=[("clock", 10, 30)], bx=-8),
+ "M03": D(yaw=-6, curve=("arc", 900), plan="OVER", w=18, d=9, nfl=2, roof="flat", wall="concrete", plat="dual", ntr=4, canopy="none", cross="over", terrain=[], road="plaza", town="shotengai", dens=0.9, lm=[("clock", 10, 30)], bx=-8),
  "M04": D(yaw=-12, curve=("arc", 900), plan="AA", w=11, d=7.5, nfl=1, roof="hip", wall="pl_cream", plat="dual", ntr=3, canopy="wood", cross="fb_wood", terrain=["paddies"], road="curve", town="suburb", dens=0.55, lm=[("deck", 30, 30)], bx=-6),
  "M05": D(yaw=20, curve=("arc", -700), plan="L", w=12, d=7, nfl=2, roof="hip", wall="brick", plat="dual", ntr=4, canopy="curve", cross="fb_steel", terrain=["pond", "orchard"], road="bend", town="suburb", dens=0.5, lm=[("sigtower", 16, 10)], bx=-8),
  "M07": D(yaw=-25, curve=("arc", 700), plan="A", w=8, d=6, nfl=1, roof="gable", wall="wall", plat="island", ntr=3, canopy="none", cross="fb_wood", terrain=["orchard"], road="bend", town="rural", dens=0.3, lm=[('farm_silo', 36, 30), ('deck', -34, 18)], bx=-5),
