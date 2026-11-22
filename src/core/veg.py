@@ -584,8 +584,8 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
     nr_ = np.random.default_rng(900 + k)
     if SNOW_KNOLL[0]:      # T6: 雪駅の丘は球ブロブをやめ、実際の針葉樹(sugi: 段+針葉カード)を疎に植える。雪面が見えて樹林らしくなる
         placed = 0
-        for gx in np.arange(-rx * 0.9, rx * 0.9, 7.5):
-            for gy in np.arange(-ry * 0.9, ry * 0.9, 7.5):
+        for gx in np.arange(-rx * 0.9, rx * 0.9, 10.0):
+            for gy in np.arange(-ry * 0.9, ry * 0.9, 10.0):
                 x = cx + gx + rng.uniform(-2.5, 2.5); y = cy + gy + rng.uniform(-2.5, 2.5)
                 u, v = (x - cx) / rx, (y - cy) / ry
                 if math.hypot(u, v) > 0.92 or rng.random() < 0.25 + 0.3 * math.hypot(u, v) ** 3:
