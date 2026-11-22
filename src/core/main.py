@@ -260,6 +260,9 @@ if args.zone:
                 _a = _a.reshape(-1, 4)
                 _lo, _hi = (0.12, 0.38) if _o.name.endswith("_forest") else (0.45, 0.8)      # T6: 里山の樹林は雪を被る割合を下げ、暗い樹冠+部分的な雪にして白い塊の山に見せない
                 _top = np.random.default_rng(abs(hash(_o.name)) % 99999).uniform(_lo, _hi, (_n, 1)).astype(np.float32)
+                if _o.name.endswith("_forest"):      # T6: 雪駅の里山樹林は灰青の岩山に見えたため、広葉樹も暗い針葉樹緑へ寄せてから薄く雪を載せる
+                    _a[:, :3] = _a[:, :3] * 0.35 + np.array((0.012, 0.030, 0.018), dtype=np.float32) * 0.65
+                    _top = _top * 0.6
                 _a[:, :3] = _a[:, :3] * (1 - _top) + np.array(_snow, dtype=np.float32) * _top
                 _ca.data.foreach_set("color", _a.ravel())
     if os.environ.get('WEATHER','1')=='1':
