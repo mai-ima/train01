@@ -240,7 +240,7 @@ if args.zone:
     import kit7 as _k7
     print('CUTS', _k7.apply_cuts())
     import veg
-    veg.SNOW_KNOLL[0] = args.zone in ('M12', 'M13', 'L01')
+    veg.SNOW_KNOLL[0] = args.zone in ('M12', 'M13', 'L01') or os.environ.get('KNOLL_SUGI') == '1'
     veg.build_landscape(cam_loc)
     if args.zone not in ('M12', 'M13', 'L01') and os.environ.get('ZGRASS', '1') == '1':
         print('ZGRASS', veg.zone_grass(cam_loc))
