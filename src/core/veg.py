@@ -570,6 +570,9 @@ def bamboo_grove(x0, x1, y0, y1, n=120, seed=1):
     emit("bamboo_leaves", np.array(CV), np.array(CT), np.array(CC), M["leaf"], "Trees")
 
 
+SNOW_KNOLL = [False]      # T6: 雪駅では丘の樹林を針葉樹(円錐形)主体にする(main.py が設定)
+
+
 def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
     """T6: 近景の里山の樹林。実在の里山林に近づけるため、(1)樹冠をノイズで群落化して林冠の切れ間・疎密を作る、
     (2)樹冠の大きさを対数正規で散らし、1本を2〜3個の葉塊(主塊+側塊)で作って輪郭を崩す、(3)広葉(明るい/黄緑/褐色がかり)と
@@ -595,6 +598,8 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
             if z < 0.2:
                 continue
             conif = clump < -0.12 and rng.random() < 0.8
+            if SNOW_KNOLL[0] and not conif:
+                conif = rng.random() < 0.85
             warm = clump > 0.25                                                    # 黄緑〜褐色がかった落葉広葉樹の群落
             rad = min(6.2, max(2.0, rng.lognormvariate(1.15, 0.30))) * (1.0 - 0.18 * rho)
             nl = 1 if conif else rng.choice((2, 2, 3))
@@ -603,7 +608,7 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
                 rl = rad * (0.62 if conif else (0.85 if li == 0 else rng.uniform(0.5, 0.7)))
                 hc = rl * (1.55 if conif else 1.0) + (0 if li == 0 else rng.uniform(-0.3, 0.6) * rad)
                 c = (x + ox, y + oy, z + hc)
-                Vb, seg, rings = blob(c, rl, rng, seg=10, rings=7, k=0.55)
+                Vb, seg, rings = blob(c, rl, rng, seg=12, rings=8, k=0.55) if SNOW_KNOLL[0] else blob(c, rl, rng, seg=10, rings=7, k=0.55)
                 if not conif:      # T6: 広葉樹の樹冠を 扁平(傘形)/丸/縦長 に散らす(全部が同じ丸い塊で『球の敷き詰め』に見えた)
                     _sy = rng.choice((0.62, 1.0, 1.0, 1.45))
                     Vb[:, 2] = c[2] + (Vb[:, 2] - c[2]) * _sy
