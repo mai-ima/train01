@@ -578,6 +578,7 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
     nr_ = np.random.default_rng(900 + k)
     Vs, Ts, Cs, off = [], [], [], 0
     step = 3.3
+    edge_blobs = []      # T6(監査『球状ブロブの敷き詰め』): 丘の縁(輪郭になる樹)だけ、塊の表面に小さな葉片を足して輪郭を崩す
     for gx in np.arange(-rx * 0.98, rx * 0.98, step):
         for gy in np.arange(-ry * 0.98, ry * 0.98, step):
             x = cx + gx + rng.uniform(-2.2, 2.2)
@@ -603,6 +604,8 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
                 hc = rl * (1.55 if conif else 1.0) + (0 if li == 0 else rng.uniform(-0.3, 0.6) * rad)
                 c = (x + ox, y + oy, z + hc)
                 Vb, seg, rings = blob(c, rl, rng, seg=10, rings=7, k=0.55)
+                if rho > 0.72 and not conif:
+                    edge_blobs.append((c, rl, warm))
                 if conif:
                     Vb[:, 2] = c[2] + (Vb[:, 2] - c[2]) * 1.9
                 n = len(Vb)
@@ -622,6 +625,30 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
                 Cs.append(np.concatenate([Cc, np.ones((n, 1))], 1))
                 Vs.append(Vb)
                 off += n
+    if edge_blobs:      # 縁の塊に葉片(三角)を 1塊あたり 36枚: 球の滑らかな輪郭が葉の凹凸のある輪郭になる
+        CV, CT, CC, o2 = [], [], [], 0
+        for (c, rl, warm) in edge_blobs:
+            for _ in range(36):
+                d = nr_.normal(size=3) * np.array([1, 1, 0.75])
+                d /= np.linalg.norm(d) + 1e-9
+                p_ = np.array(c) + d * rl * nr_.uniform(0.85, 1.22)
+                t1 = np.cross(d, [0, 0, 1.0])
+                if np.linalg.norm(t1) < 1e-3:
+                    t1 = np.array([1.0, 0, 0])
+                t1 /= np.linalg.norm(t1)
+                t2 = np.cross(d, t1)
+                a0 = nr_.uniform(0, 6.28)
+                u_ = t1 * math.cos(a0) + t2 * math.sin(a0)
+                v_ = -t1 * math.sin(a0) + t2 * math.cos(a0)
+                sz = nr_.uniform(0.35, 0.75)
+                CV += [p_ - u_ * sz * 0.5, p_ + u_ * sz * 0.5, p_ + v_ * sz + d * 0.06]
+                base = np.array([0.075, 0.100, 0.030]) if warm else np.array([0.040, 0.085, 0.028])
+                cc = base * nr_.uniform(0.7, 1.5)
+                CC += [list(cc) + [1.0]] * 3
+                CT += [(o2, o2 + 1, o2 + 2), (o2, o2 + 2, o2 + 1)]
+                o2 += 3
+        Vs.append(np.array(CV)); Cs.append(np.array(CC)); Ts += [(a + off, b + off, c_ + off) for (a, b, c_) in CT]
+        off += len(CV)
     if Vs:
         np_mesh(f"knoll_{k}_forest", np.concatenate(Vs), np.array(Ts), M["leaf"], "Trees", colors=np.concatenate(Cs), smooth=True)
 
