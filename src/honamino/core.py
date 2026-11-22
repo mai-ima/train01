@@ -201,7 +201,7 @@ def densify(pts, step=1.0):
     return np.array(out)
 
 
-def ribbon(name, pts, width, mat, z0=0.016, nacross=15, z_func=None, rut=True, skirt=0.0, col="Roads"):
+def ribbon(name, pts, width, mat, z0=0.016, nacross=15, z_func=None, rut=True, skirt=0.0, col="Roads", shore_grad=None):
     P = densify(pts, 1.0)
     N = len(P)
     tang = np.gradient(P, axis=0)
@@ -229,6 +229,9 @@ def ribbon(name, pts, width, mat, z0=0.016, nacross=15, z_func=None, rut=True, s
         # edges blend into the meadow
         C[:, j, 1] = np.maximum(C[:, j, 1], ss(0.78, 1.0, abs(t)) * 0.9)
         C[:, j, 3] = 1.0
+        if shore_grad is not None:      # T7: 水面の色の勾配。shore_grad=(side(+1なら岸は t=-1 側), 減衰距離[m])。R=1(岸)→0(沖)
+            _dist = abs(t - (-1.0 if shore_grad[0] > 0 else 1.0)) * width / 2      # 岸の側の端(t=-1 か +1)からの距離[m]
+            C[:, j, 0] = float(np.exp(-_dist / shore_grad[1]))
         V[:, j, 0], V[:, j, 1], V[:, j, 2] = xy[:, 0], xy[:, 1], z
     idx = np.arange(N * nacross).reshape(N, nacross)
     a, b, c, d = idx[:-1, :-1], idx[:-1, 1:], idx[1:, 1:], idx[1:, :-1]

@@ -479,6 +479,23 @@ def mat_water(name, deep=(0.03, 0.10, 0.13), shallow=(0.10, 0.22, 0.24)):
     return m.m
 
 
+def mat_water_gradient(name, near=(0.20, 0.42, 0.40), far=(0.02, 0.07, 0.12)):
+    """T7: 海の水面に、岸(頂点カラー R=1)から沖(R=0)への色の勾配を付ける。mat_water と同じ波・白濁・映り込みに、浅瀬の淡い青緑→沖の濃い藍を重ねる。"""
+    m = Mat(name)
+    rip = m.noise(scale=0.9, detail=5, rough=0.55)
+    swell = m.noise(scale=0.12, detail=2, rough=0.5)
+    nrm = m.bump(m.mix(0.5, rip, swell), strength=0.45, dist=0.3)
+    shore = m.attr_color("Col")
+    k = m.ramp(m.sep(shore)[0], [(0.0, far), (0.35, (0.05, 0.14, 0.2)), (1.0, near)])      # 頂点カラーの R(=X)だけを岸からの近さとして使う
+    big = m.noise(scale=0.05, detail=3, rough=0.5)
+    mid = m.ramp(m.noise(scale=0.35, detail=4, rough=0.6), [(0.35, (0.84, 0.88, 0.86)), (0.65, (1.14, 1.10, 1.05))])
+    col = m.mix(1.0, k, mid, 'MULTIPLY')
+    crest = m.ramp(m.noise(scale=0.22, detail=6, rough=0.6), [(0.76, (0.0, 0.0, 0.0)), (0.84, (1.0, 1.0, 1.0))])
+    col = m.mix(crest, col, (0.78, 0.84, 0.86))
+    m.principled(**{'Base Color': col, 'Roughness': 0.09, 'Specular IOR Level': 0.6, 'Normal': nrm})
+    return m.m
+
+
 def mat_concrete(name, base=(0.50, 0.49, 0.46), stain=0.5, seam=None, grain=1.0, seam_rot=(0, 0, 0), offset=0.0):
     """Weathered concrete. seam=(w, h) draws joints every w x h metres in the (rotated) XY plane."""
     m = Mat(name)

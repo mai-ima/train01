@@ -1497,7 +1497,13 @@ def seawall(P, s0, s1, side=1, name="seawall", h=2.0):
     nrm_s = np.vstack([nrm_s[0:1], nrm_s, nrm_s[-1:]])
     pts = [tuple(p + n * side * (7.0 + sea_w / 2)) for p, n in zip(pos_s, nrm_s)]      # C17: 海面の起点を壁(7.0m)に合わせる。5.0mだと壁の陸側2mに青い帯が出ていた(sw10の近接で確認)
     _SEA_N[0] += 1
-    core.ribbon(name + "_sea", pts, sea_w, M["water"], z0=0.030 + 0.003 * _SEA_N[0], rut=False, col="Ground")      # C17: 隣り合う護岸の海面帯が同一平面で重なり横縞(Zファイト)が出た(gt1)→呼び出しごとに高さを3mmずらす
+    if "water_grad" not in M:      # T7: 水面の色の勾配(岸の淡い青緑→沖の濃い藍)。単色の板に見える最大の弱点への対策
+        try:
+            M["water_grad"] = lib.mat_water_gradient("water_grad")
+        except Exception as _e:
+            print("water gradient material failed (fallback water):", _e)
+            M["water_grad"] = M["water"]
+    core.ribbon(name + "_sea", pts, sea_w, M["water_grad"], z0=0.030 + 0.003 * _SEA_N[0], rut=False, col="Ground", nacross=41, shore_grad=(side, 60.0))      # C17: 隣り合う護岸の海面帯が同一平面で重なり横縞(Zファイト)が出た(gt1)→呼び出しごとに高さを3mmずらす
 
 
 def gantry(x, y0, y1, z, hc=5.2, name="gantry", w=0.34):
