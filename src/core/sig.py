@@ -192,9 +192,23 @@ def chimney(x, y, h=22.0, name="sig_chimney"):
 
 
 def snow_hut(x, y, name="sig_snowhut"):
+    """雪小屋。B1: 3駅が同じ形(4×3m・切妻)だった→位置(x,y)から決まる乱数で、寸法・屋根(切妻/片流れ)・煙突・薪棚・扉の位置・雪の吹き溜まりを変える。"""
+    import random as _r
+    rr = _r.Random(int(abs(x) * 6.1 + abs(y) * 4.7) * 13 + 9)
+    hw, hd = rr.choice([(2.0, 1.5), (2.6, 1.8), (1.6, 1.4), (3.0, 2.0)])
+    hh = rr.choice([2.2, 2.4, 2.8])
     g = G(name, "Buildings")
-    g.a("wood", bevel=0.02).box(x - 2, x + 2, y - 1.5, y + 1.5, 0.0, 2.4)
-    g.a("tin").extrude_x([(y - 2.0, 2.2), (y, 3.4), (y + 2.0, 2.2)], x - 2.3, x + 2.3)
+    g.a(rr.choice(["wood", "wood", "plasterw"]), bevel=0.02).box(x - hw, x + hw, y - hd, y + hd, 0.0, hh)
+    if rr.random() < 0.6:
+        g.a("tin").extrude_x([(y - hd - 0.5, hh - 0.2), (y, hh + 1.2), (y + hd + 0.5, hh - 0.2)], x - hw - 0.3, x + hw + 0.3)
+    else:
+        g.a("tin").extrude_x([(y - hd - 0.5, hh + 0.9), (y + hd + 0.5, hh - 0.1)], x - hw - 0.3, x + hw + 0.3)
+    dxo = rr.uniform(-hw * 0.5, hw * 0.5)                                # 扉(手前の面)
+    g.a("wood_dark").box(x + dxo - 0.45, x + dxo + 0.45, y - hd - 0.04, y - hd, 0.0, 1.9)
+    if rr.random() < 0.55:                                               # 煙突
+        g.a("brick", bevel=0.02).box(x + hw * 0.5 - 0.25, x + hw * 0.5 + 0.25, y + hd * 0.3 - 0.25, y + hd * 0.3 + 0.25, hh, hh + 1.8)
+    if rr.random() < 0.5:                                                # 壁際の薪棚
+        g.a("wood_dark").box(x - hw - 0.7, x - hw - 0.05, y - 0.8, y + 0.8, 0.0, 1.2)
     g.build()
 
 
