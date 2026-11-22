@@ -490,7 +490,12 @@ def _tree_hit_bld(sid, o, yaw, w, d):
     return False
 
 
+SNOW_ZONE = [False]      # T6: 雪ゾーンでは緑の広葉樹(ケヤキ)を置かず針葉樹(杉)にする(雪景色に緑の葉は季節が合わない)
+
+
 def scatter_trees(rng, cx, cy, rx, ry, n, kinds=("sugi", "zelkova"), hmax=0.0, zfun=None):
+    if SNOW_ZONE[0]:
+        kinds = tuple(k for k in kinds if k != "zelkova") or ("sugi",)
     for i in range(n):
         a, r = rng.uniform(0, 6.283), math.sqrt(rng.random())
         x, y = cx + math.cos(a) * rx * r, cy + math.sin(a) * ry * r
@@ -1005,6 +1010,7 @@ def build_design(sid):
     kc, kv = d["curve"]
     P = centerline(kc, R=kv if kc == "arc" else 0, amp=kv if kc == "S" else 0) if sid not in CURVE_OVERRIDE else centerline("arc", R=CURVE_OVERRIDE[sid], flat=False)
     kit.ground(600, 600)
+    SNOW_ZONE[0] = "snow" in d["terrain"]
     if "snow" in d["terrain"]:                    # 雪景色: 地面に薄い積雪(線路・ホームはその上に出る)
         _sn = lib.Acc("kit_snowcover", M["snow"], "Ground")
         _sn.box(-400, 400, -400, 400, -0.012, 0.02)
