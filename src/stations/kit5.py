@@ -956,11 +956,12 @@ def embankment(P, s0, s1, h=3.0, name="embank", half=4.0, ramp=40.0, zfun=None, 
     patch = np.clip((np.sin(0.09 * ss + 1.1) * np.sin(0.037 * ss + 2.3) - 0.02) * 3.0, 0, 1)      # 裸地の斑
     patch = np.maximum(patch, np.clip((np.sin(0.31 * ss + 0.7) * np.sin(0.113 * ss + 4.1) - 0.12) * 3.5, 0, 1) * 0.9)      # C17: 短周期の裸地斑を追加(法面の土の露出が見えない、との監査)
     soil = np.zeros((N, K))
+    _pk = lambda k: np.roll(patch, 11 * k + 5)      # T7(監査『暗斑が帯状で焦げ跡のよう』): 列ごとに斑の位置を流れ方向にずらし、スロープ全幅にまたがる帯でなく不整形な塊にする
     soil[:, 0] = soil[:, K - 1] = 0.5 * (0.6 + 0.4 * patch)                                         # 法尻(濃淡あり)
-    soil[:, 1] = np.maximum(0.8 * patch, 0.9 * gul)
-    soil[:, K - 2] = np.maximum(0.8 * patch[::-1], 0.9 * gul)
-    soil[:, 2] = np.maximum(0.5 * patch, 0.8 * gul)      # C17: 裸地の斑を増やす(監査: 築堤の経年55・土の露出が無い)
-    soil[:, K - 3] = np.maximum(0.5 * patch[::-1], 0.8 * gul)
+    soil[:, 1] = np.maximum(0.8 * _pk(1), 0.9 * gul)
+    soil[:, K - 2] = np.maximum(0.8 * _pk(3)[::-1], 0.9 * gul)
+    soil[:, 2] = np.maximum(0.5 * _pk(2), 0.8 * gul)      # C17: 裸地の斑を増やす(監査: 築堤の経年55・土の露出が無い)
+    soil[:, K - 3] = np.maximum(0.5 * _pk(4)[::-1], 0.8 * gul)
     cols = np.zeros((N * K, 4), dtype=np.float32)
     cols[:, 0] = soil.reshape(-1)
     cols[:, 3] = 1.0
