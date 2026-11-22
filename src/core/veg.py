@@ -623,6 +623,12 @@ def knoll_forest(k, cx, cy, rx, ry, hh, Zf):
                     base = np.array([0.075, 0.100, 0.030]) * rng.uniform(0.85, 1.25)
                 else:
                     base = np.array([0.040, 0.085, 0.028]) * rng.uniform(0.8, 1.2)
+                if not conif:      # T6: 樹種の色差(全体が同じ濃緑だった): 1割は紅葉寄りの赤褐色・2割は若葉の明るい黄緑
+                    _pick = rng.random()
+                    if _pick < 0.10:
+                        base = np.array([0.115, 0.060, 0.020]) * rng.uniform(0.8, 1.2)
+                    elif _pick < 0.30:
+                        base = np.array([0.100, 0.140, 0.035]) * rng.uniform(0.8, 1.2)
                 shade = np.clip((Vb[:, 2] - z) / (hc * 2.0 + 1e-3), 0, 1)[:, None]
                 Cc = base[None, :] * (0.55 + 0.9 * shade) * nr_.uniform(0.6, 1.4, (n, 1))
                 Cs.append(np.concatenate([Cc, np.ones((n, 1))], 1))
