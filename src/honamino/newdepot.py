@@ -428,7 +428,7 @@ def _block_details(g, nm, w, d, nfl, zf, zh, rng):
     g.a("wood_dark", bevel=0.005).box(w / 2 - 0.70, w / 2 + 0.70, 0.04, 0.10, zf, zf + 0.95)
     for _sx in (-1, 1):                                                          # D7c(監査『玄関扉の下半分が板だけで簡素』): 下半分に凸の羽目板(2枚)と、下端に金属の蹴込み板
         _pc = w / 2 + _sx * 0.34
-        g.a("wood", bevel=0.008).box(_pc - 0.26, _pc + 0.26, 0.01, 0.04, zf + 0.20, zf + 0.85)
+        g.a("wood_dark", bevel=0.008).box(_pc - 0.26, _pc + 0.26, 0.01, 0.04, zf + 0.20, zf + 0.85)
     g.a("chrome", bevel=0.004).box(w / 2 - 0.68, w / 2 + 0.68, 0.02, 0.05, zf, zf + 0.14)
     g.a("glass").box(w / 2 - 0.66, w / 2 + 0.66, 0.06, 0.08, zf + 0.95, zf + 2.02)
     _dk = g.a("iron_black", bevel=0.004)
