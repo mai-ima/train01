@@ -835,7 +835,7 @@ DESIGN = {
  "M05": D(yaw=20, curve=("arc", -700), plan="L", w=12, d=7, nfl=2, roof="hip", wall="brick", plat="dual", ntr=4, canopy="curve", cross="fb_steel", terrain=["pond", "orchard"], road="bend", town="suburb", dens=0.5, lm=[("sigtower", 16, 10)], bx=-8),
  "M07": D(yaw=-25, curve=("arc", 700), plan="A", w=8, d=6, nfl=1, roof="gable", wall="rubble", plat="island", ntr=3, canopy="none", cross="fb_wood", terrain=["orchard"], road="bend", town="rural", dens=0.3, lm=[('farm_silo', 36, 30), ('deck', -34, 18)], bx=-5),
  "M08": D(yaw=35, curve=("S", 14), plan="T", w=16, d=8, nfl=2, roof="gable", wall="pl_ochre", plat="island", ntr=4, canopy="saw", cross="fb_wood", terrain=["hill_n"], road="straight", town="rural", dens=0.5, lm=[("sigtower", 22, -18), ("chimney", -34, 34)], bx=-9),
- "M09": D(yaw=-40, curve=("arc", 500), plan="L", w=8, d=5, nfl=1, roof="hip", wall="brick", plat="side", ntr=2, canopy="shed", cross="level", terrain=["forest"], road="diag", town="forest", dens=0.14, lm=[("deck", 24, 13), ("monument", -24, 16)], bx=-4),
+ "M09": D(yaw=-40, curve=("arc", 500), plan="L", w=8, d=5, nfl=1, roof="gable", wall="brick", plat="side", ntr=2, canopy="shed", cross="level", terrain=["forest"], road="diag", town="forest", dens=0.14, lm=[("deck", 24, 13), ("monument", -24, 16)], bx=-4),
  "M10": D(yaw=60, curve=("S", 10), plan="U", w=15, d=8, nfl=2, roof="hip", wall="wall", plat="island", ntr=4, canopy="curve", cross="underpass", terrain=["hill_s", "pond"], road="curve", town="onsen", dens=0.6, lm=[("onsen", 28, 44), ("footbath", -24, 22)], bx=-9),
  "M11": D(yaw=50, curve=("arc", 450), plan="A", w=9, d=6, nfl=1, roof="hip", wall="stone", plat="side", ntr=3, canopy="shed", cross="level", terrain=["hill_n"], road="diag", town="alpine", dens=0.22, lm=[("water", 22, -14), ("snowhut", -30, 14)], bx=-6),
  "M12": D(yaw=-70, curve=("arc", -500), plan="I", w=10, d=6, nfl=1, roof="shed", wall="concrete", plat="island", ntr=3, canopy="snow", cross="fb_steel", terrain=["snow", "hill_n", "hill_s"], road="bend", town="alpine", dens=0.15, lm=[("deck", 26, 14), ("snowhut", -26, 8)], bx=-5),
@@ -849,11 +849,11 @@ DESIGN = {
  "Y02": D(yaw=15, curve=("arc", 300), plan="I", w=5, d=4, nfl=1, roof="gable", wall="wood", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="diag", town="forest", dens=0.1, lm=[("deck", 22, 12)], bx=-3),
  "Y03": D(yaw=75, curve=("arc", -300), plan="I", w=5, d=3.5, nfl=1, roof="shed", wall="pl_grey", plat="side_short", ntr=1, canopy="none", cross="stairs", terrain=["hill_s"], road="bend", town="forest", dens=0.1, lm=[("bridge", 0, 0)], bx=-3),
  "Y04": D(yaw=-60, curve=("arc", 350), plan="L", w=7, d=4.5, nfl=1, roof="hip", wall="tile_cream", plat="side_short", ntr=1, canopy="none", cross="steps", terrain=["hill_n", "pond"], road="curve", town="onsen", dens=0.2, lm=[("onsen", 24, 22), ("footbath", -14, 14)], bx=-4),
- "S02": D(yaw=-20, curve=("arc", 450), plan="I", w=6, d=4.5, nfl=1, roof="gable", wall="pl_ochre", plat="side_short", ntr=1, canopy="none", cross="level", terrain=["orchard"], road="straight", town="rural", dens=0.2, lm=[('torii', 26, 22)], bx=-3),
+ "S02": D(yaw=-20, curve=("arc", 450), plan="I", w=6, d=4.5, nfl=1, roof="shed", wall="pl_ochre", plat="side_short", ntr=1, canopy="none", cross="level", terrain=["orchard"], road="straight", town="rural", dens=0.2, lm=[('torii', 26, 22)], bx=-3),
  "S03": D(yaw=110, curve=("S", 8), plan="I", w=7, d=5, nfl=1, roof="gable", wall="plasterw", plat="side_short", ntr=1, canopy="shed", cross="level", terrain=["forest"], road="diag", town="forest", dens=0.14, lm=[('logstack', 24, -22)], bx=-4),
  "S04": D(yaw=180, curve=("arc", -350), plan="L", w=9, d=5.5, nfl=1, roof="gable", wall="pl_green", plat="side", ntr=2, canopy="wood", cross="level", terrain=["hill_n", "forest"], road="bend", town="alpine", dens=0.28, lm=[('firetower', 30, 28), ('water', -24, 18)], bx=-5),
  "SH02": D(yaw=0, curve=("arc", -1100), plan="OVER", w=17, d=9, nfl=2, roof="flat", wall="pl_cream", plat="dual", ntr=3, canopy="none", cross="over", terrain=["paddies"], road="plaza", town="newtown", dens=0.85, lm=[("water", 44, -28)], bx=-8),
- "SH03": D(yaw=0, curve=("arc", 900), plan="I", w=9, d=6, nfl=1, roof="hip", wall="pl_cream", plat="island", ntr=3, canopy="curve", cross="stairs", terrain=["pond"], road="curve", town="newtown", dens=0.6, lm=[("deck", 30, 26)], bx=-5),
+ "SH03": D(yaw=0, curve=("arc", 900), plan="I", w=9, d=6, nfl=1, roof="gable", wall="pl_cream", plat="island", ntr=3, canopy="curve", cross="stairs", terrain=["pond"], road="curve", town="newtown", dens=0.6, lm=[("deck", 30, 26)], bx=-5),
  "SH04": D(yaw=0, curve=("straight", 0), plan="TW", w=22, d=10, nfl=3, roof="flat", wall="concrete", plat="dual", ntr=4, canopy="steel", cross="overshops", terrain=[], road="plaza", town="urban", dens=0.92, lm=[("clock", 14, 36), ("apt", -34, 58)], bx=-10),
  "SH05": D(yaw=0, curve=("S", 10), plan="U", w=14, d=8, nfl=2, roof="shed", wall="pl_green", plat="island", ntr=3, canopy="curve", cross="fb_steel", terrain=["hill_n"], road="straight", town="campus", dens=0.5, lm=[("gate", -44, 24), ("field", -78, 34)], bx=-7),      # K9: SH05 の門が駅舎の出入口(x≈-24.6,y≈32)の0.8m先に立って塞いでいた→西へ14m離す
  "SH06": D(yaw=0, curve=("arc", 1500), plan="AA", w=12, d=7, nfl=1, roof="saw", wall="tin", plat="island", ntr=5, canopy="shed", cross="fb_steel", terrain=[], road="straight", town="freight", dens=0.65, lm=[("crane", 36, 30), ("chimney", -30, 36)], bx=-6),
@@ -1095,6 +1095,8 @@ def build_design(sid):
             _rmat = {"M07": "slate", "M17": "tin_red", "M18": "thatch", "S03": "tin_green", "M15": "tin_blue", "SH03": "kawara", "L01": "tin_red"}.get(sid)      # B3: 小駅の屋根材を駅ごとに変える(監査『屋根テクスチャの使い回し』)
             if _rmat and _rmat in M:
                 vols[0]["roofmat"] = _rmat
+            if sid in ("M09", "SH03"):
+                vols[0]["ridge"] = "y"      # B3: 棟の向きを変える(妻面が正面を向く切妻)。寄棟の箱が並んで見えた M09/Y04/S02/SH03 を分ける
             _wsty = {"SH04": "tall", "SH08": "band", "S03": "tall", "M07": "band", "M09": "square", "M18": "square", "SH03": "band", "SH07": "tall", "M13": "band", "M17": "tall", "M12": "square"}.get(sid)       # B3: 似て見えた SH04(3階建て)と SH08(2階建て長方形)の窓割りを分ける(SH04=縦長+窓枠 / SH08=横長の連窓+窓枠)
             if _wsty:
                 vols[0]["win_style"], vols[0]["win_trim"] = _wsty, True
