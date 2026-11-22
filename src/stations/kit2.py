@@ -416,6 +416,12 @@ def canopy(kind, xa, xb, ztop=3.7, depth=2.6, gm=None):
     for x in posts:
         g.a("wood_dark" if kind != "steel" else "iron_black", bevel=0.01).box(x - 0.09, x + 0.09, -depth - 0.09, -depth + 0.09, Z_PLAT, Z_PLAT + ztop)
         g.a("wood_dark" if kind != "steel" else "iron_black").sbox((x, -depth, Z_PLAT + ztop - 0.5), (x, -0.1, Z_PLAT + ztop + 0.2), 0.1, 0.16, up=(1, 0, 0))
+    if kind in ("shed", "wood", "steel") and len(posts):      # 桁(前縁・後縁の水平材)と垂木: 薄い板だけの屋根に厚みと構造を出す(監査: 上屋が薄い板)
+        _bm = "wood_dark" if kind != "steel" else "iron_black"
+        g.a(_bm, bevel=0.01).box(xa - 0.4, xb + 0.4, -depth - 0.12, -depth + 0.12, Z_PLAT + ztop - 0.42, Z_PLAT + ztop - 0.08)
+        g.a(_bm, bevel=0.01).box(xa - 0.4, xb + 0.4, -0.2, 0.05, Z_PLAT + ztop + 0.05, Z_PLAT + ztop + 0.42)
+        for x in np.arange(xa, xb + 0.1, 1.0):
+            g.a(_bm).box(x - 0.035, x + 0.035, -depth - 0.4, 0.05, Z_PLAT + ztop - 0.13, Z_PLAT + ztop - 0.03)
     if kind in ("shed", "wood", "steel"):
         g.a("tin" if kind != "steel" else "roof").extrude_x([(-depth - 0.5, Z_PLAT + ztop - 0.1), (0.1, Z_PLAT + ztop + 0.45), (0.1, Z_PLAT + ztop + 0.38), (-depth - 0.5, Z_PLAT + ztop - 0.17)], xa - 0.5, xb + 0.5)
     elif kind == "curve":
